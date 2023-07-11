@@ -1,26 +1,108 @@
 <template>
-  <HelloWorld :msg="'Hello world!'"/>
+  <NavBar
+    :pages="pages"
+    :active-page="activePage"
+    :navLinksClick="(index) => (activePage = index)"
+  />
+  <PageViewer :page="pages[activePage]" />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import NavBar from "./components/Nav/NavBar.vue";
+import PageViewer from "./components/PageViewer.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld,    
-}
-}
+    NavBar,
+    PageViewer,
+  },
+  data() {
+    return {
+      activePage: 0,
+      pages: [
+        {
+          link: { text: "Home", url: "index.html" },
+          pageTitle: "Home Page",
+          content: "This is the home content",
+        },
+        {
+          link: { text: "Users", url: "users.html" },
+          pageTitle: "Users Page",
+          content: "This is the users content",
+        },
+        {
+          link: { text: "Resources", url: "resources.html" },
+          pageTitle: "Resources Page",
+          content: "This is the resources content",
+        },
+      ],
+    };
+  },
+};
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  /* CSS Reset */
+
+  /* Box sizing rules */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  /* Remove default margin and padding */
+  body,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  ul,
+  ol,
+  li,
+  figure,
+  figcaption,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Remove list styles */
+  ul,
+  ol {
+    list-style: none;
+  }
+
+  /* Remove default hyperlink styles */
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  /* Remove outline on focus */
+  a:focus,
+  button:focus {
+    outline: none;
+  }
+
+  /* Remove default button styles */
+  button {
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  /* Remove table border spacing */
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+  }
 }
 </style>
