@@ -2,21 +2,16 @@
   <nav>
     <div class="nav__left_side">
       <h3>
-        <a href="/home" @click.prevent="navLinksClick(0)"
-          >Inventory management</a
-        >
+        <router-link to="/home">Inventory management</router-link>
       </h3>
     </div>
 
     <div class="nav__right_side">
       <ul class="nav__list">
-        <li class="nav__item" v-for="(page, index) in pages"  :key="index">
-          <a
-            :href="page.link.url"
-            class="nav__link"
-            @click.prevent="navLinksClick(index)"
-            >{{ page.link.text }}</a
-          >
+        <li class="nav__item" v-for="(page, index) in pages" :key="index">
+          <router-link :to="page.link.url" class="nav__link">
+            {{ page.link.text }}
+          </router-link>
         </li>
       </ul>
     </div>
@@ -25,7 +20,7 @@
 
 <script>
 export default {
-  props: ["pages", "activePage", "navLinksClick"],
+  props: ["pages"],
 };
 </script>
 
@@ -34,11 +29,11 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #2c3e50;
+  background-color: var(--clr-inkwell);
 }
 
 .nav__left_side a {
-  color: red;
+  color: var(--clr-living-coral);
   text-decoration: none;
   padding: 1rem;
   font-size: 2rem;
@@ -61,14 +56,17 @@ nav {
 
 .nav__link {
   text-decoration: none;
-  color: #fff;
-  background-color: red;
-  font-weight: bold;
+  color: var(--clr-white);
+  background-color: var(--clr-living-coral);
   padding: 0.6rem 1rem;
   border-radius: 0.3rem;
+  font-weight: bold;
+  border: 1px solid transparent;
+  transition: var(--trans);
 }
 
-.nav__link:active .nav__link:hover {
-  color: #000;
+.nav__link:hover,
+.nav__link:active {
+  border: 1px solid #fff;
 }
 </style>

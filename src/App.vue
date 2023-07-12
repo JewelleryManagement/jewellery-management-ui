@@ -1,38 +1,34 @@
 <template>
   <NavBar
     :pages="pages"
-    :active-page="activePage"
-    :navLinksClick="(index) => (activePage = index)"
   />
-  <PageViewer :page="pages[activePage]" />
+
+  <router-view />
 </template>
 
 <script>
 import NavBar from "./components/Nav/NavBar.vue";
-import PageViewer from "./components/PageViewer.vue";
 
 export default {
   name: "App",
   components: {
     NavBar,
-    PageViewer,
   },
   data() {
     return {
-      activePage: 0,
       pages: [
         {
-          link: { text: "Home", url: "index.html" },
+          link: { text: "Home", url: "/" },
           pageTitle: "Home Page",
           content: "This is the home content",
         },
         {
-          link: { text: "Users", url: "users.html" },
+          link: { text: "Users", url: "/users" },
           pageTitle: "Users Page",
           content: "This is the users content",
         },
         {
-          link: { text: "Resources", url: "resources.html" },
+          link: { text: "Resources", url: "/resources" },
           pageTitle: "Resources Page",
           content: "This is the resources content",
         },
@@ -43,6 +39,17 @@ export default {
 </script>
 
 <style>
+:root {
+  --clr-white: #fff;
+  --clr-living-coral: #ff6f61;
+  --clr-inkwell: #363945;
+
+  --trans: all 400ms ease;
+
+  --container-width-lg: 75%;
+  --container-width-md: 86%;
+  --container-width-sm: 90%;
+}
 #app {
   /* CSS Reset */
 
@@ -104,5 +111,14 @@ export default {
     border-collapse: collapse;
     border-spacing: 0;
   }
+}
+
+.container {
+  max-width: var(--container-width-lg);
+  background-color: transparent;
+  margin: 0 auto;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  min-height: 100vh;
 }
 </style>
