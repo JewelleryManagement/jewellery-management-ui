@@ -17,18 +17,12 @@ export default {
       pages: [
         {
           link: { text: "Home", url: "/" },
-          pageTitle: "Home Page",
-          content: "This is the home content",
         },
         {
           link: { text: "Users", url: "/users" },
-          pageTitle: "Users Page",
-          content: "This is the users content",
         },
         {
           link: { text: "Resources", url: "/resources" },
-          pageTitle: "Resources Page",
-          content: "This is the resources content",
         },
       ],
     };
