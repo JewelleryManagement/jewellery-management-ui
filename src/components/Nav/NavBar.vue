@@ -9,7 +9,7 @@
     <div class="nav__right_side">
       <ul class="nav__list">
         <li class="nav__item" v-for="(page, index) in pages" :key="index">
-          <router-link :to="page.link.url" class="nav__link">
+          <router-link :to="{ name: `${page.link.text}` }" class="nav__link">
             {{ page.link.text }}
           </router-link>
         </li>
@@ -65,8 +65,10 @@ nav {
   transition: var(--trans);
 }
 
-.nav__link:hover,
-.nav__link:active {
-  border: 1px solid #fff;
+.nav__link.router-link-active,
+.nav__link:hover {
+  border: 1px solid var(--clr-living-coral);
+  background-color: #fff;
+  color: var(--clr-living-coral);
 }
 </style>

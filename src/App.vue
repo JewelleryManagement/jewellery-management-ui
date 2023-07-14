@@ -1,7 +1,5 @@
 <template>
-  <NavBar
-    :pages="pages"
-  />
+  <NavBar :pages="pages" />
 
   <router-view />
 </template>
@@ -50,6 +48,7 @@ export default {
   --container-width-md: 86%;
   --container-width-sm: 90%;
 }
+
 #app {
   /* CSS Reset */
 

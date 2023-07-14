@@ -1,18 +1,18 @@
 <template>
-          <div class="container">
-            <h1> {{pageTitle}} </h1>
-            <p> {{content}} </p>
-            </div>
+  <div class="container">
+    <h1> {{ pageTitle }} </h1>
+    <p> {{ content }} </p>
+  </div>
 </template>
 
 <script>
 export default {
-  props: ["pageTitle", "content" ],
+  props: ["pageTitle", "content"],
 };
 </script>
 
 <style scoped>
 .container {
-  text-align: center;  
+  text-align: center;
 }
 </style>

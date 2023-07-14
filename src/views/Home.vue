@@ -1,18 +1,18 @@
 <template>
-     <PageViewer :pageTitle="pageTitle" :content="content" />
+  <PageViewer :pageTitle="pageTitle" :content="content" />
 </template>
 
 <script>
 import PageViewer from "../components/PageViewer.vue";
 
 export default {
-    components: {
+  components: {
     PageViewer,
   },
   data() {
     return {
-        pageTitle: "Home Page",
-          content: "This is the home content",
+      pageTitle: "Home Page",
+      content: "This is the home content",
     };
   },
 
@@ -21,7 +21,7 @@ export default {
 
 <style scoped>
 .container {
-  text-align: center;  
+  text-align: center;
 
 }
 </style>

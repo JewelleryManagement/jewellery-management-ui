@@ -4,10 +4,10 @@ import Resources from "../views/Resources.vue";
 import Users from "../views/Users.vue";
 
 const routes = [
-  { path: "/", component: Home },
-  { path: "/home", component: Home },
-  { path: "/users", component: Users },
-  { path: "/resources", component: Resources },
+  { path: "/", name: "Home", component: Home },
+  { path: "/home", name: "Home", component: Home },
+  { path: "/users", name: "Users", component: Users },
+  { path: "/resources", name: "Resources", component: Resources },
 ];
 
 const router = createRouter({
