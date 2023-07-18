@@ -10,6 +10,7 @@
     </button>
     <ul id="users" v-if="users.length > 0">
       <li v-for="user in sortedUsers" :key="user.email">
+        <i class="fa fa-user-circle-o user-icon"></i>
         <span class="name">{{ user.name }}</span><br>
         <span class="email">{{ user.email }}</span><br>
       </li>
@@ -175,6 +176,10 @@ li:last-child {
 
 .sort-btn:active {
   transform: translate(2px ,2px);
+}
+
+.user-icon {
+    padding-right:0.2rem
 }
 
 .fa-cog.spinning {
