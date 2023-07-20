@@ -2,13 +2,11 @@
   <user-list :users="users" />
 </template>
 <script>
-import PageViewer from "../components/PageViewer.vue";
 import UserList from "../components/UserList.vue";
 
 export default {
   components: {
     UserList,
-    PageViewer,
   },
   data() {
     return {
