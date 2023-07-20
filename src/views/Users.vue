@@ -2,38 +2,35 @@
   <user-list :users="users" />
 </template>
 <script>
+import PageViewer from "../components/PageViewer.vue";
 import UserList from "../components/UserList.vue";
+import {getUsers} from "@/services/UserServices.js";
+import axios from "@/axios.config";
 
 export default {
   components: {
     UserList,
+    PageViewer,
   },
   data() {
     return {
-    users: [
-        {
-            name : 'Aleksandur Dimitrov',
-            email: 'aleksandurDimitrov@gmail.com',
-        },
-        {
-            name : 'Tsvetomir Dimitrov',
-            email: 'tsvetomirDimitrov@gmail.com',
-        },
-        {
-            name : 'Aleksander Pavlov',
-            email: 'aleksanderPavlov@gmail.com',
-        },
-        {
-            name : 'Vladislav Katrankiev',
-            email: 'vladislavKatrankiev@gmail.com',
-        },
-        {
-            name : 'Peter Katrankiev',
-            email: 'peterKatrankiev@gmail.com',
-        },
-      ],
+      users: [],
     }
-  }
+  },
+  methods: {
+        async fetchUsers() {
+            try {
+                const response = await axios.get('/users');
+                this.users = response.data;
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        },
+  },
+    async mounted() {
+        await this.fetchUsers();
+        console.log(this.users)
+    },
 };
 </script>
 <style>
