@@ -3,7 +3,7 @@
 </template>
 <script>
 import PageViewer from "../components/PageViewer.vue";
-import UserList from "../components/UserList.vue";
+import UserList from "../components/Userlist/UserList.vue";
 import {getUsers} from "@/services/UserServices.js";
 import axios from "@/axios.config";
 
