@@ -2,7 +2,6 @@
   <user-list :users="users" />
 </template>
 <script>
-import PageViewer from "../components/PageViewer.vue";
 import UserList from "../components/Userlist/UserList.vue";
 import {getUsers} from "@/services/UserServices.js";
 import axios from "@/axios.config";
@@ -10,7 +9,6 @@ import axios from "@/axios.config";
 export default {
   components: {
     UserList,
-    PageViewer,
   },
   data() {
     return {
