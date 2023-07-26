@@ -183,15 +183,12 @@ h1 {
 }
 
 .user-items {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  list-style: none;
   padding: 0;
-  margin-top: 20px;
 }
 
 .user-item {
-  flex-basis: calc(33.33% - 20px);
-  margin-bottom: 20px;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }
 </style>
