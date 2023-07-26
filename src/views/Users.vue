@@ -14,9 +14,9 @@ export default {
       users: [],
     }
   },
-  mounted() {
+  async mounted() {
     try {
-      const response = fetchUsers();
+      const response = await fetchUsers();
       this.users = response;
     } catch (error) {
       console.error('Failed to fetch users:', error);
