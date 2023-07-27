@@ -1,6 +1,6 @@
 <template>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <div class="user-list">
+  <base-card>
     <h1>User List</h1>
     <button class="sort-btn" @click="sortUsers">
       <div class="sort-sign">
@@ -12,7 +12,7 @@
       <user-item v-for="user in sortedUsers" :key="user.email" :user="user" />
     </div>
     <p class="no-users" v-else>No users found.</p>
-  </div>
+  </base-card>
 </template>
 
 <script>
@@ -63,15 +63,6 @@ export default {
 <style scoped>
 * {
   font-family: Arial, sans-serif;
-}
-
-.user-list {
-  max-width: 600px;
-  margin: 20px auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
