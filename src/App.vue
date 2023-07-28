@@ -24,6 +24,9 @@ export default {
         {
           link: { text: "Resources", url: "/resources" },
         },
+        {
+          link: { text: "Products", url: "/products" },
+        },
       ],
     };
   },
@@ -113,5 +116,6 @@ export default {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
   min-height: 100vh;
+  text-align: center;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <base-card class="container">
     <h1>{{ title }}</h1>
-    <base-button
+    <!-- <base-button
       @click="setActiveTable('Resources')"
       :mode="buttonMode('Resources')"
     >
@@ -12,7 +12,7 @@
       :mode="buttonMode('Products')"
     >
       Products
-    </base-button>
+    </base-button> -->
 
     <resource-table
       v-if="activeTable === 'Resources'"
@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import ResourceTable from "../components/Resources/ResourceTable.vue";
-import ProductsTable from "../components/Resources/ProductsTable.vue";
+import ResourceTable from "../components/Tables/ResourceTable.vue";
+import ProductsTable from "../components/Tables/ProductsTable.vue";
 import { fetchResources, fetchProducts } from "@/services/ResourcesService.js";
 
 export default {
@@ -37,8 +37,8 @@ export default {
   },
   data() {
     return {
-      title: "Resources table",
-      activeTable: "Resources",
+      title: this.$route.name + " table",
+      activeTable: this.$route.name,
       resources: [],
       products: [],
     };
@@ -61,7 +61,6 @@ export default {
         ]);
         this.resources = fetchedResources;
         this.products = fetchedProducts;
-        console.log(fetchedProducts);
       } catch (error) {
         console.log("Failed to fetch resources!", error);
       }
@@ -69,6 +68,12 @@ export default {
   },
   mounted() {
     this.fetchResources();
+  },
+  watch: {
+    $route(to, from) {
+      this.activeTable = to.name;
+      this.title = to.name + " table";
+    },
   },
 };
 </script>

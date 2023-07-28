@@ -21,7 +21,7 @@ export default {
       default: false,
     },
     to: {
-      type: String,
+      type: [String, Object],
       required: false,
       default: "/",
     },
@@ -33,23 +33,23 @@ export default {
 button,
 a {
   text-decoration: none;
-  padding: 0.75rem 1.5rem;
   font: inherit;
-  background-color: var(--clr-inkwell);
-  border: 1px solid var(--clr-inkwell);
   color: var(--clr-white);
-  cursor: pointer;
-  border-radius: 30px;
-  margin-right: 0.5rem;
-  display: inline-block;
+  background-color: var(--clr-living-coral);
+  padding: 0.6rem 1rem;
+  border-radius: 0.3rem;
+  font-weight: bold;
+  border: 1px solid transparent;
+  transition: var(--trans);
 }
 
 a:hover,
-a:active,
+a.active,
 button:hover,
-button:active {
-  background-color: var(--clr-living-coral);
-  border-color: var(--clr-living-coral);
+button.active {
+  border: 1px solid var(--clr-living-coral);
+  background-color: #fff;
+  color: var(--clr-living-coral);
 }
 
 .flat {
@@ -65,10 +65,11 @@ button:active {
 }
 
 .flat:hover,
-.flat:active,
+.flat.active,
 .outline:hover,
-.outline:active {
-  color: var(--clr-white);
-  background-color: var(--clr-living-coral);
+.outline.active {
+  border: 1px solid var(--clr-living-coral);
+  background-color: #fff;
+  color: var(--clr-living-coral);
 }
 </style>
