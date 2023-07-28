@@ -4,6 +4,7 @@
 <script>
 import UserList from "../components/Userlist/UserList.vue";
 import {fetchUsers} from "@/services/UserServices.js";
+import { showNotification } from "@/notification.js";
 
 export default {
   components: {
@@ -19,7 +20,7 @@ export default {
       const response = await fetchUsers();
       this.users = response;
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      showNotification('Failed to fetch users: ' + error, 'error')
     }
   }
 };
