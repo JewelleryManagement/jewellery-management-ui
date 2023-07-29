@@ -12,9 +12,19 @@ export default {
 };
 </script>
 
-<style scoped>
-th,
-td:hover {
+<style>
+td {
+  padding: 0.5rem;
+  text-align: left;
+}
+
+tr {
+  background-color: var(--clr-light-gray);
+  color: var(--clr-dark-gray);
+}
+
+tr:hover {
+  background-color: #ccc;
   cursor: pointer;
 }
 </style>

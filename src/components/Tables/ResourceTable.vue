@@ -1,14 +1,8 @@
 <template>
-  <div class="resource-table">
+  <div class="table">
     <table>
       <thead>
-        <tr>
-          <table-head
-            v-for="column in tableColumns"
-            :key="column.key"
-            :columns="column"
-          />
-        </tr>
+        <table-head :columns="tableColumns" />
       </thead>
       <tbody>
         <table-row
@@ -59,31 +53,10 @@ export default {
 </script>
 
 <style scoped>
-.resource-table {
+.table {
   margin-top: 1rem;
   width: 100%;
   border-collapse: collapse;
   overflow-x: auto;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #ccc;
-}
-
-th,
-td {
-  border: 1px solid #ccc;
-  padding: 8px;
-  text-align: left;
-}
-
-thead {
-  background-color: #f2f2f2;
-}
-
-tr:hover {
-  background-color: #f5f5f5;
 }
 </style>

@@ -1,9 +1,15 @@
 <template>
   <nav>
     <div class="nav__left_side">
-      <h3>
+      <div class="nav_logo">
+        <router-link to="/home">
+          <img src="@/assets/logo.png" alt="Inventory logo" />
+        </router-link>
+      </div>
+
+      <!-- <h3>
         <router-link to="/home">Inventory management</router-link>
-      </h3>
+      </h3> -->
     </div>
 
     <div class="nav__right_side">
@@ -30,6 +36,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   background-color: var(--clr-inkwell);
+  height: 4.5rem;
 }
 
 .nav__left_side a {
@@ -54,4 +61,15 @@ nav {
   margin: 0;
   padding: 0.2rem;
 }
+
+.nav_logo {
+  flex: 1;
+}
+
+.nav_logo img {
+  margin-top: 5px;
+  max-height: 100%;
+  width: 145px; 
+}
+
 </style>
