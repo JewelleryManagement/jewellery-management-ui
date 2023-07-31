@@ -131,7 +131,7 @@ export default {
   max-width: 18rem;
   width: 100%;
   min-width: 8rem;
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   color: rgb(255, 255, 255);
   border-radius: 5px;
   font-size: 14px;
@@ -155,6 +155,41 @@ export default {
 .notification .icon {
   font-size: 24px; 
   margin-right: 8px; 
+}
+.notification.hovered {
+  transform: scale(1.1);
+  transition: 0.2s ease-in-out;
+}
+
+.notification .progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+.notification .progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #f0f0f06c;
+  border-radius: 8px;
+  animation: progressBarAnimation 8s linear;
+}
+
+@keyframes progressBarAnimation {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
 }
 
 @keyframes fadeIn {

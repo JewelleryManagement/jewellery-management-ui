@@ -1,5 +1,5 @@
 import axios from "@/axios.config";
-import { showNotification } from "@/notification.js";
+import { showNotification } from "@/utils/notification.js";
 
 export async function fetchUsers() {
     const response = await axios.get("/users");
