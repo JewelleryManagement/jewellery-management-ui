@@ -1,4 +1,5 @@
 <template>
+
   <nav>
     <div class="nav__left_side">
       <div class="nav_logo">
@@ -6,10 +7,6 @@
           <img src="@/assets/logo.png" alt="Inventory logo" />
         </router-link>
       </div>
-
-      <!-- <h3>
-        <router-link to="/home">Inventory management</router-link>
-      </h3> -->
     </div>
 
     <div class="nav__right_side">
@@ -20,6 +17,22 @@
           }}</base-button>
         </li>
       </ul>
+
+      <div class="drop__down" @click="toggleDropdown">
+        <button class="drop__btn">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="dropdown__content" :class="{ active: isDropDownActive }">
+          <ul>
+            <li v-for="(page, index) in pages" :key="index">
+              <router-link :to="{ name: `${page.link.text}` }">{{
+                page.link.text
+              }}</router-link>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </nav>
 </template>
@@ -27,6 +40,16 @@
 <script>
 export default {
   props: ["pages"],
+  data() {
+    return {
+      isDropDownActive: false,
+    };
+  },
+  methods: {
+    toggleDropdown() {
+      this.isDropDownActive = !this.isDropDownActive;
+    },
+  },
 };
 </script>
 
@@ -37,6 +60,9 @@ nav {
   align-items: center;
   background-color: var(--clr-inkwell);
   height: 4.5rem;
+  position: static;
+  top: 0;
+  left: 0;
 }
 
 .nav__left_side a {
@@ -69,7 +95,60 @@ nav {
 .nav_logo img {
   margin-top: 5px;
   max-height: 100%;
-  width: 145px; 
+  width: 145px;
 }
 
+.fas {
+  font-size: 2rem;
+  color: var(--clr-living-coral);
+  margin-right: 1rem;
+}
+
+.drop__down {
+  position: relative;
+  display: inline-block;
+}
+
+.drop__btn {
+  background-color: transparent;
+  font-size: 2rem;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+.dropdown__content {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  background-color: var(--clr-living-coral);
+  border-radius: 10%;
+}
+
+.dropdown__content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.dropdown__content a {
+  color: white;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+.dropdown__content.active {
+  display: block;
+  position: absolute;
+  right: 0px;
+}
+
+@media only screen and (max-width: 600px) {
+  .drop__btn {
+    display: block;
+  }
+
+  .nav__right_side .nav__list {
+    display: none;
+  }
+}
 </style>
