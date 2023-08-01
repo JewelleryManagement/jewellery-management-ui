@@ -1,4 +1,5 @@
 <template>
+<<<<<<< HEAD
   <PageViewer :pageTitle="pageTitle" :content="content" />
 </template>
 <script>
@@ -14,6 +15,32 @@ export default {
       content: "This is the users content",
     };
   },
+=======
+  <user-list :users="users" />
+</template>
+<script>
+import UserList from "@/components/UserList/UserList.vue";
+import {fetchUsers} from "@/services/UserServices.js";
+import { showNotification } from "@/utils/notification.js";
+
+export default {
+  components: {
+    UserList,
+  },
+  data() {
+    return {
+      users: [],
+    }
+  },
+  async created() {
+    try {
+      const response = await fetchUsers();
+      this.users = response;
+    } catch (error) {
+      showNotification('Failed to fetch users: ' + error, 'error')
+    }
+  }
+>>>>>>> origin/test
 };
 </script>
 <style>
