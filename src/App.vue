@@ -1,4 +1,5 @@
 <template>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
   <NavBar :pages="pages" />
 
   <router-view />
@@ -113,5 +114,108 @@ export default {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
   min-height: 100vh;
+}
+
+.notification-container {
+  position: fixed;
+  top: 5.3rem;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 20%;
+  
+}
+
+.notification {
+  max-width: 18rem;
+  width: 100%;
+  min-width: 8rem;
+  padding: 2rem 1.5rem;
+  color: rgb(255, 255, 255);
+  border-radius: 5px;
+  font-size: 14px;
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: opacity 0.3s ease-in-out, transform 0.5s ease-in-out;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  display: flex;
+  align-items: center;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(0%);
+  animation: fadeIn 0.5s;
+}
+
+.notification .icon {
+  font-size: 24px; 
+  margin-right: 8px; 
+}
+.notification.hovered {
+  transform: scale(1.1);
+  transition: 0.2s ease-in-out;
+}
+
+.notification .progress-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+.notification .progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #f0f0f06c;
+  border-radius: 8px;
+  animation: progressBarAnimation 8s linear;
+}
+
+@keyframes progressBarAnimation {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0%);
+  }
+}
+
+.info {
+  background: linear-gradient(to left, rgba(1, 68, 92, 0.233), rgb(12, 177, 206));
+}
+
+.success {
+  background: linear-gradient(to left, rgba(28, 92, 1, 0.233), rgb(12, 206, 31));
+}
+
+.error {
+  background: linear-gradient(to left, rgba(92, 1, 1, 0.233), rgb(225, 19, 19));
+}
+
+.warning {
+  background: linear-gradient(to left, rgba(92, 74, 1, 0.233), rgb(225, 170, 19));
 }
 </style>

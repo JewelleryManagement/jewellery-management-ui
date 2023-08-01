@@ -1,19 +1,28 @@
 <template>
-  <PageViewer :pageTitle="pageTitle" :content="content" />
+  <user-list :users="users" />
 </template>
 <script>
-import PageViewer from "../components/PageViewer.vue";
+import UserList from "@/components/UserList/UserList.vue";
+import {fetchUsers} from "@/services/UserServices.js";
+import { showNotification } from "@/utils/notification.js";
 
 export default {
   components: {
-    PageViewer,
+    UserList,
   },
   data() {
     return {
-      pageTitle: "Users Page",
-      content: "This is the users content",
-    };
+      users: [],
+    }
   },
+  async created() {
+    try {
+      const response = await fetchUsers();
+      this.users = response;
+    } catch (error) {
+      showNotification('Failed to fetch users: ' + error, 'error')
+    }
+  }
 };
 </script>
 <style>
