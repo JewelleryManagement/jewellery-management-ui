@@ -39,7 +39,7 @@ a {
   padding: 0.6rem 1rem;
   border-radius: 0.3rem;
   font-weight: bold;
-  border: 1px solid transparent;
+  border: 0.06rem solid transparent;
   transition: var(--trans);
 }
 
@@ -47,7 +47,7 @@ a:hover,
 a.active,
 button:hover,
 button.active {
-  border: 1px solid var(--clr-living-coral);
+  border: 0.06rem solid var(--clr-living-coral);
   background-color: #fff;
   color: var(--clr-living-coral);
 }
@@ -68,7 +68,7 @@ button.active {
 .flat.active,
 .outline:hover,
 .outline.active {
-  border: 1px solid var(--clr-living-coral);
+  border: 0.06rem solid var(--clr-living-coral);
   background-color: #fff;
   color: var(--clr-living-coral);
 }

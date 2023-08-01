@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import ResourceTable from "../components/Tables/ResourceTable.vue";
-import { fetchResources } from "@/services/ResourcesService.js";
+import ResourceTable from "@/components/Tables/ResourceTable.vue";
+import { fetchResources } from "@/services/HttpClientService.js";
 
 export default {
   components: {
@@ -21,12 +21,8 @@ export default {
 
   methods: {
     async fetchResources() {
-      try {
-        const fetchedResources = await fetchResources();
-        this.resources = fetchedResources;
-      } catch (error) {
-        console.log("Failed to fetch resources!", error);
-      }
+      const fetchedResources = await fetchResources();
+      this.resources = fetchedResources;
     },
   },
   mounted() {
@@ -49,10 +45,7 @@ export default {
 table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #ccc;
 }
-
-
 
 thead {
   background-color: #f2f2f2;

@@ -1,7 +1,7 @@
 <template>
   <tr>
-    <td v-for="column in columns" :key="column.key">
-      {{ data[column.key] || "N/A" }}
+    <td v-for="column in columns" :key="column.clazz">
+      {{ data[column.clazz] || "N/A" }}
     </td>
   </tr>
 </template>

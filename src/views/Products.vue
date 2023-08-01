@@ -6,8 +6,8 @@
 </template>
 
 <script>
-import ProductsTable from "../components/Tables/ProductsTable.vue";
-import { fetchProducts } from "@/services/ResourcesService.js";
+import ProductsTable from "@/components/Tables/ProductsTable.vue";
+import { fetchProducts } from "@/services/HttpClientService.js";
 
 export default {
   components: {
@@ -20,12 +20,8 @@ export default {
   },
   methods: {
     async fetchResources() {
-      try {
-        const fetchedProducts = await fetchProducts();
-        this.products = fetchedProducts;
-      } catch (error) {
-        console.log("Failed to fetch resources!", error);
-      }
+      const fetchedProducts = await fetchProducts();
+      this.products = fetchedProducts;
     },
   },
   mounted() {
@@ -48,13 +44,13 @@ export default {
 table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #ccc;
+  border: 0.0625rem solid #ccc;
 }
 
 th,
 td {
-  border: 1px solid #ccc;
-  padding: 8px;
+  border: 0.0625rem solid #ccc;
+  padding: 0.5rem;
   text-align: left;
 }
 

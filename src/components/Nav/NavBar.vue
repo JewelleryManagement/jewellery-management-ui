@@ -93,9 +93,9 @@ nav {
 }
 
 .nav_logo img {
-  margin-top: 5px;
+  margin-top: 0.3rem;
   max-height: 100%;
-  width: 145px;
+  width: 9.06rem;
 }
 
 .fas {
@@ -132,14 +132,14 @@ nav {
 
 .dropdown__content a {
   color: white;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   text-decoration: none;
   display: block;
 }
 .dropdown__content.active {
   display: block;
   position: absolute;
-  right: 0px;
+  right: 0;
 }
 
 @media only screen and (max-width: 600px) {
