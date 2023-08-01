@@ -2,8 +2,9 @@
   <user-list :users="users" />
 </template>
 <script>
-import UserList from "../components/Userlist/UserList.vue";
+import UserList from "@/components/UserList/UserList.vue";
 import {fetchUsers} from "@/services/UserServices.js";
+import { showNotification } from "@/utils/notification.js";
 
 export default {
   components: {
@@ -14,12 +15,12 @@ export default {
       users: [],
     }
   },
-  async mounted() {
+  async created() {
     try {
       const response = await fetchUsers();
       this.users = response;
     } catch (error) {
-      console.error('Failed to fetch users:', error);
+      showNotification('Failed to fetch users: ' + error, 'error')
     }
   }
 };

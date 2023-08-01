@@ -1,9 +1,11 @@
 import axios from "@/axios.config";
+import { showNotification } from "@/utils/notification.js";
 
 async function fetchData(endpoint) {
     try {
         const response = await axios.get(endpoint);
         if (response.status === 200) {
+            showNotification("Successfully retrieved!", "success");
             return response.data;
         }
     } catch (error) {
