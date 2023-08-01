@@ -1,8 +1,5 @@
 <template>
-<<<<<<< HEAD
-=======
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
->>>>>>> origin/test
   <NavBar :pages="pages" />
 
   <router-view />
@@ -117,8 +114,6 @@ export default {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
   min-height: 100vh;
-<<<<<<< HEAD
-=======
 }
 
 .notification-container {
@@ -222,6 +217,5 @@ export default {
 
 .warning {
   background: linear-gradient(to left, rgba(92, 74, 1, 0.233), rgb(225, 170, 19));
->>>>>>> origin/test
 }
 </style>
