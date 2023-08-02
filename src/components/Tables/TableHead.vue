@@ -1,6 +1,6 @@
 <template>
   <tr>
-    <th v-for="column in columns" :key="column.label">{{ column.label }}</th>
+    <th v-for="column in columns" :key="column.key">{{ column.label }}</th>
   </tr>
 </template>
 

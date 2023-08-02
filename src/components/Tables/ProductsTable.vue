@@ -34,13 +34,13 @@ export default {
   computed: {
     tableColumns() {
       return [
-        { clazz: "description", label: "Description" },
-        { clazz: "authors", label: "Authors" },
-        { clazz: "inStock", label: "In Stock" },
-        { clazz: "isSold", label: "Sold" },
-        { clazz: "owner", label: "Owner" },
-        { clazz: "picture", label: "Picture" },
-        { clazz: "salePrice", label: "Sale price" },
+        { key: "description", label: "Description" },
+        { key: "authors", label: "Authors" },
+        { key: "inStock", label: "In Stock" },
+        { key: "isSold", label: "Sold" },
+        { key: "owner", label: "Owner" },
+        { key: "picture", label: "Picture" },
+        { key: "salePrice", label: "Sale price" },
       ];
     },
   },
