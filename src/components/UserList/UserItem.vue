@@ -14,8 +14,8 @@ export default {
 
 <style scoped>
 li {
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
+  padding: 0.6rem;
+  border-bottom: 0.06rem solid #ccc;
 }
 
 li:last-child {
