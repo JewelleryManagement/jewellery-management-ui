@@ -2,22 +2,25 @@
   <user-list :users="users" />
 </template>
 <script>
-import UserList from "@/components/UserList/UserList.vue";
+import { inject, ref, onMounted } from "vue";
+import UserList from "../components/UserList/UserList.vue";
 import { fetchUsers } from "@/services/HttpClientService.js";
-import { showNotification } from "@/utils/notification.js";
 
 export default {
   components: {
     UserList,
   },
-  data() {
-    return {
-      users: [],
-    };
-  },
-  async created() {
+  setup() {
+    const users = ref([]);
+
+    onMounted(async () => {
       const response = await fetchUsers();
-      this.users = response;
+      users.value = response;
+    });
+
+    return {
+      users,
+    };
   },
 };
 </script>

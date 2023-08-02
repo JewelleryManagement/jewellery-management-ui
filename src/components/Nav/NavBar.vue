@@ -4,7 +4,7 @@
     <div class="nav__left_side">
       <div class="nav_logo">
         <router-link to="/home">
-          <img src="@/assets/logo.png" alt="Inventory logo" />
+          <img src="../../assets/logo.png" alt="Inventory logo" />
         </router-link>
       </div>
     </div>

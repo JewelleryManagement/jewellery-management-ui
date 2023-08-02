@@ -3,47 +3,84 @@
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
   />
-  <NavBar :pages="pages" />
+  <v-app>
+    <v-main>
+      <NavBar :pages="pages" />
 
-  <router-view />
+      <SnackBar
+        v-model="snackbar.isActive"
+        :isActive="snackbar.isActive"
+        :message="snackbar.message"
+        :color="snackbar.color"
+        :location="snackbar.location"
+        :timeout="snackbar.timeout"
+        :width="snackbar.width"
+      />
+
+      <router-view />
+    </v-main>
+  </v-app>
 </template>
 
 <script>
 import NavBar from "./components/Nav/NavBar.vue";
+import SnackBar from "./components/ui/SnackBar.vue";
+import { ref, provide } from "vue";
+
 
 export default {
   name: "App",
   components: {
     NavBar,
+    SnackBar
   },
-  data() {
-    return {
-      pages: [
-        {
-          link: { text: "Home", url: "/" },
-        },
-        {
-          link: { text: "Users", url: "/users" },
-        },
-        {
-          link: { text: "Resources", url: "/resources" },
-        },
-        {
-          link: { text: "Products", url: "/products" },
-        },
-      ],
+  setup() {
+    const pages = ref([
+      {
+        link: { text: "Home", url: "/" },
+      },
+      {
+        link: { text: "Users", url: "/users" },
+      },
+      {
+        link: { text: "Resources", url: "/resources" },
+      },
+      {
+        link: { text: "Products", url: "/products" },
+      },
+    ]);
+
+    const snackbar = ref({
+      isActive: false,
+      message: '',
+      color: 'success',
+      timeout: 3000,
+      width: 250
+    });
+
+    const showSnackbar = (message, color, timeout, location = 'bottom cemter') => {
+      snackbar.value.isActive = true;
+      snackbar.value.color = color;
+      snackbar.value.message = message;
+      snackbar.value.timeout = timeout;
+      snackbar.value.location = location;
     };
-  },
+
+    provide('snackbar', snackbar);
+    provide('showSnackbar', showSnackbar);
+
+    return { pages, snackbar, showSnackbar };
+  }
 };
 </script>
+
+
 
 <style>
 :root {
   --clr-white: #fff;
   --clr-living-coral: #ff6f61;
   --clr-inkwell: #363945;
-  --clr-light-gray: #f2f2f2;
-  --clr-dark-gray: #333;
 
   --trans: all 400ms ease;
 
@@ -123,119 +160,5 @@ export default {
   margin-bottom: 1rem;
   min-height: 100vh;
   text-align: center;
-}
-
-.notification-container {
-  position: fixed;
-  top: 5.3rem;
-  right: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  width: 20%;
-}
-
-.notification {
-  max-width: 18rem;
-  width: 100%;
-  min-width: 8rem;
-  padding: 2rem 1.5rem;
-  color: rgb(255, 255, 255);
-  border-radius: 0.3125rem;
-  font-size: 0.875rem;
-  border-radius: 0.5rem;
-  opacity: 0;
-  transform: translateX(100%);
-  transition: opacity 0.3s ease-in-out, transform 0.5s ease-in-out;
-  border-radius: 0.5rem;
-  margin-bottom: 0.625rem;
-  word-wrap: break-word;
-  display: flex;
-  align-items: center;
-}
-
-.notification.show {
-  opacity: 1;
-  transform: translateX(0%);
-  animation: fadeIn 0.5s;
-}
-
-.notification .icon {
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-}
-.notification.hovered {
-  transform: scale(1.1);
-  transition: 0.2s ease-in-out;
-}
-
-.notification .progress-bar {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 0.3125rem;
-  width: 100%;
-  border-radius: 0.5rem;
-  background-color: #f0f0f0;
-}
-
-.notification .progress-bar::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 0;
-  background-color: #f0f0f06c;
-  border-radius: 0.5rem;
-  animation: progressBarAnimation 8s linear;
-}
-
-@keyframes progressBarAnimation {
-  0% {
-    width: 0;
-  }
-  100% {
-    width: 100%;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0%);
-  }
-}
-
-.info {
-  background: linear-gradient(
-    to left,
-    rgba(1, 68, 92, 0.233),
-    rgb(12, 177, 206)
-  );
-}
-
-.success {
-  background: linear-gradient(
-    to left,
-    rgba(28, 92, 1, 0.233),
-    rgb(12, 206, 31)
-  );
-}
-
-.error {
-  background: linear-gradient(to left, rgba(92, 1, 1, 0.233), rgb(225, 19, 19));
-}
-
-.warning {
-  background: linear-gradient(
-    to left,
-    rgba(92, 74, 1, 0.233),
-    rgb(225, 170, 19)
-  );
 }
 </style>

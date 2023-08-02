@@ -1,5 +1,23 @@
 import axios from "@/axios.config";
 import { showNotification } from "@/utils/notification.js";
+import { ref } from 'vue';
+
+const snackbar = ref({
+  isActive: false,
+  message: '',
+  color: 'success',
+  timeout: 3000,
+  width: 250
+});
+
+const showSnackbar = (message, color, timeout, location = 'bottom cemter') => {
+  snackbar.value.isActive = true;
+  snackbar.value.color = color;
+  snackbar.value.message = message;
+  snackbar.value.timeout = timeout;
+  snackbar.value.location = location;
+};
+
 
 async function fetchData(endpoint) {
   try {
@@ -9,6 +27,12 @@ async function fetchData(endpoint) {
     }
   } catch (error) {
     showNotification("Failed to fetch data from the server: ", "error");
+    showSnackbar(
+      error,
+      "error",
+      4000,
+      "top right"
+    );
     return []
   }
 }
@@ -22,5 +46,5 @@ export async function fetchProducts() {
 }
 
 export async function fetchUsers() {
-  return await fetchData("/users");
+  return await fetchData("/userss");
 }
