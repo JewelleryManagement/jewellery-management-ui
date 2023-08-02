@@ -9,6 +9,7 @@ async function fetchData(endpoint) {
     }
   } catch (error) {
     showNotification("Failed to fetch data from the server: ", "error");
+    return []
   }
 }
 

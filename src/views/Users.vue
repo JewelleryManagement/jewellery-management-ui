@@ -16,12 +16,8 @@ export default {
     };
   },
   async created() {
-    try {
       const response = await fetchUsers();
       this.users = response;
-    } catch (error) {
-      showNotification("Failed to fetch users: " + error, "error");
-    }
   },
 };
 </script>
