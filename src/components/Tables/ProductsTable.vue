@@ -112,7 +112,7 @@ export default {
   .table-table {
     height: 40rem;
   }
-  .no-resources {
+  .no-products {
     font-size: 2rem;
   }
 }

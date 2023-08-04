@@ -70,4 +70,10 @@ thead {
   background-color: #f2f2f2;
 }
 
+@media (max-width: 480px) {
+  .products-header {
+    font-size: 1rem;
+    top: 0.7rem;
+  }
+}
 </style>
