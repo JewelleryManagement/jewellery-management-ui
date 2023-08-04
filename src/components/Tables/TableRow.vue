@@ -19,12 +19,12 @@ td {
 }
 
 tr {
-  background-color: var(--clr-light-gray);
-  color: var(--clr-dark-gray);
+  background-color: var(--clr-inkwell);
+  color: var(--clr-living-coral);
 }
 
 tr:hover {
-  background-color: #ccc;
+  background-color: #424553;
   cursor: pointer;
 }
 </style>

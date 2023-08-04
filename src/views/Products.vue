@@ -30,7 +30,7 @@ export default {
 };
 </script>
 
-<style>
+<style >
 .container {
   text-align: center;
 }
@@ -44,12 +44,11 @@ export default {
 table {
   width: 100%;
   border-collapse: collapse;
-  border: 0.0625rem solid #ccc;
 }
 
 th,
 td {
-  border: 0.0625rem solid #ccc;
+  border: 0.0225rem solid var(--clr-inkwell);
   padding: 0.5rem;
   text-align: left;
 }
@@ -58,7 +57,4 @@ thead {
   background-color: #f2f2f2;
 }
 
-tr:hover {
-  background-color: #f5f5f5;
-}
 </style>

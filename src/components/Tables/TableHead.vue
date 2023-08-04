@@ -17,6 +17,7 @@ th {
   white-space: nowrap;
   background-color: var(--clr-inkwell);
   color: var(--clr-living-coral);
+  border-bottom: 2px solid;
 }
 
 th:hover {

@@ -45,6 +45,9 @@ export default {
   --clr-light-gray: #f2f2f2;
   --clr-dark-gray: #333;
 
+  --clr-living-coral-hover: #ff887e;
+  --clr-inkwell-hover: #424553;
+
   --trans: all 400ms ease;
 
   --container-width-lg: 75%;
@@ -237,5 +240,21 @@ export default {
     rgba(92, 74, 1, 0.233),
     rgb(225, 170, 19)
   );
+}
+
+body::-webkit-scrollbar {
+  width: 10px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--clr-living-coral);
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background-color: var(--clr-living-coral-hover);
+}
+
+body::-webkit-scrollbar-track {
+  background-color: var(--clr-inkwell);
 }
 </style>
