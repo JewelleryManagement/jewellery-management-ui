@@ -8,27 +8,37 @@
 <script>
 import ProductsTable from "@/components/Tables/ProductsTable.vue";
 import { fetchProducts } from "@/services/HttpClientService.js";
+import { ref, onMounted, inject } from "vue";
 
 export default {
   components: {
     ProductsTable,
   },
-  data() {
+  setup() {
+    const products = ref([]);
+    const showSnackbar = inject('showSnackbar');
+
+    onMounted(async () => {
+      try {
+        const response = await fetchProducts();
+        products.value = response;
+      } catch (error) {
+        showSnackbar({
+          message: error.message || "Failed to fetch products.",
+          color: 'error',
+          timeout: 4000,
+          location: "top right"
+        });
+      }
+    });
+
     return {
-      products: [],
+      products,
     };
-  },
-  methods: {
-    async fetchResources() {
-      const fetchedProducts = await fetchProducts();
-      this.products = fetchedProducts;
-    },
-  },
-  mounted() {
-    this.fetchResources();
   },
 };
 </script>
+
 
 <style>
 .container {

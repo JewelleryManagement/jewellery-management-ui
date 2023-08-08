@@ -4,22 +4,21 @@
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
   />
   <v-app>
+    <NavBar :pages="pages" />
     <v-main>
-      <NavBar :pages="pages" />
-
-      <SnackBar
-        v-model="snackbar.isActive"
-        :isActive="snackbar.isActive"
-        :message="snackbar.message"
-        :color="snackbar.color"
-        :location="snackbar.location"
-        :timeout="snackbar.timeout"
-        :width="snackbar.width"
-      />
-
       <router-view />
     </v-main>
+  <SnackBar
+  v-model="snackbar.isActive"
+  :isActive="snackbar.isActive"
+  :message="snackbar.message"
+  :color="snackbar.color"
+  :location="snackbar.location"
+  :timeout="snackbar.timeout"
+  :width="snackbar.width"
+/>
   </v-app>
+      
 </template>
 
 <script>
@@ -55,21 +54,32 @@ export default {
       message: '',
       color: 'success',
       timeout: 3000,
-      width: 250
+      location: 'top center',
     });
 
-    const showSnackbar = (message, color, timeout, location = 'bottom cemter') => {
+    // const showSnackbar = (message, color, timeout, location = 'bottom cemter') => {
+    //   snackbar.value.isActive = true;
+    //   snackbar.value.color = color;
+    //   snackbar.value.message = message;
+    //   snackbar.value.timeout = timeout;
+    //   snackbar.value.location = location;
+    // };
+    const showSnackbar = ({ message, color, timeout, location = 'top center' }) => {
       snackbar.value.isActive = true;
-      snackbar.value.color = color;
       snackbar.value.message = message;
+      snackbar.value.color = color;
       snackbar.value.timeout = timeout;
       snackbar.value.location = location;
+
+      setTimeout(() => {
+        snackbar.value.isActive = false;
+      }, timeout);
     };
 
     provide('snackbar', snackbar);
     provide('showSnackbar', showSnackbar);
 
-    return { pages, snackbar, showSnackbar };
+    return { pages, snackbar };
   }
 };
 </script>

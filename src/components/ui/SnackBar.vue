@@ -39,18 +39,18 @@ export default {
       required: false,
     },
   },
-  beforeUpdate() {
-    this.internalActive = this.isActive;
-  },
+  // beforeUpdate() {
+  //   this.internalActive = this.isActive;
+  // },
 
-  methods: {
-    showSnackbar(payload) {
-      this.isActive = true;
-      this.message = payload.message;
-      this.color = payload.color;
-      this.timeout = payload.timeout;
-      this.location = "bottom left";
-    },
-  },
+  // methods: {
+  //   showSnackbar(payload) {
+  //     this.isActive = true;
+  //     this.message = payload.message;
+  //     this.color = payload.color;
+  //     this.timeout = payload.timeout;
+  //     this.location = "bottom left";
+  //   },
+  // },
 };
 </script>

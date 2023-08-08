@@ -3,19 +3,28 @@
 </template>
 <script>
 import { inject, ref, onMounted } from "vue";
-import UserList from "../components/UserList/UserList.vue";
 import { fetchUsers } from "@/services/HttpClientService.js";
-
+import UserList from "@/components/UserList/UserList.vue";
 export default {
   components: {
     UserList,
   },
   setup() {
     const users = ref([]);
+    const showSnackbar = inject('showSnackbar');
 
     onMounted(async () => {
-      const response = await fetchUsers();
-      users.value = response;
+      try {
+        const response = await fetchUsers();
+        users.value = response;
+      } catch (error) {
+        showSnackbar({
+          message: error.message || "Failed to fetch users.",
+          color: 'error',
+          timeout: 4000,
+          location: "top right"
+        });
+      }
     });
 
     return {
