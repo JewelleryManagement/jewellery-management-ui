@@ -66,5 +66,5 @@ hooks:
   #   in the script specified in "location".
   ApplicationStart:
     - location: scripts/start_docker.sh
-      timeout: 180
+      timeout: 300
       runas: root
