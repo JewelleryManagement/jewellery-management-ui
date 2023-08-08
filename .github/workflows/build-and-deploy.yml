@@ -38,8 +38,8 @@ jobs:
 
     - name: Set up Node
       uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
+      with:
+        node-version: '18.x'
     - name: Install with npm
       run: npm install
 
