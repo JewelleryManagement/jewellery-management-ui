@@ -1,5 +1,8 @@
 <template>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+  />
   <NavBar :pages="pages" />
 
   <router-view />
@@ -25,6 +28,9 @@ export default {
         {
           link: { text: "Resources", url: "/resources" },
         },
+        {
+          link: { text: "Products", url: "/products" },
+        },
       ],
     };
   },
@@ -36,6 +42,8 @@ export default {
   --clr-white: #fff;
   --clr-living-coral: #ff6f61;
   --clr-inkwell: #363945;
+  --clr-light-gray: #f2f2f2;
+  --clr-dark-gray: #333;
 
   --trans: all 400ms ease;
 
@@ -114,17 +122,17 @@ export default {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
   min-height: 100vh;
+  text-align: center;
 }
 
 .notification-container {
   position: fixed;
   top: 5.3rem;
-  right: 20px;
+  right: 1.25rem;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   width: 20%;
-  
 }
 
 .notification {
@@ -133,14 +141,14 @@ export default {
   min-width: 8rem;
   padding: 2rem 1.5rem;
   color: rgb(255, 255, 255);
-  border-radius: 5px;
-  font-size: 14px;
-  border-radius: 8px;
+  border-radius: 0.3125rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
   opacity: 0;
   transform: translateX(100%);
   transition: opacity 0.3s ease-in-out, transform 0.5s ease-in-out;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  border-radius: 0.5rem;
+  margin-bottom: 0.625rem;
   word-wrap: break-word;
   display: flex;
   align-items: center;
@@ -153,8 +161,8 @@ export default {
 }
 
 .notification .icon {
-  font-size: 24px; 
-  margin-right: 8px; 
+  font-size: 1.5rem;
+  margin-right: 0.5rem;
 }
 .notification.hovered {
   transform: scale(1.1);
@@ -165,21 +173,21 @@ export default {
   position: absolute;
   bottom: 0;
   left: 0;
-  height: 5px;
+  height: 0.3125rem;
   width: 100%;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background-color: #f0f0f0;
 }
 
 .notification .progress-bar::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
   width: 0;
   background-color: #f0f0f06c;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   animation: progressBarAnimation 8s linear;
 }
 
@@ -204,11 +212,19 @@ export default {
 }
 
 .info {
-  background: linear-gradient(to left, rgba(1, 68, 92, 0.233), rgb(12, 177, 206));
+  background: linear-gradient(
+    to left,
+    rgba(1, 68, 92, 0.233),
+    rgb(12, 177, 206)
+  );
 }
 
 .success {
-  background: linear-gradient(to left, rgba(28, 92, 1, 0.233), rgb(12, 206, 31));
+  background: linear-gradient(
+    to left,
+    rgba(28, 92, 1, 0.233),
+    rgb(12, 206, 31)
+  );
 }
 
 .error {
@@ -216,6 +232,10 @@ export default {
 }
 
 .warning {
-  background: linear-gradient(to left, rgba(92, 74, 1, 0.233), rgb(225, 170, 19));
+  background: linear-gradient(
+    to left,
+    rgba(92, 74, 1, 0.233),
+    rgb(225, 170, 19)
+  );
 }
 </style>

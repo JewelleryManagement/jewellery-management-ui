@@ -1,28 +1,27 @@
 <template>
   <base-card class="container">
-    <h1>Resources table</h1>
-    <resource-table :resources="resources"></resource-table>
+    <h1>Products table</h1>
+    <products-table :products="products"></products-table>
   </base-card>
 </template>
 
 <script>
-import ResourceTable from "@/components/Tables/ResourceTable.vue";
-import { fetchResources } from "@/services/HttpClientService.js";
+import ProductsTable from "@/components/Tables/ProductsTable.vue";
+import { fetchProducts } from "@/services/HttpClientService.js";
 
 export default {
   components: {
-    ResourceTable,
+    ProductsTable,
   },
   data() {
     return {
-      resources: [],
+      products: [],
     };
   },
-
   methods: {
     async fetchResources() {
-      const fetchedResources = await fetchResources();
-      this.resources = fetchedResources;
+      const fetchedProducts = await fetchProducts();
+      this.products = fetchedProducts;
     },
   },
   mounted() {
@@ -45,6 +44,14 @@ export default {
 table {
   width: 100%;
   border-collapse: collapse;
+  border: 0.0625rem solid #ccc;
+}
+
+th,
+td {
+  border: 0.0625rem solid #ccc;
+  padding: 0.5rem;
+  text-align: left;
 }
 
 thead {

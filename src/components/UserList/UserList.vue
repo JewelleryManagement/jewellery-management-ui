@@ -1,6 +1,6 @@
 <template>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <div class="user-list">
+  <base-card>
     <h1>User List</h1>
     <button class="sort-btn" @click="sortUsers">
       <div class="sort-sign">
@@ -12,7 +12,7 @@
       <user-item v-for="user in sortedUsers" :key="user.email" :user="user" />
     </div>
     <p class="no-users" v-else>No users found.</p>
-  </div>
+  </base-card>
 </template>
 
 <script>
@@ -65,15 +65,6 @@ export default {
   font-family: Arial, sans-serif;
 }
 
-.user-list {
-  max-width: 600px;
-  margin: 20px auto;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
 h1 {
   color: #333;
   text-align: center;
@@ -94,7 +85,7 @@ h1 {
 .no-users {
     text-align: center;
     color: #333;
-    font-size: 24px;
+    font-size: 1.5rem;
     position: relative;
     padding: 3rem;
     top: 1rem;
@@ -105,15 +96,15 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 45px;
-  height: 45px;
+  width: 2.81rem;
+  height: 2.81rem;
   border: none;
   border-radius: 50%;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   transition-duration: .3s;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+  box-shadow: 0.125rem 0.125rem 0.6rem rgba(0, 0, 0, 0.199);
   background-color: var(--clr-living-coral);
 }
 
@@ -127,7 +118,7 @@ h1 {
 }
 
 .sort-sign i {
-  font-size: 17px;
+  font-size: 1.0625rem;
   color: white;
 }
 
@@ -143,8 +134,8 @@ h1 {
 }
 
 .sort-btn:hover {
-  width: 125px;
-  border-radius: 40px;
+  width: 7.8125rem;
+  border-radius: 2.5rem;
   transition-duration: .3s;
 }
 
@@ -158,11 +149,11 @@ h1 {
   opacity: 1;
   width: 70%;
   transition-duration: .3s;
-  padding-right: 10px;
+  padding-right: 0.625rem;
 }
 
 .sort-btn:active {
-  transform: translate(2px ,2px);
+  transform: translate(0.125rem ,0.125rem);
 }
 
 .user-icon {
@@ -188,7 +179,7 @@ h1 {
 }
 
 .user-item {
-  padding: 10px;
-  border-bottom: 1px solid #ccc;
+  padding: 0.625rem;
+  border-bottom: 0.0625rem solid #ccc;
 }
 </style>
