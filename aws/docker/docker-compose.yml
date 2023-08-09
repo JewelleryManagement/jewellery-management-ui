@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
 
-  jms-app:
+  jms-fe-app:
     container_name: jms-fe
     build:
       context: .
