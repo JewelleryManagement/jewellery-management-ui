@@ -10,7 +10,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 # install and cache app dependencies
 COPY app/package.json /app/package.json
 # RUN npm install -g yarn
-RUN yarn install
+RUN yarn install --verbose
 RUN yarn install @vue/cli@3.7.0 -g
 
 # start app
