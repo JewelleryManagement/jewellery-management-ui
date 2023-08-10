@@ -12,7 +12,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 COPY app/package*.json /app/
 # RUN npm install -g yarn
 # RUN yarn install --verbose
-RUN yarn global add @vue/cli
+# RUN yarn global add @vue/cli
 
 COPY . .
 
