@@ -1,27 +1,26 @@
 <template>
-  <div class="table">
-    <table>
-      <thead>
-        <table-head :columns="tableColumns" />
-      </thead>
-      <tbody>
-        <table-row
-          v-for="(resource, index) in resources"
-          :key="index"
-          :data="resource"
-          :columns="tableColumns"
-        />
-      </tbody>
-    </table>
-  </div>
+  <v-card-title>
+    <v-spacer></v-spacer>
+    <v-text-field
+      v-model="search"
+      append-icon="mdi-magnify"
+      label="Search"
+      single-line
+      hide-details
+    ></v-text-field>
+  </v-card-title>
+  <v-data-table
+    :headers="tableColumns"
+    :items="resources"
+    :search="search"
+  ></v-data-table>
 </template>
 <script>
-import TableRow from "./TableRow.vue";
-import TableHead from "./TableHead.vue";
+import { VDataTable } from "vuetify/labs/VDataTable";
+
 export default {
   components: {
-    TableRow,
-    TableHead,
+    VDataTable,
   },
   props: {
     resources: {
@@ -29,34 +28,28 @@ export default {
       required: true,
     },
   },
-  computed: {
-    tableColumns() {
-      return [
-        { key: "clazz", label: "Resource Type" },
-        { key: "color", label: "Color" },
-        { key: "quality", label: "Quality" },
-        { key: "quantityType", label: "Quantity Type" },
-        { key: "shape", label: "Shape" },
-        { key: "size", label: "Size" },
-        { key: "type", label: "Type" },
-        { key: "purity", label: "Purity" },
-        { key: "plating", label: "Plating" },
-        { key: "carat", label: "Carat" },
-        { key: "cut", label: "Cut" },
-        { key: "dimensionX", label: "dimensionX" },
-        { key: "dimensionY", label: "dimensionY" },
-        { key: "dimensionZ", label: "dimensionZ" },
-      ];
-    },
+  data() {
+    return {
+      search: "",
+      tableColumns: [
+        { key: "clazz", title: "Resource Type" },
+        { key: "color", title: "Color" },
+        { key: "quality", title: "Quality" },
+        { key: "quantityType", title: "Quantity Type" },
+        { key: "shape", title: "Shape" },
+        { key: "size", title: "Size" },
+        { key: "type", title: "Type" },
+        { key: "purity", title: "Purity" },
+        { key: "plating", title: "Plating" },
+        { key: "carat", title: "Carat" },
+        { key: "cut", title: "Cut" },
+        { key: "dimensionX", title: "dimensionX" },
+        { key: "dimensionY", title: "dimensionY" },
+        { key: "dimensionZ", title: "dimensionZ" },
+      ],
+    };
   },
 };
 </script>
 
-<style scoped>
-.table {
-  margin-top: 1rem;
-  width: 100%;
-  border-collapse: collapse;
-  overflow-x: auto;
-}
-</style>
+<style scoped></style>

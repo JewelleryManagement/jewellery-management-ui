@@ -1,8 +1,16 @@
 <template>
-  <base-card class="container">
-    <h1>Resources table</h1>
-    <resource-table :resources="resources"></resource-table>
-  </base-card>
+  <v-container class="my-12" fluid>
+    <v-row justify="center">
+      <v-col cols="10" max-width="1600">
+        <v-card class="elevation-12">
+          <div class="text-center">
+            <h1>Resources table</h1>
+          </div>
+          <resource-table :resources="resources"></resource-table>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -31,27 +39,4 @@ export default {
 };
 </script>
 
-<style>
-.container {
-  text-align: center;
-}
-
-.resource-table {
-  margin-top: 1rem;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-thead {
-  background-color: #f2f2f2;
-}
-
-tr:hover {
-  background-color: #f5f5f5;
-}
-</style>
+<style scoped></style>

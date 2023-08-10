@@ -1,29 +1,40 @@
 <template>
-  <div>
-    <table>
-      <thead>
-        <table-head :columns="tableColumns" />
-      </thead>
-      <tbody>
-        <table-row
-          v-for="(product, index) in products"
-          :key="index"
-          :data="product"
-          :columns="tableColumns"
-        />
-      </tbody>
-    </table>
-  </div>
+  <v-card-title>
+    <v-spacer></v-spacer>
+    <v-text-field
+      v-model="search"
+      append-icon="mdi-magnify"
+      label="Search"
+      single-line
+      hide-details
+    ></v-text-field>
+  </v-card-title>
+  <v-data-table
+    :headers="tableColumns"
+    :items="products"
+    :search="search"
+  ></v-data-table>
 </template>
-
 <script>
-import TableRow from "./TableRow.vue";
-import TableHead from "./TableHead.vue";
+import { VDataTable } from "vuetify/labs/VDataTable";
 
 export default {
+  data() {
+    return {
+      search: "",
+      tableColumns: [
+        { key: "description", title: "Description" },
+        { key: "authors", title: "Authors" },
+        { key: "inStock", title: "In Stock" },
+        { key: "isSold", title: "Sold" },
+        { key: "owner", title: "Owner" },
+        { key: "picture", title: "Picture" },
+        { key: "salePrice", title: "Sale price" },
+      ],
+    };
+  },
   components: {
-    TableRow,
-    TableHead,
+    VDataTable,
   },
   props: {
     products: {
@@ -31,27 +42,7 @@ export default {
       required: true,
     },
   },
-  computed: {
-    tableColumns() {
-      return [
-        { key: "description", label: "Description" },
-        { key: "authors", label: "Authors" },
-        { key: "inStock", label: "In Stock" },
-        { key: "isSold", label: "Sold" },
-        { key: "owner", label: "Owner" },
-        { key: "picture", label: "Picture" },
-        { key: "salePrice", label: "Sale price" },
-      ];
-    },
-  },
 };
 </script>
 
-<style scoped>
-table {
-  margin-top: 1rem;
-  width: 100%;
-  border-collapse: collapse;
-  overflow-x: auto;
-}
-</style>
+<style scoped></style>

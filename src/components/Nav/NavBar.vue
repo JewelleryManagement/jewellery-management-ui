@@ -25,7 +25,7 @@
       </v-btn>
     </v-toolbar-items>
 
-    <v-menu v-if="smAndDown" >
+    <v-menu v-if="smAndDown">
       <template v-slot:activator="{ props }">
         <v-app-bar-nav-icon v-bind="props" size="x-large"></v-app-bar-nav-icon>
       </template>
@@ -54,14 +54,10 @@ export default {
   },
   computed: {
     smAndDown() {
-      return this.$vuetify.display.smAndDown
-    }
-  }
+      return this.$vuetify.display.smAndDown;
+    },
+  },
 };
 </script>
 
-<style>
-.icon {
-  font-size: 50px;
-}
-</style>
+<style></style>

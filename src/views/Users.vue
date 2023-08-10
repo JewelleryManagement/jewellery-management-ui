@@ -11,7 +11,7 @@ export default {
   },
   setup() {
     const users = ref([]);
-    const showSnackbar = inject('showSnackbar');
+    const showSnackbar = inject("showSnackbar");
 
     onMounted(async () => {
       try {
@@ -20,9 +20,9 @@ export default {
       } catch (error) {
         showSnackbar({
           message: error.message || "Failed to fetch users.",
-          color: 'error',
+          color: "error",
           timeout: 4000,
-          location: "top right"
+          location: "top right",
         });
       }
     });
@@ -33,8 +33,4 @@ export default {
   },
 };
 </script>
-<style>
-.container {
-  text-align: center;
-}
-</style>
+<style></style>

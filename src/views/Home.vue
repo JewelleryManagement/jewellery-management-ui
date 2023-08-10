@@ -15,13 +15,11 @@ export default {
       content: "This is the home content",
     };
   },
-
-}
+};
 </script>
 
 <style scoped>
 .container {
   text-align: center;
-
 }
 </style>
