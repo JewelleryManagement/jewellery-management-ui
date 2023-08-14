@@ -24,3 +24,7 @@ export async function fetchProducts() {
 export async function fetchUsers() {
   return await fetchData("/users");
 }
+
+export async function fetchResourcesByUserID(userId) {
+  return await fetchData("/resources/availability/" + userId);
+}

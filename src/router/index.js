@@ -3,6 +3,7 @@ import Home from "../views/Home.vue";
 import Resources from "../views/Resources.vue";
 import Products from "../views/Products.vue";
 import Users from "../views/Users.vue";
+import ResourceAvailability from "../components/UserList/ResourceAvailability.vue";
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -29,6 +30,12 @@ const routes = [
     name: "Products",
     component: Products,
     meta: { title: "Products page" },
+  },
+  {
+    path: '/resource-availability/:userId',
+    name: 'ResourceAvailability',
+    component: ResourceAvailability,
+    meta: {title: "Resource availability"},
   },
 ];
 

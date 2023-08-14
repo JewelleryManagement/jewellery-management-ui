@@ -4,7 +4,6 @@
 <script>
 import UserList from "@/components/UserList/UserList.vue";
 import { fetchUsers } from "@/services/HttpClientService.js";
-import { showNotification } from "@/utils/notification.js";
 
 export default {
   components: {
