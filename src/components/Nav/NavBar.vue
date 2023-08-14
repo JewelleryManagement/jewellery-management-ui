@@ -45,17 +45,18 @@
 </template>
 
 <script>
+import { computed } from "vue";
+
 export default {
   props: ["pages"],
-  methods: {
-    goToPage(pageName) {
-      this.$router.push({ name: pageName });
-    },
-  },
-  computed: {
-    smAndDown() {
-      return this.$vuetify.display.smAndDown;
-    },
+  setup(props) {
+    const isSmAndDown = computed(() => {
+      return props.$vuetify.display.smAndDown;
+    });
+
+    return {
+      isSmAndDown,
+    };
   },
 };
 </script>

@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
 import ResourceTable from "@/components/Tables/ResourceTable.vue";
 import { fetchResources } from "@/services/HttpClientService.js";
 
@@ -21,20 +22,21 @@ export default {
   components: {
     ResourceTable,
   },
-  data() {
-    return {
-      resources: [],
-    };
-  },
+  setup() {
+    const resources = ref([]);
 
-  methods: {
-    async fetchResources() {
+    const fetchResourcesData = async () => {
       const fetchedResources = await fetchResources();
-      this.resources = fetchedResources;
-    },
-  },
-  mounted() {
-    this.fetchResources();
+      resources.value = fetchedResources;
+    };
+
+    onMounted(() => {
+      fetchResourcesData();
+    });
+
+    return {
+      resources,
+    };
   },
 };
 </script>

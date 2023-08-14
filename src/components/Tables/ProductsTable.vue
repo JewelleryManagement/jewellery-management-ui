@@ -15,24 +15,12 @@
     :search="search"
   ></v-data-table>
 </template>
+
 <script>
+import { ref } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 export default {
-  data() {
-    return {
-      search: "",
-      tableColumns: [
-        { key: "description", title: "Description" },
-        { key: "authors", title: "Authors" },
-        { key: "inStock", title: "In Stock" },
-        { key: "isSold", title: "Sold" },
-        { key: "owner", title: "Owner" },
-        { key: "picture", title: "Picture" },
-        { key: "salePrice", title: "Sale price" },
-      ],
-    };
-  },
   components: {
     VDataTable,
   },
@@ -41,6 +29,23 @@ export default {
       type: Array,
       required: true,
     },
+  },
+  setup() {
+    const search = ref("");
+    const tableColumns = [
+      { key: "description", text: "Description" },
+      { key: "authors", text: "Authors" },
+      { key: "inStock", text: "In Stock" },
+      { key: "isSold", text: "Sold" },
+      { key: "owner", text: "Owner" },
+      { key: "picture", text: "Picture" },
+      { key: "salePrice", text: "Sale price" },
+    ];
+
+    return {
+      search,
+      tableColumns,
+    };
   },
 };
 </script>

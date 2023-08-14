@@ -10,13 +10,9 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      internalActive: this.isActive,
-    };
-  },
+import { ref, watch } from "vue";
 
+export default {
   props: {
     isActive: {
       type: Boolean,
@@ -39,18 +35,19 @@ export default {
       required: false,
     },
   },
-  // beforeUpdate() {
-  //   this.internalActive = this.isActive;
-  // },
+  setup(props) {
+    const internalActive = ref(props.isActive);
 
-  // methods: {
-  //   showSnackbar(payload) {
-  //     this.isActive = true;
-  //     this.message = payload.message;
-  //     this.color = payload.color;
-  //     this.timeout = payload.timeout;
-  //     this.location = "bottom left";
-  //   },
-  // },
+    watch(
+      () => props.isActive,
+      (newIsActive) => {
+        internalActive.value = newIsActive;
+      }
+    );
+
+    return {
+      internalActive,
+    };
+  },
 };
 </script>

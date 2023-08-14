@@ -51,13 +51,6 @@ export default {
       location: "top center",
     });
 
-    // const showSnackbar = (message, color, timeout, location = 'bottom cemter') => {
-    //   snackbar.value.isActive = true;
-    //   snackbar.value.color = color;
-    //   snackbar.value.message = message;
-    //   snackbar.value.timeout = timeout;
-    //   snackbar.value.location = location;
-    // };
     const showSnackbar = ({
       message,
       color,

@@ -1,5 +1,5 @@
 <template>
-    <link
+  <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
   />
@@ -9,7 +9,9 @@
       <v-card-actions>
         <v-btn class="sort-btn" @click="sortUsers">
           <div class="sort-sign">
-            <v-icon class="fa-spin" :class="{ 'mdi-cog': isSorting }"></v-icon>
+            <v-icon class="fa-spin">
+              {{ isSorting ? "mdi-cog" : "" }}
+            </v-icon>
           </div>
           <div class="sort-text">Sort</div>
         </v-btn>
@@ -18,23 +20,21 @@
     <v-card-text>
       <v-container>
         <v-row>
-          <v-col cols="12" v-if="users.length > 0">
-              <v-list lines="tree">
-                <v-list-item
-                  v-for="user in sortedUsers"
-                  :key="user.email"
-                  :title="user.name"
-                  :subtitle="user.email"
-                >
-                  <template v-slot:prepend>
-                    <v-icon>
-                      <i class="fa fa-user-circle-o user-icon"></i>
-                    </v-icon>
-                  </template>
-                </v-list-item>
-              </v-list>
-
-    
+          <v-col cols="12" v-if="sortedUsers.length > 0">
+            <v-list lines="tree">
+              <v-list-item
+                v-for="user in sortedUsers"
+                :key="user.email"
+                :title="user.name"
+                :subtitle="user.email"
+              >
+                <template v-slot:prepend>
+                  <v-icon>
+                    <i class="fa fa-user-circle-o user-icon"></i>
+                  </v-icon>
+                </template>
+              </v-list-item>
+            </v-list>
           </v-col>
           <v-col cols="12" v-else>
             <p class="no-users">No users found.</p>
@@ -46,23 +46,20 @@
 </template>
 
 <script>
+import { ref, computed } from "vue";
 
 export default {
-
   props: ["users"],
-  data() {
-    return {
-      isSorting: false,
-      isAscending: true,
-    };
-  },
-  computed: {
-    sortedUsers() {
-      return this.users.slice().sort((a, b) => {
+  setup(props) {
+    const isSorting = ref(false);
+    const isAscending = ref(true);
+
+    const sortedUsers = computed(() => {
+      return props.users.slice().sort((a, b) => {
         const nameA = a.name.toUpperCase();
         const nameB = b.name.toUpperCase();
 
-        if (this.isAscending) {
+        if (isAscending.value) {
           if (nameA < nameB) return -1;
           if (nameA > nameB) return 1;
         } else {
@@ -72,17 +69,22 @@ export default {
 
         return 0;
       });
-    },
-  },
-  methods: {
-    sortUsers() {
-      this.isSorting = true;
+    });
+
+    const sortUsers = () => {
+      isSorting.value = true;
 
       setTimeout(() => {
-        this.isAscending = !this.isAscending;
-        this.isSorting = false;
+        isAscending.value = !isAscending.value;
+        isSorting.value = false;
       }, 1000);
-    },
+    };
+
+    return {
+      isSorting,
+      sortedUsers,
+      sortUsers,
+    };
   },
 };
 </script>
