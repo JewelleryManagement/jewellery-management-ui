@@ -6,7 +6,7 @@
           <div class="text-center">
             <h1>Products table</h1>
           </div>
-          <products-table :products="products"></products-table>
+          <products-table></products-table>
         </v-card>
       </v-col>
     </v-row>
@@ -15,21 +15,20 @@
 
 <script>
 import ProductsTable from "@/components/Tables/ProductsTable.vue";
-import { fetchProducts } from "@/services/HttpClientService.js";
-import { ref, onMounted, inject } from "vue";
+import { onMounted, inject } from "vue";
+import { useStore } from "vuex";
 
 export default {
   components: {
     ProductsTable,
   },
   setup() {
-    const products = ref([]);
+    const store = useStore();
     const showSnackbar = inject("showSnackbar");
 
     onMounted(async () => {
       try {
-        const response = await fetchProducts();
-        products.value = response;
+        store.dispatch("products/fetchProducts");
       } catch (error) {
         showSnackbar({
           message: error.message || "Failed to fetch products.",
@@ -40,9 +39,7 @@ export default {
       }
     });
 
-    return {
-      products,
-    };
+    return {};
   },
 };
 </script>

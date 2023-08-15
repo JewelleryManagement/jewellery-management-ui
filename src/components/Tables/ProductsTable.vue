@@ -17,34 +17,24 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
+import { useStore } from "vuex";
 
 export default {
   components: {
     VDataTable,
   },
-  props: {
-    products: {
-      type: Array,
-      required: true,
-    },
-  },
   setup() {
     const search = ref("");
-    const tableColumns = [
-      { key: "description", text: "Description" },
-      { key: "authors", text: "Authors" },
-      { key: "inStock", text: "In Stock" },
-      { key: "isSold", text: "Sold" },
-      { key: "owner", text: "Owner" },
-      { key: "picture", text: "Picture" },
-      { key: "salePrice", text: "Sale price" },
-    ];
+    const store = useStore();
+    const products = computed(() => store.getters["products/allProducts"]);
+    const tableColumns = computed(() => store.getters["products/getColumns"]);
 
     return {
       search,
       tableColumns,
+      products,
     };
   },
 };

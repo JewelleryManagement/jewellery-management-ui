@@ -1,22 +1,23 @@
 <template>
-  <user-list :users="users" />
+  <user-list />
 </template>
 <script>
-import { inject, ref, onMounted } from "vue";
-import { fetchUsers } from "@/services/HttpClientService.js";
+import { inject, onMounted } from "vue";
 import UserList from "@/components/UserList/UserList.vue";
+
+import { useStore } from "vuex";
+
 export default {
   components: {
     UserList,
   },
   setup() {
-    const users = ref([]);
+    const store = useStore();
     const showSnackbar = inject("showSnackbar");
 
     onMounted(async () => {
       try {
-        const response = await fetchUsers();
-        users.value = response;
+        store.dispatch("users/fetchUsers");
       } catch (error) {
         showSnackbar({
           message: error.message || "Failed to fetch users.",
@@ -27,9 +28,7 @@ export default {
       }
     });
 
-    return {
-      users,
-    };
+    return {}
   },
 };
 </script>

@@ -20,10 +20,10 @@
     <v-card-text>
       <v-container>
         <v-row>
-          <v-col cols="12" v-if="sortedUsers.length > 0">
+          <v-col cols="12" v-if="allUsers.length > 0">
             <v-list lines="tree">
               <v-list-item
-                v-for="user in sortedUsers"
+                v-for="user in isBeingSorted ? sortedUsers : allUsers"
                 :key="user.email"
                 :title="user.name"
                 :subtitle="user.email"
@@ -46,44 +46,27 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { computed } from "vue";
+import { useStore } from "vuex";
 
 export default {
-  props: ["users"],
-  setup(props) {
-    const isSorting = ref(false);
-    const isAscending = ref(true);
-
-    const sortedUsers = computed(() => {
-      return props.users.slice().sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-
-        if (isAscending.value) {
-          if (nameA < nameB) return -1;
-          if (nameA > nameB) return 1;
-        } else {
-          if (nameA > nameB) return -1;
-          if (nameA < nameB) return 1;
-        }
-
-        return 0;
-      });
-    });
+  setup() {
+    const store = useStore();
+    const allUsers = computed(() => store.getters["users/allUsers"]);
+    const sortedUsers = computed(() => store.getters["users/sortedUsers"]);
+    const isSorting = computed(() => store.getters["users/isSorting"]);
+    const isBeingSorted = computed(() => store.getters["users/isBeingSorted"]);
 
     const sortUsers = () => {
-      isSorting.value = true;
-
-      setTimeout(() => {
-        isAscending.value = !isAscending.value;
-        isSorting.value = false;
-      }, 1000);
+      store.dispatch("users/toggleSorting");
     };
 
     return {
-      isSorting,
       sortedUsers,
+      allUsers,
       sortUsers,
+      isSorting,
+      isBeingSorted
     };
   },
 };

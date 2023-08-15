@@ -6,7 +6,7 @@
           <div class="text-center">
             <h1>Resources table</h1>
           </div>
-          <resource-table :resources="resources"></resource-table>
+          <resource-table></resource-table>
         </v-card>
       </v-col>
     </v-row>
@@ -14,29 +14,22 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import ResourceTable from "@/components/Tables/ResourceTable.vue";
-import { fetchResources } from "@/services/HttpClientService.js";
+import { useStore } from "vuex";
 
 export default {
   components: {
     ResourceTable,
   },
   setup() {
-    const resources = ref([]);
-
-    const fetchResourcesData = async () => {
-      const fetchedResources = await fetchResources();
-      resources.value = fetchedResources;
-    };
+    const store = useStore();
 
     onMounted(() => {
-      fetchResourcesData();
+      store.dispatch("resources/fetchResources");
     });
 
-    return {
-      resources,
-    };
+    return {};
   },
 };
 </script>

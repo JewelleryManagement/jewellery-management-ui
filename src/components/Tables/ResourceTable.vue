@@ -17,41 +17,24 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
+import { useStore } from "vuex";
 
 export default {
   components: {
     VDataTable,
   },
-  props: {
-    resources: {
-      type: Array,
-      required: true,
-    },
-  },
   setup() {
+    const store = useStore();
+    const resources = computed(() => store.getters["resources/allResources"]);
+    const tableColumns = computed(() => store.getters["resources/getColumns"]);
     const search = ref("");
-    const tableColumns = [
-      { key: "clazz", title: "Resource Type" },
-      { key: "color", title: "Color" },
-      { key: "quality", title: "Quality" },
-      { key: "quantityType", title: "Quantity Type" },
-      { key: "shape", title: "Shape" },
-      { key: "size", title: "Size" },
-      { key: "type", title: "Type" },
-      { key: "purity", title: "Purity" },
-      { key: "plating", title: "Plating" },
-      { key: "carat", title: "Carat" },
-      { key: "cut", title: "Cut" },
-      { key: "dimensionX", title: "dimensionX" },
-      { key: "dimensionY", title: "dimensionY" },
-      { key: "dimensionZ", title: "dimensionZ" },
-    ];
 
     return {
       search,
       tableColumns,
+      resources,
     };
   },
 };

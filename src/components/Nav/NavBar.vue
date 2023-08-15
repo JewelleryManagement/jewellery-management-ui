@@ -25,7 +25,7 @@
       </v-btn>
     </v-toolbar-items>
 
-    <v-menu v-if="smAndDown">
+    <v-menu v-if="isSmAndDown">
       <template v-slot:activator="{ props }">
         <v-app-bar-nav-icon v-bind="props" size="x-large"></v-app-bar-nav-icon>
       </template>
@@ -46,12 +46,14 @@
 
 <script>
 import { computed } from "vue";
+import { useDisplay } from "vuetify/lib/framework.mjs";
 
 export default {
   props: ["pages"],
-  setup(props) {
+  setup() {
+    const mobile = useDisplay();
     const isSmAndDown = computed(() => {
-      return props.$vuetify.display.smAndDown;
+      return mobile.smAndDown.value;
     });
 
     return {

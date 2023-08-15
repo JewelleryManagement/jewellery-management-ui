@@ -1,9 +1,14 @@
 import { createStore } from "vuex";
-import tablesModule from "./modules/tables";
+import resourcesModule from "./modules/resources";
+import productsModule from "./modules/products";
+import usersModule from "./modules/users";
 
 const store = createStore({
-  tables: tablesModule,
+  modules: {
+    resources: resourcesModule,
+    products: productsModule,
+    users: usersModule,
+  },
 });
-
 
 export default store;
