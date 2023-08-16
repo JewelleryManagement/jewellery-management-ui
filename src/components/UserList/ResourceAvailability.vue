@@ -1,11 +1,10 @@
 <template>
   <div class="container">
-    <h1 class="resources-header" style="top:1.5rem">Resources availability table</h1>
-    <h1 class="resources-header" style="font-size:1rem">{{ userId }}</h1>  
+    <h1 class="resources-header" style="top: 1.5rem">Resources availability table</h1>
+    <h1 class="resources-header" style="font-size: 1rem">{{ ownerName }}</h1>
     <resource-availability-table :userId="userId" :resources="resources"></resource-availability-table>
   </div>
 </template>
-
 
 <script>
 import ResourceAvailabilityTable from "@/components/Tables/ResourceAvailabilityTable.vue";
@@ -18,13 +17,18 @@ export default {
   data() {
     return {
       userId: null,
-      resources: [], // Store fetched resources here
+      resources: [],
+      ownerName: "Loading...",
     };
   },
   async created() {
     this.userId = this.$route.params.userId;
     this.resources = await fetchResourcesByUserID(this.userId);
-    console.log(this.resources)
+    if (this.resources.length > 0) {
+      this.ownerName = this.resources[0].owner.name; // Update owner name when data is fetched
+    }else {
+      this.ownerName = "This user doesn't have any resources";
+    }
   },
 };
 </script>
@@ -33,12 +37,13 @@ export default {
 .resources-header {
   background-color: var(--clr-inkwell);
   color: white;
-  width: 40%;
-  padding: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0rem 0.5rem 0rem;
   margin: auto;
   position: relative;
   top: 1.2rem;
-  border-radius: 4px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
   z-index: -1;
 }
 

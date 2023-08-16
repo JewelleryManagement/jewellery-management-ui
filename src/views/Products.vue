@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
-    <h1 class="products-header">Products table</h1>
+  <base-card class="container">
+    <h1>Products table</h1>
     <products-table :products="products"></products-table>
-  </div>
+  </base-card>
 </template>
 
 <script>
@@ -31,18 +31,6 @@ export default {
 </script>
 
 <style>
-.products-header {
-  background-color: var(--clr-inkwell);
-  color: white;
-  width: 40%;
-  padding: 0.5rem;
-  margin: auto;
-  position: relative;
-  top: 1.2rem;
-  border-radius: 4px;
-  z-index: -1;
-}
-
 .container {
   text-align: center;
 }
@@ -56,24 +44,21 @@ export default {
 table {
   width: 100%;
   border-collapse: collapse;
+  border: 0.0625rem solid #ccc;
 }
 
 th,
 td {
-  border: 0.0225rem solid var(--clr-inkwell);
+  border: 0.0625rem solid #ccc;
   padding: 0.5rem;
   text-align: left;
-  border-bottom: 0.1rem solid var(--clr-living-coral);
 }
 
 thead {
   background-color: #f2f2f2;
 }
 
-@media (max-width: 480px) {
-  .products-header {
-    font-size: 1rem;
-    top: 0.7rem;
-  }
+tr:hover {
+  background-color: #f5f5f5;
 }
 </style>
