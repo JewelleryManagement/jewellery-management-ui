@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { onMounted } from "vue";
+import { onMounted, inject } from "vue";
 import ResourceTable from "@/components/Tables/ResourceTable.vue";
 import { useStore } from "vuex";
 
@@ -24,9 +24,19 @@ export default {
   },
   setup() {
     const store = useStore();
+    const showSnackbar = inject("showSnackbar");
 
-    onMounted(() => {
-      store.dispatch("resources/fetchResources");
+    onMounted(async () => {
+      try {
+        await store.dispatch("resources/fetchResources");
+      } catch (error) {
+        showSnackbar({
+          message: "Failed to fetch resources.",
+          color: "error",
+          timeout: 4000,
+          location: "top right",
+        });
+      }
     });
 
     return {};

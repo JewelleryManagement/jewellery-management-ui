@@ -5,7 +5,6 @@
       <router-view />
     </v-main>
     <SnackBar
-      v-model="snackbar.isActive"
       :isActive="snackbar.isActive"
       :message="snackbar.message"
       :color="snackbar.color"
@@ -49,6 +48,7 @@ export default {
       color: "success",
       timeout: 3000,
       location: "top center",
+      width: 100,
     });
 
     const showSnackbar = ({

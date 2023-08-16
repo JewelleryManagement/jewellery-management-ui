@@ -17,10 +17,10 @@ export default {
 
     onMounted(async () => {
       try {
-        store.dispatch("users/fetchUsers");
+        await store.dispatch("users/fetchUsers");
       } catch (error) {
         showSnackbar({
-          message: error.message || "Failed to fetch users.",
+          message: "Failed to fetch users.",
           color: "error",
           timeout: 4000,
           location: "top right",

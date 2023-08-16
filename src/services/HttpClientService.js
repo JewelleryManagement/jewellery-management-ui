@@ -8,7 +8,7 @@ async function fetchData(endpoint) {
       return response.data;
     }
   } catch (error) {    
-    throw new Error("Failed to fetch data from the server.");
+    throw new Error("Failed to fetch data from the server.");    
   }
 }
 

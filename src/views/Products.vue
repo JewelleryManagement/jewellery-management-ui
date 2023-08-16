@@ -28,10 +28,10 @@ export default {
 
     onMounted(async () => {
       try {
-        store.dispatch("products/fetchProducts");
+        await store.dispatch("products/fetchProducts");
       } catch (error) {
         showSnackbar({
-          message: error.message || "Failed to fetch products.",
+          message: "Failed to fetch products.",
           color: "error",
           timeout: 4000,
           location: "top right",
