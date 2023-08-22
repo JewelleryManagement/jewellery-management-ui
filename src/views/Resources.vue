@@ -6,6 +6,16 @@
           <div class="text-center">
             <h1>Resources table</h1>
           </div>
+          <div class="d-flex justify-end">
+            <v-col cols="12" sm="6" md="4" class="text-end">
+              <router-link to="/resources/add">
+                <v-btn rounded="xs" size="x-large" color="red"
+                  >Add resource</v-btn
+                >
+              </router-link>
+            </v-col>
+          </div>
+
           <resource-table></resource-table>
         </v-card>
       </v-col>
