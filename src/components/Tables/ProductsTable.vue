@@ -1,57 +1,43 @@
 <template>
-  <div>
-    <table>
-      <thead>
-        <table-head :columns="tableColumns" />
-      </thead>
-      <tbody>
-        <table-row
-          v-for="(product, index) in products"
-          :key="index"
-          :data="product"
-          :columns="tableColumns"
-        />
-      </tbody>
-    </table>
-  </div>
+  <v-card-title>
+    <v-spacer></v-spacer>
+    <v-text-field
+      v-model="search"
+      append-icon="mdi-magnify"
+      label="Search"
+      single-line
+      hide-details
+    ></v-text-field>
+  </v-card-title>
+  <v-data-table
+    :headers="tableColumns"
+    :items="products"
+    :search="search"
+  ></v-data-table>
 </template>
 
 <script>
-import TableRow from "./TableRow.vue";
-import TableHead from "./TableHead.vue";
+import { ref, computed } from "vue";
+import { VDataTable } from "vuetify/labs/VDataTable";
+import { useStore } from "vuex";
 
 export default {
   components: {
-    TableRow,
-    TableHead,
+    VDataTable,
   },
-  props: {
-    products: {
-      type: Array,
-      required: true,
-    },
-  },
-  computed: {
-    tableColumns() {
-      return [
-        { key: "description", label: "Description" },
-        { key: "authors", label: "Authors" },
-        { key: "inStock", label: "In Stock" },
-        { key: "isSold", label: "Sold" },
-        { key: "owner", label: "Owner" },
-        { key: "picture", label: "Picture" },
-        { key: "salePrice", label: "Sale price" },
-      ];
-    },
+  setup() {
+    const search = ref("");
+    const store = useStore();
+    const products = computed(() => store.getters["products/allProducts"]);
+    const tableColumns = computed(() => store.getters["products/getColumns"]);
+
+    return {
+      search,
+      tableColumns,
+      products,
+    };
   },
 };
 </script>
 
-<style scoped>
-table {
-  margin-top: 1rem;
-  width: 100%;
-  border-collapse: collapse;
-  overflow-x: auto;
-}
-</style>
+<style scoped></style>

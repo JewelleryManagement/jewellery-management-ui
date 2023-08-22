@@ -1,64 +1,47 @@
 <template>
-  <base-card class="container">
-    <h1>Products table</h1>
-    <products-table :products="products"></products-table>
-  </base-card>
+  <v-container class="my-12" fluid>
+    <v-row justify="center">
+      <v-col cols="10" max-width="1600">
+        <v-card class="elevation-12">
+          <div class="text-center">
+            <h1>Products table</h1>
+          </div>
+          <products-table></products-table>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import ProductsTable from "@/components/Tables/ProductsTable.vue";
-import { fetchProducts } from "@/services/HttpClientService.js";
+import { onMounted, inject } from "vue";
+import { useStore } from "vuex";
 
 export default {
   components: {
     ProductsTable,
   },
-  data() {
-    return {
-      products: [],
-    };
-  },
-  methods: {
-    async fetchResources() {
-      const fetchedProducts = await fetchProducts();
-      this.products = fetchedProducts;
-    },
-  },
-  mounted() {
-    this.fetchResources();
+  setup() {
+    const store = useStore();
+    const showSnackbar = inject("showSnackbar");
+
+    onMounted(async () => {
+      try {
+        await store.dispatch("products/fetchProducts");
+      } catch (error) {
+        showSnackbar({
+          message: "Failed to fetch products.",
+          color: "error",
+          timeout: 4000,
+          location: "top right",
+        });
+      }
+    });
+
+    return {};
   },
 };
 </script>
 
-<style>
-.container {
-  text-align: center;
-}
-
-.resource-table {
-  margin-top: 1rem;
-  width: 100%;
-  border-collapse: collapse;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 0.0625rem solid #ccc;
-}
-
-th,
-td {
-  border: 0.0625rem solid #ccc;
-  padding: 0.5rem;
-  text-align: left;
-}
-
-thead {
-  background-color: #f2f2f2;
-}
-
-tr:hover {
-  background-color: #f5f5f5;
-}
-</style>
+<style scoped></style>

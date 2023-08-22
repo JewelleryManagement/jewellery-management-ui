@@ -3,25 +3,27 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import PageViewer from "../components/PageViewer.vue";
 
 export default {
   components: {
     PageViewer,
   },
-  data() {
+  setup() {
+    const pageTitle = ref("Home Page");
+    const content = ref("This is the home content");
+
     return {
-      pageTitle: "Home Page",
-      content: "This is the home content",
+      pageTitle,
+      content,
     };
   },
-
-}
+};
 </script>
 
 <style scoped>
 .container {
   text-align: center;
-
 }
 </style>
