@@ -1,81 +1,77 @@
 <template>
   <v-container class="my-12" fluid>
-    <v-sheet width="300" class="mx-auto">
-      <v-form ref="formRef">
-
-        <v-select
-          v-model="select"
-          :items="items"
-          :rules="[(v) => !!v || 'Item is required']"
-          label="Item"
-          required
-          @change="onItemChange($event)"
-          return-object
-        ></v-select>
-
-        <Pearl v-if="select === 'Pearl'" />
-
-        <v-checkbox
-          v-model="checkbox"
-          :rules="[(v) => !!v || 'You must agree to continue!']"
-          label="Do you agree?"
-          required
-        ></v-checkbox>
-
-        <div class="d-flex flex-column">
-          <v-btn color="success" class="mt-4" block @click="validate">
-            Submit
-          </v-btn>
-
-          <v-btn color="error" class="mt-4" block @click="resetValidation">
-            Reset
-          </v-btn>
+    <v-card class="mx-auto pa-10" width="800" height="auto">
+      <template v-slot:title>
+        <div class="mx-auto text-center" style="font-size: 24px">
+          Add a resource
         </div>
-      </v-form>
-    </v-sheet>
+      </template>
+
+      <v-sheet width="300" class="mx-auto">
+        <v-form ref="formRef">
+          <Select
+            :select-value="select"
+            @selected-option="handleSelectedOption"
+          />
+          <!-- <v-select
+            v-model="select"
+            :items="items"
+            :rules="[(v) => !!v || 'Item is required']"
+            label="Item"
+            required
+            return-object
+          ></v-select> -->
+
+          {{ select }}
+          <Pearl v-if="selected === 'Pearl'" @form-data="getFormData" />
+        </v-form>
+      </v-sheet>
+    </v-card>
   </v-container>
 </template>
 
 <script>
-import { ref, onUpdated } from "vue";
-import Pearl from '../components/AddResources/Pearl.vue'
+import { ref, inject } from "vue";
+import Pearl from "../components/AddResources/Pearl.vue";
+import Select from "../components/AddResources/Select.vue";
+import { useStore } from "vuex";
+
 export default {
   components: {
-    Pearl
+    Pearl,
+    Select,
   },
   setup() {
+    const store = useStore();
     const formRef = ref(null);
+    const showSnackbar = inject("showSnackbar");
+    const select = ref("");
+    const selected = ref("");
 
-    const resetValidation = () => {
-      if (formRef.value) {
-        formRef.value.reset();
-        formRef.value.resetValidation();
+    const getFormData = async (data) => {
+      try {
+        await store.dispatch("resources/AddResources", data);
+      } catch (error) {
+        showSnackbar({
+          message: "Failed to send resource.",
+          color: "error",
+          timeout: 4000,
+          location: "top right",
+        });
       }
     };
 
-    const items = ["Pearl", "PreciousMetal", "Gemstone", "LinkingPart"];
-    const nameRules = ref("");
-    const validate = ref("");
-    const select = ref("");
-    const checkbox = ref(false);
-    const reset = ref("");
-    const rules = ref("");
+    const handleSelectedOption = (newValue) => {
+      selected.value = newValue;
+    };
 
-    const onItemChange = (e) => {
-      console.log(e);
-    }
 
     return {
-      onItemChange,
-      formRef,
-      resetValidation,
-      nameRules,
-      checkbox,
+      handleSelectedOption,
+      getFormData,
       select,
-      validate,
-      items,
-      reset,
-      rules,
+      selected,
+      formRef
     };
   },
 };

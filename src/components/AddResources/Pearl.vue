@@ -1,6 +1,6 @@
 <template>
   <v-text-field
-    v-model="type"
+    v-model="inputField.type"
     :counter="10"
     :rules="nameRules"
     label="Type"
@@ -8,7 +8,7 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="size"
+    v-model="inputField.size"
     :counter="10"
     :rules="nameRules"
     label="Size"
@@ -16,7 +16,7 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="quality"
+    v-model="inputField.quality"
     :counter="10"
     :rules="nameRules"
     label="Quality"
@@ -24,7 +24,7 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="color"
+    v-model="inputField.color"
     :counter="10"
     :rules="nameRules"
     label="Color"
@@ -32,32 +32,64 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="shape"
+    v-model="inputField.shape"
     :counter="10"
     :rules="nameRules"
     label="Shape"
     required
   ></v-text-field>
+
+  <v-checkbox
+    v-model="inputField.checkbox"
+    :rules="[(v) => !!v || 'You must agree to continue!']"
+    label="Do you agree?"
+    required
+  ></v-checkbox>
+
+  <div class="d-flex flex-column">
+    <v-btn color="success" class="mt-4" block @click="submitForm">
+      Submit
+    </v-btn>
+
+    <v-btn color="error" class="mt-4" block @click="resetValidation">
+      Reset
+    </v-btn>
+  </div>
 </template>
 
 <script>
-import {ref} from 'vue'
+import { ref, reactive } from "vue";
 export default {
-
-  setup() {
-    const type = ref('');
-    const size = ref('');
-    const quality = ref('');
-    const color = ref('');
-    const shape = ref('');
-    const counter = ref('');
+  emits: ["form-data"],
+  setup(props, { emit }) {
+    const inputField = reactive({
+      clazz: "Pearl",
+      type: "",
+      size: "",
+      quality: "",
+      color: "",
+      shape: "",
+      counter: "",
+      checkbox: false,
+    });
 
     const nameRules = [
-      v => !!v || `Input field is required`,
-      v => (v && v.length <= 10) ? `At least 10 characters are required` : '',
+      (v) => !!v || `Input field is required`,
+      (v) => (v && v.length <= 3 ? `At least 3 characters are required` : ""),
     ];
-    
-    return {type, size, quality, color, shape, nameRules, counter};
+
+    const submitForm = () => {
+      emit("form-data", inputField);
+    };
+
+    const resetValidation = () => {
+      if (formRef.value) {
+        formRef.value.reset();
+        formRef.value.resetValidation();
+      }
+    };
+
+    return { inputField, nameRules, submitForm, resetValidation };
   },
 };
 </script>
