@@ -42,9 +42,19 @@
   <v-checkbox
     v-model="inputField.checkbox"
     :rules="[(v) => !!v || 'You must agree to continue!']"
-    label="Do you agree?"
+    label="Ready to submit this information?"
     required
   ></v-checkbox>
+
+  <v-card-text
+    v-if="sentData"
+    class="text-red-darken-4 text-center text-h6 pa-0"
+    style="height: 1rem;"
+  >
+    Information has been submited
+  </v-card-text>
+  <div v-else style="height: 1rem;"></div>
+
 
   <div class="d-flex flex-column">
     <v-btn color="success" class="mt-4" block @click="submitForm">
@@ -60,8 +70,9 @@
 <script>
 import { ref, reactive } from "vue";
 export default {
-  emits: ["form-data"],
+  emits: ["form-data", "reset-form-data"],
   setup(props, { emit }) {
+    const sentData = ref(false);
     const inputField = reactive({
       clazz: "Pearl",
       type: "",
@@ -75,21 +86,36 @@ export default {
 
     const nameRules = [
       (v) => !!v || `Input field is required`,
-      (v) => (v && v.length <= 3 ? `At least 3 characters are required` : ""),
+      (v) => (v && v.length <= 2 ? `At least 3 characters are required` : ""),
     ];
 
     const submitForm = () => {
       emit("form-data", inputField);
+      infoSent();
     };
 
     const resetValidation = () => {
-      if (formRef.value) {
-        formRef.value.reset();
-        formRef.value.resetValidation();
-      }
+      emit("reset-form-data");
     };
 
-    return { inputField, nameRules, submitForm, resetValidation };
+    
+
+    const infoSent = () => {
+      sentData.value = true;
+
+      setTimeout(() => {
+        sentData.value = false;
+      }, 4000);
+    };
+
+    return {
+      inputField,
+      nameRules,
+      submitForm,
+      resetValidation,
+      infoSent,
+      sentData,
+    };
   },
 };
 </script>

@@ -8,23 +8,19 @@
       </template>
 
       <v-sheet width="300" class="mx-auto">
-        <v-form ref="formRef">
-          <Select
-            :select-value="select"
-            @selected-option="handleSelectedOption"
+        <Select
+          :select-value="select"
+          @selected-option="handleSelectedOption"
+        />
+        <v-form ref="form">
+          <Pearl
+            v-if="selected === 'Pearl'"
+            @form-data="getFormData"
+            @reset-form-data="resData"
           />
-          <!-- <v-select
-            v-model="select"
-            :items="items"
-            :rules="[(v) => !!v || 'Item is required']"
-            label="Item"
-            required
-            return-object
-          ></v-select> -->
-
-          {{ select }}
-          <Pearl v-if="selected === 'Pearl'" @form-data="getFormData" />
         </v-form>
+
+
       </v-sheet>
     </v-card>
   </v-container>
@@ -43,7 +39,7 @@ export default {
   },
   setup() {
     const store = useStore();
-    const formRef = ref(null);
+    const form = ref(null);
     const showSnackbar = inject("showSnackbar");
     const select = ref("");
     const selected = ref("");
@@ -51,7 +47,10 @@ export default {
     const getFormData = async (data) => {
       try {
         await store.dispatch("resources/AddResources", data);
+        console.log(await form.value.validate());
+        resData();
       } catch (error) {
+        console.log(error);
         showSnackbar({
           message: "Failed to send resource.",
           color: "error",
@@ -65,13 +64,21 @@ export default {
       selected.value = newValue;
     };
 
+    const resData = () => {
+      if (form.value) {
+        form.value.reset();
+        form.value.resetValidation();
+      }
+    };
+
 
     return {
+      resData,
       handleSelectedOption,
       getFormData,
       select,
       selected,
-      formRef
+      form,
     };
   },
 };
