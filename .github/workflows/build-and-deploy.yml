@@ -46,5 +46,5 @@ jobs:
     - name: Push codedeploy files to AWS S3
       run: |
         rsync -aP --exclude=aws . ./aws/docker/app
-        zip -r frontent_codedeploy.zip aws
-        aws s3 cp frontent_codedeploy.zip s3://${{ secrets.S3BUCKET }}/
+        zip -r frontend_codedeploy.zip aws
+        aws s3 cp frontend_codedeploy.zip s3://${{ secrets.S3BUCKET }}/
