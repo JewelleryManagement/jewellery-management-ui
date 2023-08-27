@@ -41,10 +41,12 @@ jobs:
       with:
         node-version: '18.x'
     - name: Install with npm
-      run: NODE_ENV=development npm install
+      run: npm install
+    - name: Build with npm
+      run: npm run build
 
     - name: Push codedeploy files to AWS S3
       run: |
-        rsync -aP --exclude=aws . ./aws/docker/app
+        cp -r dist aws/docker/app
         zip -r frontend_codedeploy.zip aws
         aws s3 cp frontend_codedeploy.zip s3://${{ secrets.S3BUCKET }}/
