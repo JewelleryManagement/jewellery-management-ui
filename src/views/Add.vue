@@ -12,73 +12,41 @@
           :select-value="select"
           @selected-option="handleSelectedOption"
         />
-        <v-form ref="form">
-          <Pearl
-            v-if="selected === 'Pearl'"
-            @form-data="getFormData"
-            @reset-form-data="resData"
-          />
-        </v-form>
-
-
+        <Pearl
+          v-if="selected === 'Pearl'"
+        />
+        <PreciousMetal
+          v-if="selected === 'PreciousMetal'"
+        />
       </v-sheet>
     </v-card>
   </v-container>
 </template>
 
 <script>
-import { ref, inject } from "vue";
+import { ref } from "vue";
 import Pearl from "../components/AddResources/Pearl.vue";
+import PreciousMetal from "../components/AddResources/PreciousMetal.vue";
 import Select from "../components/AddResources/Select.vue";
-import { useStore } from "vuex";
 
 export default {
   components: {
     Pearl,
     Select,
+    PreciousMetal
   },
   setup() {
-    const store = useStore();
-    const form = ref(null);
-    const showSnackbar = inject("showSnackbar");
     const select = ref("");
     const selected = ref("");
-
-    const getFormData = async (data) => {
-      try {
-        await store.dispatch("resources/AddResources", data);
-        console.log(await form.value.validate());
-        resData();
-      } catch (error) {
-        console.log(error);
-        showSnackbar({
-          message: "Failed to send resource.",
-          color: "error",
-          timeout: 4000,
-          location: "top right",
-        });
-      }
-    };
 
     const handleSelectedOption = (newValue) => {
       selected.value = newValue;
     };
 
-    const resData = () => {
-      if (form.value) {
-        form.value.reset();
-        form.value.resetValidation();
-      }
-    };
-
-
     return {
-      resData,
       handleSelectedOption,
-      getFormData,
       select,
       selected,
-      form,
     };
   },
 };

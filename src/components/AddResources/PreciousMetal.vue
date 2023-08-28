@@ -9,20 +9,13 @@
     ></v-text-field>
 
     <v-text-field
-      v-model="inputField.size"
+      v-model="inputField.purity"
       :counter="10"
       :rules="nameRules"
-      label="Size"
+      label="Purity"
       required
     ></v-text-field>
 
-    <v-text-field
-      v-model="inputField.quality"
-      :counter="10"
-      :rules="nameRules"
-      label="Quality"
-      required
-    ></v-text-field>
 
     <v-text-field
       v-model="inputField.color"
@@ -33,10 +26,10 @@
     ></v-text-field>
 
     <v-text-field
-      v-model="inputField.shape"
+      v-model="inputField.plating"
       :counter="10"
       :rules="nameRules"
-      label="Shape"
+      label="Plating"
       required
     ></v-text-field>
 
@@ -80,12 +73,11 @@ export default {
 
     const sentData = ref(false);
     const inputField = reactive({
-      clazz: "Pearl",
+      clazz: "PreciousMetal",
       type: "",
-      size: "",
-      quality: "",
+      purity: "",
       color: "",
-      shape: "",
+      plating: "",
       counter: "",
       checkbox: false,
     });
@@ -96,7 +88,7 @@ export default {
     ];
 
     const submitForm = async () => {
-      const { clazz, type, size, quality, color, shape } = toRefs(inputField);
+      const { clazz, type, purity, color, plating } = toRefs(inputField);
 
       const { valid } = await form.value.validate();
       if (valid) {
@@ -104,13 +96,12 @@ export default {
           const dataToSubmit = {
             clazz: clazz.value,
             type: type.value,
-            size: size.value,
-            quality: quality.value,
+            purity: purity.value,
             color: color.value,
-            shape: shape.value,
+            plating: plating.value,
           };
 
-          await store.dispatch("resources/AddResources", dataToSubmit);
+          // await store.dispatch("resources/AddResources", dataToSubmit);
           infoSent();
           resData();
         } catch (error) {

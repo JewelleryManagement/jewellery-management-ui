@@ -13,7 +13,17 @@
     :headers="tableColumns"
     :items="resources"
     :search="search"
-  ></v-data-table>
+  >
+
+  <template v-slot:item.delete="{ item }">
+      <v-icon>mdi-delete</v-icon>
+    </template>
+    <template v-slot:item.edit="{ item }">
+      <v-icon>mdi-pencil</v-icon>
+    </template>
+
+
+  </v-data-table>
 </template>
 
 <script>

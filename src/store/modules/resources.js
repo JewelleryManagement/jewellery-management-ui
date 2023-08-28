@@ -20,6 +20,8 @@ export default {
       { key: "dimensionX", title: "dimensionX" },
       { key: "dimensionY", title: "dimensionY" },
       { key: "dimensionZ", title: "dimensionZ" },
+      { key: "delete", title: "", slot: "delete" },
+      { key: "edit", title: "", slot: "edit" },
     ],
   }),
   mutations: {
@@ -27,8 +29,8 @@ export default {
       state.resources = resources;
     },
     addResources(state, payload) {
-      state.resources.push(payload)
-    }
+      state.resources.push(payload);
+    },
   },
   actions: {
     async fetchResources({ commit }) {
@@ -36,8 +38,8 @@ export default {
       commit("setResources", res);
     },
     async AddResources({ commit }, formData) {
-      const res = await postResources(formData)
-      commit('addResources', res)
+      const res = await postResources(formData);
+      commit("addResources", res);
     },
   },
   getters: {
