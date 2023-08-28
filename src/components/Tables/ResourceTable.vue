@@ -1,62 +1,43 @@
 <template>
-  <div class="table">
-    <table>
-      <thead>
-        <table-head :columns="tableColumns" />
-      </thead>
-      <tbody>
-        <table-row
-          v-for="(resource, index) in resources"
-          :key="index"
-          :data="resource"
-          :columns="tableColumns"
-        />
-      </tbody>
-    </table>
-  </div>
+  <v-card-title>
+    <v-spacer></v-spacer>
+    <v-text-field
+      v-model="search"
+      append-icon="mdi-magnify"
+      label="Search"
+      single-line
+      hide-details
+    ></v-text-field>
+  </v-card-title>
+  <v-data-table
+    :headers="tableColumns"
+    :items="resources"
+    :search="search"
+  ></v-data-table>
 </template>
+
 <script>
-import TableRow from "./TableRow.vue";
-import TableHead from "./TableHead.vue";
+import { ref, computed } from "vue";
+import { VDataTable } from "vuetify/labs/VDataTable";
+import { useStore } from "vuex";
+
 export default {
   components: {
-    TableRow,
-    TableHead,
+    VDataTable,
   },
-  props: {
-    resources: {
-      type: Array,
-      required: true,
-    },
-  },
-  computed: {
-    tableColumns() {
-      return [
-        { key: "clazz", label: "Resource Type" },
-        { key: "color", label: "Color" },
-        { key: "quality", label: "Quality" },
-        { key: "quantityType", label: "Quantity Type" },
-        { key: "shape", label: "Shape" },
-        { key: "size", label: "Size" },
-        { key: "type", label: "Type" },
-        { key: "purity", label: "Purity" },
-        { key: "plating", label: "Plating" },
-        { key: "carat", label: "Carat" },
-        { key: "cut", label: "Cut" },
-        { key: "dimensionX", label: "dimensionX" },
-        { key: "dimensionY", label: "dimensionY" },
-        { key: "dimensionZ", label: "dimensionZ" },
-      ];
-    },
+  setup() {
+    const store = useStore();
+    const resources = computed(() => store.getters["resources/allResources"]);
+    const tableColumns = computed(() => store.getters["resources/getColumns"]);
+    const search = ref("");
+
+    return {
+      search,
+      tableColumns,
+      resources,
+    };
   },
 };
 </script>
 
-<style scoped>
-.table {
-  margin-top: 1rem;
-  width: 100%;
-  border-collapse: collapse;
-  overflow-x: auto;
-}
-</style>
+<style scoped></style>

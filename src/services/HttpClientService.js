@@ -1,5 +1,4 @@
 import axios from "@/axios.config";
-import { showNotification } from "@/utils/notification.js";
 
 async function fetchData(endpoint) {
   try {
@@ -7,9 +6,8 @@ async function fetchData(endpoint) {
     if (response.status === 200) {
       return response.data;
     }
-  } catch (error) {
-    showNotification("Failed to fetch data from the server: ", "error");
-    return []
+  } catch (error) {    
+    throw new Error("Failed to fetch data from the server.");    
   }
 }
 
