@@ -20,4 +20,4 @@ COPY . .
 
 # start app
 # CMD ["npm", "run", "serve"]
-CMD ["http-server", "app", "-a", "localhost", "-p", "3000"]
+CMD ["http-server", "dist", "-p", "3000"]
