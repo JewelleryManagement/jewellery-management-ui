@@ -1,5 +1,6 @@
 import axios from "@/axios.config";
 
+
 async function fetchData(endpoint) {
   try {
     const response = await axios.get(endpoint);

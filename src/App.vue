@@ -81,8 +81,6 @@ export default {
   --clr-white: #fff;
   --clr-living-coral: #ff6f61;
   --clr-inkwell: #363945;
-  --clr-light-gray: #f2f2f2;
-  --clr-dark-gray: #333;
 
   --trans: all 400ms ease;
 

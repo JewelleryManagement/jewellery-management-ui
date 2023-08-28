@@ -41,16 +41,6 @@ export default {
 
     return {};
   },
-
-  methods: {
-    async fetchResources() {
-      const fetchedResources = await fetchResources();
-      this.resources = fetchedResources;
-    },
-  },
-  mounted() {
-    this.fetchResources();
-  },
 };
 </script>
 
