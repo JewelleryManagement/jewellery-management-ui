@@ -1,7 +1,7 @@
 # base image
-FROM node:latest
+FROM nginx:stable-alpine
 
-RUN npm install -g http-server
+# RUN npm install -g http-server
 
 # set working directory
 WORKDIR /app
@@ -16,8 +16,12 @@ WORKDIR /app
 # RUN yarn install --verbose
 # RUN yarn global add @vue/cli
 
-COPY . .
+# COPY . .
 
 # start app
 # CMD ["npm", "run", "serve"]
-CMD ["http-server", "app", "-p", "3000"]
+# CMD ["http-server", "dist", "-a", "localhost", "-p", "3000"]
+
+COPY /app /usr/share/nginx/html
+# EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]
