@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { fetchResources, postResources } from "@/services/HttpClientService.js";
+import { fetchResources, postResources, removeResource } from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
@@ -31,6 +31,9 @@ export default {
     addResources(state, payload) {
       state.resources.push(payload);
     },
+    removeResource(state, payload) {
+      state.resources = state.resources.filter(resource => resource.id !== payload)
+    }
   },
   actions: {
     async fetchResources({ commit }) {
@@ -41,6 +44,10 @@ export default {
       const res = await postResources(formData);
       commit("addResources", res);
     },
+    async removeResource({commit}, id) {
+      const res = await removeResource(id)
+      commit("removeResource", id)
+    }
   },
   getters: {
     allResources: (state) => state.resources,

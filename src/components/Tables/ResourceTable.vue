@@ -9,20 +9,13 @@
       hide-details
     ></v-text-field>
   </v-card-title>
-  <v-data-table
-    :headers="tableColumns"
-    :items="resources"
-    :search="search"
-  >
-
-  <template v-slot:item.delete="{ item }">
-      <v-icon>mdi-delete</v-icon>
+  <v-data-table :headers="tableColumns" :items="resources" :search="search">
+    <template v-slot:item.delete="{ item }">
+      <v-icon color="red" @click="onDelete(item.selectable.id)">mdi-delete</v-icon>
     </template>
     <template v-slot:item.edit="{ item }">
-      <v-icon>mdi-pencil</v-icon>
+      <v-icon color="green">mdi-pencil</v-icon>
     </template>
-
-
   </v-data-table>
 </template>
 
@@ -41,10 +34,15 @@ export default {
     const tableColumns = computed(() => store.getters["resources/getColumns"]);
     const search = ref("");
 
+    const onDelete = async (id) => {
+      await store.dispatch("resources/removeResource", id)
+    }
+
     return {
       search,
       tableColumns,
       resources,
+      onDelete
     };
   },
 };

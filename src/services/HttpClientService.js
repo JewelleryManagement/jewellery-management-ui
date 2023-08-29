@@ -39,3 +39,20 @@ async function postData(endpoint, data) {
 export async function postResources(data) {
   return await postData("/resources", data);
 }
+
+// DELETE REQUESTS
+
+async function removeData(endpoint) {
+  try {
+    const response = await axios.delete(endpoint)
+    if (response.status === 201) {
+      return response.data;
+    }
+  } catch (error) {
+    throw new Error("Failed to delete this resource.");
+  }
+}
+
+export async function removeResource(id) {
+  return await removeData(`/resources/${id}`)
+}
