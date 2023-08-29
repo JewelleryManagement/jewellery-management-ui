@@ -42,7 +42,6 @@ export default {
   },
   setup(props) {
     const store = useStore()
-
     const select = ref("");
     const selected = ref("");
     const route = useRoute();
@@ -50,8 +49,7 @@ export default {
     const pageTitle = ref(route.meta.title)
     const asd = computed(() => store.getters["resources/getResourceById"](props.id));
 
-    console.log(asd);
-  
+    console.log(asd.value);
     
     const handleSelectedOption = (newValue) => {
       selected.value = newValue;

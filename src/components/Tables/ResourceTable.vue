@@ -41,9 +41,10 @@ export default {
     }
 
     const onEdit = async (item) => {
-      // const id = item.id
-      // const resourceById = resources.value.find(resource => resource.id === id)
-      // console.log(resourceById);
+      const id = item.id
+      console.log(resources);
+      const resourceById = resources.value.find(resource => resource.id === id)
+      console.log(resourceById);
     }
 
     return {
