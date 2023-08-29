@@ -45,12 +45,13 @@ export default {
       commit("addResources", res);
     },
     async removeResource({commit}, id) {
-      const res = await removeResource(id)
+      await removeResource(id)
       commit("removeResource", id)
     }
   },
   getters: {
     allResources: (state) => state.resources,
     getColumns: (state) => state.tableColumns,
+    getResourceById: (state) => (id) => state.resources.find(resource => resource.id === id)
   },
 };

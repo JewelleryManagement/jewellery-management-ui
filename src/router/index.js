@@ -44,7 +44,14 @@ const routes = [
     path: "/resources/add",
     name: "Add Resources",
     component: Add,
-    meta: { title: "Add resource page" },
+    meta: { title: "Add resource" },
+  },
+  {
+    path: "/resources/edit/:id",
+    name: "Edit-Resource",
+    props: true,
+    component: Add,
+    meta: { title: "Edit resource" },
   },
 
   {
