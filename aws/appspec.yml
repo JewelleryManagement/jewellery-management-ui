@@ -5,7 +5,7 @@ files:
   - source: /docker/
     destination: /tmp/fe
 hooks:
-  Install:
+  BeforeInstall:
     - location: scripts/install_docker.sh
       timeout: 180
       runas: root
