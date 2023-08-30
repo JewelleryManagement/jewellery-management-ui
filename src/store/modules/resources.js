@@ -5,6 +5,7 @@ export default {
   namespaced: true,
   state: reactive({
     resources: [],
+    resourceDetails: {},
     tableColumns: [
       { key: "clazz", title: "Resource Type" },
       { key: "color", title: "Color" },
@@ -33,7 +34,13 @@ export default {
     },
     removeResource(state, payload) {
       state.resources = state.resources.filter(resource => resource.id !== payload)
-    }
+    },
+    setResourceDetails(state, payload) {
+      state.resourceDetails = payload
+    },
+    updateFormData(state, data) {
+      state.resourceDetails = data;
+    },
   },
   actions: {
     async fetchResources({ commit }) {
@@ -47,11 +54,18 @@ export default {
     async removeResource({commit}, id) {
       await removeResource(id)
       commit("removeResource", id)
-    }
+    },
+    setResourceDetails({commit}, data) {
+      commit('setResourceDetails', data)
+    },
+    updateFormData({ commit, state }, newData) {
+      commit("updateFormData", newData);
+    },
   },
   getters: {
     allResources: (state) => state.resources,
     getColumns: (state) => state.tableColumns,
-    getResourceById: (state) => (id) => state.resources.find(resource => resource.id === id)
+    getResourceById: (state) => (id) => state.resources.find(resource => resource.id === id),
+    getResourceDetails: (state) => state.resourceDetails
   },
 };
