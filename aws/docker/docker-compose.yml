@@ -1,5 +1,5 @@
 version: '3.7'
-name: jms-docker
+name: jms-docker-fe
 services:
 
   jms-fe:
@@ -10,13 +10,5 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app:/app
-      # - /app/node_modules
     ports:
       - '3000:80'
-    networks:
-      - jms-network
-
-networks:
-  jms-network:
-    name: jms-network
-    driver: bridge
