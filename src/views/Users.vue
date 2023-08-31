@@ -1,5 +1,7 @@
 <template>
-  <user-list />
+  <v-container class="my-12" fluid>
+    <user-list />
+  </v-container>
 </template>
 <script>
 import { inject, onMounted } from "vue";
@@ -28,7 +30,7 @@ export default {
       }
     });
 
-    return {}
+    return {};
   },
 };
 </script>

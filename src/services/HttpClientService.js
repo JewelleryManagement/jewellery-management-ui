@@ -56,3 +56,20 @@ async function removeData(endpoint) {
 export async function removeResource(id) {
   return await removeData(`/resources/${id}`)
 }
+
+// PUT REQUEST
+
+async function updateData(endpoint, data) {
+  try {
+    const response = await axios.put(endpoint, data);
+    if (response.status === 200) {
+      return response.data;
+    }
+  } catch (error) {
+    throw new Error("Failed to update data on the server.");
+  }
+}
+
+export async function updateResource(id, data) {
+  return await updateData(`/resources/${id}`, data);
+}

@@ -15,7 +15,7 @@
     </template>
     <template v-slot:item.edit="{ item }">
       <router-link :to="{ name: 'Edit-Resource', params: { id: item.selectable.id } }">
-      <v-icon color="green" @click="onEdit(item.selectable)">mdi-pencil</v-icon>
+      <v-icon color="green">mdi-pencil</v-icon>
       </router-link>
     </template>
   </v-data-table>
@@ -40,19 +40,11 @@ export default {
       await store.dispatch("resources/removeResource", id)
     }
 
-    const onEdit = async (item) => {
-      const id = item.id
-      console.log(resources);
-      const resourceById = resources.value.find(resource => resource.id === id)
-      console.log(resourceById);
-    }
-
     return {
       search,
       tableColumns,
       resources,
       onDelete,
-      onEdit
     };
   },
 };

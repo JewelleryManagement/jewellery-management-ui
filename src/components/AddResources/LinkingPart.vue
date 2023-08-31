@@ -1,33 +1,9 @@
 <template>
   <v-text-field
-    v-model="formData.type"
+    v-model="formData.description"
     :counter="10"
     :rules="nameRules"
-    label="Type"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.purity"
-    :counter="10"
-    :rules="nameRules"
-    label="Purity"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.color"
-    :counter="10"
-    :rules="nameRules"
-    label="Color"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.plating"
-    :counter="10"
-    :rules="nameRules"
-    label="Plating"
+    label="Description"
     required
   ></v-text-field>
 

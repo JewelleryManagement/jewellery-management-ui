@@ -1,5 +1,10 @@
 import { reactive } from "vue";
-import { fetchResources, postResources, removeResource } from "@/services/HttpClientService.js";
+import {
+  fetchResources,
+  postResources,
+  removeResource,
+  updateResource,
+} from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
@@ -21,6 +26,7 @@ export default {
       { key: "dimensionX", title: "dimensionX" },
       { key: "dimensionY", title: "dimensionY" },
       { key: "dimensionZ", title: "dimensionZ" },
+      { key: "description", title: "Description" },
       { key: "delete", title: "", slot: "delete" },
       { key: "edit", title: "", slot: "edit" },
     ],
@@ -33,13 +39,23 @@ export default {
       state.resources.push(payload);
     },
     removeResource(state, payload) {
-      state.resources = state.resources.filter(resource => resource.id !== payload)
+      state.resources = state.resources.filter(
+        (resource) => resource.id !== payload
+      );
     },
     setResourceDetails(state, payload) {
-      state.resourceDetails = payload
+      state.resourceDetails = payload;
     },
     updateFormData(state, data) {
       state.resourceDetails = data;
+    },
+    updateResource(state, updatedResource) {
+      const index = state.resources.findIndex(
+        (resource) => resource.id === updatedResource.id
+      );
+      if (index !== -1) {
+        state.resources.splice(index, 1, updatedResource);
+      }
     },
   },
   actions: {
@@ -51,21 +67,27 @@ export default {
       const res = await postResources(formData);
       commit("addResources", res);
     },
-    async removeResource({commit}, id) {
-      await removeResource(id)
-      commit("removeResource", id)
+    async removeResource({ commit }, id) {
+      await removeResource(id);
+      commit("removeResource", id);
     },
-    setResourceDetails({commit}, data) {
-      commit('setResourceDetails', data)
+    setResourceDetails({ commit }, data) {
+      commit("setResourceDetails", data);
     },
     updateFormData({ commit, state }, newData) {
       commit("updateFormData", newData);
+    },
+    async updateSomeResource({ commit },  data ) {
+      const { id, ...resourceWithoutId } = data;
+      const updatedResource = await updateResource(id, resourceWithoutId);
+      commit("updateResource", updatedResource);
     },
   },
   getters: {
     allResources: (state) => state.resources,
     getColumns: (state) => state.tableColumns,
-    getResourceById: (state) => (id) => state.resources.find(resource => resource.id === id),
-    getResourceDetails: (state) => state.resourceDetails
+    getResourceById: (state) => (id) =>
+      state.resources.find((resource) => resource.id === id),
+    getResourceDetails: (state) => state.resourceDetails,
   },
 };

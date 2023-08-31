@@ -1,33 +1,57 @@
 <template>
   <v-text-field
-    v-model="formData.type"
-    :counter="10"
-    :rules="nameRules"
-    label="Type"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.size"
-    :counter="10"
-    :rules="nameRules"
-    label="Size"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.quality"
-    :counter="10"
-    :rules="nameRules"
-    label="Quality"
-    required
-  ></v-text-field>
-
-  <v-text-field
     v-model="formData.color"
     :counter="10"
     :rules="nameRules"
     label="Color"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.carat"
+    :counter="10"
+    :rules="nameRules"
+    label="Carat"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.cut"
+    :counter="10"
+    :rules="nameRules"
+    label="Cut"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.clarity"
+    :counter="10"
+    :rules="nameRules"
+    label="Clarity"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.dimensionX"
+    :counter="10"
+    :rules="nameRules"
+    label="dimensionX"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.dimensionY"
+    :counter="10"
+    :rules="nameRules"
+    label="dimensionY"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.dimensionZ"
+    :counter="10"
+    :rules="nameRules"
+    label="dimensionZ"
     required
   ></v-text-field>
 
