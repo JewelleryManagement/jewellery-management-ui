@@ -7,13 +7,13 @@
         <option v-for="clazz in gemstoneClasses" :key="clazz" class="menu-option">{{ clazz.label }}</option>
       </select>
     </div>
-    <div v-if="selectedGemstoneClass === 'ChooseClass' && resources.length > 0">
+    <div v-if="selectedGemstoneClass === 'ChooseClass' && resourcesLength > 0">
       <p class="information select">Please select a resource class.</p>
     </div>
-    <div v-else-if="filteredResources.length === 0 && resources.length > 0" class="information unavailable">
+    <div v-else-if="filteredresourceInUser.length === 0 && resourcesLength > 0" class="information unavailable">
       No resources available.
     </div>
-    <div v-else-if="resources.length == 0" class="information unavailable">
+    <div v-else-if="resourcesLength == 0" class="information unavailable">
       This user doesn't have any resources
     </div>
     <div v-else>
@@ -21,14 +21,13 @@
         <table class="table-table">
           <thead class="table-component">
             <tr>
-              <th v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Precious Metals' || selectedGemstoneClass == 'Gemstones'">Resource Type</th>
+              <th v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Precious Metals'">Resource Type</th>
               <th v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Precious Metals' || selectedGemstoneClass == 'Gemstones'">Resource Color</th>
               <th v-if="selectedGemstoneClass == 'Pearls'">Size</th>   
               <th v-if="selectedGemstoneClass == 'Pearls'">Shape</th>   
               <th v-if="selectedGemstoneClass == 'Pearls'">Quality</th>   
               <th v-if="selectedGemstoneClass == 'Precious Metals'">Purity</th>   
-              <th v-if="selectedGemstoneClass == 'Precious Metals'">Plating</th>   
-              <th v-if="selectedGemstoneClass == 'Gemstones'">Quality</th>   
+              <th v-if="selectedGemstoneClass == 'Precious Metals'">Plating</th>      
               <th v-if="selectedGemstoneClass == 'Gemstones'">Carat</th>   
               <th v-if="selectedGemstoneClass == 'Gemstones'">Cut</th>   
               <th v-if="selectedGemstoneClass == 'Gemstones'">Clarity</th>   
@@ -40,25 +39,24 @@
             </tr>
           </thead>
           <tbody class="table-component">
-            <tr v-for="(resource, index) in filteredResources" :key="index">
-              <td v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Precious Metals' || selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].type }}</td>
-              <td v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Precious Metals'">{{ resource.resources[index].color }}</td>
-              <td v-if="selectedGemstoneClass == 'Pearls'">{{ resource.resources[index].size }}</td>
-              <td v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].shape }}</td>
-              <td v-if="selectedGemstoneClass == 'Pearls'">{{ resource.resources[index].quality }}</td>
+            <tr v-for="(resource, index) in filteredresourceInUser" :key="index">
+              <td v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Precious Metals'">{{ resource.resource.type }}</td>
+              <td v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Precious Metals'">{{ resource.resource.color }}</td>
+              <td v-if="selectedGemstoneClass == 'Pearls'">{{ resource.resource.size }}</td>
+              <td v-if="selectedGemstoneClass == 'Pearls' || selectedGemstoneClass == 'Gemstones'">{{ resource.resource.shape }}</td>
+              <td v-if="selectedGemstoneClass == 'Pearls'">{{ resource.resource.quality }}</td>
 
-              <td v-if="selectedGemstoneClass == 'Precious Metals'">{{ resource.resources[index].purity }}</td>
-              <td v-if="selectedGemstoneClass == 'Precious Metals'">{{ resource.resources[index].plating }}</td>
+              <td v-if="selectedGemstoneClass == 'Precious Metals'">{{ resource.resource.purity }}</td>
+              <td v-if="selectedGemstoneClass == 'Precious Metals'">{{ resource.resource.plating }}</td>
 
-              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].quality }}</td>
-              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].carat }}</td>
-              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].cut }}</td>
-              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].clarity }}</td>
-              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].dimensionX }}</td>
-              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].dimensionY }}</td>
-              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resources[index].dimensionZ }}</td>
+              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resource.carat }}</td>
+              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resource.cut }}</td>
+              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resource.clarity }}</td>
+              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resource.dimensionX }}</td>
+              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resource.dimensionY }}</td>
+              <td v-if="selectedGemstoneClass == 'Gemstones'">{{ resource.resource.dimensionZ }}</td>
               
-              <td v-if="selectedGemstoneClass == 'Linking Parts'">{{ resource.resources[index].description }}</td>
+              <td v-if="selectedGemstoneClass == 'Linking Parts'">{{ resource.resource.description }}</td>
               
               <td>{{ resource.quantity }}</td>
             </tr>
@@ -77,8 +75,8 @@ export default {
       type: String,
       required: true,
     },
-    resources: {
-      type: Array,
+    resourcesInUser: {
+      type: Object,
       required: true,
     },
   },
@@ -102,22 +100,28 @@ export default {
           name:"LinkingPart",
           label: "Linking Parts",
         }, 
-        ],
+      ],
     };
   },
 computed: {
-  filteredResources() {
+  filteredresourceInUser() {
     if (this.selectedGemstoneClass === "ChooseClass") {
-      return this.resources;
+      return this.resourcesInUser.resourcesAndQuantities;
     } else {
       const selectedClass = this.gemstoneClasses.find(clazz => clazz.label === this.selectedGemstoneClass);
       if (selectedClass) {
-        return this.resources.filter(resource => resource.resources[0].clazz === selectedClass.name);
+        console.log(this.resourcesInUser);
+        let filteredResources = this.resourcesInUser.resourcesAndQuantities.filter(resourceAndQuantity => resourceAndQuantity.resource.clazz === selectedClass.name);
+        console.log(filteredResources);
+        return filteredResources;
       } else {
         return [];
       }
     }
   },
+  resourcesLength() {
+      return this.resourcesInUser.resourcesAndQuantities.length;
+    },
 },
   methods: {
     goBack() {
@@ -289,7 +293,7 @@ computed: {
   .table {
     margin-top: 0.5rem;
   }
-  .no-resources {
+  .no-resourcesInUser {
     font-size: 2rem;
   }
 }

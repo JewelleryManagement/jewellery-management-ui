@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <h1 class="resources-header" style="top: 1.5rem">Resources availability table</h1>
+    <h1 class="resources-header" style="top: 1.5rem">resourcesInUser availability table</h1>
     <h1 class="resources-header" style="font-size: 1rem">{{ ownerName }}</h1>
-    <resource-availability-table :userId="userId" :resources="resources"></resource-availability-table>
+    <resource-availability-table :userId="userId" :resourcesInUser="resourcesInUser" v-if="resourcesInUser.resourcesAndQuantities"></resource-availability-table>
   </div>
 </template>
 
@@ -17,15 +17,15 @@ export default {
   data() {
     return {
       userId: null,
-      resources: [],
+      resourcesInUser: {},
       ownerName: "Loading...",
     };
   },
   async created() {
     this.userId = this.$route.params.userId;
-    this.resources = await fetchResourcesByUserID(this.userId);
-    if (this.resources.length > 0) {
-      this.ownerName = this.resources[0].owner.name; // Update owner name when data is fetched
+    this.resourcesInUser = await fetchResourcesByUserID(this.userId);
+    if (this.resourcesInUser.resourcesAndQuantities.length > 0) {
+      this.ownerName = this.resourcesInUser.owner.name;
     }else {
       this.ownerName = "This user doesn't have any resources";
     }
@@ -67,7 +67,7 @@ thead {
 }
 
 @media (max-width: 480px) {
-  .resources-header {
+  .resourcesInUser-header {
     font-size: 1rem;
     top: 0.7rem;
   }
