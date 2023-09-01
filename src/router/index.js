@@ -3,22 +3,8 @@ import Home from "../views/Home.vue";
 import Resources from "../views/Resources.vue";
 import Products from "../views/Products.vue";
 import Users from "../views/Users.vue";
-import Add from "../views/Add.vue";
+import ResourceDetails from "../views/ResourceDetails.vue";
 
-const resourceRoutes = [
-  {
-    path: "",
-    name: "Resources",
-    component: Resources,
-    meta: { title: "Resources page" },
-  },
-  {
-    path: "add",
-    name: "Add Resources",
-    component: Add,
-    meta: { title: "Add resource page" },
-  },
-];
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -43,14 +29,14 @@ const routes = [
   {
     path: "/resources/add",
     name: "Add Resources",
-    component: Add,
+    component: ResourceDetails,
     meta: { title: "Add resource" },
   },
   {
     path: "/resources/edit/:id",
     name: "Edit-Resource",
     props: true,
-    component: Add,
+    component: ResourceDetails,
     meta: { title: "Edit resource" },
   },
 

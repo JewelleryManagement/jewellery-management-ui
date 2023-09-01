@@ -37,7 +37,8 @@ export default {
     const search = ref("");
 
     const onDelete = async (id) => {
-      await store.dispatch("resources/removeResource", id)
+      const confirmation = window.confirm('Are you sure that you would like to delete this item?')
+      if (confirmation) await store.dispatch("resources/removeResource", id)
     }
 
     return {

@@ -8,6 +8,14 @@
   ></v-text-field>
 
   <v-text-field
+    v-model="formData.quantityType"
+    :counter="10"
+    :rules="nameRules"
+    label="Quantity Type"
+    required
+  ></v-text-field>
+
+  <v-text-field
     v-model="formData.purity"
     :counter="10"
     :rules="nameRules"
@@ -39,7 +47,7 @@ import { useStore } from "vuex";
 export default {
   setup() {
     const store = useStore();
-    const formData = store.state.resources.resourceDetails;
+    const formData = store.getters["resources/getResourceDetails"];
 
     const nameRules = [
       (v) => !!v || `Input field is required`,

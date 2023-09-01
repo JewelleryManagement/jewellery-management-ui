@@ -44,10 +44,7 @@ export async function postResources(data) {
 
 async function removeData(endpoint) {
   try {
-    const response = await axios.delete(endpoint)
-    if (response.status === 201) {
-      return response.data;
-    }
+    await axios.delete(endpoint)
   } catch (error) {
     throw new Error("Failed to delete this resource.");
   }

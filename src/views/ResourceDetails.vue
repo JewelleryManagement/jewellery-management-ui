@@ -12,6 +12,7 @@
           v-model="selected"
           :items="options"
           label="Select resource type"
+          :disabled="isDisabled"
         ></v-select>
 
         <v-form @submit.prevent="handleSubmit" ref="form">
@@ -19,7 +20,6 @@
           <PreciousMetal v-if="selected === 'PreciousMetal'" />
           <Gemstone v-if="selected === 'Gemstone'" />
           <LinkingPart v-if="selected === 'LinkingPart'" />
-
 
           <v-card-text
             v-if="sentData"
@@ -57,7 +57,7 @@ import Pearl from "../components/AddResources/Pearl.vue";
 import PreciousMetal from "../components/AddResources/PreciousMetal.vue";
 import Gemstone from "../components/AddResources/Gemstone.vue";
 import LinkingPart from "../components/AddResources/LinkingPart.vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 export default {
@@ -65,7 +65,7 @@ export default {
     Pearl,
     PreciousMetal,
     Gemstone,
-    LinkingPart
+    LinkingPart,
   },
   props: {
     id: String,
@@ -73,6 +73,7 @@ export default {
   setup(props) {
     const store = useStore();
     const route = useRoute();
+    const router = useRouter();
     const options = ref(["Pearl", "Gemstone", "PreciousMetal", "LinkingPart"]);
     const pageTitle = ref(route.meta.title);
     const getText = computed(() => (text1, text2) => {
@@ -81,15 +82,21 @@ export default {
 
     const showSnackbar = inject("showSnackbar");
     const selected = ref("");
+    const isDisabled = ref(false);
+
     const form = ref(null);
     const sentData = ref(false);
-    const formData = computed(() => store.state.resources.resourceDetails);
+    const resourceDetails = computed(
+      () => store.state.resources.resourceDetails
+    );
 
     if (props.id) {
-      const data = computed(() =>store.getters["resources/getResourceById"](props.id));
-      store.dispatch("resources/setResourceDetails", data.value);
-      const resourceDetail = computed(() => store.getters["resources/getResourceDetails"]);
-      selected.value = resourceDetail.value.clazz;
+      isDisabled.value = true;
+      const resourceDetails = computed(() =>
+        store.getters["resources/getResourceById"](props.id)
+      );
+      store.dispatch("resources/setResourceDetails", resourceDetails.value);
+      selected.value = resourceDetails.value.clazz;
     }
 
     const handleSelectedOption = (newValue) => {
@@ -98,12 +105,11 @@ export default {
 
     watch(selected, (newValue) => {
       //Reset input data on selection change
-      store.dispatch("resources/updateFormData", {});
+      store.dispatch("resources/setResourceDetails", {});
     });
 
     const resData = () => {
       if (form.value) {
-        console.log(form.value);
         form.value.reset();
         form.value.resetValidation();
       }
@@ -111,18 +117,32 @@ export default {
 
     const handleSubmit = async () => {
       const { valid } = await form.value.validate();
-      if (valid && pageTitle.value === "Add resource") {
-        store.dispatch("resources/setResourceDetails", {
-          clazz: selected.value,
-          ...formData.value,
-        });
+
+      if (valid && props.id) {
+        // edit
         try {
-          await store.dispatch("resources/AddResources", {
+          store.dispatch("resources/updateSomeResource", resourceDetails.value);
+          infoSent();
+          router.push("/resources");
+        } catch (error) {
+          showSnackbar({
+            message: "Failed to send resource.",
+            color: "error",
+            timeout: 4000,
+            location: "top right",
+          });
+        }
+      } else {
+        // add
+        try {
+          await store.dispatch("resources/AddResource", {
             clazz: selected.value,
-            ...formData.value,
+            ...resourceDetails.value,
           });
           infoSent();
           resData();
+          router.push("/resources");
+
         } catch (error) {
           showSnackbar({
             message: "Failed to send resource.",
@@ -131,22 +151,7 @@ export default {
             location: "top right",
           });
         }
-      } else if (valid && pageTitle.value == "Edit resource") {
-        const resourceDetail = computed(
-          () => store.getters["resources/getResourceDetails"]
-        );
-        try {
-          store.dispatch("resources/updateSomeResource", resourceDetail.value);
-          infoSent();
-        } catch (error) {
-          showSnackbar({
-            message: "Failed to send resource.",
-            color: "error",
-            timeout: 4000,
-            location: "top right",
-          });
-        }
-      } 
+      }
     };
 
     const infoSent = () => {
@@ -158,6 +163,7 @@ export default {
     };
 
     return {
+      isDisabled,
       getText,
       handleSubmit,
       resData,
