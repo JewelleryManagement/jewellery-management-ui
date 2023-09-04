@@ -35,12 +35,12 @@ export default {
     setResources(state, resources) {
       state.resources = resources;
     },
-    addResource(state, payload) {
+    createResource(state, payload) {
       state.resources.push(payload);
     },
-    removeResource(state, payload) {
+    removeResource(state, id) {
       state.resources = state.resources.filter(
-        (resource) => resource.id !== payload
+        (resource) => resource.id !== id
       );
     },
     setResourceDetails(state, payload) {
@@ -48,8 +48,7 @@ export default {
     },
     updateResource(state, updatedResource) {
       const index = state.resources.findIndex((resource) => resource.id === updatedResource.id);
-      if (index !== -1) state.resources[index] = updateResource
-    
+      if (index !== -1) state.resources[index] = updatedResource;
     },
   },
   actions: {
@@ -57,9 +56,10 @@ export default {
       const res = await fetchResources();
       commit("setResources", res);
     },
-    async AddResource({ commit }, formData) {
+    async createResource({ commit }, formData) {
+      
       const res = await postResources(formData);
-      commit("addResource", res);
+      commit("createResource", res);
     },
     async removeResource({ commit }, id) {
       await removeResource(id);
@@ -68,8 +68,7 @@ export default {
     setResourceDetails({ commit }, data) {
       commit("setResourceDetails", data);
     },
-    async updateSomeResource({ commit },  data ) {
-      const { id, ...resourceWithoutId } = data;
+    async updateResource({ commit },  { id, ...resourceWithoutId } ) {
       const updatedResource = await updateResource(id, resourceWithoutId);
       commit("updateResource", updatedResource);
     },

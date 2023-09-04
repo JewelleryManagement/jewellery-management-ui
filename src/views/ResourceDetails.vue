@@ -12,7 +12,7 @@
           v-model="selected"
           :items="options"
           label="Select resource type"
-          :disabled="isDisabled"
+          :disabled="isEditState"
         ></v-select>
 
         <v-form @submit.prevent="handleSubmit" ref="form">
@@ -21,23 +21,12 @@
           <Gemstone v-if="selected === 'Gemstone'" />
           <LinkingPart v-if="selected === 'LinkingPart'" />
 
-          <v-card-text
-            v-if="sentData"
-            class="text-red-darken-4 text-center text-h6 pa-0"
-            style="height: 1rem"
-          >
-            {{
-              getText("Item has been updated", "Information has been submited")
-            }}
-          </v-card-text>
-          <div v-else style="height: 1rem"></div>
-
           <div v-if="selected" class="d-flex flex-column">
             <v-btn color="success" class="mt-4" block type="submit">
-              {{ getText("Edit", "Submit") }}
+              Submit
             </v-btn>
 
-            <v-btn color="error" class="mt-4" block @click="resData">
+            <v-btn color="error" class="mt-4" block @click="resetForm">
               Reset
             </v-btn>
 
@@ -53,10 +42,10 @@
 
 <script>
 import { ref, computed, watch, inject } from "vue";
-import Pearl from "../components/AddResources/Pearl.vue";
-import PreciousMetal from "../components/AddResources/PreciousMetal.vue";
-import Gemstone from "../components/AddResources/Gemstone.vue";
-import LinkingPart from "../components/AddResources/LinkingPart.vue";
+import Pearl from "../components/ResourceDetailsForm/Pearl.vue";
+import PreciousMetal from "../components/ResourceDetailsForm/PreciousMetal.vue";
+import Gemstone from "../components/ResourceDetailsForm/Gemstone.vue";
+import LinkingPart from "../components/ResourceDetailsForm/LinkingPart.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
@@ -76,22 +65,16 @@ export default {
     const router = useRouter();
     const options = ref(["Pearl", "Gemstone", "PreciousMetal", "LinkingPart"]);
     const pageTitle = ref(route.meta.title);
-    const getText = computed(() => (text1, text2) => {
-      return pageTitle.value === "Edit resource" ? text1 : text2;
-    });
-
+    const resourceDetails = computed(
+      () => store.getters["resources/getResourceDetails"]
+    );
     const showSnackbar = inject("showSnackbar");
     const selected = ref("");
-    const isDisabled = ref(false);
+    const isEditState = props.id !== undefined;
 
     const form = ref(null);
-    const sentData = ref(false);
-    const resourceDetails = computed(
-      () => store.state.resources.resourceDetails
-    );
 
-    if (props.id) {
-      isDisabled.value = true;
+    if (isEditState) {
       const resourceDetails = computed(() =>
         store.getters["resources/getResourceById"](props.id)
       );
@@ -99,16 +82,12 @@ export default {
       selected.value = resourceDetails.value.clazz;
     }
 
-    const handleSelectedOption = (newValue) => {
-      selected.value = newValue;
-    };
-
     watch(selected, (newValue) => {
       //Reset input data on selection change
-      store.dispatch("resources/setResourceDetails", {});
+      store.dispatch("resources/setResourceDetails", { clazz: newValue });
     });
 
-    const resData = () => {
+    const resetForm = () => {
       if (form.value) {
         form.value.reset();
         form.value.resetValidation();
@@ -117,61 +96,59 @@ export default {
 
     const handleSubmit = async () => {
       const { valid } = await form.value.validate();
-
-      if (valid && props.id) {
-        // edit
-        try {
-          store.dispatch("resources/updateSomeResource", resourceDetails.value);
-          infoSent();
-          router.push("/resources");
-        } catch (error) {
-          showSnackbar({
-            message: "Failed to send resource.",
-            color: "error",
-            timeout: 4000,
-            location: "top right",
-          });
-        }
-      } else {
-        // add
-        try {
-          await store.dispatch("resources/AddResource", {
-            clazz: selected.value,
-            ...resourceDetails.value,
-          });
-          infoSent();
-          resData();
-          router.push("/resources");
-
-        } catch (error) {
-          showSnackbar({
-            message: "Failed to send resource.",
-            color: "error",
-            timeout: 4000,
-            location: "top right",
-          });
+      if (valid) {
+        if (isEditState) {
+          editResource();
+        } else {
+          createResource();
         }
       }
     };
 
-    const infoSent = () => {
-      sentData.value = true;
+    const editResource = async () => {
+      try {
+        await store.dispatch("resources/updateResource", resourceDetails.value);
+        showSuccessSnackbar("Successfully edited resource!");
+        router.push("/resources");
+      } catch (error) {
+        showErrorSnackbar("Couldn't edit resouce");
+      }
+    };
 
-      setTimeout(() => {
-        sentData.value = false;
-      }, 4000);
+    const createResource = async () => {
+      try {
+        await store.dispatch("resources/createResource", resourceDetails.value);
+        showSuccessSnackbar("Successfully created resource!");
+        router.push("/resources");
+      } catch (error) {
+        showErrorSnackbar("Couldn't create resource");
+      }
+    };
+
+    const showErrorSnackbar = (message) => {
+      showSnackbar({
+        message: message,
+        color: "error",
+        timeout: 4000,
+        location: "bottom center",
+      });
+    };
+
+    const showSuccessSnackbar = (message) => {
+      showSnackbar({
+        message: message,
+        color: "success",
+        timeout: 4000,
+        location: "bottom center",
+      });
     };
 
     return {
-      isDisabled,
-      getText,
+      isEditState,
       handleSubmit,
-      resData,
-      sentData,
-      infoSent,
+      resetForm,
       form,
       pageTitle,
-      handleSelectedOption,
       selected,
       options,
     };

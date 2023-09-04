@@ -2,7 +2,7 @@
   <v-text-field
     v-model="formData.color"
     :counter="10"
-    :rules="nameRules"
+    :rules="textFieldRules"
     label="Color"
     required
   ></v-text-field>
@@ -10,7 +10,7 @@
   <v-text-field
     v-model="formData.carat"
     :counter="10"
-    :rules="nameRules"
+    :rules="numberFieldRules"
     label="Carat"
     required
   ></v-text-field>
@@ -18,7 +18,7 @@
   <v-text-field
     v-model="formData.cut"
     :counter="10"
-    :rules="nameRules"
+    :rules="textFieldRules"
     label="Cut"
     required
   ></v-text-field>
@@ -26,7 +26,7 @@
   <v-text-field
     v-model="formData.clarity"
     :counter="10"
-    :rules="nameRules"
+    :rules="textFieldRules"
     label="Clarity"
     required
   ></v-text-field>
@@ -34,7 +34,7 @@
   <v-text-field
     v-model="formData.dimensionX"
     :counter="10"
-    :rules="nameRules"
+    :rules="numberFieldRules"
     label="dimensionX"
     required
   ></v-text-field>
@@ -42,7 +42,7 @@
   <v-text-field
     v-model="formData.dimensionY"
     :counter="10"
-    :rules="nameRules"
+    :rules="numberFieldRules"
     label="dimensionY"
     required
   ></v-text-field>
@@ -50,7 +50,7 @@
   <v-text-field
     v-model="formData.dimensionZ"
     :counter="10"
-    :rules="nameRules"
+    :rules="numberFieldRules"
     label="dimensionZ"
     required
   ></v-text-field>
@@ -58,7 +58,7 @@
   <v-text-field
     v-model="formData.quantityType"
     :counter="10"
-    :rules="nameRules"
+    :rules="textFieldRules"
     label="Quantity Type"
     required
   ></v-text-field>
@@ -66,7 +66,7 @@
   <v-text-field
     v-model="formData.shape"
     :counter="10"
-    :rules="nameRules"
+    :rules="textFieldRules"
     label="Shape"
     required
   ></v-text-field>
@@ -80,14 +80,20 @@ export default {
     const store = useStore();
     const formData = store.getters["resources/getResourceDetails"];
 
-    const nameRules = [
+    const textFieldRules = [
       (v) => !!v || `Input field is required`,
       (v) => (v && v.length <= 10) || "Input must be less than 10 characters",
     ];
 
+    const numberFieldRules = [
+      (v) => !!v || `Input field is required`,
+      (v) => (v && v > 0) || "Input must be a number larger than 0",
+    ];
+
     return {
       formData,
-      nameRules
+      textFieldRules,
+      numberFieldRules
     };
   },
 };

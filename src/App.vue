@@ -21,7 +21,7 @@
 
 <script>
 import NavBar from "./components/Nav/NavBar.vue";
-import SnackBar from "./components/ui/SnackBar.vue";
+import SnackBar from "./components/Popup/SnackBar.vue";
 import { ref, provide } from "vue";
 
 export default {

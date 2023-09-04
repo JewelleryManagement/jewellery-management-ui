@@ -1,11 +1,12 @@
 <template>
-  <v-text-field
+  <v-textarea
     v-model="formData.description"
-    :counter="30"
-    :rules="nameRules"
+    :counter="100"
+    :rules="descriptionRules"
+    rows=2
     label="Description"
     required
-  ></v-text-field>
+  ></v-textarea>
 
   <v-text-field
     v-model="formData.quantityType"
@@ -30,9 +31,15 @@ export default {
       (v) => (v && v.length <= 30) || "Input must be less than 30 characters",
     ];
 
+    const descriptionRules = [
+      (v) => !!v || `Input field is required`,
+      (v) => (v && v.length <= 100) || "Input must be less than 100 characters",
+    ];
+
     return {
       formData,
-      nameRules
+      nameRules,
+      descriptionRules
     };
   },
 };
