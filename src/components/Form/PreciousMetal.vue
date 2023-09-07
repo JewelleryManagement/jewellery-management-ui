@@ -38,25 +38,22 @@
     label="Plating"
     required
   ></v-text-field>
-
 </template>
 
 <script>
 import { useStore } from "vuex";
+import { useTextFieldRules } from "../../utils/validation-rules.js";
 
 export default {
   setup() {
     const store = useStore();
     const formData = store.getters["resources/getResourceDetails"];
 
-    const nameRules = [
-      (v) => !!v || `Input field is required`,
-      (v) => (v && v.length <= 10) || "Input must be less than 10 characters",
-    ];
+    const nameRules = useTextFieldRules();
 
     return {
       formData,
-      nameRules
+      nameRules,
     };
   },
 };

@@ -50,21 +50,19 @@
 
 <script>
 import { useStore } from "vuex";
+import {
+  useTextFieldRules,
+  useNumberFieldRules,
+} from "../../utils/validation-rules.js";
 
 export default {
   setup() {
     const store = useStore();
     const formData = store.getters["resources/getResourceDetails"];
 
-    const textFieldRules = [
-      (v) => !!v || `Input field is required`,
-      (v) => (v && v.length <= 10) || "Input must be less than 10 characters",
-    ];
-    const numberFieldRules = [
-      (v) => !!v || `Input field is required`,
-      (v) => (v && v > 0) || "Input must be a number larger than 0",
-    ];
-
+    const textFieldRules = useTextFieldRules()
+    const numberFieldRules = useNumberFieldRules();
+    
     return {
       formData,
       textFieldRules,

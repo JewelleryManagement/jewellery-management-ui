@@ -20,21 +20,19 @@
 
 <script>
 import { useStore } from "vuex";
+import {
+  useTextFieldRules,
+  useTextAreaFieldRules,
+} from "../../utils/validation-rules.js";
+
 
 export default {
   setup() {
     const store = useStore();
     const formData = store.getters["resources/getResourceDetails"];
 
-    const nameRules = [
-      (v) => !!v || `Input field is required`,
-      (v) => (v && v.length <= 30) || "Input must be less than 30 characters",
-    ];
-
-    const descriptionRules = [
-      (v) => !!v || `Input field is required`,
-      (v) => (v && v.length <= 100) || "Input must be less than 100 characters",
-    ];
+    const nameRules = useTextFieldRules();
+    const descriptionRules = useTextAreaFieldRules();
 
     return {
       formData,
