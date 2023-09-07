@@ -18,7 +18,7 @@
   <v-text-field
     v-model="formData.purity"
     :counter="10"
-    :rules="nameRules"
+    :rules="numberFieldRules"
     label="Purity"
     required
   ></v-text-field>
@@ -42,7 +42,10 @@
 
 <script>
 import { useStore } from "vuex";
-import { useTextFieldRules } from "../../utils/validation-rules.js";
+import {
+  useTextFieldRules,
+  useNumberFieldRules,
+} from "../../utils/validation-rules.js";
 
 export default {
   setup() {
@@ -50,10 +53,12 @@ export default {
     const formData = store.getters["resources/getResourceDetails"];
 
     const nameRules = useTextFieldRules();
+    const numberFieldRules = useNumberFieldRules();
 
     return {
       formData,
       nameRules,
+      numberFieldRules,
     };
   },
 };
