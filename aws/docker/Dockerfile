@@ -1,27 +1,9 @@
 # base image
 FROM nginx:stable-alpine
 
-# RUN npm install -g http-server
+WORKDIR /usr/share/nginx/html
 
-# set working directory
-WORKDIR /app
+COPY ./app/ .
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-# add `/app/node_modules/.bin` to $PATH
-# ENV PATH /app/node_modules/.bin:$PATH
-# ENV NODE_ENV development
-
-# install and cache app dependencies
-# COPY app/package*.json ./
-# RUN npm install -g yarn
-# RUN yarn install --verbose
-# RUN yarn global add @vue/cli
-
-# COPY . .
-
-# start app
-# CMD ["npm", "run", "serve"]
-# CMD ["http-server", "dist", "-a", "localhost", "-p", "3000"]
-
-COPY /app /usr/share/nginx/html
-# EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
