@@ -42,10 +42,10 @@
 
 <script>
 import { ref, computed, watch, inject } from "vue";
-import Pearl from "../components/ResourceDetailsForm/Pearl.vue";
-import PreciousMetal from "../components/ResourceDetailsForm/PreciousMetal.vue";
-import Gemstone from "../components/ResourceDetailsForm/Gemstone.vue";
-import LinkingPart from "../components/ResourceDetailsForm/LinkingPart.vue";
+import Pearl from "../components/Form/Pearl.vue";
+import PreciousMetal from "../components/Form/PreciousMetal.vue";
+import Gemstone from "../components/Form/Gemstone.vue";
+import LinkingPart from "../components/Form/LinkingPart.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
