@@ -3,6 +3,8 @@ import Home from "../views/Home.vue";
 import Resources from "../views/Resources.vue";
 import Products from "../views/Products.vue";
 import Users from "../views/Users.vue";
+import ResourceDetails from "../views/ResourceDetails.vue";
+
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -25,6 +27,20 @@ const routes = [
     meta: { title: "Resources page" },
   },
   {
+    path: "/resources/add",
+    name: "Add Resources",
+    component: ResourceDetails,
+    meta: { title: "Add resource" },
+  },
+  {
+    path: "/resources/edit/:id",
+    name: "Edit-Resource",
+    props: true,
+    component: ResourceDetails,
+    meta: { title: "Edit resource" },
+  },
+
+  {
     path: "/products",
     name: "Products",
     component: Products,
@@ -38,10 +54,10 @@ const router = createRouter({
   linkActiveClass: "active",
 });
 
-router.beforeEach((to,from,next) => {
+router.beforeEach((to, from, next) => {
   const pageTitle = to.meta.title;
-  document.title = pageTitle
-  next()
-})
+  document.title = pageTitle;
+  next();
+});
 
 export default router;
