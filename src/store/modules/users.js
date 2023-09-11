@@ -29,7 +29,7 @@ export default {
     },
     toggleSorting({ commit, state }) {
       commit("setIsSorting", true);
-      commit("setIsBeingSorted", true)
+      commit("setIsBeingSorted", true);
       setTimeout(() => {
         // commit("setIsAscending", !state.isAscending);
         commit("setIsSorting", false);
@@ -45,6 +45,9 @@ export default {
     },
     allUsers(state) {
       return state.users;
+    },
+    getUserById: (state) => (userId) => {
+      return state.users.find((user) => user.id === userId);
     },
     sortedUsers(state) {
       return state.users.slice().sort((a, b) => {

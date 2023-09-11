@@ -4,7 +4,7 @@ import Resources from "../views/Resources.vue";
 import Products from "../views/Products.vue";
 import Users from "../views/Users.vue";
 import ResourceDetails from "../views/ResourceDetails.vue";
-
+import UserAvailability from '../components/UserList/UserAvailability'
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -19,6 +19,13 @@ const routes = [
     name: "Users",
     component: Users,
     meta: { title: "Users page" },
+  },
+  {
+    path: "/users/:id",
+    props: true,
+    name: "Users Availability",
+    component: UserAvailability,
+    meta: { title: "Users Availability" },
   },
   {
     path: "/resources",
