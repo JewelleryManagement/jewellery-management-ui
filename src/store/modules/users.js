@@ -7,6 +7,26 @@ export default {
     isSorting: false,
     isBeingSorted: false,
     isAscending: true,
+    tableColumns: [
+      { key: "quantity", title: "Quantity" },
+      { key: "clazz", title: "Resource Type" },
+      { key: "color", title: "Color" },
+      { key: "quality", title: "Quality" },
+      { key: "quantityType", title: "Quantity Type" },
+      { key: "shape", title: "Shape" },
+      { key: "size", title: "Size" },
+      { key: "type", title: "Type" },
+      { key: "purity", title: "Purity" },
+      { key: "plating", title: "Plating" },
+      { key: "carat", title: "Carat" },
+      { key: "cut", title: "Cut" },
+      { key: "dimensionX", title: "dimensionX" },
+      { key: "dimensionY", title: "dimensionY" },
+      { key: "dimensionZ", title: "dimensionZ" },
+      { key: "description", title: "Description" },
+      { key: "delete", title: "", slot: "delete" },
+      { key: "edit", title: "", slot: "edit" },
+    ],
   },
   mutations: {
     setUsers(state, users) {
@@ -37,6 +57,7 @@ export default {
     },
   },
   getters: {
+    getColumns: (state) => state.tableColumns,
     isSorting(state) {
       return state.isSorting;
     },
