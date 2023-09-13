@@ -32,8 +32,8 @@
 import { computed, ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import { VDataTable } from "vuetify/labs/VDataTable";
-import ResourceAvailabilityTable from "@/components/Tables/ResourceAvailabilityTable.vue";
-import UserCard from "@/components/Cards/UserCard.vue";
+import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
+import UserCard from "@/components/Card/UserCard.vue";
 
 export default {
   components: {

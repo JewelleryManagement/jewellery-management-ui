@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import ProductsTable from "@/components/Tables/ProductsTable.vue";
+import ProductsTable from "@/components/Table/ProductsTable.vue";
 import { onMounted, inject } from "vue";
 import { useStore } from "vuex";
 
