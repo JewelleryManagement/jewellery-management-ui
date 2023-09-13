@@ -5,7 +5,7 @@
 </template>
 <script>
 import { inject, onMounted } from "vue";
-import UserList from "@/components/UserList/UserList.vue";
+import UserList from "@/components/List/UserList.vue";
 
 import { useStore } from "vuex";
 

@@ -1,16 +1,24 @@
-import { fetchUsers } from "@/services/HttpClientService.js";
+import {
+  fetchUsers,
+  fetchResourcePerUser,
+} from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
   state: {
     users: [],
+    usersResources: {},
     isSorting: false,
     isBeingSorted: false,
     isAscending: true,
+    resourceAvailabilityColumns: [{ key: "quantity", title: "Quantity" }],
   },
   mutations: {
     setUsers(state, users) {
       state.users = users;
+    },
+    setUsersResources(state, usersResources) {
+      state.usersResources = usersResources;
     },
     setIsSorting(state, isSorting) {
       state.isSorting = isSorting;
@@ -29,14 +37,22 @@ export default {
     },
     toggleSorting({ commit, state }) {
       commit("setIsSorting", true);
-      commit("setIsBeingSorted", true)
+      commit("setIsBeingSorted", true);
       setTimeout(() => {
         // commit("setIsAscending", !state.isAscending);
         commit("setIsSorting", false);
       }, 100);
     },
+    async fetchResourcesPerUser({ commit }, userId) {
+      const res = await fetchResourcePerUser(userId);
+      commit("setUsersResources", res);
+    },
   },
   getters: {
+    getColumns: (state, getters, rootState, rootGetters) => [
+      ...state.resourceAvailabilityColumns,
+      ...rootGetters["resources/getColumns"],
+    ],
     isSorting(state) {
       return state.isSorting;
     },
@@ -45,6 +61,9 @@ export default {
     },
     allUsers(state) {
       return state.users;
+    },
+    getUserResources(state) {
+      return state.usersResources;
     },
     sortedUsers(state) {
       return state.users.slice().sort((a, b) => {

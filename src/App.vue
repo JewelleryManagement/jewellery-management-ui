@@ -1,22 +1,26 @@
 <template>
-  <v-app>
-    <NavBar :pages="pages" />
-    <v-main>
-      <router-view v-slot="slotProps">
-        <transition name="route" mode="out-in">
-          <component :is="slotProps.Component"></component>
-        </transition>
-      </router-view>
-    </v-main>
-    <SnackBar
-      :isActive="snackbar.isActive"
-      :message="snackbar.message"
-      :color="snackbar.color"
-      :location="snackbar.location"
-      :timeout="snackbar.timeout"
-      :width="snackbar.width"
-    />
-  </v-app>
+  <suspense>
+    <template #default>
+      <v-app>
+        <NavBar :pages="pages" />
+        <v-main>
+          <router-view v-slot="slotProps">
+            <transition name="route" mode="out-in">
+              <component :is="slotProps.Component"></component>
+            </transition>
+          </router-view>
+        </v-main>
+        <SnackBar
+          :isActive="snackbar.isActive"
+          :message="snackbar.message"
+          :color="snackbar.color"
+          :location="snackbar.location"
+          :timeout="snackbar.timeout"
+          :width="snackbar.width"
+        />
+      </v-app>
+    </template>
+  </suspense>
 </template>
 
 <script>

@@ -27,6 +27,7 @@
                 :key="user.email"
                 :title="user.name"
                 :subtitle="user.email"
+                :to="`/users/${user.id}`"
               >
                 <template v-slot:prepend>
                   <v-icon>
@@ -56,7 +57,7 @@ export default {
     const sortedUsers = computed(() => store.getters["users/sortedUsers"]);
     const isSorting = computed(() => store.getters["users/isSorting"]);
     const isBeingSorted = computed(() => store.getters["users/isBeingSorted"]);
-
+    
     const sortUsers = () => {
       store.dispatch("users/toggleSorting");
     };

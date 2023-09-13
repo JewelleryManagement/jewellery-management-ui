@@ -23,7 +23,7 @@
 
 <script>
 import { onMounted, inject } from "vue";
-import ResourceTable from "@/components/Tables/ResourceTable.vue";
+import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
 
 export default {
