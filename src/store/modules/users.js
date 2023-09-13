@@ -50,8 +50,8 @@ export default {
   },
   getters: {
     getColumns: (state, getters, rootState, rootGetters) => [
-      ...rootGetters["resources/getColumns"],
       ...state.resourceAvailabilityColumns,
+      ...rootGetters["resources/getColumns"],
     ],
     isSorting(state) {
       return state.isSorting;

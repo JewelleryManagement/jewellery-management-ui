@@ -1,22 +1,31 @@
-<template>
-  <v-container class="my-12" fluid>
-    <v-row justify="center">
-      <v-col cols="10" max-width="1600">
-        <user-card
-          :name="user.owner.name"
-          :email="user.owner.email"
-          :resourcesAndQuantities="user.resourcesAndQuantities"
-        ></user-card>
 
-        <resource-availability-table
-          :tableColumns="tableColumns"
-          :resourceItem="resourceItem"
-          :search="search"
-          :name="user.owner.name"
-        ></resource-availability-table>
-      </v-col>
-    </v-row>
-  </v-container>
+<template>
+  <suspense>
+    <template #default>
+      <v-container class="my-12" fluid>
+        <v-row justify="center">
+          <v-col cols="10" max-width="1600">
+            <suspense>
+              <user-card
+                :name="user.owner.name"
+                :email="user.owner.email"
+                :resourcesAndQuantities="user.resourcesAndQuantities"
+              ></user-card>
+            </suspense>
+            <resource-availability-table
+              :tableColumns="tableColumns"
+              :resourceItem="resourceItem"
+              :search="search"
+              :name="user.owner.name"
+            ></resource-availability-table>
+          </v-col>
+        </v-row>
+      </v-container>
+    </template>
+    <template #fallback>
+      <span>Loading...</span>
+    </template>
+  </suspense>
 </template>
 
 <script>
@@ -33,22 +42,19 @@ export default {
     UserCard,
   },
   props: ["id"],
-  setup(props) {
+  async setup(props) {
     const store = useStore();
     const showSnackbar = inject("showSnackbar");
-
-    onMounted(async () => {
-      try {
-        await store.dispatch("users/fetchResourcesPerUser", props.id);
-      } catch (error) {
-        showSnackbar({
-          message: "Failed to fetch products.",
-          color: "error",
-          timeout: 4000,
-          location: "top right",
-        });
-      }
-    });
+    try {
+      await store.dispatch("users/fetchResourcesPerUser", props.id);
+    } catch (error) {
+      showSnackbar({
+        message: "Failed to fetch products.",
+        color: "error",
+        timeout: 4000,
+        location: "top right",
+      });
+    }
     const user = computed(() => store.getters["users/getUserResources"]);
     const tableColumns = computed(() => store.getters["users/getColumns"]);
     const search = ref("");
