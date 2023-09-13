@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
-import Resources from "../views/Resources.vue";
-import Products from "../views/Products.vue";
-import Users from "../views/Users.vue";
-import ResourceDetails from "../views/ResourceDetails.vue";
-import UserAvailability from '../components/UserList/UserAvailability'
+const Home = () => import("../views/Home.vue");
+const Resources = () => import("../views/Resources.vue");
+const Products = () => import("../views/Products.vue");
+const Users = () => import("../views/Users.vue");
+const ResourceDetails = () => import("../views/ResourceDetails.vue");
+const UserDetails = () => import("../views/UserDetails.vue");
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -23,9 +23,9 @@ const routes = [
   {
     path: "/users/:id",
     props: true,
-    name: "Users Availability",
-    component: UserAvailability,
-    meta: { title: "Users Availability" },
+    name: "Users Details",
+    component: UserDetails,
+    meta: { title: "Users Details" },
   },
   {
     path: "/resources",

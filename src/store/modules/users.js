@@ -1,36 +1,24 @@
-import { fetchUsers } from "@/services/HttpClientService.js";
+import {
+  fetchUsers,
+  fetchResourcePerUser,
+} from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
   state: {
     users: [],
+    usersResources: {},
     isSorting: false,
     isBeingSorted: false,
     isAscending: true,
-    tableColumns: [
-      { key: "quantity", title: "Quantity" },
-      { key: "clazz", title: "Resource Type" },
-      { key: "color", title: "Color" },
-      { key: "quality", title: "Quality" },
-      { key: "quantityType", title: "Quantity Type" },
-      { key: "shape", title: "Shape" },
-      { key: "size", title: "Size" },
-      { key: "type", title: "Type" },
-      { key: "purity", title: "Purity" },
-      { key: "plating", title: "Plating" },
-      { key: "carat", title: "Carat" },
-      { key: "cut", title: "Cut" },
-      { key: "dimensionX", title: "dimensionX" },
-      { key: "dimensionY", title: "dimensionY" },
-      { key: "dimensionZ", title: "dimensionZ" },
-      { key: "description", title: "Description" },
-      { key: "delete", title: "", slot: "delete" },
-      { key: "edit", title: "", slot: "edit" },
-    ],
+    resourceAvailabilityColumns: [{ key: "quantity", title: "Quantity" }],
   },
   mutations: {
     setUsers(state, users) {
       state.users = users;
+    },
+    setUsersResources(state, usersResources) {
+      state.usersResources = usersResources;
     },
     setIsSorting(state, isSorting) {
       state.isSorting = isSorting;
@@ -55,9 +43,16 @@ export default {
         commit("setIsSorting", false);
       }, 100);
     },
+    async fetchResourcesPerUser({ commit }, userId) {
+      const res = await fetchResourcePerUser(userId);
+      commit("setUsersResources", res);
+    },
   },
   getters: {
-    getColumns: (state) => state.tableColumns,
+    getColumns: (state, getters, rootState, rootGetters) => [
+      ...rootGetters["resources/getColumns"],
+      ...state.resourceAvailabilityColumns,
+    ],
     isSorting(state) {
       return state.isSorting;
     },
@@ -67,8 +62,8 @@ export default {
     allUsers(state) {
       return state.users;
     },
-    getUserById: (state) => (userId) => {
-      return state.users.find((user) => user.id === userId);
+    getUserResources(state) {
+      return state.usersResources;
     },
     sortedUsers(state) {
       return state.users.slice().sort((a, b) => {

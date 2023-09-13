@@ -3,39 +3,53 @@
     <v-row justify="center">
       <v-col cols="10" max-width="1600">
         <user-card
-          :name="user.name"
-          :email="user.email"
+          :name="user.owner.name"
+          :email="user.owner.email"
           :resourcesAndQuantities="user.resourcesAndQuantities"
         ></user-card>
 
-        <users-table
+        <resource-availability-table
           :tableColumns="tableColumns"
           :resourceItem="resourceItem"
           :search="search"
-          :name="user.name"
-        ></users-table>
+          :name="user.owner.name"
+        ></resource-availability-table>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted, inject } from "vue";
 import { useStore } from "vuex";
 import { VDataTable } from "vuetify/labs/VDataTable";
-import UsersTable from "../Tables/UsersTable.vue";
-import UserCard from "./UserCard.vue";
+import ResourceAvailabilityTable from "@/components/Tables/ResourceAvailabilityTable.vue";
+import UserCard from "@/components/Cards/UserCard.vue";
 
 export default {
   components: {
     VDataTable,
-    UsersTable,
+    ResourceAvailabilityTable,
     UserCard,
   },
   props: ["id"],
   setup(props) {
     const store = useStore();
-    const user = computed(() => store.getters["users/getUserById"](props.id));
+    const showSnackbar = inject("showSnackbar");
+
+    onMounted(async () => {
+      try {
+        await store.dispatch("users/fetchResourcesPerUser", props.id);
+      } catch (error) {
+        showSnackbar({
+          message: "Failed to fetch products.",
+          color: "error",
+          timeout: 4000,
+          location: "top right",
+        });
+      }
+    });
+    const user = computed(() => store.getters["users/getUserResources"]);
     const tableColumns = computed(() => store.getters["users/getColumns"]);
     const search = ref("");
     const resourceItem = ref([]);
