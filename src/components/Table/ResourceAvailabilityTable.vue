@@ -4,8 +4,8 @@
       <h1>{{ name }}'s resource table</h1>
       <div class="d-flex justify-end">
         <v-col cols="12" sm="6" md="4" class="text-end">
-          <v-btn rounded="xs" size="x-large" color="red" to="/resources/add"
-            >Add resource</v-btn
+          <v-btn rounded="xs" size="x-large" color="red" :to="`/users/${pageId}/add`"
+            >Add quantity</v-btn
           >
         </v-col>
       </div>
@@ -44,6 +44,7 @@
 
 <script>
 import { VDataTable } from "vuetify/labs/VDataTable";
+import { useRoute, useRouter } from "vue-router";
 
 export default {
   props: ["tableColumns", "resourceItem", "search", "name"],
@@ -51,6 +52,7 @@ export default {
     VDataTable,
   },
   setup(props) {
+    const route = useRoute();
     const onDelete = async (id) => {
       const confirmation = window.confirm(
         "Are you sure that you would like to delete this item?"
@@ -63,6 +65,7 @@ export default {
       search: props.search,
       name: props.name,
       onDelete,
+      pageId: route.params.id
     };
   },
 };

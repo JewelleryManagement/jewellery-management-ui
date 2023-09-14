@@ -5,6 +5,7 @@ const Products = () => import("../views/Products.vue");
 const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
+const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -26,6 +27,16 @@ const routes = [
     name: "Users Details",
     component: UserDetails,
     meta: { title: "Users Details" },
+    // children: [
+    //   { path: "add", component: ResourceDetails },
+    // ]
+  },
+  {
+    path: "/users/:id/add",
+    props: true,
+    name: "Users resource add",
+    component: UserResourceDetails,
+    meta: { title: "Users resource add" },
   },
   {
     path: "/resources",
