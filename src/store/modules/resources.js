@@ -29,6 +29,7 @@ export default {
       { key: "description", title: "Description" },
       { key: "delete", title: "", slot: "delete" },
       { key: "edit", title: "", slot: "edit" },
+      { key: "add", title: "", slot: "add" },
     ],
   }),
   mutations: {
@@ -76,8 +77,7 @@ export default {
   getters: {
     allResources: (state) => state.resources,
     getColumns: (state) => state.tableColumns,
-    getResourceById: (state) => (id) =>
-      state.resources.find((resource) => resource.id === id),
+    getResourceById: (state) => (id) => state.resources.find((resource) => resource.id === id),
     getResourceDetails: (state) => state.resourceDetails,
   },
 };

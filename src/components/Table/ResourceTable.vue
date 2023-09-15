@@ -18,6 +18,12 @@
       <v-icon color="green">mdi-pencil</v-icon>
       </router-link>
     </template>
+    <template v-slot:item.add="{ item }">
+      <router-link :to="{ name: 'Add-Quantity', params: { id: item.selectable.id } }">
+      <v-icon color="blue">mdi-plus</v-icon>
+    </router-link>
+
+    </template>
   </v-data-table>
 </template>
 

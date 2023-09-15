@@ -1,6 +1,7 @@
 import {
   fetchUsers,
   fetchResourcePerUser,
+  postResourceAvailability
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -47,11 +48,14 @@ export default {
       const res = await fetchResourcePerUser(userId);
       commit("setUsersResources", res);
     },
+    async postResourcePerUser({ commit }, data) {
+      await postResourceAvailability(data);
+    },
   },
   getters: {
     getColumns: (state, getters, rootState, rootGetters) => [
       ...state.resourceAvailabilityColumns,
-      ...rootGetters["resources/getColumns"],
+      ...rootGetters["resources/getColumns"].slice(0,-3),
     ],
     isSorting(state) {
       return state.isSorting;
@@ -61,6 +65,9 @@ export default {
     },
     allUsers(state) {
       return state.users;
+    },
+    userPerId(state, id) {
+      return state.users.find(user => user.id === id)
     },
     getUserResources(state) {
       return state.usersResources;

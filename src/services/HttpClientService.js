@@ -44,6 +44,10 @@ export async function postResources(data) {
   return await postData("/resources", data);
 }
 
+export async function postResourceAvailability(data) {
+  return await postData("/resources/availability", data);
+}
+
 // DELETE REQUESTS
 
 async function removeData(endpoint) {

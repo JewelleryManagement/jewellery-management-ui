@@ -34,9 +34,9 @@ const routes = [
   {
     path: "/users/:id/add",
     props: true,
-    name: "Users resource add",
+    name: "Add-Quantity",
     component: UserResourceDetails,
-    meta: { title: "Users resource add" },
+    meta: { title: "Add Quantity" },
   },
   {
     path: "/resources",
