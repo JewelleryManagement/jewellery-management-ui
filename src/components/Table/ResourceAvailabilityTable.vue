@@ -25,7 +25,6 @@
 
 <script>
 import { VDataTable } from "vuetify/labs/VDataTable";
-import { useRoute } from "vue-router";
 
 export default {
   props: ["tableColumns", "resourceItem", "search", "name"],
@@ -33,14 +32,12 @@ export default {
     VDataTable,
   },
   setup(props) {
-    const route = useRoute();
 
     return {
       tableColumns: props.tableColumns,
       resourceItem: props.resourceItem,
       search: props.search,
       name: props.name,
-      pageId: route.params.id
     };
   },
 };

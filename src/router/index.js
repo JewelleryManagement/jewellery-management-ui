@@ -27,12 +27,9 @@ const routes = [
     name: "Users Details",
     component: UserDetails,
     meta: { title: "Users Details" },
-    // children: [
-    //   { path: "add", component: ResourceDetails },
-    // ]
   },
   {
-    path: "/users/:id/add",
+    path: "/resources/availability/add/:id",
     props: true,
     name: "Add-Quantity",
     component: UserResourceDetails,

@@ -1,31 +1,32 @@
-
 <template>
-  <suspense>
-    <template #default>
-      <v-container class="my-12" fluid>
-        <v-row justify="center">
-          <v-col cols="10" max-width="1600">
-            <suspense>
-              <user-card
+  <v-container>
+    <suspense>
+      <template #default>
+        <v-container class="my-12" fluid>
+          <v-row justify="center">
+            <v-col cols="10" max-width="1600">
+              <suspense>
+                <user-card
+                  :name="user.owner.name"
+                  :email="user.owner.email"
+                  :resourcesAndQuantities="user.resourcesAndQuantities"
+                ></user-card>
+              </suspense>
+              <resource-availability-table
+                :tableColumns="tableColumns"
+                :resourceItem="resourceItem"
+                :search="search"
                 :name="user.owner.name"
-                :email="user.owner.email"
-                :resourcesAndQuantities="user.resourcesAndQuantities"
-              ></user-card>
-            </suspense>
-            <resource-availability-table
-              :tableColumns="tableColumns"
-              :resourceItem="resourceItem"
-              :search="search"
-              :name="user.owner.name"
-            ></resource-availability-table>
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
-    <template #fallback>
-      <span>Loading...</span>
-    </template>
-  </suspense>
+              ></resource-availability-table>
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+      <template #fallback>
+        <span>Loading...</span>
+      </template>
+    </suspense>
+  </v-container>
 </template>
 
 <script>

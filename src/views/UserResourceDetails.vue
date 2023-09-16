@@ -1,11 +1,9 @@
 <template>
   <v-container class="my-12" fluid>
     <v-card class="mx-auto pa-10" width="800" height="auto">
-      <template v-slot:title>
         <div class="mx-auto text-center" style="font-size: 24px">
           {{ pageTitle }}
         </div>
-      </template>
 
       <v-sheet width="300" class="mx-auto">
         <v-select
@@ -68,6 +66,10 @@ export default {
     const selected = ref("");
     const isEditState = props.id !== undefined;
     const quantity = ref("");
+
+    if (route.path.includes('/add/')) {
+      console.log('yes');
+    }
 
     const allUsers = computed(() => store.getters["users/allUsers"]);
     const selectedUser = ref("");

@@ -6,9 +6,7 @@
         <v-main>
           <router-view v-slot="slotProps">
             <transition name="route" mode="out-in">
-              <div>
                 <component :is="slotProps.Component"></component>
-              </div>
             </transition>
           </router-view>
         </v-main>
