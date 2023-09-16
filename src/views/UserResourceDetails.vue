@@ -1,47 +1,48 @@
 <template>
   <v-container class="my-12" fluid>
-    <v-card class="mx-auto pa-10" width="800" height="auto">
-        <div class="mx-auto text-center" style="font-size: 24px">
-          {{ pageTitle }}
-        </div>
+    <resource-card
+      :resource="resource"
+      :currentQuantity="currentQuantity"
+    ></resource-card>
 
-      <v-sheet width="300" class="mx-auto">
-        <v-select
+    <v-sheet width="300" class="mx-auto">
+      <!-- <v-select
           v-model="selected"
           label="Select resource type"
           :disabled="isEditState"
-        ></v-select>
+        ></v-select> -->
 
-        <v-form @submit.prevent="handleSubmit" ref="form">
-          <v-select
-            label="Select user"
-            :items="userOptions"
-            v-model="selectedUser"
+      <div class="mx-auto text-center" style="font-size: 24px">
+        {{ pageTitle }}
+      </div>
+
+      <v-form @submit.prevent="handleSubmit" ref="form">
+        <v-select
+          label="Select user"
+          :items="userOptions"
+          v-model="selectedUser"
+        >
+        </v-select>
+
+        <v-text-field
+          v-if="selected"
+          v-model="quantity"
+          label="Quantity"
+          :rules="numberFieldRules"
+          required
+        ></v-text-field>
+
+        <div v-if="selected" class="d-flex flex-column">
+          <v-btn color="success" class="mt-4" block type="submit">Submit</v-btn>
+          <v-btn color="error" class="mt-4" block @click="resetForm"
+            >Reset</v-btn
           >
-          </v-select>
-
-          <v-text-field
-            v-if="selected"
-            v-model="quantity"
-            label="Quantity"
-            :rules="numberFieldRules"
-            required
-          ></v-text-field>
-
-          <div v-if="selected" class="d-flex flex-column">
-            <v-btn color="success" class="mt-4" block type="submit"
-              >Submit</v-btn
-            >
-            <v-btn color="error" class="mt-4" block @click="resetForm"
-              >Reset</v-btn
-            >
-            <v-btn color="warning" class="mt-4" block to="/resources"
-              >Go Back</v-btn
-            >
-          </div>
-        </v-form>
-      </v-sheet>
-    </v-card>
+          <v-btn color="warning" class="mt-4" block to="/resources"
+            >Go Back</v-btn
+          >
+        </div>
+      </v-form>
+    </v-sheet>
   </v-container>
 </template>
 
@@ -50,8 +51,12 @@ import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useNumberFieldRules } from "../utils/validation-rules";
+import ResourceCard from "@/components/Card/ResourceCard.vue";
 
 export default {
+  components: {
+    ResourceCard,
+  },
   props: {
     id: String,
   },
@@ -65,10 +70,28 @@ export default {
     const showSnackbar = inject("showSnackbar");
     const selected = ref("");
     const isEditState = props.id !== undefined;
+    const currentQuantity = ref("");
     const quantity = ref("");
 
-    if (route.path.includes('/add/')) {
-      console.log('yes');
+    // if (route.path.includes("/add/")) {
+    //   console.log("yes");
+    // }
+
+    const resourceDetails = computed(() =>
+      store.getters["resources/getResourceById"](props.id)
+    );
+
+    const resouceByUser = computed(
+      () => store.getters["users/getUserResources"]
+    );
+
+    for (const key in resouceByUser.value.resourcesAndQuantities) {
+      if (
+        resouceByUser.value.resourcesAndQuantities[key].resource.id === props.id
+      ) {
+        currentQuantity.value =
+          resouceByUser.value.resourcesAndQuantities[key].quantity;
+      }
     }
 
     const allUsers = computed(() => store.getters["users/allUsers"]);
@@ -80,9 +103,6 @@ export default {
     }
 
     if (isEditState) {
-      const resourceDetails = computed(() =>
-        store.getters["resources/getResourceById"](props.id)
-      );
       store.dispatch("resources/setResourceDetails", resourceDetails.value);
       selected.value =
         resourceDetails.value.clazz +
@@ -139,6 +159,7 @@ export default {
     };
 
     return {
+      resource: resourceDetails.value,
       isEditState,
       handleSubmit,
       resetForm,
@@ -149,6 +170,7 @@ export default {
       numberFieldRules,
       userOptions,
       selectedUser,
+      currentQuantity,
     };
   },
 };
