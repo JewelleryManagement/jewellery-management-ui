@@ -19,6 +19,13 @@
       :items="resourceItem"
       :search="search"
     >
+    <template v-slot:item.remove="{ item }">
+      <router-link
+        :to="{ name: 'Remove-Quantity', params: { id: item.selectable.id } }"
+      >
+        <v-icon color="blue">mdi-minus</v-icon>
+      </router-link>
+    </template>
     </v-data-table>
   </v-card>
 </template>
@@ -32,7 +39,6 @@ export default {
     VDataTable,
   },
   setup(props) {
-
     return {
       tableColumns: props.tableColumns,
       resourceItem: props.resourceItem,

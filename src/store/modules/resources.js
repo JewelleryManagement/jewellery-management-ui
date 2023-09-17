@@ -27,10 +27,11 @@ export default {
       { key: "dimensionY", title: "dimensionY" },
       { key: "dimensionZ", title: "dimensionZ" },
       { key: "description", title: "Description" },
-      { key: "delete", title: "", slot: "delete" },
-      { key: "edit", title: "", slot: "edit" },
-      { key: "add", title: "", slot: "add" },
     ],
+    tableColumnDelete: { key: "delete", title: "", slot: "delete" },
+    tableColumnEdit: { key: "edit", title: "", slot: "edit" },
+    tableColumnAdd: { key: "add", title: "", slot: "add" },
+    tableColumnRemoveQuantity: { key: "remove", title: "", slot: "remove" },
   }),
   mutations: {
     setResources(state, resources) {
@@ -48,7 +49,9 @@ export default {
       state.resourceDetails = payload;
     },
     updateResource(state, updatedResource) {
-      const index = state.resources.findIndex((resource) => resource.id === updatedResource.id);
+      const index = state.resources.findIndex(
+        (resource) => resource.id === updatedResource.id
+      );
       if (index !== -1) state.resources[index] = updatedResource;
     },
   },
@@ -58,7 +61,6 @@ export default {
       commit("setResources", res);
     },
     async createResource({ commit }, formData) {
-      
       const res = await postResources(formData);
       commit("createResource", res);
     },
@@ -69,15 +71,21 @@ export default {
     setResourceDetails({ commit }, data) {
       commit("setResourceDetails", data);
     },
-    async updateResource({ commit },  { id, ...resourceWithoutId } ) {
+    async updateResource({ commit }, { id, ...resourceWithoutId }) {
       const updatedResource = await updateResource(id, resourceWithoutId);
       commit("updateResource", updatedResource);
     },
   },
   getters: {
     allResources: (state) => state.resources,
-    getColumns: (state) => state.tableColumns,
-    getResourceById: (state) => (id) => state.resources.find((resource) => resource.id === id),
+    getColumns: (state) => [
+      ...state.tableColumns,
+      state.tableColumnDelete,
+      state.tableColumnEdit,
+      state.tableColumnAdd,
+    ],
+    getResourceById: (state) => (id) =>
+      state.resources.find((resource) => resource.id === id),
     getResourceDetails: (state) => state.resourceDetails,
   },
 };

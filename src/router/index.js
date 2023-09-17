@@ -36,6 +36,13 @@ const routes = [
     meta: { title: "Add Quantity" },
   },
   {
+    path: "/resources/availability/remove/:id",
+    props: true,
+    name: "Remove-Quantity",
+    component: UserResourceDetails,
+    meta: { title: "Remove Quantity" },
+  },
+  {
     path: "/resources",
     name: "Resources",
     component: Resources,

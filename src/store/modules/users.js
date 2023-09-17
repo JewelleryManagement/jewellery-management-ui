@@ -54,8 +54,9 @@ export default {
   },
   getters: {
     getColumns: (state, getters, rootState, rootGetters) => [
+      rootState.resources.tableColumnRemoveQuantity,
       ...state.resourceAvailabilityColumns,
-      ...rootGetters["resources/getColumns"].slice(0,-3),
+      ...rootState.resources.tableColumns,
     ],
     isSorting(state) {
       return state.isSorting;
@@ -65,9 +66,6 @@ export default {
     },
     allUsers(state) {
       return state.users;
-    },
-    userPerId(state, id) {
-      return state.users.find(user => user.id === id)
     },
     getUserResources(state) {
       return state.usersResources;
