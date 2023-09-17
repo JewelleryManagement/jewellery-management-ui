@@ -1,7 +1,7 @@
 <template>
   <v-card class="elevation-12 mt-4">
     <div class="text-center">
-      <h1>{{ name }}'s resource table</h1>
+      <h1>{{ user.name }}'s resource table</h1>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -34,7 +34,7 @@
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 export default {
-  props: ["tableColumns", "resourceItem", "search", "name"],
+  props: ["tableColumns", "resourceItem", "search", "user"],
   components: {
     VDataTable,
   },
@@ -43,7 +43,7 @@ export default {
       tableColumns: props.tableColumns,
       resourceItem: props.resourceItem,
       search: props.search,
-      name: props.name,
+      user: props.user,
     };
   },
 };

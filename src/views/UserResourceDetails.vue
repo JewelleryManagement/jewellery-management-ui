@@ -3,6 +3,7 @@
     <resource-card
       :resource="resource"
       :currentQuantity="currentQuantity"
+      :emptyArr="emptyArr"
     ></resource-card>
 
     <v-sheet width="300" class="mx-auto">
@@ -19,19 +20,18 @@
         </v-select>
 
         <v-text-field
-          v-if="selected"
           v-model="quantity"
           label="Quantity"
           :rules="numberFieldRules"
           required
         ></v-text-field>
 
-        <div v-if="selected" class="d-flex flex-column">
+        <div class="d-flex flex-column">
           <v-btn color="success" class="mt-4" block type="submit">Submit</v-btn>
           <v-btn color="error" class="mt-4" block @click="resetForm"
             >Reset</v-btn
           >
-          <v-btn color="warning" class="mt-4" block to="/users"
+          <v-btn color="warning" class="mt-4" block @click="router.go(-1)"
             >Go Back</v-btn
           >
         </div>
@@ -54,7 +54,7 @@ export default {
   props: {
     id: String,
   },
-  setup(props) {
+  async setup(props) {
     const form = ref(null);
     const numberFieldRules = useNumberFieldRules();
     const store = useStore();
@@ -62,47 +62,53 @@ export default {
     const router = useRouter();
     const pageTitle = ref(route.meta.title);
     const showSnackbar = inject("showSnackbar");
-    const selected = ref("");
-    const isEditState = props.id !== undefined;
     const currentQuantity = ref("");
     const quantity = ref("");
-
-    // if (route.path.includes("/add/")) {
-    //   console.log("yes");
-    // }
-
-    const resourceDetails = computed(() =>store.getters["resources/getResourceById"](props.id));
-    const resouceByUser = computed(() => store.getters["users/getUserResources"]);
+    const resourceDetails = computed(() =>store.getters["resources/getResourceById"](props.id)); // the exact resource
+    const resouceByUser = computed(() => store.getters["users/getUserResources"]); // owner + resourcesAndQuantities
     const allUsers = computed(() => store.getters["users/allUsers"]);
+    const selectedUser = ref("");
+    const userOptions = ref([]);
 
-    // TO DO -------------
-    // for (const key in allUsers.value) {
-    //   const userId = allUsers.value[key].id;
-    //   const userResource = store.getters["resources/getResourceById"](userId);
-    //   console.log(userResource);
-    // }
+    const emptyArr = ref([])
+    for (const key in allUsers.value) {
+      const userId = allUsers.value[key].id;
+      const res = await store.dispatch("users/fetchResourcesByUser", userId);
+      emptyArr.value.push(res)
+    }
 
-    for (const key in resouceByUser.value.resourcesAndQuantities) {
+    for (const key in allUsers.value) {
+      userOptions.value.push(allUsers.value[key].name); // Gives user input options
+    }
+
+
+    if (pageTitle.value.includes("Add")) {
+      for (const key in resouceByUser.value.resourcesAndQuantities) {
       if (resouceByUser.value.resourcesAndQuantities[key].resource.id === props.id) {
         currentQuantity.value += resouceByUser.value.resourcesAndQuantities[key].quantity;
       }
     }
+    } else if (pageTitle.value.includes("Remove")) {
+      const url = router.options.history.state.back
+      const userId = url.substring(url.lastIndexOf('/') + 1);
+      try {
+        await store.dispatch("users/fetchResourcesPerUser", userId);
+        const user = computed(() => store.getters["users/getUserResources"]);
+        selectedUser.value = user.value.owner.name
+        
+        for (const key in user.value.resourcesAndQuantities) {
+          const exactResource = user.value.resourcesAndQuantities[key].resource
+          if (exactResource.id === props.id) {
+            const resourceQuantity = user.value.resourcesAndQuantities[key].quantity
+            quantity.value = resourceQuantity
+            currentQuantity.value = resourceQuantity
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
 
-    const selectedUser = ref("");
-
-    const userOptions = ref([]);
-    for (const key in allUsers.value) {
-      userOptions.value.push(allUsers.value[key].name);
-    }
-
-    if (isEditState) {
-      store.dispatch("resources/setResourceDetails", resourceDetails.value);
-      selected.value =
-        resourceDetails.value.clazz +
-        " - " +
-        (resourceDetails.value.type ||
-          resourceDetails.value.clarity ||
-          resourceDetails.value.description);
+      // TO DO REMOVE API
     }
 
     const resetForm = () => {
@@ -152,13 +158,13 @@ export default {
     };
 
     return {
+      emptyArr: emptyArr.value,
+      router,
       resource: resourceDetails.value,
-      isEditState,
       handleSubmit,
       resetForm,
       form,
       pageTitle,
-      selected,
       quantity,
       numberFieldRules,
       userOptions,

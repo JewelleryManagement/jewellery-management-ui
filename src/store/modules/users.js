@@ -21,6 +21,9 @@ export default {
     setUsersResources(state, usersResources) {
       state.usersResources = usersResources;
     },
+    setAllResourcesByUsers(state, usersResources) {
+      state.allResourcesByUser.push(usersResources);
+    },
     setIsSorting(state, isSorting) {
       state.isSorting = isSorting;
     },
@@ -48,6 +51,9 @@ export default {
       const res = await fetchResourcePerUser(userId);
       commit("setUsersResources", res);
     },
+    async fetchResourcesByUser({ commit }, userId) {
+      return await fetchResourcePerUser(userId);
+    },
     async postResourcePerUser({ commit }, data) {
       await postResourceAvailability(data);
     },
@@ -66,6 +72,9 @@ export default {
     },
     allUsers(state) {
       return state.users;
+    },
+    getUserById(state,id) {
+      return state.users.find(user => user.id === id)
     },
     getUserResources(state) {
       return state.usersResources;

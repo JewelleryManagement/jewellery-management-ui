@@ -16,7 +16,7 @@
                 :tableColumns="tableColumns"
                 :resourceItem="resourceItem"
                 :search="search"
-                :name="user.owner.name"
+                :user="user.owner"
               ></resource-availability-table>
             </v-col>
           </v-row>
