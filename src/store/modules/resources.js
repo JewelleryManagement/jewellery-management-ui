@@ -4,6 +4,7 @@ import {
   postResources,
   removeResource,
   updateResource,
+  removeResourceQuantity
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -75,6 +76,9 @@ export default {
       const updatedResource = await updateResource(id, resourceWithoutId);
       commit("updateResource", updatedResource);
     },
+    async removeQuantityFromResource({commit}, data) {
+      await removeResourceQuantity(data.userId, data.resourceId, data.quantityNumber)
+    }
   },
   getters: {
     allResources: (state) => state.resources,

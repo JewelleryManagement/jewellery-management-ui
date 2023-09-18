@@ -24,7 +24,6 @@
       :currentQuantity="currentQuantity"
       :usersAndValues="usersAndValues"
     ></PreciousMetalCard>
-
   </v-container>
 </template>
 
@@ -42,29 +41,41 @@ export default {
     GemstoneCard,
     PreciousMetalCard,
   },
-  props: ["resource", "currentQuantity", "emptyArr"],
+  props: ["resource", "quantityAndResourceByUser"],
   setup(props) {
-    let quantityForAllUsers = 0
-    const usersAndValues = ref([])
+    const resourceId = props.resource.id;
 
-    for (const key in props.emptyArr) {
-      
-      for (const key2 in props.emptyArr[key].resourcesAndQuantities) {
-        if (props.emptyArr[key].resourcesAndQuantities[key2].resource.id === props.resource.id) {
-          quantityForAllUsers +=props.emptyArr[key].resourcesAndQuantities[key2].quantity
-          usersAndValues.value.push({
-            name: props.emptyArr[key].owner.name,
-            quantity: props.emptyArr[key].resourcesAndQuantities[key2].quantity,
-          })
-        }
-      }
+    const usersAndValues = ref([]);
 
-    }
+    const calculateUserValues = () => {
+      const quantityForAllUsers = props.quantityAndResourceByUser.reduce(
+        (total, user) => {
+          const userResource = user.resourcesAndQuantities.find(
+            (resource) => resource.resource.id === resourceId
+          );
+
+          if (userResource) {
+            usersAndValues.value.push({
+              name: user.owner.name,
+              quantity: userResource.quantity,
+            });
+            return total + userResource.quantity;
+          }
+
+          return total;
+        },
+        0
+      );
+
+      return quantityForAllUsers;
+    };
+
+    const currentQuantity = calculateUserValues();
+
     return {
       resource: props.resource,
-      currentQuantity: quantityForAllUsers,
-      emotyArr: props.emptyArr,
-      usersAndValues: usersAndValues.value
+      currentQuantity,
+      usersAndValues: usersAndValues.value,
     };
   },
 };

@@ -3,7 +3,7 @@
     <resource-card
       :resource="resource"
       :currentQuantity="currentQuantity"
-      :emptyArr="emptyArr"
+      :quantityAndResourceByUser="quantityAndResourceByUser"
     ></resource-card>
 
     <v-sheet width="300" class="mx-auto">
@@ -62,63 +62,65 @@ export default {
     const router = useRouter();
     const pageTitle = ref(route.meta.title);
     const showSnackbar = inject("showSnackbar");
-    const currentQuantity = ref("");
     const quantity = ref("");
-    const resourceDetails = computed(() =>store.getters["resources/getResourceById"](props.id)); // the exact resource
-    const resouceByUser = computed(() => store.getters["users/getUserResources"]); // owner + resourcesAndQuantities
+    const resourceId = props.id;
+    const resouceByUser = computed(
+      () => store.getters["users/getUserResources"]
+    ); // owner + resourcesAndQuantities
     const allUsers = computed(() => store.getters["users/allUsers"]);
     const selectedUser = ref("");
-    const userOptions = ref([]);
+    const userOptions = computed(() =>
+      store.getters["users/allUsers"].map((user) => user.name)
+    );
+    const currentQuantity = ref("");
 
-    const emptyArr = ref([])
-    for (const key in allUsers.value) {
-      const userId = allUsers.value[key].id;
+    const quantityAndResourceByUser = ref([]);
+
+    for (const index in allUsers.value) {
+      const userId = allUsers.value[index].id;
       const res = await store.dispatch("users/fetchResourcesByUser", userId);
-      emptyArr.value.push(res)
+      quantityAndResourceByUser.value.push(res);
     }
 
-    for (const key in allUsers.value) {
-      userOptions.value.push(allUsers.value[key].name); // Gives user input options
-    }
+    function getCurrentResourceQuantity() {
+      const currentResources = resouceByUser.value.resourcesAndQuantities;
 
-
-    if (pageTitle.value.includes("Add")) {
-      for (const key in resouceByUser.value.resourcesAndQuantities) {
-      if (resouceByUser.value.resourcesAndQuantities[key].resource.id === props.id) {
-        currentQuantity.value += resouceByUser.value.resourcesAndQuantities[key].quantity;
+      for (const index in currentResources) {
+        currentResources[index].resource.id === resourceId
+          ? (currentQuantity.value += currentResources[index].quantity)
+          : "";
       }
     }
-    } else if (pageTitle.value.includes("Remove")) {
-      const url = router.options.history.state.back
-      const userId = url.substring(url.lastIndexOf('/') + 1);
+
+    async function getCurrentResourceQuantityAndUser() {
+      const url = router.options.history.state.back; // /users/userId
+      const userId = url.substring(url.lastIndexOf("/") + 1); // substing to find userId
       try {
         await store.dispatch("users/fetchResourcesPerUser", userId);
         const user = computed(() => store.getters["users/getUserResources"]);
-        selectedUser.value = user.value.owner.name
-        
-        for (const key in user.value.resourcesAndQuantities) {
-          const exactResource = user.value.resourcesAndQuantities[key].resource
-          if (exactResource.id === props.id) {
-            const resourceQuantity = user.value.resourcesAndQuantities[key].quantity
-            quantity.value = resourceQuantity
-            currentQuantity.value = resourceQuantity
+        const currentUserQuantity = user.value.resourcesAndQuantities;
+        selectedUser.value = user.value.owner.name;
+
+        for (const index in currentUserQuantity) {
+          const currentUserResource = currentUserQuantity[index].resource;
+          if (currentUserResource.id === resourceId) {
+            const resourceQuantity = currentUserQuantity[index].quantity;
+            quantity.value = resourceQuantity;
+            currentQuantity.value = resourceQuantity;
           }
         }
       } catch (error) {
-        console.log(error);
+        showErrorSnackbar("Couldn't get user and its resource/quantity");
       }
-
-      // TO DO REMOVE API
     }
 
-    const resetForm = () => {
-      if (form.value) {
-        form.value.reset();
-        form.value.resetValidation();
-      }
-    };
+    if (route.path.includes("/add")) {
+      getCurrentResourceQuantity();
+    } else if (route.path.includes("/remove")) {
+      getCurrentResourceQuantityAndUser();
+    }
 
-    const handleSubmit = async () => {
+    const handleAddSubmit = async () => {
       const { valid } = await form.value.validate();
       const findUser = allUsers.value.find(
         (user) => user.name == selectedUser.value
@@ -135,6 +137,29 @@ export default {
           router.push("/resources");
         } catch (error) {
           showErrorSnackbar("Couldn't not add quantity");
+        }
+      }
+    };
+
+    const handleRemoveSubmit = async () => {
+      // DELETE /resource/availability/{userId}/{resourceId}/{quantity}
+      const { valid } = await form.value.validate();
+      const findUser = allUsers.value.find(
+        (user) => user.name == selectedUser.value
+      );
+
+      if (valid) {
+        const data = {
+          userId: findUser.id,
+          resourceId: props.id,
+          quantityNumber: quantity.value,
+        };
+
+        try {
+          await store.dispatch("resources/removeQuantityFromResource", data);
+          router.push(`/users/${findUser.id}`);
+        } catch (error) {
+          showErrorSnackbar("Couldn't not update quantity");
         }
       }
     };
@@ -158,11 +183,20 @@ export default {
     };
 
     return {
-      emptyArr: emptyArr.value,
+      quantityAndResourceByUser: quantityAndResourceByUser.value,
       router,
-      resource: resourceDetails.value,
-      handleSubmit,
-      resetForm,
+      resource: computed(() =>
+        store.getters["resources/getResourceById"](props.id)
+      ),
+      handleSubmit: route.path.includes("/add")
+        ? handleAddSubmit
+        : handleRemoveSubmit,
+      resetForm() {
+        if (form.value) {
+          form.value.reset();
+          form.value.resetValidation();
+        }
+      },
       form,
       pageTitle,
       quantity,
