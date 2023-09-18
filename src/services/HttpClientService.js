@@ -64,7 +64,7 @@ export async function removeResource(id) {
 
 export async function removeResourceQuantity(userId, resourceId, quantity) {
   return await removeData(
-    `/resource/availability/${userId}/${resourceId}/${quantity}`
+    `/resources/availability/${userId}/${resourceId}/${quantity}`
   );
 }
 
