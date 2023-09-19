@@ -4,34 +4,34 @@
       v-if="resource.clazz === 'Pearl'"
       :resource="resource"
       :currentQuantity="currentQuantity"
-      :usersAndValues="usersAndValues"
+      :usersAndQuantities="usersAndQuantities"
     ></PearlCard>
     <LinkingPartCard
       v-if="resource.clazz === 'LinkingPart'"
       :resource="resource"
       :currentQuantity="currentQuantity"
-      :usersAndValues="usersAndValues"
+      :usersAndQuantities="usersAndQuantities"
     ></LinkingPartCard>
     <GemstoneCard
       v-if="resource.clazz === 'Gemstone'"
       :resource="resource"
       :currentQuantity="currentQuantity"
-      :usersAndValues="usersAndValues"
+      :usersAndQuantities="usersAndQuantities"
     ></GemstoneCard>
     <PreciousMetalCard
       v-if="resource.clazz === 'PreciousMetal'"
       :resource="resource"
       :currentQuantity="currentQuantity"
-      :usersAndValues="usersAndValues"
+      :usersAndQuantities="usersAndQuantities"
     ></PreciousMetalCard>
   </v-container>
 </template>
 
 <script>
-import PearlCard from "./ResourceCards/PearlCard.vue";
-import LinkingPartCard from "./ResourceCards/LinkingPartCard.vue";
-import GemstoneCard from "./ResourceCards/GemstoneCard.vue";
-import PreciousMetalCard from "./ResourceCards/PreciousMetalCard.vue";
+import PearlCard from "./ResourceAvailabilityCards/PearlCard.vue";
+import LinkingPartCard from "./ResourceAvailabilityCards/LinkingPartCard.vue";
+import GemstoneCard from "./ResourceAvailabilityCards/GemstoneCard.vue";
+import PreciousMetalCard from "./ResourceAvailabilityCards/PreciousMetalCard.vue";
 import { ref } from "vue";
 
 export default {
@@ -45,7 +45,7 @@ export default {
   setup(props) {
     const resourceId = props.resource.id;
 
-    const usersAndValues = ref([]);
+    const usersAndQuantities = ref([]);
 
     const calculateUserValues = () => {
       const quantityForAllUsers = props.quantityAndResourceByUser.reduce(
@@ -55,7 +55,7 @@ export default {
           );
 
           if (userResource) {
-            usersAndValues.value.push({
+            usersAndQuantities.value.push({
               name: user.owner.name,
               quantity: userResource.quantity,
             });
@@ -75,7 +75,7 @@ export default {
     return {
       resource: props.resource,
       currentQuantity,
-      usersAndValues: usersAndValues.value,
+      usersAndQuantities: usersAndQuantities.value,
     };
   },
 };

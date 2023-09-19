@@ -20,8 +20,7 @@
       <div>Color: {{ resource.color }}</div>
       <div>Cut: {{ resource.cut }}</div>
       <div>
-        Dimensions(x,y,z): {{ resource.dimensionX }} x
-        {{ resource.dimensionY }} x {{ resource.dimensionZ }}
+        Size: {{ resource.dimensionX }}x{{ resource.dimensionY }}x{{ resource.dimensionZ }}
       </div>
       <div>Quantity Type: {{ resource.quantityType }}</div>
       <div>Shape: {{ resource.shape }}</div>

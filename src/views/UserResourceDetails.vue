@@ -1,10 +1,10 @@
 <template>
   <v-container class="my-12" fluid>
-    <resource-card
+    <resource-availability-card
       :resource="resource"
       :currentQuantity="currentQuantity"
       :quantityAndResourceByUser="quantityAndResourceByUser"
-    ></resource-card>
+    ></resource-availability-card>
 
     <v-sheet width="300" class="mx-auto">
       <div class="mx-auto text-center" style="font-size: 24px">
@@ -45,11 +45,11 @@ import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useNumberFieldRules } from "../utils/validation-rules";
-import ResourceCard from "@/components/Card/ResourceCard.vue";
+import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
 
 export default {
   components: {
-    ResourceCard,
+    ResourceAvailabilityCard,
   },
   props: {
     id: String,
@@ -62,7 +62,7 @@ export default {
     const router = useRouter();
     const pageTitle = ref(route.meta.title);
     const showSnackbar = inject("showSnackbar");
-    const quantity = ref("");
+    const quantityToSubmit = ref("");
     const resourceId = props.id;
     const resouceByUser = computed(
       () => store.getters["users/getUserResources"]
@@ -73,7 +73,6 @@ export default {
       store.getters["users/allUsers"].map((user) => user.name)
     );
     const currentQuantity = ref("");
-
     const quantityAndResourceByUser = ref([]);
 
     for (const index in allUsers.value) {
@@ -105,7 +104,7 @@ export default {
           const currentUserResource = currentUserQuantity[index].resource;
           if (currentUserResource.id === resourceId) {
             const resourceQuantity = currentUserQuantity[index].quantity;
-            quantity.value = resourceQuantity;
+            quantityToSubmit.value = resourceQuantity;
             currentQuantity.value = resourceQuantity;
           }
         }
@@ -129,20 +128,19 @@ export default {
         const data = {
           userId: findUser.id,
           resourceId: props.id,
-          quantity: quantity.value,
+          quantity: quantityToSubmit.value,
         };
         try {
           await store.dispatch("users/postResourcePerUser", data);
           showSuccessSnackbar("Successfully added quantity!");
           router.push("/resources");
         } catch (error) {
-          showErrorSnackbar("Couldn't not add quantity");
+          showErrorSnackbar("Couldn't add quantity");
         }
       }
     };
 
     const handleRemoveSubmit = async () => {
-      // DELETE /resource/availability/{userId}/{resourceId}/{quantity}
       const { valid } = await form.value.validate();
       const findUser = allUsers.value.find(
         (user) => user.name == selectedUser.value
@@ -152,14 +150,15 @@ export default {
         const data = {
           userId: findUser.id,
           resourceId: props.id,
-          quantityNumber: quantity.value,
+          quantityNumber: quantityToSubmit.value,
         };
 
         try {
           await store.dispatch("resources/removeQuantityFromResource", data);
+          showSuccessSnackbar(`Successfully removed quantity`)
           router.push(`/users/${findUser.id}`);
         } catch (error) {
-          showErrorSnackbar("Couldn't not update quantity");
+          showErrorSnackbar("Couldn't update quantity");
         }
       }
     };
@@ -199,7 +198,7 @@ export default {
       },
       form,
       pageTitle,
-      quantity,
+      quantity: quantityToSubmit,
       numberFieldRules,
       userOptions,
       selectedUser,
