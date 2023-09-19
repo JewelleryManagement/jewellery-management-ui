@@ -68,7 +68,7 @@ export default {
     const resourceDetails = computed(
       () => store.getters["resources/getResourceDetails"]
     );
-    const showSnackbar = inject("showSnackbar");
+    const snackbarProvider = inject("snackbarProvider");
     const selected = ref("");
     const isEditState = props.id !== undefined;
 
@@ -108,39 +108,21 @@ export default {
     const editResource = async () => {
       try {
         await store.dispatch("resources/updateResource", resourceDetails.value);
-        showSuccessSnackbar("Successfully edited resource!");
+        snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
         router.push("/resources");
       } catch (error) {
-        showErrorSnackbar("Couldn't edit resouce");
+        snackbarProvider.showErrorSnackbar("Couldn't edit resouce");
       }
     };
 
     const createResource = async () => {
       try {
         await store.dispatch("resources/createResource", resourceDetails.value);
-        showSuccessSnackbar("Successfully created resource!");
+        snackbarProvider.showSuccessSnackbar("Successfully created resource!");
         router.push("/resources");
       } catch (error) {
-        showErrorSnackbar("Couldn't create resource");
+        snackbarProvider.showErrorSnackbar("Couldn't create resource");
       }
-    };
-
-    const showErrorSnackbar = (message) => {
-      showSnackbar({
-        message: message,
-        color: "error",
-        timeout: 4000,
-        location: "bottom center",
-      });
-    };
-
-    const showSuccessSnackbar = (message) => {
-      showSnackbar({
-        message: message,
-        color: "success",
-        timeout: 4000,
-        location: "bottom center",
-      });
     };
 
     return {

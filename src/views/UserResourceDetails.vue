@@ -55,13 +55,13 @@ export default {
     id: String,
   },
   async setup(props) {
+    const snackbarProvider = inject("snackbarProvider");
     const form = ref(null);
     const numberFieldRules = useNumberFieldRules();
     const store = useStore();
     const route = useRoute();
     const router = useRouter();
     const pageTitle = ref(route.meta.title);
-    const showSnackbar = inject("showSnackbar");
     const quantityToSubmit = ref("");
     const resourceId = props.id;
     const resouceByUser = computed(
@@ -132,10 +132,10 @@ export default {
         };
         try {
           await store.dispatch("users/postResourcePerUser", data);
-          showSuccessSnackbar("Successfully added quantity!");
+          snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
           router.push("/resources");
         } catch (error) {
-          showErrorSnackbar("Couldn't add quantity");
+          snackbarProvider.showErrorSnackbar("Couldn't add quantity");
         }
       }
     };
@@ -155,30 +155,12 @@ export default {
 
         try {
           await store.dispatch("resources/removeQuantityFromResource", data);
-          showSuccessSnackbar(`Successfully removed quantity`)
+          snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
           router.push(`/users/${findUser.id}`);
         } catch (error) {
-          showErrorSnackbar("Couldn't update quantity");
+          snackbarProvider.showErrorSnackbar("Couldn't update quantity");
         }
       }
-    };
-
-    const showErrorSnackbar = (message) => {
-      showSnackbar({
-        message: message,
-        color: "error",
-        timeout: 4000,
-        location: "bottom center",
-      });
-    };
-
-    const showSuccessSnackbar = (message) => {
-      showSnackbar({
-        message: message,
-        color: "success",
-        timeout: 4000,
-        location: "bottom center",
-      });
     };
 
     return {

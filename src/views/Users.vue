@@ -15,18 +15,13 @@ export default {
   },
   setup() {
     const store = useStore();
-    const showSnackbar = inject("showSnackbar");
+    const snackbarProvider = inject("snackbarProvider");
 
     onMounted(async () => {
       try {
         await store.dispatch("users/fetchUsers");
       } catch (error) {
-        showSnackbar({
-          message: "Failed to fetch users.",
-          color: "error",
-          timeout: 4000,
-          location: "top right",
-        });
+        snackbarProvider.showErrorSnackbar("Failed to fetch users.");
       }
     });
 

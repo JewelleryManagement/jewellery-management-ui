@@ -45,16 +45,11 @@ export default {
   props: ["id"],
   async setup(props) {
     const store = useStore();
-    const showSnackbar = inject("showSnackbar");
+    const snackbarProvider = inject("snackbarProvider");
     try {
       await store.dispatch("users/fetchResourcesPerUser", props.id);
     } catch (error) {
-      showSnackbar({
-        message: "Failed to fetch products.",
-        color: "error",
-        timeout: 4000,
-        location: "top right",
-      });
+      snackbarProvider.showErrorSnackbar("Failed to fetch products.");
     }
     const user = computed(() => store.getters["users/getUserResources"]);
     const tableColumns = computed(() => store.getters["users/getColumns"]);

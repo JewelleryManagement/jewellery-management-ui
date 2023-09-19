@@ -24,18 +24,13 @@ export default {
   },
   setup() {
     const store = useStore();
-    const showSnackbar = inject("showSnackbar");
+    const snackbarProvider = inject("snackbarProvider");
 
     onMounted(async () => {
       try {
         await store.dispatch("products/fetchProducts");
       } catch (error) {
-        showSnackbar({
-          message: "Failed to fetch products.",
-          color: "error",
-          timeout: 4000,
-          location: "top right",
-        });
+        snackbarProvider.showErrorSnackbar("Failed to fetch products");
       }
     });
 

@@ -6,7 +6,7 @@
         <v-main>
           <router-view v-slot="slotProps">
             <transition name="route" mode="out-in">
-                <component :is="slotProps.Component"></component>
+              <component :is="slotProps.Component"></component>
             </transition>
           </router-view>
         </v-main>
@@ -59,6 +59,22 @@ export default {
       width: 100,
     });
 
+    const snackbarProvider = {
+      showSnackbar: (message, color, timeout, location) => {
+        snackbar.value.isActive = true;
+        snackbar.value.message = message;
+        snackbar.value.color = color;
+        snackbar.value.timeout = timeout;
+        snackbar.value.location = location;
+
+        setTimeout(() => {
+          snackbar.value.isActive = false;
+        }, timeout);
+      },
+      showSuccessSnackbar: (message) => showSnackbar({message, color: "success", timeout: 4000, location: "bottom center"}),
+      showErrorSnackbar: (message) => showSnackbar({message, color: "error", timeout: 4000, location: "bottom center"}),
+    };
+
     const showSnackbar = ({
       message,
       color,
@@ -76,8 +92,10 @@ export default {
       }, timeout);
     };
 
+
     provide("snackbar", snackbar);
     provide("showSnackbar", showSnackbar);
+    provide("snackbarProvider", snackbarProvider);
 
     return { pages, snackbar };
   },
@@ -85,18 +103,6 @@ export default {
 </script>
 
 <style>
-:root {
-  --clr-white: #fff;
-  --clr-living-coral: #ff6f61;
-  --clr-inkwell: #363945;
-
-  --trans: all 400ms ease;
-
-  --container-width-lg: 75%;
-  --container-width-md: 86%;
-  --container-width-sm: 90%;
-}
-
 .route-enter-from {
   opacity: 0;
   transform: translateY(-30px);
