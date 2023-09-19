@@ -53,21 +53,13 @@ import { useStore } from "vuex";
 export default {
   setup() {
     const store = useStore();
-    const allUsers = computed(() => store.getters["users/allUsers"]);
-    const sortedUsers = computed(() => store.getters["users/sortedUsers"]);
-    const isSorting = computed(() => store.getters["users/isSorting"]);
-    const isBeingSorted = computed(() => store.getters["users/isBeingSorted"]);
-    
-    const sortUsers = () => {
-      store.dispatch("users/toggleSorting");
-    };
 
     return {
-      sortedUsers,
-      allUsers,
-      sortUsers,
-      isSorting,
-      isBeingSorted
+      sortedUsers: computed(() => store.getters["users/sortedUsers"]),
+      allUsers: computed(() => store.getters["users/allUsers"]),
+      isSorting: computed(() => store.getters["users/isSorting"]),
+      isBeingSorted: computed(() => store.getters["users/isBeingSorted"]),
+      sortUsers: () => store.dispatch("users/toggleSorting"),
     };
   },
 };
@@ -117,7 +109,7 @@ h1 {
   overflow: hidden;
   transition-duration: 0.3s;
   box-shadow: 0.125rem 0.125rem 0.6rem rgba(0, 0, 0, 0.199);
-  background-color: var(--clr-living-coral);
+  background-color: #ff6f61;
 }
 
 .sort-sign {
