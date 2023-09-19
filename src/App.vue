@@ -60,7 +60,7 @@ export default {
     });
 
     const snackbarProvider = {
-      showSnackbar: (message, color, timeout, location) => {
+      showSnackbar: ( message, color, timeout, location = "top center" ) => {
         snackbar.value.isActive = true;
         snackbar.value.message = message;
         snackbar.value.color = color;
@@ -71,30 +71,11 @@ export default {
           snackbar.value.isActive = false;
         }, timeout);
       },
-      showSuccessSnackbar: (message) => showSnackbar({message, color: "success", timeout: 4000, location: "bottom center"}),
-      showErrorSnackbar: (message) => showSnackbar({message, color: "error", timeout: 4000, location: "bottom center"}),
+
+      showSuccessSnackbar: (message) => snackbarProvider.showSnackbar(message, "success", 4000, "bottom center"),
+      showErrorSnackbar: (message) => snackbarProvider.showSnackbar(message, "error", 4000, "bottom center"),
     };
 
-    const showSnackbar = ({
-      message,
-      color,
-      timeout,
-      location = "top center",
-    }) => {
-      snackbar.value.isActive = true;
-      snackbar.value.message = message;
-      snackbar.value.color = color;
-      snackbar.value.timeout = timeout;
-      snackbar.value.location = location;
-
-      setTimeout(() => {
-        snackbar.value.isActive = false;
-      }, timeout);
-    };
-
-
-    provide("snackbar", snackbar);
-    provide("showSnackbar", showSnackbar);
     provide("snackbarProvider", snackbarProvider);
 
     return { pages, snackbar };
