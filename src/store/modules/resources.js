@@ -6,7 +6,7 @@ import {
   updateResource,
   removeResourceQuantity,
   fetchAvailabilityResourceById,
-  fetchQuantityByResourceId
+  fetchQuantityByResourceId,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -15,6 +15,7 @@ export default {
     resources: [],
     resourceDetails: {},
     tableColumns: [
+      { key: "quantity", title: "Quantity" },
       { key: "clazz", title: "Resource Type" },
       { key: "color", title: "Color" },
       { key: "quality", title: "Quality" },
@@ -61,7 +62,12 @@ export default {
   actions: {
     async fetchResources({ commit }) {
       const res = await fetchResources();
-      commit("setResources", res);
+      const formattedResponse = Object.values(res).map((item) => ({
+        ...item.resource,
+        quantity: item.quantity,
+      }));
+      commit("setResources", formattedResponse);
+  
     },
     async createResource({ commit }, formData) {
       const res = await postResources(formData);
@@ -78,15 +84,15 @@ export default {
       const updatedResource = await updateResource(id, resourceWithoutId);
       commit("updateResource", updatedResource);
     },
-    async removeQuantityFromResource({commit}, data) {
-      await removeResourceQuantity(data.userId, data.resourceId, data.quantity)
+    async removeQuantityFromResource({ commit }, data) {
+      await removeResourceQuantity(data.userId, data.resourceId, data.quantity);
     },
-    async fetchAvailabilityResourceById({commit}, resourceId) {
-     return await fetchAvailabilityResourceById(resourceId)
+    async fetchAvailabilityResourceById({ commit }, resourceId) {
+      return await fetchAvailabilityResourceById(resourceId);
     },
-    async fetchQuantityByResourceId({commit}, resourceId) {
-      return await fetchQuantityByResourceId(resourceId)
-     },
+    async fetchQuantityByResourceId({ commit }, resourceId) {
+      return await fetchQuantityByResourceId(resourceId);
+    },
   },
   getters: {
     allResources: (state) => state.resources,

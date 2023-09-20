@@ -12,8 +12,11 @@ async function fetchData(endpoint) {
   }
 }
 
+// export async function fetchResources() {
+//   return await fetchData("/resources");
+// }
 export async function fetchResources() {
-  return await fetchData("/resources");
+  return await fetchData("/resources/quantity ");
 }
 
 export async function fetchResourcePerUser(userId) {

@@ -11,7 +11,7 @@ export default {
     usersResources: {},
     isSorting: false,
     sortingWheel: false,
-    resourceAvailabilityColumns: [{ key: "quantity", title: "Quantity" }],
+    // resourceAvailabilityColumns: [{ key: "quantity", title: "Quantity" }],
   },
   mutations: {
     setUsers(state, users) {
@@ -57,7 +57,7 @@ export default {
   getters: {
     getColumns: (state, getters, rootState, rootGetters) => [
       rootState.resources.tableColumnRemoveQuantity,
-      ...state.resourceAvailabilityColumns,
+      // ...state.resourceAvailabilityColumns,
       ...rootState.resources.tableColumns,
     ],
     allUsers(state) {
