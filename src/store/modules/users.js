@@ -10,28 +10,27 @@ export default {
     users: [],
     usersResources: {},
     isSorting: false,
-    isBeingSorted: false,
-    isAscending: true,
+    sortingWheel: false,
     resourceAvailabilityColumns: [{ key: "quantity", title: "Quantity" }],
   },
   mutations: {
     setUsers(state, users) {
       state.users = users;
     },
+    toggleSorting(state) {
+      state.isSorting = !state.isSorting;
+    },
+    toggleSortingWheel(state) {
+      state.sortingWheel = !state.sortingWheel
+      setTimeout(() => {
+        state.sortingWheel = false
+      }, 100);
+    },
     setUsersResources(state, usersResources) {
       state.usersResources = usersResources;
     },
     setAllResourcesByUsers(state, usersResources) {
       state.allResourcesByUser.push(usersResources);
-    },
-    setIsSorting(state, isSorting) {
-      state.isSorting = isSorting;
-    },
-    setIsBeingSorted(state, isBeingSorted) {
-      state.isBeingSorted = isBeingSorted;
-    },
-    setIsAscending(state, isAscending) {
-      state.isAscending = isAscending;
     },
   },
   actions: {
@@ -40,12 +39,9 @@ export default {
       commit("setUsers", res);
     },
     toggleSorting({ commit, state }) {
-      commit("setIsSorting", true);
-      commit("setIsBeingSorted", true);
-      setTimeout(() => {
-        // commit("setIsAscending", !state.isAscending);
-        commit("setIsSorting", false);
-      }, 100);
+      commit("toggleSorting"); 
+      commit("toggleSortingWheel"); 
+
     },
     async fetchResourcesPerUser({ commit }, userId) {
       const res = await fetchResourcePerUser(userId);
@@ -64,12 +60,6 @@ export default {
       ...state.resourceAvailabilityColumns,
       ...rootState.resources.tableColumns,
     ],
-    isSorting(state) {
-      return state.isSorting;
-    },
-    isBeingSorted(state) {
-      return state.isBeingSorted;
-    },
     allUsers(state) {
       return state.users;
     },
@@ -79,19 +69,17 @@ export default {
     getUserResources(state) {
       return state.usersResources;
     },
+    sortingWheel: (state) =>  state.sortingWheel,
     sortedUsers(state) {
-      return state.users.slice().sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-        if (state.isAscending) {
-          if (nameA < nameB) return -1;
-          if (nameA > nameB) return 1;
-        } else {
-          if (nameA > nameB) return -1;
-          if (nameA < nameB) return 1;
-        }
-        return 0;
-      });
+      if (state.isSorting) {
+        return [...state.users].sort((a,b) => {
+          return a.name.localeCompare(b.name)
+        });
+      }
+      return state.users;
+    },
+    isSorting(state) {
+      return state.isSorting;
     },
   },
 };
