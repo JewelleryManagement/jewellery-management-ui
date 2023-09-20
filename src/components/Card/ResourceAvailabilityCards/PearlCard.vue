@@ -9,8 +9,8 @@
       >Current quantity:
       {{ currentQuantity === "" ? "0" : currentQuantity }}</v-card-subtitle
     >
-    <v-card-subtitle v-for="item in usersAndValues" :key="item.id">
-      User: {{ item.name }} - Quantity: {{ item.quantity }}
+    <v-card-subtitle v-for="item in usersAndQuantities" :key="item.id">
+      User: {{ item.owner.name }} - Quantity: {{ item.quantity }}
     </v-card-subtitle>
 
     <v-card-text>
@@ -26,12 +26,12 @@
 
 <script>
 export default {
-  props: ["resource", "currentQuantity", "usersAndValues"],
+  props: ["resource", "currentQuantity", "usersAndQuantities"],
   setup(props) {
     return {
       resource: props.resource,
       currentQuantity: props.currentQuantity,
-      usersAndValues: props.usersAndValues,
+      usersAndQuantities: props.usersAndQuantities,
     };
   },
 };

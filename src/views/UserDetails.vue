@@ -45,9 +45,10 @@ export default {
   props: ["id"],
   async setup(props) {
     const store = useStore();
+    const userId = props.id
     const snackbarProvider = inject("snackbarProvider");
     try {
-      await store.dispatch("users/fetchResourcesPerUser", props.id);
+      await store.dispatch("users/fetchResourcesPerUser", userId);
     } catch (error) {
       snackbarProvider.showErrorSnackbar("Failed to fetch products.");
     }
@@ -62,7 +63,7 @@ export default {
       resource.quantity = quantity;
       resourceItem.value.push(resource);
     }
-
+    
     return {
       user,
       tableColumns,

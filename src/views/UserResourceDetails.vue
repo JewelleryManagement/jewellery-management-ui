@@ -2,8 +2,8 @@
   <v-container class="my-12" fluid>
     <resource-availability-card
       :resource="resource"
-      :currentQuantity="currentQuantity"
-      :quantityAndResourceByUser="quantityAndResourceByUser"
+      :resourceAvailability="resourceAvailability"
+      :resourceQuantity="resourceQuantity"
     ></resource-availability-card>
 
     <v-sheet width="300" class="mx-auto">
@@ -62,116 +62,68 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const pageTitle = ref(route.meta.title);
-    const quantityToSubmit = ref("");
+    const quantity = ref("");
     const resourceId = props.id;
-    const resouceByUser = computed(
-      () => store.getters["users/getUserResources"]
-    ); // owner + resourcesAndQuantities
     const allUsers = computed(() => store.getters["users/allUsers"]);
     const selectedUser = ref("");
     const userOptions = computed(() =>
       store.getters["users/allUsers"].map((user) => user.name)
     );
-    const currentQuantity = ref("");
-    const quantityAndResourceByUser = ref([]);
+    const resourceAvailability = await store.dispatch(
+      "resources/fetchAvailabilityResourceById",
+      resourceId
+    );
 
-    for (const index in allUsers.value) {
-      const userId = allUsers.value[index].id;
-      const res = await store.dispatch("users/fetchResourcesByUser", userId);
-      quantityAndResourceByUser.value.push(res);
+    if (route.path.includes("/remove")) {
+      const user = computed(() => store.getters["users/getUserResources"]);
+      selectedUser.value = user.value.owner.name;
+      const quantityByUser = resourceAvailability.usersAndQuantities.find(
+        (item) => item.owner.name === user.value.owner.name
+      ).quantity;
+      quantity.value = quantityByUser;
     }
 
-    function getCurrentResourceQuantity() {
-      const currentResources = resouceByUser.value.resourcesAndQuantities;
-
-      for (const index in currentResources) {
-        currentResources[index].resource.id === resourceId
-          ? (currentQuantity.value += currentResources[index].quantity)
-          : "";
-      }
-    }
-
-    async function getCurrentResourceQuantityAndUser() {
-      const url = router.options.history.state.back; // /users/userId
-      const userId = url.substring(url.lastIndexOf("/") + 1); // substing to find userId
-      try {
-        await store.dispatch("users/fetchResourcesPerUser", userId);
-        const user = computed(() => store.getters["users/getUserResources"]);
-        const currentUserQuantity = user.value.resourcesAndQuantities;
-        selectedUser.value = user.value.owner.name;
-
-        for (const index in currentUserQuantity) {
-          const currentUserResource = currentUserQuantity[index].resource;
-          if (currentUserResource.id === resourceId) {
-            const resourceQuantity = currentUserQuantity[index].quantity;
-            quantityToSubmit.value = resourceQuantity;
-            currentQuantity.value = resourceQuantity;
+    const handleSubmit = async () => {
+      const { valid } = await form.value.validate();
+      const findUser = allUsers.value.find(
+        (user) => user.name == selectedUser.value
+      );
+      if (valid) {
+        const data = {
+          userId: findUser.id,
+          resourceId: props.id,
+          quantity: quantity.value,
+        };
+        try {
+          if (route.path.includes("/add")) {
+            await store.dispatch("users/postResourcePerUser", data);
+            snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
+            router.push("/resources");
+          } else if (route.path.includes("/remove")) {
+            await store.dispatch("resources/removeQuantityFromResource", data);
+            snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
+            router.push(`/users/${findUser.id}`);
           }
-        }
-      } catch (error) {
-        showErrorSnackbar("Couldn't get user and its resource/quantity");
-      }
-    }
-
-    if (route.path.includes("/add")) {
-      getCurrentResourceQuantity();
-    } else if (route.path.includes("/remove")) {
-      getCurrentResourceQuantityAndUser();
-    }
-
-    const handleAddSubmit = async () => {
-      const { valid } = await form.value.validate();
-      const findUser = allUsers.value.find(
-        (user) => user.name == selectedUser.value
-      );
-      if (valid) {
-        const data = {
-          userId: findUser.id,
-          resourceId: props.id,
-          quantity: quantityToSubmit.value,
-        };
-        try {
-          await store.dispatch("users/postResourcePerUser", data);
-          snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
-          router.push("/resources");
         } catch (error) {
-          snackbarProvider.showErrorSnackbar("Couldn't add quantity");
-        }
-      }
-    };
-
-    const handleRemoveSubmit = async () => {
-      const { valid } = await form.value.validate();
-      const findUser = allUsers.value.find(
-        (user) => user.name == selectedUser.value
-      );
-
-      if (valid) {
-        const data = {
-          userId: findUser.id,
-          resourceId: props.id,
-          quantityNumber: quantityToSubmit.value,
-        };
-
-        try {
-          await store.dispatch("resources/removeQuantityFromResource", data);
-          snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
-          router.push(`/users/${findUser.id}`);
-        } catch (error) {
-          snackbarProvider.showErrorSnackbar("Couldn't update quantity");
+          const errorMessage = route.path.includes("/add")
+            ? "Couldn't add quantity"
+            : "Couldn't update quantity";
+          snackbarProvider.showErrorSnackbar(errorMessage);
         }
       }
     };
 
     return {
-      quantityAndResourceByUser: quantityAndResourceByUser.value,
       router,
       resource: computed(() =>
         store.getters["resources/getResourceById"](props.id)
       ),
-      handleSubmit: route.path.includes("/add")
-        ? handleAddSubmit
-        : handleRemoveSubmit,
+      resourceAvailability: resourceAvailability,
+      resourceQuantity: await store.dispatch(
+        "resources/fetchQuantityByResourceId",
+        resourceId
+      ),
+      handleSubmit,
       resetForm() {
         if (form.value) {
           form.value.reset();
@@ -180,11 +132,10 @@ export default {
       },
       form,
       pageTitle,
-      quantity: quantityToSubmit,
+      quantity,
       numberFieldRules,
       userOptions,
       selectedUser,
-      currentQuantity,
     };
   },
 };

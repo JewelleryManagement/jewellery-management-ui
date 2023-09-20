@@ -4,7 +4,9 @@ import {
   postResources,
   removeResource,
   updateResource,
-  removeResourceQuantity
+  removeResourceQuantity,
+  fetchAvailabilityResourceById,
+  fetchQuantityByResourceId
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -77,8 +79,14 @@ export default {
       commit("updateResource", updatedResource);
     },
     async removeQuantityFromResource({commit}, data) {
-      await removeResourceQuantity(data.userId, data.resourceId, data.quantityNumber)
-    }
+      await removeResourceQuantity(data.userId, data.resourceId, data.quantity)
+    },
+    async fetchAvailabilityResourceById({commit}, resourceId) {
+     return await fetchAvailabilityResourceById(resourceId)
+    },
+    async fetchQuantityByResourceId({commit}, resourceId) {
+      return await fetchQuantityByResourceId(resourceId)
+     },
   },
   getters: {
     allResources: (state) => state.resources,

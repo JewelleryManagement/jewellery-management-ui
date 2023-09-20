@@ -32,7 +32,6 @@ import PearlCard from "./ResourceAvailabilityCards/PearlCard.vue";
 import LinkingPartCard from "./ResourceAvailabilityCards/LinkingPartCard.vue";
 import GemstoneCard from "./ResourceAvailabilityCards/GemstoneCard.vue";
 import PreciousMetalCard from "./ResourceAvailabilityCards/PreciousMetalCard.vue";
-import { ref } from "vue";
 
 export default {
   components: {
@@ -41,41 +40,15 @@ export default {
     GemstoneCard,
     PreciousMetalCard,
   },
-  props: ["resource", "quantityAndResourceByUser"],
+  props: ["resource", 'resourceAvailability', 'resourceQuantity'],
+  
   setup(props) {
-    const resourceId = props.resource.id;
-
-    const usersAndQuantities = ref([]);
-
-    const calculateUserValues = () => {
-      const quantityForAllUsers = props.quantityAndResourceByUser.reduce(
-        (total, user) => {
-          const userResource = user.resourcesAndQuantities.find(
-            (resource) => resource.resource.id === resourceId
-          );
-
-          if (userResource) {
-            usersAndQuantities.value.push({
-              name: user.owner.name,
-              quantity: userResource.quantity,
-            });
-            return total + userResource.quantity;
-          }
-
-          return total;
-        },
-        0
-      );
-
-      return quantityForAllUsers;
-    };
-
-    const currentQuantity = calculateUserValues();
 
     return {
-      resource: props.resource,
-      currentQuantity,
-      usersAndQuantities: usersAndQuantities.value,
+      resourceQuantity: props.resourceQuantity,
+      resource: props.resourceAvailability.resource,
+      currentQuantity: props.resourceQuantity.quantity,
+      usersAndQuantities: props.resourceAvailability.usersAndQuantities,
     };
   },
 };

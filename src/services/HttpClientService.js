@@ -20,6 +20,14 @@ export async function fetchResourcePerUser(userId) {
   return await fetchData(`/resources/availability/${userId}`);
 }
 
+export async function fetchAvailabilityResourceById(resourceId) {
+  return await fetchData(`/resources/availability/by-resource/${resourceId}`);
+}
+
+export async function fetchQuantityByResourceId(resourceId) {
+  return await fetchData(`/resources/quantity/${resourceId}`);
+}
+
 export async function fetchProducts() {
   return await fetchData("/products");
 }
