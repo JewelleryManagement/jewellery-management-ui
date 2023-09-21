@@ -9,7 +9,7 @@
       hide-details
     ></v-text-field>
   </v-card-title>
-  <v-data-table :headers="tableColumns" :items="resources" :search="search">
+  <v-data-table :headers="tableColumns" :items="filteredResources" :search="search">
     <template v-slot:item.delete="{ item }">
       <v-icon color="red" @click="onDelete(item.selectable.id)"
         >mdi-delete</v-icon
@@ -33,18 +33,30 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 
 export default {
+  props: ['sortChoice'],
   components: {
     VDataTable,
   },
-  setup() {
+  setup(props) {
+    const internalSortChoice = ref(props.sortChoice); 
+    watch(() => props.sortChoice,(newSortChoice) => {internalSortChoice.value = newSortChoice;});
     const store = useStore();
     const resources = computed(() => store.getters["resources/allResources"]);
     const tableColumns = computed(() => store.getters["resources/getColumns"]);
+
+    const filteredResources = computed(() => {
+      if (internalSortChoice.value === 'All') {
+        return resources.value; 
+      } else {
+        return resources.value.filter((x) => x.clazz === internalSortChoice.value);
+      }
+    });
+
     const search = ref("");
 
     const onDelete = async (id) => {
@@ -55,6 +67,8 @@ export default {
     };
 
     return {
+      filteredResources,
+      internalSortChoice,
       search,
       tableColumns,
       resources,
