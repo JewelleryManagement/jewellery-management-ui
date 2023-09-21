@@ -9,6 +9,10 @@ import {
   fetchQuantityByResourceId,
 } from "@/services/HttpClientService.js";
 
+const filterColumnsByKey = (state, keys) => {
+  return state.tableColumns.filter((column) => keys.includes(column.key));
+};
+
 export default {
   namespaced: true,
   state: reactive({
@@ -67,7 +71,6 @@ export default {
         quantity: item.quantity,
       }));
       commit("setResources", formattedResponse);
-  
     },
     async createResource({ commit }, formData) {
       const res = await postResources(formData);
@@ -102,6 +105,48 @@ export default {
       state.tableColumnEdit,
       state.tableColumnAdd,
     ],
+    getColumnsForPearl: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "type",
+        "size",
+        "quality",
+        "quantityType",
+        "color",
+        "shape",
+      ]),
+    getColumnsForGemstone: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "quantityType",
+        "color",
+        "shape",
+        "carat",
+        "cut",
+        "clarity",
+        "dimensionX",
+        "dimensionY",
+        "dimensionZ",
+      ]),
+    getColumnsForLinkingPart: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "description",
+        "quantityType",
+      ]),
+    getColumnsForPreciousMetal: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "type",
+        "quantityType",
+        "purity",
+        "color",
+        "plating",
+      ]),
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
     getResourceDetails: (state) => state.resourceDetails,

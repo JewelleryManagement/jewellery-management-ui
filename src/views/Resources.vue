@@ -3,14 +3,18 @@
     <v-row justify="center">
       <v-col cols="10" max-width="1600">
         <v-card class="elevation-12">
-          <div class="text-center">
-            <h1>Resources table</h1>
-          </div>
+          <v-container class="text-center text-h4 font-weight-bold">
+            {{
+              sortChoice === "All"
+                ? "All resources table"
+                : `${sortChoice}'s resources table`
+            }}
+          </v-container>
           <div class="d-flex justify-space-between">
             <v-menu>
               <template v-slot:activator="{ props }">
                 <v-btn
-                variant="outlined"
+                  variant="outlined"
                   class="mx-4"
                   rounded="xs"
                   :size="isSmAndDown ? 'small' : 'x-large'"
@@ -26,7 +30,9 @@
                   :key="index"
                   :value="index"
                 >
-                  <v-list-item-title @click="clickHandler(item.title)">{{ item.title }}</v-list-item-title>
+                  <v-list-item-title @click="clickHandler(item.title)">{{
+                    item.title
+                  }}</v-list-item-title>
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -76,7 +82,9 @@ export default {
     });
 
     return {
-      isSmAndDown: computed(() => {return mobile.smAndDown.value}),
+      isSmAndDown: computed(() => {
+        return mobile.smAndDown.value;
+      }),
       clickHandler,
       sortChoice,
       items: [

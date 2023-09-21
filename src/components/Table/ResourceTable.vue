@@ -9,7 +9,11 @@
       hide-details
     ></v-text-field>
   </v-card-title>
-  <v-data-table :headers="tableColumns" :items="filteredResources" :search="search">
+  <v-data-table
+    :headers="tableColumns"
+    :items="filteredResources"
+    :search="search"
+  >
     <template v-slot:item.delete="{ item }">
       <v-icon color="red" @click="onDelete(item.selectable.id)"
         >mdi-delete</v-icon
@@ -38,22 +42,45 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 
 export default {
-  props: ['sortChoice'],
+  props: ["sortChoice"],
   components: {
     VDataTable,
   },
   setup(props) {
-    const internalSortChoice = ref(props.sortChoice); 
-    watch(() => props.sortChoice,(newSortChoice) => {internalSortChoice.value = newSortChoice;});
+    const internalSortChoice = ref(props.sortChoice);
+    watch(
+      () => props.sortChoice,
+      (newSortChoice) => {
+        internalSortChoice.value = newSortChoice;
+      }
+    );
     const store = useStore();
     const resources = computed(() => store.getters["resources/allResources"]);
-    const tableColumns = computed(() => store.getters["resources/getColumns"]);
+
+    const columnGettersMap = {
+      All: "resources/getColumns",
+      LinkingPart: "resources/getColumnsForLinkingPart",
+      Pearl: "resources/getColumnsForPearl",
+      Gemstone: "resources/getColumnsForGemstone",
+      PreciousMetal: "resources/getColumnsForPreciousMetal",
+    };
+
+    const selectedTableColumns = computed(() => {
+      const getterName = columnGettersMap[internalSortChoice.value];
+      if (getterName) {
+        return store.getters[getterName];
+      } else {
+        return store.getters["resources/getColumns"];
+      }
+    });
 
     const filteredResources = computed(() => {
-      if (internalSortChoice.value === 'All') {
-        return resources.value; 
+      if (internalSortChoice.value === "All") {
+        return resources.value;
       } else {
-        return resources.value.filter((x) => x.clazz === internalSortChoice.value);
+        return resources.value.filter(
+          (x) => x.clazz === internalSortChoice.value
+        );
       }
     });
 
@@ -70,7 +97,7 @@ export default {
       filteredResources,
       internalSortChoice,
       search,
-      tableColumns,
+      tableColumns: selectedTableColumns,
       resources,
       onDelete,
     };
