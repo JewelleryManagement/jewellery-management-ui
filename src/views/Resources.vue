@@ -7,7 +7,7 @@
             <h1>Resources table</h1>
           </div>
           <div class="d-flex justify-space-between">
-            <v-menu open-on-hover>
+            <v-menu>
               <template v-slot:activator="{ props }">
                 <v-btn
                 variant="outlined"
