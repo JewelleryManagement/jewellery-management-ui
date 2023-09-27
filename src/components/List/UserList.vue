@@ -3,18 +3,13 @@
     <v-card-title class="text-center text-h3" >
       User List
     </v-card-title>
-      <v-card-actions class="justify-end mx-10" >
-        <v-btn elevation="2" rounded="xl"  @click="sortUsersHandler" color="red">
-          <v-icon class="fa-spin"> {{ sortingWheel ? "mdi-cog" : "" }} </v-icon>
-          Sort
-        </v-btn>
-      </v-card-actions>
+
       <v-container>
         <v-row>
           <v-col cols="12" v-if="allUsers.length > 0">
             <v-list>
               <v-list-item
-                v-for="user in sortedUsers"
+                v-for="user in allUsers"
                 :key="user.email"
                 :title="user.name"
                 :subtitle="user.email"
@@ -45,13 +40,7 @@ export default {
     const store = useStore();
 
     return {
-      sortedUsers: computed(() => store.getters["users/sortedUsers"]),
       allUsers: computed(() => store.getters["users/allUsers"]),
-      isSorting: computed(() => store.getters["users/isSorting"]),
-      sortingWheel: computed(() => store.getters["users/sortingWheel"]),
-      sortedUsers: computed(() => store.getters["users/sortedUsers"]),
-      sortUsersHandler: () => store.dispatch("users/toggleSorting"),
-      
     };
   },
 };

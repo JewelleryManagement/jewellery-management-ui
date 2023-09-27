@@ -5,9 +5,9 @@
         <v-card class="elevation-12">
           <v-container class="text-center text-h4 font-weight-bold">
             {{
-              sortChoice === "All"
+              selectedResourceType === "All"
                 ? "All resources table"
-                : `${sortChoice}'s resources table`
+                : `${selectedResourceType}'s resources table`
             }}
           </v-container>
           <div class="d-flex justify-space-between">
@@ -21,18 +21,19 @@
                   color="red"
                   v-bind="props"
                 >
-                  Sorting
+                  Resource Type
                 </v-btn>
               </template>
               <v-list>
                 <v-list-item
-                  v-for="(item, index) in items"
-                  :key="index"
-                  :value="index"
+                  v-for="resourceType in resourceTypes"
+                  :key="resourceType"
+                  :value="resourceType"
                 >
-                  <v-list-item-title @click="clickHandler(item.title)">{{
-                    item.title
-                  }}</v-list-item-title>
+                  <v-list-item-title
+                    @click="filterResourcesByType(resourceType)"
+                    >{{ resourceType }}</v-list-item-title
+                  >
                 </v-list-item>
               </v-list>
             </v-menu>
@@ -46,7 +47,9 @@
             >
           </div>
 
-          <resource-table :sortChoice="sortChoice"></resource-table>
+          <resource-table
+            :selectedResourceType="selectedResourceType"
+          ></resource-table>
         </v-card>
       </v-col>
     </v-row>
@@ -66,11 +69,10 @@ export default {
   setup() {
     const store = useStore();
     const snackbarProvider = inject("snackbarProvider");
-    const mobile = useDisplay();
-    const sortChoice = ref("All");
+    const selectedResourceType = ref("All");
 
-    const clickHandler = (title) => {
-      sortChoice.value = title;
+    const filterResourcesByType = (title) => {
+      selectedResourceType.value = title;
     };
 
     onMounted(async () => {
@@ -83,16 +85,16 @@ export default {
 
     return {
       isSmAndDown: computed(() => {
-        return mobile.smAndDown.value;
+        return useDisplay().smAndDown.value;
       }),
-      clickHandler,
-      sortChoice,
-      items: [
-        { title: "All" },
-        { title: "Pearl" },
-        { title: "LinkingPart" },
-        { title: "Gemstone" },
-        { title: "PreciousMetal" },
+      filterResourcesByType,
+      selectedResourceType,
+      resourceTypes: [
+        "All",
+        "Pearl",
+        "LinkingPart",
+        "Gemstone",
+        "PreciousMetal",
       ],
     };
   },

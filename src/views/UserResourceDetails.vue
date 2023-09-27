@@ -16,11 +16,12 @@
           label="Select user"
           :items="userOptions"
           v-model="selectedUser"
+          :disabled="route.path.includes('/remove')"
         >
         </v-select>
 
         <v-text-field
-          v-model="quantity"
+          v-model="quantityToSubmit"
           label="Quantity"
           :rules="numberFieldRules"
           required
@@ -62,7 +63,7 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const pageTitle = ref(route.meta.title);
-    const quantity = ref("");
+    const quantityToSubmit = ref("");
     const resourceId = props.id;
     const allUsers = computed(() => store.getters["users/allUsers"]);
     const selectedUser = ref("");
@@ -80,7 +81,7 @@ export default {
       const quantityByUser = resourceAvailability.usersAndQuantities.find(
         (item) => item.owner.name === user.value.owner.name
       ).quantity;
-      quantity.value = quantityByUser;
+      quantityToSubmit.value = quantityByUser;
     }
 
     const handleSubmit = async () => {
@@ -92,11 +93,11 @@ export default {
         const data = {
           userId: findUser.id,
           resourceId: props.id,
-          quantity: quantity.value,
+          quantity: quantityToSubmit.value,
         };
         try {
           if (route.path.includes("/add")) {
-            await store.dispatch("users/postResourcePerUser", data);
+            await store.dispatch("users/postResourcesToUser", data);
             snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
             router.push("/resources");
           } else if (route.path.includes("/remove")) {
@@ -114,6 +115,7 @@ export default {
     };
 
     return {
+      route,
       router,
       resource: computed(() =>
         store.getters["resources/getResourceById"](props.id)
@@ -132,7 +134,7 @@ export default {
       },
       form,
       pageTitle,
-      quantity,
+      quantityToSubmit,
       numberFieldRules,
       userOptions,
       selectedUser,

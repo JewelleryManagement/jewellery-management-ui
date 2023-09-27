@@ -48,7 +48,7 @@ export default {
     const userId = props.id
     const snackbarProvider = inject("snackbarProvider");
     try {
-      await store.dispatch("users/fetchResourcesPerUser", userId);
+      await store.dispatch("users/fetchResourcesForUser", userId);
     } catch (error) {
       snackbarProvider.showErrorSnackbar("Failed to fetch products.");
     }

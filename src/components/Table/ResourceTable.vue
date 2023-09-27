@@ -42,14 +42,14 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 
 export default {
-  props: ["sortChoice"],
+  props: ["selectedResourceType"],
   components: {
     VDataTable,
   },
   setup(props) {
-    const internalSortChoice = ref(props.sortChoice);
+    const internalSortChoice = ref(props.selectedResourceType);
     watch(
-      () => props.sortChoice,
+      () => props.selectedResourceType,
       (newSortChoice) => {
         internalSortChoice.value = newSortChoice;
       }
@@ -67,11 +67,7 @@ export default {
 
     const selectedTableColumns = computed(() => {
       const getterName = columnGettersMap[internalSortChoice.value];
-      if (getterName) {
-        return store.getters[getterName];
-      } else {
-        return store.getters["resources/getColumns"];
-      }
+      return store.getters[getterName ? getterName : "resources/getColumns"];
     });
 
     const filteredResources = computed(() => {
