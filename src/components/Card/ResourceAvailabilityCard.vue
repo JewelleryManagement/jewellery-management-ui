@@ -23,19 +23,9 @@
 </template>
 
 <script>
-import PearlCard from "./ResourceAvailabilityCards/PearlCard.vue";
-import LinkingPartCard from "./ResourceAvailabilityCards/LinkingPartCard.vue";
-import GemstoneCard from "./ResourceAvailabilityCards/GemstoneCard.vue";
-import PreciousMetalCard from "./ResourceAvailabilityCards/PreciousMetalCard.vue";
 import { useStore } from "vuex";
 
 export default {
-  components: {
-    PearlCard,
-    LinkingPartCard,
-    GemstoneCard,
-    PreciousMetalCard,
-  },
   props: ["resource", 'resourceAvailability', 'resourceQuantity'],
   
   setup(props) {
