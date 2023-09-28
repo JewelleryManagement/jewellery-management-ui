@@ -11,10 +11,6 @@ async function fetchData(endpoint) {
     throw new Error("Failed to fetch data from the server.");
   }
 }
-
-// export async function fetchResources() {
-//   return await fetchData("/resources");
-// }
 export async function fetchResources() {
   return await fetchData("/resources/quantity ");
 }

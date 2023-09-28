@@ -117,14 +117,9 @@ export default {
     return {
       route,
       router,
-      resource: computed(() =>
-        store.getters["resources/getResourceById"](props.id)
-      ),
+      resource: computed(() =>store.getters["resources/getResourceById"](props.id)),
       resourceAvailability: resourceAvailability,
-      resourceQuantity: await store.dispatch(
-        "resources/fetchQuantityByResourceId",
-        resourceId
-      ),
+      resourceQuantity: await store.dispatch("resources/fetchQuantityByResourceId",resourceId),
       handleSubmit,
       resetForm() {
         if (form.value) {

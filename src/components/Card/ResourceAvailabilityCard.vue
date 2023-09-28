@@ -29,6 +29,7 @@ export default {
   props: ["resource", 'resourceAvailability', 'resourceQuantity'],
   
   setup(props) {
+    
     let formatResource = (jsonObj) => {
       const store = useStore();
       const allTable = store.getters["resources/getTableColumns"];

@@ -9,7 +9,6 @@ export default {
   state: {
     users: [],
     usersResources: {},
-    // resourceAvailabilityColumns: [{ key: "quantity", title: "Quantity" }],
   },
   mutations: {
     setUsers(state, users) {
