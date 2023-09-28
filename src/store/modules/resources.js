@@ -19,7 +19,6 @@ export default {
     resources: [],
     resourceDetails: {},
     tableColumns: [
-      { key: "quantity", title: "Quantity" },
       { key: "clazz", title: "Resource Type" },
       { key: "color", title: "Color" },
       { key: "quality", title: "Quality" },
@@ -36,6 +35,7 @@ export default {
       { key: "dimensionZ", title: "dimensionZ" },
       { key: "description", title: "Description" },
     ],
+    tableColumnQuantity: { key: "quantity", title: "Quantity"},
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
     tableColumnAdd: { key: "add", title: "", slot: "add" },
@@ -98,8 +98,10 @@ export default {
     },
   },
   getters: {
+    getTableColumns: (state) => state.tableColumns,
     allResources: (state) => state.resources,
     getColumns: (state) => [
+      state.tableColumnQuantity,
       ...state.tableColumns,
       state.tableColumnDelete,
       state.tableColumnEdit,
