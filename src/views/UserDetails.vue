@@ -1,31 +1,32 @@
-
 <template>
-  <suspense>
-    <template #default>
-      <v-container class="my-12" fluid>
-        <v-row justify="center">
-          <v-col cols="10" max-width="1600">
-            <suspense>
-              <user-card
-                :name="user.owner.name"
-                :email="user.owner.email"
-                :resourcesAndQuantities="user.resourcesAndQuantities"
-              ></user-card>
-            </suspense>
-            <resource-availability-table
-              :tableColumns="tableColumns"
-              :resourceItem="resourceItem"
-              :search="search"
-              :name="user.owner.name"
-            ></resource-availability-table>
-          </v-col>
-        </v-row>
-      </v-container>
-    </template>
-    <template #fallback>
-      <span>Loading...</span>
-    </template>
-  </suspense>
+  <v-container>
+    <suspense>
+      <template #default>
+        <v-container class="my-12" fluid>
+          <v-row justify="center">
+            <v-col cols="10" max-width="1600">
+              <suspense>
+                <user-card
+                  :name="user.owner.name"
+                  :email="user.owner.email"
+                  :resourcesAndQuantities="user.resourcesAndQuantities"
+                ></user-card>
+              </suspense>
+              <resource-availability-table
+                :tableColumns="tableColumns"
+                :resourceItem="resourceItem"
+                :search="search"
+                :user="user.owner"
+              ></resource-availability-table>
+            </v-col>
+          </v-row>
+        </v-container>
+      </template>
+      <template #fallback>
+        <span>Loading...</span>
+      </template>
+    </suspense>
+  </v-container>
 </template>
 
 <script>
@@ -44,16 +45,12 @@ export default {
   props: ["id"],
   async setup(props) {
     const store = useStore();
-    const showSnackbar = inject("showSnackbar");
+    const userId = props.id
+    const snackbarProvider = inject("snackbarProvider");
     try {
-      await store.dispatch("users/fetchResourcesPerUser", props.id);
+      await store.dispatch("users/fetchResourcesForUser", userId);
     } catch (error) {
-      showSnackbar({
-        message: "Failed to fetch products.",
-        color: "error",
-        timeout: 4000,
-        location: "top right",
-      });
+      snackbarProvider.showErrorSnackbar("Failed to fetch products.");
     }
     const user = computed(() => store.getters["users/getUserResources"]);
     const tableColumns = computed(() => store.getters["users/getColumns"]);
@@ -66,7 +63,7 @@ export default {
       resource.quantity = quantity;
       resourceItem.value.push(resource);
     }
-
+    
     return {
       user,
       tableColumns,

@@ -1,23 +1,30 @@
 import axios from "@/axios.config";
 
-// GET REQUESTS 
+// GET REQUESTS
 async function fetchData(endpoint) {
   try {
     const response = await axios.get(endpoint);
     if (response.status === 200) {
       return response.data;
     }
-  } catch (error) {    
-    throw new Error("Failed to fetch data from the server.");    
+  } catch (error) {
+    throw new Error("Failed to fetch data from the server.");
   }
 }
-
 export async function fetchResources() {
-  return await fetchData("/resources");
+  return await fetchData("/resources/quantity ");
 }
 
 export async function fetchResourcePerUser(userId) {
   return await fetchData(`/resources/availability/${userId}`);
+}
+
+export async function fetchAvailabilityResourceById(resourceId) {
+  return await fetchData(`/resources/availability/by-resource/${resourceId}`);
+}
+
+export async function fetchQuantityByResourceId(resourceId) {
+  return await fetchData(`/resources/quantity/${resourceId}`);
 }
 
 export async function fetchProducts() {
@@ -44,18 +51,28 @@ export async function postResources(data) {
   return await postData("/resources", data);
 }
 
+export async function postResourceAvailability(data) {
+  return await postData("/resources/availability", data);
+}
+
 // DELETE REQUESTS
 
 async function removeData(endpoint) {
   try {
-    await axios.delete(endpoint)
+    await axios.delete(endpoint);
   } catch (error) {
     throw new Error("Failed to delete this resource.");
   }
 }
 
 export async function removeResource(id) {
-  return await removeData(`/resources/${id}`)
+  return await removeData(`/resources/${id}`);
+}
+
+export async function removeResourceQuantity(userId, resourceId, quantity) {
+  return await removeData(
+    `/resources/availability/${userId}/${resourceId}/${quantity}`
+  );
 }
 
 // PUT REQUEST

@@ -1,14 +1,7 @@
 <template>
   <v-card class="elevation-12 mt-4">
     <div class="text-center">
-      <h1>{{ name }}'s resource table</h1>
-      <div class="d-flex justify-end">
-        <v-col cols="12" sm="6" md="4" class="text-end">
-          <v-btn rounded="xs" size="x-large" color="red" to="/resources/add"
-            >Add resource</v-btn
-          >
-        </v-col>
-      </div>
+      <h1>{{ user.name }}'s resource table</h1>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -26,16 +19,11 @@
       :items="resourceItem"
       :search="search"
     >
-      <template v-slot:item.delete="{ item }">
-        <v-icon color="red" @click="onDelete(item.selectable.id)"
-          >mdi-delete</v-icon
-        >
-      </template>
-      <template v-slot:item.edit="{ item }">
+      <template v-slot:item.remove="{ item }">
         <router-link
-          :to="{ name: 'Edit-Resource', params: { id: item.selectable.id } }"
+          :to="{ name: 'Remove-Quantity', params: { id: item.selectable.id } }"
         >
-          <v-icon color="green">mdi-pencil</v-icon>
+          <v-icon color="blue">mdi-minus</v-icon>
         </router-link>
       </template>
     </v-data-table>
@@ -46,23 +34,16 @@
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 export default {
-  props: ["tableColumns", "resourceItem", "search", "name"],
+  props: ["tableColumns", "resourceItem", "search", "user"],
   components: {
     VDataTable,
   },
   setup(props) {
-    const onDelete = async (id) => {
-      const confirmation = window.confirm(
-        "Are you sure that you would like to delete this item?"
-      );
-    };
-
     return {
       tableColumns: props.tableColumns,
       resourceItem: props.resourceItem,
       search: props.search,
-      name: props.name,
-      onDelete,
+      user: props.user,
     };
   },
 };
