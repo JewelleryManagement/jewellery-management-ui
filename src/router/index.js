@@ -6,9 +6,16 @@ const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
 const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
+const Login = () => import("../views/Login.vue");
 
 const routes = [
-  { path: "/", redirect: "/home" },
+  { path: "/", redirect: "/login" },
+  {
+    path: "/login",
+    name: "Login",
+    component: Login,
+    meta: { title: "Login page" },
+  },
   {
     path: "/home",
     name: "Home",
