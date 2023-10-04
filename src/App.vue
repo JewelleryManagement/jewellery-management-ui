@@ -59,25 +59,24 @@ export default {
       width: 100,
     });
 
-    const showSnackbar = ({
-      message,
-      color,
-      timeout,
-      location = "top center",
-    }) => {
-      snackbar.value.isActive = true;
-      snackbar.value.message = message;
-      snackbar.value.color = color;
-      snackbar.value.timeout = timeout;
-      snackbar.value.location = location;
+    const snackbarProvider = {
+      showSnackbar: ( message, color, timeout, location = "top center" ) => {
+        snackbar.value.isActive = true;
+        snackbar.value.message = message;
+        snackbar.value.color = color;
+        snackbar.value.timeout = timeout;
+        snackbar.value.location = location;
 
-      setTimeout(() => {
-        snackbar.value.isActive = false;
-      }, timeout);
+        setTimeout(() => {
+          snackbar.value.isActive = false;
+        }, timeout);
+      },
+
+      showSuccessSnackbar: (message) => snackbarProvider.showSnackbar(message, "success", 4000, "bottom center"),
+      showErrorSnackbar: (message) => snackbarProvider.showSnackbar(message, "error", 4000, "bottom center"),
     };
 
-    provide("snackbar", snackbar);
-    provide("showSnackbar", showSnackbar);
+    provide("snackbarProvider", snackbarProvider);
 
     return { pages, snackbar };
   },
@@ -85,18 +84,6 @@ export default {
 </script>
 
 <style>
-:root {
-  --clr-white: #fff;
-  --clr-living-coral: #ff6f61;
-  --clr-inkwell: #363945;
-
-  --trans: all 400ms ease;
-
-  --container-width-lg: 75%;
-  --container-width-md: 86%;
-  --container-width-sm: 90%;
-}
-
 .route-enter-from {
   opacity: 0;
   transform: translateY(-30px);

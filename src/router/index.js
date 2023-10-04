@@ -5,6 +5,7 @@ const Products = () => import("../views/Products.vue");
 const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
+const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
 
 const routes = [
   { path: "/", redirect: "/home" },
@@ -26,6 +27,20 @@ const routes = [
     name: "Users Details",
     component: UserDetails,
     meta: { title: "Users Details" },
+  },
+  {
+    path: "/resources/availability/add/:id",
+    props: true,
+    name: "Add-Quantity",
+    component: UserResourceDetails,
+    meta: { title: "Add Quantity" },
+  },
+  {
+    path: "/resources/availability/remove/:id",
+    props: true,
+    name: "Remove-Quantity",
+    component: UserResourceDetails,
+    meta: { title: "Remove Quantity" },
   },
   {
     path: "/resources",

@@ -1,6 +1,9 @@
 <template>
   <v-card class="mx-auto pa-10 elevation-12" width="500" height="auto">
-    <v-card-title class="text-h6">{{ name }}</v-card-title>
+    <v-card-title class="text-h6">
+      <v-icon>mdi-account</v-icon>
+      {{ name }}
+    </v-card-title>
     <v-card-text>
       <div>Email: {{ email }}</div>
       <div>Resource Availability: {{ resourcesAndQuantities.length }}</div>
