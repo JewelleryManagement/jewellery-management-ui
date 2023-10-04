@@ -55,6 +55,10 @@ export async function postResourceAvailability(data) {
   return await postData("/resources/availability", data);
 }
 
+export async function postUserLogin(user) {
+  return await postData("/login", user);
+}
+
 // DELETE REQUESTS
 
 async function removeData(endpoint) {

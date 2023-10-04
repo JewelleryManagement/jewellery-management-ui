@@ -21,7 +21,7 @@
       ></v-img>
     </v-container>
 
-    <v-container class="pa-4 pa-md-12 ml-sm-10 mr-sm-10">
+    <v-container class="mt-12 pa-4 pa-md-12 ml-sm-10 mr-sm-10">
       <div class="text-subtitle-1 text-medium-emphasis">Account</div>
 
       <v-text-field
@@ -30,22 +30,8 @@
         prepend-inner-icon="mdi-email-outline"
         variant="outlined"
         v-model="emailInput"
+        :rules="useEmailFieldRules()"
       ></v-text-field>
-
-      <!-- <div
-        class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between"
-      >
-        Password
-
-        <a
-          class="text-caption text-decoration-none text-red-lighten-2"
-          href="#"
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          Forgot login password?</a
-        >
-      </div> -->
 
       <v-text-field
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
@@ -56,19 +42,12 @@
         variant="outlined"
         @click:append-inner="visible = !visible"
         v-model="passwordInput"
+        :rules="usePasswordFieldRules()"
       ></v-text-field>
-
-      <v-card class="mb-4 mb-md-12" color="surface-variant" variant="tonal">
-        <v-card-text class="text-medium-emphasis text-caption">
-          Warning: After 3 consecutive failed login attempts, you account will
-          be temporarily locked for three hours. If you must login now, you can
-          also click "Forgot login password?" below to reset the login password.
-        </v-card-text>
-      </v-card>
 
       <v-btn
         block
-        class="mb-4 mb-md-8"
+        class="mt-12 mb-4 mb-md-8"
         color="#E57373"
         size="large"
         variant="tonal"
@@ -80,9 +59,11 @@
   </v-card>
 </template>
 <script setup>
+import {useEmailFieldRules, usePasswordFieldRules} from '../utils/validation-rules'
 import { useStore } from "vuex";
-import { ref } from "vue";
+import { ref, inject } from "vue";
 import { useRouter } from "vue-router";
+const snackbarProvider = inject("snackbarProvider");
 
 const store = useStore();
 const router = useRouter();
@@ -96,10 +77,17 @@ const submitHandler = async () => {
       email: emailInput.value,
       password: passwordInput.value,
     };
-    const success = await store.dispatch("auth/login", data);
-    if (success === "ok") {
-      router.push("/home");
-    }
+    userLogin(data);
+  } 
+};
+
+const userLogin = async (data) => {
+  try {
+    const user = await store.dispatch("auth/login", data);
+    snackbarProvider.showSuccessSnackbar("Successfully logged in!");
+    user ? router.push("/home") : "";
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(error.message);
   }
 };
 </script>

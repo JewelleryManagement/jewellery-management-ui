@@ -20,6 +20,7 @@
         :key="index"
         :to="{ name: page.link.text }"
         text
+        @click="page.link.text === 'Logout' ? logoutHandler() : null"
       >
         {{ page.link.text }}
       </v-btn>
@@ -36,6 +37,7 @@
           :key="index"
           link
           :to="{ name: page.link.text }"
+          @click="page.link.text === 'Logout' ? logoutHandler() : null"
         >
           {{ page.link.text }}
         </v-list-item>
@@ -45,18 +47,31 @@
 </template>
 
 <script>
-import { computed } from "vue";
+import { computed, ref, inject } from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 export default {
   props: ["pages"],
   setup() {
+    const store = useStore()
+    const router = useRouter()
+    const snackbarProvider = inject("snackbarProvider");
     const mobile = useDisplay();
     const isSmAndDown = computed(() => {
       return mobile.smAndDown.value;
     });
 
+    const logoutHandler = () => {
+      console.log('here');
+      store.dispatch('auth/logout')
+      snackbarProvider.showSuccessSnackbar('Logged out successfully!')
+      router.push('/login')
+    }
+
     return {
+      logoutHandler,
       isSmAndDown,
     };
   },

@@ -8,6 +8,7 @@ const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
 const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
 const Login = () => import("../views/Login.vue");
+const NotFound = () => import("../views/NotFound.vue");
 // const store = useStore();
 import store from "@/store/store";
 const routes = [
@@ -22,7 +23,7 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home,
-    meta: { title: "Home page", requiresunAuth: true },
+    meta: { title: "Home page", requiresAuth: true },
   },
   {
     path: "/users",
@@ -77,6 +78,15 @@ const routes = [
     component: Products,
     meta: { title: "Products page", requiresAuth: true },
   },
+
+  {
+    path: "/logout",
+    name: "Logout",
+    component: Products,
+    meta: { title: "Logout page", requiresAuth: true },
+  },
+  { path: "/:notFound(.*)", component: NotFound, meta: { requiresunAuth: true}},
+
 ];
 
 const router = createRouter({
@@ -88,12 +98,14 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const pageTitle = to.meta.title;
   document.title = pageTitle;
-  if (to.meta.requiresAuth && store.getters["auth/isAuthenticated"]) {
-    next();
-  } else if (to.meta.requiresunAuth) {
-    next();
-  } else {
+  const isAuthenticated = store.getters["auth/isAuthenticated"];
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
     next("/login");
+  } else if (to.path === "/login" && isAuthenticated) {
+    next('/home');
+  } else {
+    next();
   }
 });
 

@@ -2,7 +2,7 @@
   <suspense>
     <template #default>
       <v-app>
-        <NavBar :pages="pages" />
+        <NavBar v-if="isAuth" :pages="pages" />
         <v-main>
           <router-view v-slot="slotProps">
             <transition name="route" mode="out-in">
@@ -26,7 +26,8 @@
 <script>
 import NavBar from "./components/Nav/NavBar.vue";
 import SnackBar from "./components/Popup/SnackBar.vue";
-import { ref, provide } from "vue";
+import { useStore } from "vuex";
+import { ref, provide, computed } from "vue";
 
 export default {
   name: "App",
@@ -35,6 +36,8 @@ export default {
     SnackBar,
   },
   setup() {
+    const store = useStore();
+    const isAuth = computed(() => store.getters["auth/isAuthenticated"]);
     const pages = ref([
       {
         link: { text: "Home", url: "/" },
@@ -48,6 +51,9 @@ export default {
       {
         link: { text: "Products", url: "/products" },
       },
+      {
+        link: { text: "Logout", url: "/logout" },
+      },
     ]);
 
     const snackbar = ref({
@@ -60,7 +66,7 @@ export default {
     });
 
     const snackbarProvider = {
-      showSnackbar: ( message, color, timeout, location = "top center" ) => {
+      showSnackbar: (message, color, timeout, location = "top center") => {
         snackbar.value.isActive = true;
         snackbar.value.message = message;
         snackbar.value.color = color;
@@ -72,13 +78,20 @@ export default {
         }, timeout);
       },
 
-      showSuccessSnackbar: (message) => snackbarProvider.showSnackbar(message, "success", 4000, "bottom center"),
-      showErrorSnackbar: (message) => snackbarProvider.showSnackbar(message, "error", 4000, "bottom center"),
+      showSuccessSnackbar: (message) =>
+        snackbarProvider.showSnackbar(
+          message,
+          "success",
+          4000,
+          "bottom center"
+        ),
+      showErrorSnackbar: (message) =>
+        snackbarProvider.showSnackbar(message, "error", 4000, "bottom center"),
     };
 
     provide("snackbarProvider", snackbarProvider);
 
-    return { pages, snackbar };
+    return { pages, snackbar, isAuth };
   },
 };
 </script>
