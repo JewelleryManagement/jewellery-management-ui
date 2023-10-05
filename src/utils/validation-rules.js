@@ -30,11 +30,6 @@ export function useEmailFieldRules() {
 export function usePasswordFieldRules() {
   return [
     (v) => !!v || "Password field is required",
-    (v) =>
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&+=!])[A-Za-z\d@#$%^&+=!]{6,}$/.test(
-        v
-      ) || "Password must meet complexity requirements",
-    (v) => v.length >= 6 || "Password must be at least 6 characters long",
     (v) => v.length <= 100 || "Password must be less than 100 characters",
   ];
 }

@@ -52,7 +52,14 @@ export default {
         link: { text: "Products", url: "/products" },
       },
       {
-        link: { text: "Logout", url: "/logout" },
+        link: {
+          text: "Profile",
+          url: "/profile",
+          dropdown: [{ text: "Details" }, { text: "Logout" }],
+        },
+      },
+      {
+        link: { text: "Logout", url: "/logout" }
       },
     ]);
 

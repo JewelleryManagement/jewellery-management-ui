@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-// import { useStore } from "vuex";
+import store from "@/store/store";
+
 const Home = () => import("../views/Home.vue");
 const Resources = () => import("../views/Resources.vue");
 const Products = () => import("../views/Products.vue");
@@ -8,9 +9,9 @@ const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
 const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
 const Login = () => import("../views/Login.vue");
+const Profile = () => import("../views/Profile.vue");
 const NotFound = () => import("../views/NotFound.vue");
-// const store = useStore();
-import store from "@/store/store";
+
 const routes = [
   { path: "/", redirect: "/login" },
   {
@@ -71,22 +72,25 @@ const routes = [
     component: ResourceDetails,
     meta: { title: "Edit resource", requiresAuth: true },
   },
-
   {
     path: "/products",
     name: "Products",
     component: Products,
     meta: { title: "Products page", requiresAuth: true },
   },
-
   {
-    path: "/logout",
-    name: "Logout",
-    component: Products,
-    meta: { title: "Logout page", requiresAuth: true },
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
+    meta: { title: "Profile page", requiresAuth: true },
   },
-  { path: "/:notFound(.*)", component: NotFound, meta: { requiresunAuth: true}},
 
+  { path: "/logout", redirect: "/login" },
+  {
+    path: "/:notFound(.*)",
+    component: NotFound,
+    meta: { requiresunAuth: true },
+  },
 ];
 
 const router = createRouter({
@@ -103,7 +107,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next("/login");
   } else if (to.path === "/login" && isAuthenticated) {
-    next('/home');
+    next("/home");
   } else {
     next();
   }

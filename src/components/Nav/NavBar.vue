@@ -14,16 +14,37 @@
 
     <v-spacer></v-spacer>
 
-    <v-toolbar-items class="hidden-sm-and-down">
+    <v-toolbar-items class="hidden-sm-and-down" v-for="(page, index) in pages">
       <v-btn
-        v-for="(page, index) in pages"
+        v-if="page.link.text !== 'Profile' && page.link.text !== 'Logout'"
         :key="index"
-        :to="{ name: page.link.text }"
+        :to="page.link.url"
         text
         @click="page.link.text === 'Logout' ? logoutHandler() : null"
       >
         {{ page.link.text }}
       </v-btn>
+
+      <v-menu
+        open-on-hover
+        v-else-if="page.link.text === 'Profile' && page.link.text !== 'Logout'"
+      >
+        <template v-slot:activator="{ props }">
+          <v-btn v-bind="props"> Profile </v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+            v-for="(item, index) in page.link.dropdown"
+            :key="index"
+            link
+            @click="
+              item.text === 'Logout' ? logoutHandler() : router.push('/profile')
+            "
+            >{{ item.text }}
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-toolbar-items>
 
     <v-menu v-if="isSmAndDown">
@@ -35,8 +56,8 @@
         <v-list-item
           v-for="(page, index) in pages"
           :key="index"
+          :to="page.link.url"
           link
-          :to="{ name: page.link.text }"
           @click="page.link.text === 'Logout' ? logoutHandler() : null"
         >
           {{ page.link.text }}
@@ -47,16 +68,16 @@
 </template>
 
 <script>
-import { computed, ref, inject } from "vue";
+import { computed, inject } from "vue";
+import { useRouter } from "vue-router";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
 
 export default {
   props: ["pages"],
   setup() {
-    const store = useStore()
-    const router = useRouter()
+    const store = useStore();
+    const router = useRouter();
     const snackbarProvider = inject("snackbarProvider");
     const mobile = useDisplay();
     const isSmAndDown = computed(() => {
@@ -64,13 +85,13 @@ export default {
     });
 
     const logoutHandler = () => {
-      console.log('here');
-      store.dispatch('auth/logout')
-      snackbarProvider.showSuccessSnackbar('Logged out successfully!')
-      router.push('/login')
-    }
+      store.dispatch("auth/logout");
+      snackbarProvider.showSuccessSnackbar("Logged out successfully!");
+      router.push("/login");
+    };
 
     return {
+      router,
       logoutHandler,
       isSmAndDown,
     };

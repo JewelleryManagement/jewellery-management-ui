@@ -15,7 +15,6 @@
               <resource-availability-table
                 :tableColumns="tableColumns"
                 :resourceItem="resourceItem"
-                :search="search"
                 :user="user.owner"
               ></resource-availability-table>
             </v-col>
@@ -30,7 +29,7 @@
 </template>
 
 <script>
-import { computed, ref, onMounted, inject } from "vue";
+import { computed, ref, inject } from "vue";
 import { useStore } from "vuex";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
@@ -54,7 +53,6 @@ export default {
     }
     const user = computed(() => store.getters["users/getUserResources"]);
     const tableColumns = computed(() => store.getters["users/getColumns"]);
-    const search = ref("");
     const resourceItem = ref([]);
 
     for (let i = 0; i < user.value.resourcesAndQuantities.length; i++) {
@@ -67,7 +65,6 @@ export default {
     return {
       user,
       tableColumns,
-      search,
       resourceItem,
     };
   },
