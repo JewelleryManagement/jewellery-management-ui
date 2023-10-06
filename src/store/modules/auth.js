@@ -20,11 +20,9 @@ export default {
     async login({commit}, payload) {
       const user = await postUserLogin(payload)
       commit('setUser', user)
-      localStorage.setItem("userAuth", JSON.stringify(user.user));
       return user.user
     },
     logout({commit}) {
-      localStorage.removeItem("userAuth");
       commit('clearUser');
     }
   },
