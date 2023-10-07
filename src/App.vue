@@ -2,7 +2,11 @@
   <suspense>
     <template #default>
       <v-app>
-        <NavBar v-if="isAuth" :defaultMenuPages="defaultMenuPages" :hamburgerMenuPages="hamburgerMenuPages" />
+        <NavBar
+          v-if="isAuth"
+          :defaultMenuPages="defaultMenuPages"
+          :hamburgerMenuPages="hamburgerMenuPages"
+        />
         <v-main>
           <router-view v-slot="slotProps">
             <transition name="route" mode="out-in">
@@ -26,6 +30,7 @@
 <script>
 import NavBar from "./components/Nav/NavBar.vue";
 import SnackBar from "./components/Popup/SnackBar.vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref, provide, computed } from "vue";
 
@@ -38,47 +43,7 @@ export default {
   setup() {
     const store = useStore();
     const isAuth = computed(() => store.getters["auth/isAuthenticated"]);
-  
-    const mainMenuPages = [
-      {
-        link: { text: "Home", url: "/" },
-      },
-      {
-        link: { text: "Users", url: "/users" },
-      },
-      {
-        link: { text: "Resources", url: "/resources" },
-      },
-      {
-        link: { text: "Products", url: "/products" },
-      }
-    ]
-    const hamburgerMenuPages = ref([
-      ...mainMenuPages,
-      {
-        link: {
-          text: "Profile",
-          url: "/profile",
-        },
-      },
-      {
-        link: { text: "Logout", url: "/logout" },
-      },
-    ]);
-
-    const profileDropdown = {
-      isMenuDropdown: true,
-      link: {
-        text: "Profile",
-        url: "/profile",
-        dropdown: [{ text: "Details" }, { text: "Logout" }],
-      },
-    };
-    
-    const defaultMenuPages = ref([
-      ...mainMenuPages,
-      profileDropdown
-    ]);
+    const router = useRouter();
 
     const snackbar = ref({
       isActive: false,
@@ -114,6 +79,59 @@ export default {
     };
 
     provide("snackbarProvider", snackbarProvider);
+
+    const logoutHandler = () => {
+      store.dispatch("auth/logout");
+      snackbarProvider.showSuccessSnackbar("Logged out successfully!");
+      router.push("/login");
+    };
+
+    const navToProfile = () => {
+      router.push("/profile");
+    };
+
+    const mainMenuPages = [
+      {
+        link: { text: "Home", url: "/" },
+      },
+      {
+        link: { text: "Users", url: "/users" },
+      },
+      {
+        link: { text: "Resources", url: "/resources" },
+      },
+      {
+        link: { text: "Products", url: "/products" },
+      },
+    ];
+
+    const profileDropdown = {
+      isMenuDropdown: true,
+      link: {
+        text: "Profile",
+        url: "/profile",
+        dropdown: [
+          { clickHandler: navToProfile, text: "Details" },
+          { clickHandler: logoutHandler, text: "Logout" },
+        ],
+      },
+    };
+
+     const hamburgerMenuPages = ref([
+      ...mainMenuPages,
+      {
+        link: {
+          text: "Profile",
+          url: "/profile",
+        },
+      },
+      {
+        clickHandler: logoutHandler,
+        link: { text: "Logout", url: "/logout" },
+      },
+    ]);
+
+    const defaultMenuPages = ref([...mainMenuPages, profileDropdown]);
 
     return { defaultMenuPages, hamburgerMenuPages, snackbar, isAuth };
   },

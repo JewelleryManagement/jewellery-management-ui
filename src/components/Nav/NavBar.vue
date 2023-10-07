@@ -35,11 +35,7 @@
               v-for="(item, index) in page.link.dropdown"
               :key="index"
               link
-              @click="
-                item.text === 'Logout'
-                  ? logoutHandler()
-                  : router.push('/profile')
-              "
+              @click="item.clickHandler"
               >{{ item.text }}
             </v-list-item>
           </v-list>
@@ -58,7 +54,7 @@
           :key="index"
           :to="page.link.url"
           link
-          @click="page.link.text === 'Logout' ? logoutHandler() : null"
+          @click="page.clickHandler"
         >
           {{ page.link.text }}
         </v-list-item>
@@ -68,31 +64,19 @@
 </template>
 
 <script>
-import { computed, inject } from "vue";
-import { useRouter } from "vue-router";
+import { computed } from "vue";
 import { useDisplay } from "vuetify/lib/framework.mjs";
-import { useStore } from "vuex";
 
 export default {
   props: ["defaultMenuPages", "hamburgerMenuPages"],
   setup() {
-    const store = useStore();
-    const router = useRouter();
-    const snackbarProvider = inject("snackbarProvider");
     const mobile = useDisplay();
     const isSmallScreen = computed(() => {
       return mobile.smAndDown.value;
     });
 
-    const logoutHandler = () => {
-      store.dispatch("auth/logout");
-      snackbarProvider.showSuccessSnackbar("Logged out successfully!");
-      router.push("/login");
-    };
 
     return {
-      router,
-      logoutHandler,
       isSmallScreen,
     };
   },
