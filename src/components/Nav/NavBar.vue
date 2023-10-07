@@ -14,23 +14,19 @@
 
     <v-spacer></v-spacer>
 
-    <v-toolbar-items class="hidden-sm-and-down" v-for="(page, index) in pages">
-      <v-btn
-        v-if="page.link.text !== 'Profile' && page.link.text !== 'Logout'"
-        :key="index"
-        :to="page.link.url"
-        text
-        @click="page.link.text === 'Logout' ? logoutHandler() : null"
-      >
+    <v-toolbar-items
+      class="hidden-sm-and-down"
+      v-if="!isSmallScreen"
+      
+    >
+    <template v-for="(page, index) in defaultMenuPages"> 
+      <v-btn v-if="!page.isMenuDropdown" :key="index" :to="page.link.url" text>
         {{ page.link.text }}
       </v-btn>
 
-      <v-menu
-        open-on-hover
-        v-else-if="page.link.text === 'Profile' && page.link.text !== 'Logout'"
-      >
-        <template v-slot:activator="{ props }">
-          <v-btn v-bind="props"> Profile </v-btn>
+      <v-menu v-if="page.isMenuDropdown" open-on-hover :key="index">
+        <template v-slot:activator="{ props }" >
+          <v-btn v-bind="props">{{ page.link.text }}</v-btn>
         </template>
 
         <v-list>
@@ -45,16 +41,17 @@
           </v-list-item>
         </v-list>
       </v-menu>
+      </template>
     </v-toolbar-items>
 
-    <v-menu v-if="isSmAndDown">
+    <v-menu v-if="isSmallScreen">
       <template v-slot:activator="{ props }">
         <v-app-bar-nav-icon v-bind="props" size="x-large"></v-app-bar-nav-icon>
       </template>
 
       <v-list>
         <v-list-item
-          v-for="(page, index) in pages"
+          v-for="(page, index) in hamburgerMenuPages"
           :key="index"
           :to="page.link.url"
           link
@@ -74,13 +71,13 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 import { useStore } from "vuex";
 
 export default {
-  props: ["pages"],
+  props: ["defaultMenuPages", "hamburgerMenuPages"],
   setup() {
     const store = useStore();
     const router = useRouter();
     const snackbarProvider = inject("snackbarProvider");
     const mobile = useDisplay();
-    const isSmAndDown = computed(() => {
+    const isSmallScreen = computed(() => {
       return mobile.smAndDown.value;
     });
 
@@ -93,7 +90,7 @@ export default {
     return {
       router,
       logoutHandler,
-      isSmAndDown,
+      isSmallScreen,
     };
   },
 };

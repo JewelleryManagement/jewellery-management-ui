@@ -2,7 +2,7 @@
   <suspense>
     <template #default>
       <v-app>
-        <NavBar v-if="isAuth" :pages="pages" />
+        <NavBar v-if="isAuth" :defaultMenuPages="defaultMenuPages" :hamburgerMenuPages="hamburgerMenuPages" />
         <v-main>
           <router-view v-slot="slotProps">
             <transition name="route" mode="out-in">
@@ -38,7 +38,8 @@ export default {
   setup() {
     const store = useStore();
     const isAuth = computed(() => store.getters["auth/isAuthenticated"]);
-    const pages = ref([
+  
+    const mainMenuPages = [
       {
         link: { text: "Home", url: "/" },
       },
@@ -50,17 +51,33 @@ export default {
       },
       {
         link: { text: "Products", url: "/products" },
-      },
+      }
+    ]
+    const hamburgerMenuPages = ref([
+      ...mainMenuPages,
       {
         link: {
           text: "Profile",
           url: "/profile",
-          dropdown: [{ text: "Details" }, { text: "Logout" }],
         },
       },
       {
-        link: { text: "Logout", url: "/logout" }
+        link: { text: "Logout", url: "/logout" },
       },
+    ]);
+
+    const profileDropdown = {
+      isMenuDropdown: true,
+      link: {
+        text: "Profile",
+        url: "/profile",
+        dropdown: [{ text: "Details" }, { text: "Logout" }],
+      },
+    };
+    
+    const defaultMenuPages = ref([
+      ...mainMenuPages,
+      profileDropdown
     ]);
 
     const snackbar = ref({
@@ -98,7 +115,7 @@ export default {
 
     provide("snackbarProvider", snackbarProvider);
 
-    return { pages, snackbar, isAuth };
+    return { defaultMenuPages, hamburgerMenuPages, snackbar, isAuth };
   },
 };
 </script>
