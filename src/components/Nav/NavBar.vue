@@ -14,33 +14,36 @@
 
     <v-spacer></v-spacer>
 
-    <v-toolbar-items
-      class="hidden-sm-and-down"
-      v-if="!isSmallScreen"
-      
-    >
-    <template v-for="(page, index) in defaultMenuPages"> 
-      <v-btn v-if="!page.isMenuDropdown" :key="index" :to="page.link.url" text>
-        {{ page.link.text }}
-      </v-btn>
+    <v-toolbar-items class="hidden-sm-and-down" v-if="!isSmallScreen">
+      <template v-for="(page, index) in defaultMenuPages">
+        <v-btn
+          v-if="!page.isMenuDropdown"
+          :key="index"
+          :to="page.link.url"
+          text
+        >
+          {{ page.link.text }}
+        </v-btn>
 
-      <v-menu v-if="page.isMenuDropdown" open-on-hover :key="index">
-        <template v-slot:activator="{ props }" >
-          <v-btn v-bind="props">{{ page.link.text }}</v-btn>
-        </template>
+        <v-menu v-if="page.isMenuDropdown" open-on-hover :key="index">
+          <template v-slot:activator="{ props }">
+            <v-btn v-bind="props">{{ page.link.text }}</v-btn>
+          </template>
 
-        <v-list>
-          <v-list-item
-            v-for="(item, index) in page.link.dropdown"
-            :key="index"
-            link
-            @click="
-              item.text === 'Logout' ? logoutHandler() : router.push('/profile')
-            "
-            >{{ item.text }}
-          </v-list-item>
-        </v-list>
-      </v-menu>
+          <v-list>
+            <v-list-item
+              v-for="(item, index) in page.link.dropdown"
+              :key="index"
+              link
+              @click="
+                item.text === 'Logout'
+                  ? logoutHandler()
+                  : router.push('/profile')
+              "
+              >{{ item.text }}
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </template>
     </v-toolbar-items>
 
