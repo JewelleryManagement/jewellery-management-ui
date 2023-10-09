@@ -49,6 +49,105 @@
             :rules="useNumberFieldRules()"
           ></v-text-field>
 
+          <!-- DIALOG -->
+          <!-- <v-dialog transition="dialog-top-transition" width="auto">
+            <template v-slot:activator="{ props }">
+              <v-btn color="primary" v-bind="props" block
+                >Select resources</v-btn
+              >
+            </template>
+            <template v-slot:default="{ isActive }">
+              <v-card>
+                <v-toolbar color="red" title="Reasources..."></v-toolbar>
+                <v-card-text>
+                  <v-data-table
+                    :headers="tableColumns"
+                    :items="resources"
+                    class="elevation-1"
+                  >
+                    <template v-slot:item.add="{ item }">
+                      <v-icon color="blue" @click="addHandler(item)"
+                        >mdi-plus</v-icon
+                      >
+                    </template>
+                  </v-data-table>
+                </v-card-text>
+
+                <v-card-actions class="justify-end">
+                  <v-btn
+                    color="red"
+                    variant="text"
+                    @click="isActive.value = false"
+                    >Close</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </template>
+          </v-dialog>
+
+          <v-dialog v-model="dialogVisible" max-width="500">
+            <v-card>
+              <v-card-title> Add Item </v-card-title>
+              <v-card-text>
+                <v-text-field label="Name"></v-text-field>
+                <v-text-field label="Description"></v-text-field>
+              </v-card-text>
+            </v-card>
+          </v-dialog> -->
+
+              <v-btn color="primary" @click="dialog = true" block>
+                Open Dialog 1
+              </v-btn>
+              <v-dialog
+                v-model="dialog"
+                transition="dialog-top-transition"
+                width="auto"
+              >
+                <template v-slot:default="{ isActive }">
+                  <v-card>
+                    <v-toolbar color="red" title="Reasources..."></v-toolbar>
+                    <v-card-text>
+                      <v-data-table
+                        :headers="tableColumns"
+                        :items="resources"
+                        class="elevation-1"
+                      >
+                        <template v-slot:item.add="{ item }">
+                          <v-icon color="blue" @click="addHandler(item), dialog2 = true " 
+                            >mdi-plus</v-icon
+                          >
+                        </template>
+                      </v-data-table>
+                    </v-card-text>
+
+                    <v-card-actions class="justify-end">
+                      <v-btn
+                        color="red"
+                        variant="text"
+                        @click="isActive.value = false"
+                        >Close</v-btn
+                      >
+                    </v-card-actions>
+                  </v-card>
+                </template>
+              </v-dialog>
+
+              <v-dialog v-model="dialog2" width="auto">
+                <v-card>
+                  <v-card-title> Resource: {{ selectedResource.clazz }} Quantity: {{ selectedResource.quantity }}  </v-card-title>
+     
+                  <v-card-actions>
+                    <v-btn
+                      color="primary"
+                      variant="text"
+                      @click="dialog2 = false"
+                    >
+                      Close
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
           <div class="d-flex flex-column">
             <v-btn color="success" class="mt-4" block type="submit">
               Submit
@@ -69,6 +168,7 @@
 </template>
 
 <script setup>
+const props = defineProps(["VDataTable"]);
 import {
   useTextFieldRules,
   useNumberFieldRules,
@@ -77,8 +177,18 @@ import {
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { VDataTable } from "vuetify/labs/VDataTable";
+const dialog = ref(false);
+const dialog2 = ref(false);
 
 const store = useStore();
+const resources = computed(() => store.getters["resources/allResources"]);
+
+const tableColumns = [
+  computed(() => store.state.resources.tableColumnAdd).value,
+  computed(() => store.state.resources.tableColumnQuantity).value,
+  ...computed(() => store.state.resources.tableColumns).value,
+];
 const route = useRoute();
 const router = useRouter();
 const pageTitle = ref(route.meta.title);
@@ -121,6 +231,17 @@ async function handleSubmit() {
   }
   console.log(valid);
 }
+
+const selectedResource = ref(null)
+
+const addHandler = (item) => {
+  selectedResource.value = item.raw
+  // selectedResource.value = {
+  //   id: item.raw.id,
+  //   quantity: item.raw.quantity,
+  // };
+  console.log(selectedResource);
+};
 </script>
 
 <!-- {
