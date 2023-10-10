@@ -40,6 +40,7 @@ export default {
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
     tableColumnAdd: { key: "add", title: "", slot: "add" },
     tableColumnRemoveQuantity: { key: "remove", title: "", slot: "remove" },
+    tableColumnAddQuantity: { key: "addQuantity", title: "", slot: "addQuantity", width: '100px'  },
   }),
   mutations: {
     setResources(state, resources) {
