@@ -4,6 +4,12 @@ export function useTextFieldRules() {
     (v) => (v && v.length <= 10) || "Input must be less than 10 characters",
   ];
 }
+export function useTextFieldLargeRules() {
+  return [
+    (v) => !!v || `Input field is required`,
+    (v) => (v && v.length <= 50) || "Input must be less than 50 characters",
+  ];
+}
 
 export function useNumberFieldRules() {
   return [

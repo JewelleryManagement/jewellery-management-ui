@@ -13,7 +13,7 @@
     :headers="tableColumns"
     :items="products"
     :search="search"
-  ></v-data-table>
+  > </v-data-table>
 </template>
 
 <script>

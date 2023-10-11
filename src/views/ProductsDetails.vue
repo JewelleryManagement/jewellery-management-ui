@@ -8,11 +8,11 @@
       </template>
 
       <v-sheet width="300" class="mx-auto">
-        <v-form ref="form" @submit.prevent="handleSubmit">
+        <v-form ref="form" @submit.prevent="handleSubmit" @keydown.enter.prevent>
           <v-text-field
             v-model="productName"
             label="Product name"
-            :rules="useTextFieldRules()"
+            :rules="useTextFieldLargeRules()"
           ></v-text-field>
 
           <v-text-field
@@ -25,6 +25,7 @@
             label="Author"
             v-model="authorInput"
             :error="authorsValidation"
+            @keyup.enter="addAuthorHandler"
           >
             <template v-slot:append>
               <v-icon @click="addAuthorHandler">mdi-plus</v-icon>
@@ -66,6 +67,7 @@
                     <template v-slot:item.addQuantity="{ item }">
                       <v-text-field
                         variant="underlined"
+                        type="number"
                         v-model="quantityByProduct[item.value]"
                         :style="{
                           background: 'transparent',
@@ -93,13 +95,9 @@
           </v-dialog>
 
           <div class="d-flex flex-column">
-            <div class="d-flex justify-center">
-              <v-btn color="primary" @click="dialog = true">
-                Resources
-              </v-btn>
-              <v-btn color="primary" @click="dialog = true">
-                Products
-              </v-btn>
+            <div class="d-flex justify-space-between">
+              <v-btn color="primary" @click="dialog = true"> Resources </v-btn>
+              <v-btn color="primary" @click="dialog = true"> Products </v-btn>
             </div>
 
             <v-btn color="success" class="mt-4" block type="submit">
@@ -123,29 +121,36 @@
 <script setup>
 const props = defineProps(["VDataTable"]);
 import {
-  useTextFieldRules,
+  useTextFieldLargeRules,
   useNumberFieldRules,
   useTextAreaFieldRules,
 } from "@/utils/validation-rules";
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { VDataTable } from "vuetify/labs/VDataTable";
-const dialog = ref(false);
 
 const store = useStore();
-const resources = computed(() => store.getters["resources/allResources"]);
+const route = useRoute();
+const router = useRouter();
+const snackbarProvider = inject("snackbarProvider");
 
 const tableColumns = [
   computed(() => store.state.resources.tableColumnAddQuantity).value,
   computed(() => store.state.resources.tableColumnQuantity).value,
   ...computed(() => store.state.resources.tableColumns).value,
 ];
-const route = useRoute();
-const router = useRouter();
-const pageTitle = ref(route.meta.title);
-const userId = computed(() => store.getters["auth/getUser"]).value.id;
+const user = computed(() => store.getters["auth/getUser"]).value;
+
+try {
+  await store.dispatch("users/fetchResourcesForUser", user.id);
+} catch (error) {
+  console.log(error);
+}
+
 const [
+  pageTitle,
+  dialog,
   form,
   productName,
   description,
@@ -155,7 +160,11 @@ const [
   authorsValidation,
   quantityByProduct,
   resourcesContent,
+  resources,
+  productsContent,
 ] = [
+  ref(route.meta.title),
+  ref(false),
   ref(null),
   ref(""),
   ref(""),
@@ -165,7 +174,18 @@ const [
   ref(false),
   ref({}),
   ref([]),
+  ref([]),
+  ref(["g28a891r-df13-40eg-9e51-ce313h52f6fi"]),
 ];
+
+const resourcesByUser = computed(() => store.getters["users/getUserResources"]);
+
+for (let i = 0; i < resourcesByUser.value.resourcesAndQuantities.length; i++) {
+  let quantity = resourcesByUser.value.resourcesAndQuantities[i].quantity;
+  let resource = resourcesByUser.value.resourcesAndQuantities[i].resource;
+  resource.quantity = quantity;
+  resources.value.push(resource);
+}
 
 const addAuthorHandler = () => {
   if (authorInput.value === "") return;
@@ -193,11 +213,10 @@ const saveTableValues = () => {
       resourceId: e[0],
       quantity: e[1],
     };
-
     resourcesContent.value.push(finalInputFields);
   });
-
   quantityByProduct.value = {};
+  dialog.value = false;
 };
 
 async function handleSubmit() {
@@ -207,36 +226,29 @@ async function handleSubmit() {
     authorsValidation.value = true;
     return;
   }
+
+  if (resourcesContent.value.length <= 0 || productsContent.value.length <= 0) {
+    return;
+  }
+
+  if (!valid) return;
+
+  const product = {
+    productName: productName.value,
+    description: description.value,
+    owner: user.name,
+    authors: authors.value,
+    salePrice: salePrice.value,
+    resources: resourcesContent.value,
+    products: productsContent.value,
+  };
+
+  try {
+    await store.dispatch("products/createProduct", product);
+    resetForm();
+    router.push("/products");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not create the product");
+  }
 }
 </script>
-
-<!-- {
-    "name": "Classical white pearl necklace",
-    "description": "Details about the necklace",
-    "ownerId": "349c35ea-9d64-417b-882e-c017d85d7249",
-    "authors": ["GoldWorker1", "GoldWorker2"],
-    "salePrice": "240",
-    "resourcesContent": [
-        {
-            "resourceId": "ae90c61b-d55f-485c-8929-411eec5b1354",
-            "quantity": 2
-        },
-        {
-            "resourceId": "e28a891e-df13-40ef-9e51-ce313c52f6fd",
-            "quantity": 5
-        },
-        {
-            "resourceId": "e28a891e-df13-40ef-9e51-ce313c52f6fd",
-            "quantity": 5
-        }, 
-        {
-            "resourceId": "0e49b1c0-f60f-4154-99cd-4f9ddf80b163",
-            "quantity": 1
-        }
-        
-    ],
-    "productsContent": [
-        "g28a891r-df13-40eg-9e51-ce313h52f6fi",
-        "g58a871r-df13-45eg-gh51-ce3t8h52fh6k"
-    ]
-} -->
