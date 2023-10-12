@@ -8,7 +8,11 @@
       </template>
 
       <v-sheet width="300" class="mx-auto">
-        <v-form ref="form" @submit.prevent="handleSubmit" @keydown.enter.prevent>
+        <v-form
+          ref="form"
+          @submit.prevent="handleSubmit"
+          @keydown.enter.prevent
+        >
           <v-text-field
             v-model="productName"
             label="Product name"
@@ -50,37 +54,28 @@
             :rules="useNumberFieldRules()"
           ></v-text-field>
 
-          <v-dialog
+          <resources-dialog
             v-model="dialog"
+            @save-resources-dialog="resourcesTableValues"
+          ></resources-dialog>
+
+          <v-dialog
+            v-model="dialog2"
             transition="dialog-top-transition"
             width="auto"
           >
             <template v-slot:default="{ isActive }">
               <v-card>
-                <v-toolbar color="red" title="Reasources..."></v-toolbar>
+                <v-toolbar color="green" title="Products..."></v-toolbar>
                 <v-card-text>
-                  <v-data-table
-                    :headers="tableColumns"
-                    :items="resources"
-                    class="elevation-1"
-                  >
-                    <template v-slot:item.addQuantity="{ item }">
-                      <v-text-field
-                        variant="underlined"
-                        type="number"
-                        v-model="quantityByProduct[item.value]"
-                        :style="{
-                          background: 'transparent',
-                          border: 'none',
-                          boxShadow: 'none',
-                        }"
-                      ></v-text-field>
-                    </template>
-                  </v-data-table>
+                  <products-table></products-table>
                 </v-card-text>
 
                 <v-card-actions class="justify-end">
-                  <v-btn color="green" variant="text" @click="saveTableValues"
+                  <v-btn
+                    color="green"
+                    variant="text"
+                    @click="isActive.value = false"
                     >Save</v-btn
                   >
                   <v-btn
@@ -96,8 +91,10 @@
 
           <div class="d-flex flex-column">
             <div class="d-flex justify-space-between">
-              <v-btn color="primary" @click="dialog = true"> Resources </v-btn>
-              <v-btn color="primary" @click="dialog = true"> Products </v-btn>
+              <v-btn color="primary" @click="dialog = !dialog">
+                Resources
+              </v-btn>
+              <v-btn color="primary" @click="dialog2 = true"> Products </v-btn>
             </div>
 
             <v-btn color="success" class="mt-4" block type="submit">
@@ -119,27 +116,24 @@
 </template>
 
 <script setup>
-const props = defineProps(["VDataTable"]);
 import {
   useTextFieldLargeRules,
   useNumberFieldRules,
   useTextAreaFieldRules,
 } from "@/utils/validation-rules";
+
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { VDataTable } from "vuetify/labs/VDataTable";
+import ProductsTable from "@/components/Table/ProductsTable.vue";
+import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
 
+const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 
-const tableColumns = [
-  computed(() => store.state.resources.tableColumnAddQuantity).value,
-  computed(() => store.state.resources.tableColumnQuantity).value,
-  ...computed(() => store.state.resources.tableColumns).value,
-];
 const user = computed(() => store.getters["auth/getUser"]).value;
 
 try {
@@ -151,6 +145,7 @@ try {
 const [
   pageTitle,
   dialog,
+  dialog2,
   form,
   productName,
   description,
@@ -158,12 +153,11 @@ const [
   authors,
   salePrice,
   authorsValidation,
-  quantityByProduct,
   resourcesContent,
-  resources,
   productsContent,
 ] = [
   ref(route.meta.title),
+  ref(false),
   ref(false),
   ref(null),
   ref(""),
@@ -172,20 +166,9 @@ const [
   ref([]),
   ref(""),
   ref(false),
-  ref({}),
-  ref([]),
   ref([]),
   ref(["g28a891r-df13-40eg-9e51-ce313h52f6fi"]),
 ];
-
-const resourcesByUser = computed(() => store.getters["users/getUserResources"]);
-
-for (let i = 0; i < resourcesByUser.value.resourcesAndQuantities.length; i++) {
-  let quantity = resourcesByUser.value.resourcesAndQuantities[i].quantity;
-  let resource = resourcesByUser.value.resourcesAndQuantities[i].resource;
-  resource.quantity = quantity;
-  resources.value.push(resource);
-}
 
 const addAuthorHandler = () => {
   if (authorInput.value === "") return;
@@ -201,21 +184,14 @@ const resetForm = () => {
   if (form.value) {
     form.value.reset();
     form.value.resetValidation();
+    resourcesContent.value = [];
     authors.value = [];
     authorsValidation.value = false;
   }
 };
 
-const saveTableValues = () => {
-  const currentInputFields = Object.entries(quantityByProduct.value);
-  currentInputFields.forEach((e) => {
-    const finalInputFields = {
-      resourceId: e[0],
-      quantity: e[1],
-    };
-    resourcesContent.value.push(finalInputFields);
-  });
-  quantityByProduct.value = {};
+const resourcesTableValues = (resourceContentValue) => {
+  resourcesContent.value = [...resourcesContent.value, resourceContentValue];
   dialog.value = false;
 };
 
