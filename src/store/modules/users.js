@@ -1,7 +1,7 @@
 import {
   fetchUsers,
   fetchResourcePerUser,
-  postResourceAvailability
+  postResourceAvailability,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -43,9 +43,7 @@ export default {
     allUsers(state) {
       return state.users;
     },
-    getUserById(state,id) {
-      return state.users.find(user => user.id === id)
-    },
+    getUserById: (state) => (id) => state.users.find((user) => user.id === id),
     getUserResources(state) {
       return state.usersResources;
     },

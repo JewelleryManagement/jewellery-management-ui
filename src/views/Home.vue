@@ -1,11 +1,14 @@
 <template>
-  <PageViewer :pageTitle="pageTitle" :content="content" />
+  <v-container class="d-flex flex-column align-center">
+    <PageViewer :pageTitle="pageTitle" :content="content" />
+
+  </v-container>
+
 </template>
 
 <script>
 import { ref } from "vue";
 import PageViewer from "../components/PageViewer.vue";
-
 export default {
   components: {
     PageViewer,
@@ -21,9 +24,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.container {
-  text-align: center;
-}
-</style>

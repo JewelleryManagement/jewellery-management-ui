@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import resourcesModule from "./modules/resources";
 import productsModule from "./modules/products";
 import usersModule from "./modules/users";
+import authModule from "./modules/auth";
 import VuexPersistence from 'vuex-persist' 
 
 const vuexLocal = new VuexPersistence({
@@ -13,6 +14,7 @@ const store = createStore({
     resources: resourcesModule,
     products: productsModule,
     users: usersModule,
+    auth: authModule,
   },
   plugins: [vuexLocal.plugin]
 });
