@@ -55,46 +55,22 @@
           ></v-text-field>
 
           <resources-dialog
-            v-model="dialog"
+            v-model="resourceDialog"
             @save-resources-dialog="resourcesTableValues"
+            @close-dialog="closeDialog"
           ></resources-dialog>
 
-          <v-dialog
-            v-model="dialog2"
-            transition="dialog-top-transition"
-            width="auto"
-          >
-            <template v-slot:default="{ isActive }">
-              <v-card>
-                <v-toolbar color="green" title="Products..."></v-toolbar>
-                <v-card-text>
-                  <products-table></products-table>
-                </v-card-text>
-
-                <v-card-actions class="justify-end">
-                  <v-btn
-                    color="green"
-                    variant="text"
-                    @click="isActive.value = false"
-                    >Save</v-btn
-                  >
-                  <v-btn
-                    color="red"
-                    variant="text"
-                    @click="isActive.value = false"
-                    >Close</v-btn
-                  >
-                </v-card-actions>
-              </v-card>
-            </template>
-          </v-dialog>
+          <products-dialog v-model="productsDialog" @close-dialog="closeDialog">
+          </products-dialog>
 
           <div class="d-flex flex-column">
             <div class="d-flex justify-space-between">
-              <v-btn color="primary" @click="dialog = !dialog">
+              <v-btn color="primary" @click="resourceDialog = true">
                 Resources
               </v-btn>
-              <v-btn color="primary" @click="dialog2 = true"> Products </v-btn>
+              <v-btn color="primary" @click="productsDialog = true">
+                Products
+              </v-btn>
             </div>
 
             <v-btn color="success" class="mt-4" block type="submit">
@@ -125,8 +101,8 @@ import {
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
+import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
@@ -144,8 +120,8 @@ try {
 
 const [
   pageTitle,
-  dialog,
-  dialog2,
+  resourceDialog,
+  productsDialog,
   form,
   productName,
   description,
@@ -190,9 +166,15 @@ const resetForm = () => {
   }
 };
 
+const closeDialog = (payload) => {
+  payload === "resources"
+    ? (resourceDialog.value = false)
+    : (productsDialog.value = false);
+};
+
 const resourcesTableValues = (resourceContentValue) => {
   resourcesContent.value = [...resourcesContent.value, resourceContentValue];
-  dialog.value = false;
+  closeDialog("resources");
 };
 
 async function handleSubmit() {

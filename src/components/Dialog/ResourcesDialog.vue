@@ -1,6 +1,7 @@
 <template>
   <v-dialog
     :model-value="modelValue"
+    @update:model-value="modelValue"
     transition="dialog-top-transition"
     width="auto"
   >
@@ -35,7 +36,7 @@
           <v-btn
             color="red"
             variant="text"
-            @click="$emit('save-resources-dialog')"
+            @click="() => $emit('close-dialog', 'resources')"
             >Close</v-btn
           >
         </v-card-actions>
@@ -50,11 +51,9 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 const store = useStore();
 
-const { modelValue } = defineProps({
-  modelValue: Boolean,
-});
+const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
+const { modelValue } = defineProps({ modelValue: Boolean });
 
-const emits = defineEmits(["update:modelValue", "save-resources-dialog"]);
 const [quantityByProduct, resourcesContent, resources] = [
   ref({}),
   ref([]),
