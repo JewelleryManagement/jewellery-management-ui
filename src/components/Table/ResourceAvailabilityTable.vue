@@ -32,17 +32,19 @@
 
 <script>
 import { VDataTable } from "vuetify/labs/VDataTable";
-
+import { ref } from "vue";
 export default {
-  props: ["tableColumns", "resourceItem", "search", "user"],
+  props: ["tableColumns", "resourceItem", "user"],
   components: {
     VDataTable,
   },
   setup(props) {
+    const search = ref("");
+
     return {
       tableColumns: props.tableColumns,
       resourceItem: props.resourceItem,
-      search: props.search,
+      search,
       user: props.user,
     };
   },

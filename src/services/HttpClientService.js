@@ -1,4 +1,6 @@
 import axios from "@/axios.config";
+import store from "@/store/store";
+import router from "@/router/index";
 
 // GET REQUESTS
 async function fetchData(endpoint) {
@@ -8,6 +10,11 @@ async function fetchData(endpoint) {
       return response.data;
     }
   } catch (error) {
+    if (error.response && error.response.status === 401) {
+      store.dispatch("auth/logout");
+      router.push("/login");
+    }
+
     throw new Error("Failed to fetch data from the server.");
   }
 }
@@ -53,6 +60,10 @@ export async function postResources(data) {
 
 export async function postResourceAvailability(data) {
   return await postData("/resources/availability", data);
+}
+
+export async function postUserLogin(user) {
+  return await postData("/login", user);
 }
 
 // DELETE REQUESTS

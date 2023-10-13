@@ -18,3 +18,18 @@ export function useTextAreaFieldRules() {
     (v) => (v && v.length <= 100) || "Input must be less than 100 characters",
   ];
 }
+
+export function useEmailFieldRules() {
+  return [
+    (v) => !!v || "Email field is required",
+    (v) => /.+@.+\..+/.test(v) || "Email must be valid",
+    (v) => (v && v.length <= 100) || "Email must be less than 100 characters",
+  ];
+}
+
+export function usePasswordFieldRules() {
+  return [
+    (v) => !!v || "Password field is required",
+    (v) => v.length <= 100 || "Password must be less than 100 characters",
+  ];
+}
