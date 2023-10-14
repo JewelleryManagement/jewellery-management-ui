@@ -24,7 +24,6 @@
             :items="resources"
             class="elevation-1"
             :search="search"
-
           >
             <template v-slot:item.addQuantity="{ item }">
               <v-text-field
@@ -42,6 +41,9 @@
         </v-card-text>
 
         <v-card-actions class="justify-end">
+          <v-btn color="#7986CB" variant="text" @click="clearTableValues"
+            >Clear</v-btn
+          >
           <v-btn color="green" variant="text" @click="saveTableValues"
             >Save</v-btn
           >
@@ -87,16 +89,29 @@ for (let i = 0; i < resourcesByUser.value.resourcesAndQuantities.length; i++) {
   resources.value.push(resource);
 }
 
+const clearTableValues = () => {
+  quantityByProduct.value = {};
+};
+
 const saveTableValues = () => {
   const currentInputFields = Object.entries(quantityByProduct.value);
+
   currentInputFields.forEach((e) => {
     const finalInputFields = {
       resourceId: e[0],
       quantity: e[1],
     };
-    resourcesContent.value.push(finalInputFields);
+
+    const existingResource = resourcesContent.value.find(
+      (r) => r.resourceId === finalInputFields.resourceId
+    );
+
+    if (existingResource) {
+      existingResource.quantity = finalInputFields.quantity;
+    } else {
+      resourcesContent.value.push(finalInputFields);
+    }
   });
-  quantityByProduct.value = {};
   emits("save-resources-dialog", resourcesContent.value);
 };
 </script>
