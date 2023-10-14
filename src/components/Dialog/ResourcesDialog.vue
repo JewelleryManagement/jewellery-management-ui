@@ -8,11 +8,23 @@
     <template v-slot:default="{ isActive }">
       <v-card>
         <v-toolbar color="red" title="Reasources..."></v-toolbar>
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
         <v-card-text>
           <v-data-table
             :headers="tableColumns"
             :items="resources"
             class="elevation-1"
+            :search="search"
+
           >
             <template v-slot:item.addQuantity="{ item }">
               <v-text-field
@@ -53,6 +65,7 @@ const store = useStore();
 
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const { modelValue } = defineProps({ modelValue: Boolean });
+const search = ref("");
 
 const [quantityByProduct, resourcesContent, resources] = [
   ref({}),
