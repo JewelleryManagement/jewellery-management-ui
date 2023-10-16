@@ -6,7 +6,8 @@ export default {
   state: reactive({
     products: [],
     tableColumns: [
-      { key: "productName", title: "Name" },
+      { key: "catalogNumber", title: "Catalog Number" },
+      { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
       { key: "authors", title: "Authors" },
       { key: "inStock", title: "In Stock" },

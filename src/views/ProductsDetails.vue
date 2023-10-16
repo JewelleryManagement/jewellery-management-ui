@@ -14,8 +14,8 @@
           @keydown.enter.prevent
         >
           <v-text-field
-            v-model="productName"
-            label="Product name"
+            v-model="catalogName"
+            label="Catalog name"
             :rules="useTextFieldLargeRules()"
           ></v-text-field>
 
@@ -25,27 +25,17 @@
             :rules="useTextAreaFieldRules()"
           ></v-text-field>
 
-          <v-text-field
-            label="Author"
-            v-model="authorInput"
-            :error="authorsValidation"
-            @keyup.enter="addAuthorHandler"
+          <v-autocomplete
+            v-model="authors"
+            clearable
+            chips
+            closable-chips
+            label="Authors"
+            :items="allUsers"
+            multiple
+            :rules="[validateAuthors(authors)]"
           >
-            <template v-slot:append>
-              <v-icon @click="addAuthorHandler">mdi-plus</v-icon>
-            </template>
-          </v-text-field>
-
-          <div>
-            <v-chip
-              v-for="(author, index) in authors"
-              :key="index"
-              closable
-              @click="removeAuthor(index)"
-            >
-              {{ author }}
-            </v-chip>
-          </div>
+          </v-autocomplete>
 
           <v-text-field
             class="mt-4"
@@ -68,9 +58,15 @@
               <v-btn color="primary" @click="resourceDialog = true">
                 Resources
               </v-btn>
+              <p>Resources selected: {{ resourcesContent.length || 0 }}</p>
+            </div>
+
+            <div class="d-flex justify-space-between mt-4">
               <v-btn color="primary" @click="productsDialog = true">
                 Products
               </v-btn>
+              <p>Products selected: {{ productsContent.length || 0 }}</p>
+
             </div>
 
             <v-btn color="success" class="mt-4" block type="submit">
@@ -96,6 +92,7 @@ import {
   useTextFieldLargeRules,
   useNumberFieldRules,
   useTextAreaFieldRules,
+  validateAuthors,
 } from "@/utils/validation-rules";
 
 import { ref, computed, inject } from "vue";
@@ -111,50 +108,25 @@ const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
+const allUsers = computed(() =>
+  store.getters["users/allUsers"].map((user) => user.name)
+);
 
 try {
   await store.dispatch("users/fetchResourcesForUser", user.id);
 } catch (error) {
   console.log(error);
 }
+const pageTitle = ref(route.meta.title);
+const [resourceDialog, productsDialog] = [ref(false), ref(false)];
+const form = ref(null);
+const [catalogName, description, salePrice] = [ref(""), ref(""), ref("")];
+const authors = ref([]);
 
-const [
-  pageTitle,
-  resourceDialog,
-  productsDialog,
-  form,
-  productName,
-  description,
-  authorInput,
-  authors,
-  salePrice,
-  authorsValidation,
-  resourcesContent,
-  productsContent,
-] = [
-  ref(route.meta.title),
-  ref(false),
-  ref(false),
-  ref(null),
-  ref(""),
-  ref(""),
-  ref(""),
-  ref([]),
-  ref(""),
-  ref(false),
+const [resourcesContent, productsContent] = [
   ref([]),
   ref(["g28a891r-df13-40eg-9e51-ce313h52f6fi"]),
 ];
-
-const addAuthorHandler = () => {
-  if (authorInput.value === "") return;
-  authors.value.push(authorInput.value);
-  authorInput.value = "";
-};
-
-const removeAuthor = (index) => {
-  authors.value.splice(index, 1);
-};
 
 const resetForm = () => {
   if (form.value) {
@@ -162,7 +134,6 @@ const resetForm = () => {
     form.value.resetValidation();
     resourcesContent.value = [];
     authors.value = [];
-    authorsValidation.value = false;
   }
 };
 
@@ -173,17 +144,12 @@ const closeDialog = (payload) => {
 };
 
 const resourcesTableValues = (resourceContentValue) => {
-  resourcesContent.value = [...resourcesContent.value, resourceContentValue];
+  resourcesContent.value = resourceContentValue;
   closeDialog("resources");
 };
 
 async function handleSubmit() {
   const { valid } = await form.value.validate();
-
-  if (authors.value.length <= 0) {
-    authorsValidation.value = true;
-    return;
-  }
 
   if (resourcesContent.value.length <= 0 || productsContent.value.length <= 0) {
     return;
@@ -192,7 +158,7 @@ async function handleSubmit() {
   if (!valid) return;
 
   const product = {
-    productName: productName.value,
+    catalogName: catalogName.value,
     description: description.value,
     owner: user.name,
     authors: authors.value,

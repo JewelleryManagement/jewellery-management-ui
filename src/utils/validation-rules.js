@@ -39,3 +39,10 @@ export function usePasswordFieldRules() {
     (v) => v.length <= 100 || "Password must be less than 100 characters",
   ];
 }
+
+export function validateAuthors(authors) {
+  if (authors.length === 0) {
+    return 'Please select at least one author.';
+  }
+  return true;
+}
