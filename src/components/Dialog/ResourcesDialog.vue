@@ -90,7 +90,10 @@ for (let i = 0; i < resourcesByUser.value.resourcesAndQuantities.length; i++) {
 }
 
 const clearTableValues = () => {
-  quantityByProduct.value = {};
+  for (let i = 0; i < resourcesContent.value.length; i++) {
+    const element = resourcesContent.value[i].resourceId;
+    quantityByProduct.value[element] = ''
+  }
 };
 
 const saveTableValues = () => {
@@ -107,11 +110,22 @@ const saveTableValues = () => {
     );
 
     if (existingResource) {
+      if (finalInputFields.quantity == "" || finalInputFields.quantity == 0) {
+        const existingResourceIndex = resourcesContent.value.findIndex(
+          (r) => r.resourceId === finalInputFields.resourceId
+        );
+
+        console.log(existingResourceIndex);
+
+        resourcesContent.value.splice(existingResourceIndex, 1)
+      }
+
       existingResource.quantity = finalInputFields.quantity;
     } else {
       resourcesContent.value.push(finalInputFields);
     }
   });
+
   emits("save-resources-dialog", resourcesContent.value);
 };
 </script>

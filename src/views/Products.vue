@@ -11,7 +11,7 @@
             <v-btn
               class="mx-4"
               rounded="xs"
-              :size="isSmAndDown ? 'small' : 'x-large'"
+              :size="isSmallScreen ? 'small' : 'x-large'"
               color="red"
               to="/products/add"
               >Add Product</v-btn
@@ -42,14 +42,14 @@ export default {
     onMounted(async () => {
       try {
         await store.dispatch("products/fetchProducts");
-        await store.dispatch("users/fetchUsers");
+        // await store.dispatch("users/fetchUsers");
       } catch (error) {
         snackbarProvider.showErrorSnackbar("Failed to fetch products");
       }
     });
 
     return {
-      isSmAndDown: computed(() => {
+      isSmallScreen: computed(() => {
         return useDisplay().smAndDown.value;
       }),
     };

@@ -14,7 +14,7 @@
           @keydown.enter.prevent
         >
           <v-text-field
-            v-model="catalogName"
+            v-model="catalogNumber"
             label="Catalog name"
             :rules="useTextFieldLargeRules()"
           ></v-text-field>
@@ -44,6 +44,17 @@
             :rules="useNumberFieldRules()"
           ></v-text-field>
 
+          <v-text-field label="Barcode..." v-model="productionNumber">
+          </v-text-field>
+
+          <div>
+            <vue-barcode
+              v-if="productionNumber"
+              :value="productionNumber"
+              :options="{ displayValue: true, lineColor: '#2B2B2C' }"
+            />
+          </div>
+
           <resources-dialog
             v-model="resourceDialog"
             @save-resources-dialog="resourcesTableValues"
@@ -58,15 +69,25 @@
               <v-btn color="primary" @click="resourceDialog = true">
                 Resources
               </v-btn>
-              <p>Resources selected: {{ resourcesContent.length || 0 }}</p>
-            </div>
 
-            <div class="d-flex justify-space-between mt-4">
               <v-btn color="primary" @click="productsDialog = true">
                 Products
               </v-btn>
-              <p>Products selected: {{ productsContent.length || 0 }}</p>
+            </div>
 
+            <div class="d-flex flex-column mt-4">
+              <p v-if="resourcesContent.length > 0">
+                Resources selected: {{ resourcesContent.length || 0 }}
+                <ul>
+                  <li v-for="item in resourcesContent" :key="item.id">
+                    {{ item.quantity }}
+                  </li>
+                </ul>
+              </p>
+
+              <p v-if="productsContent.length > 0">
+                Products selected: {{ productsContent.length || 0 }}
+              </p>
             </div>
 
             <v-btn color="success" class="mt-4" block type="submit">
@@ -100,6 +121,8 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
+import VueBarcode from "@chenfengyuan/vue-barcode";
+
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
@@ -109,7 +132,7 @@ const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
 const allUsers = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.name)
+store.getters["users/allUsers"].map((user) => user.name)
 );
 
 try {
@@ -120,10 +143,9 @@ try {
 const pageTitle = ref(route.meta.title);
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const form = ref(null);
-const [catalogName, description, salePrice] = [ref(""), ref(""), ref("")];
-const authors = ref([]);
-
-const [resourcesContent, productsContent] = [
+const [catalogNumber, description, salePrice, productionNumber] = [ref(""), ref(""), ref(""), ref("")];
+const [authors, resourcesContent, productsContent] = [
+  ref([]),
   ref([]),
   ref(["g28a891r-df13-40eg-9e51-ce313h52f6fi"]),
 ];
@@ -149,6 +171,7 @@ const resourcesTableValues = (resourceContentValue) => {
 };
 
 async function handleSubmit() {
+  console.log(resourcesContent.value);
   const { valid } = await form.value.validate();
 
   if (resourcesContent.value.length <= 0 || productsContent.value.length <= 0) {
@@ -158,7 +181,8 @@ async function handleSubmit() {
   if (!valid) return;
 
   const product = {
-    catalogName: catalogName.value,
+    catalogNumber: catalogNumber.value,
+    productionNumber: productionNumber.value,
     description: description.value,
     owner: user.name,
     authors: authors.value,
