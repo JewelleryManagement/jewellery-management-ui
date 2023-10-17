@@ -78,11 +78,6 @@
             <div class="d-flex flex-column mt-4">
               <p v-if="resourcesContent.length > 0">
                 Resources selected: {{ resourcesContent.length || 0 }}
-                <ul>
-                  <li v-for="item in resourcesContent" :key="item.id">
-                    {{ item.quantity }}
-                  </li>
-                </ul>
               </p>
 
               <p v-if="productsContent.length > 0">
