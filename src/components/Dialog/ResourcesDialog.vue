@@ -30,6 +30,8 @@
                 variant="underlined"
                 v-model="quantityByProduct[item.value]"
                 type="number"
+                min="0"
+                :rules="usePositiveNumberRules()"
                 :style="{
                   background: 'transparent',
                   border: 'none',
@@ -60,6 +62,7 @@
 </template>
 
 <script setup>
+import { usePositiveNumberRules } from "../../utils/validation-rules";
 import { ref, computed } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
@@ -90,9 +93,13 @@ for (let i = 0; i < resourcesByUser.value.resourcesAndQuantities.length; i++) {
 }
 
 const clearTableValues = () => {
-  for (let i = 0; i < resourcesContent.value.length; i++) {
-    const element = resourcesContent.value[i].resourceId;
-    quantityByProduct.value[element] = ''
+  if (resourcesContent.value.length > 0) {
+    for (let i = 0; i < resourcesContent.value.length; i++) {
+      const element = resourcesContent.value[i].resourceId;
+      quantityByProduct.value[element] = "";
+    }
+  } else {
+    quantityByProduct.value = {};
   }
 };
 
@@ -100,29 +107,29 @@ const saveTableValues = () => {
   const currentInputFields = Object.entries(quantityByProduct.value);
 
   currentInputFields.forEach((e) => {
-    const finalInputFields = {
-      resourceId: e[0],
-      quantity: e[1],
-    };
+    const resourceId = e[0];
+    const quantity = e[1];
 
     const existingResource = resourcesContent.value.find(
-      (r) => r.resourceId === finalInputFields.resourceId
+      (r) => r.resourceId === resourceId
     );
 
     if (existingResource) {
-      if (finalInputFields.quantity == "" || finalInputFields.quantity == 0) {
+      if (quantity == "" || quantity == 0 || quantity < 0) {
         const existingResourceIndex = resourcesContent.value.findIndex(
-          (r) => r.resourceId === finalInputFields.resourceId
+          (r) => r.resourceId === resourceId
         );
 
-        console.log(existingResourceIndex);
-
-        resourcesContent.value.splice(existingResourceIndex, 1)
+        resourcesContent.value.splice(existingResourceIndex, 1);
+      } else {
+        if (quantity < 0) return;
+        existingResource.quantity = quantity;
       }
-
-      existingResource.quantity = finalInputFields.quantity;
     } else {
-      resourcesContent.value.push(finalInputFields);
+      if (quantity == "" || quantity == 0 || quantity < 0) {
+        return;
+      }
+      resourcesContent.value.push({ resourceId, quantity });
     }
   });
 

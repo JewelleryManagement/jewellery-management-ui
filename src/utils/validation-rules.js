@@ -40,6 +40,12 @@ export function usePasswordFieldRules() {
   ];
 }
 
+export function usePositiveNumberRules() {
+  return [
+    (v) => (v >= 0) || "Please enter a positive number",
+  ];
+}
+
 export function validateAuthors(authors) {
   if (authors.length === 0) {
     return 'Please select at least one author.';
