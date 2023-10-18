@@ -129,7 +129,7 @@ const saveTableValues = () => {
       if (quantity == "" || quantity == 0 || quantity < 0) {
         return;
       }
-      resourcesContent.value.push({ resourceId, quantity });
+      resourcesContent.value.push({ id: resourceId, quantity });
     }
   });
 

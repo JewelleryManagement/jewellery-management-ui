@@ -30,7 +30,7 @@ export default {
     const store = useStore();
     const products = computed(() => store.getters["products/allProducts"]);
     const tableColumns = computed(() => store.getters["products/getColumns"]);
-
+    
     return {
       search,
       tableColumns,

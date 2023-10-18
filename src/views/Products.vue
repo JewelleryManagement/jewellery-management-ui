@@ -42,7 +42,6 @@ export default {
     onMounted(async () => {
       try {
         await store.dispatch("products/fetchProducts");
-        // await store.dispatch("users/fetchUsers");
       } catch (error) {
         snackbarProvider.showErrorSnackbar("Failed to fetch products");
       }

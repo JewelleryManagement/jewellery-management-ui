@@ -31,7 +31,7 @@
             chips
             closable-chips
             label="Authors"
-            :items="allUsers"
+            :items="allUsersNames"
             multiple
             :rules="[validateAuthors(authors)]"
           >
@@ -118,7 +118,6 @@ import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import VueBarcode from "@chenfengyuan/vue-barcode";
 
-
 const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
@@ -126,19 +125,26 @@ const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
-const allUsers = computed(() =>
-store.getters["users/allUsers"].map((user) => user.name)
+
+const allUsers = computed(() => store.getters["users/allUsers"]);
+const allUsersNames = computed(() =>
+  store.getters["users/allUsers"].map((user) => user.name)
 );
 
 try {
   await store.dispatch("users/fetchResourcesForUser", user.id);
 } catch (error) {
-  console.log(error);
+  snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
 }
 const pageTitle = ref(route.meta.title);
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const form = ref(null);
-const [catalogNumber, description, salePrice, productionNumber] = [ref(""), ref(""), ref(""), ref("")];
+const [catalogNumber, description, salePrice, productionNumber] = [
+  ref(""),
+  ref(""),
+  ref(""),
+  ref(""),
+];
 const [authors, resourcesContent, productsContent] = [
   ref([]),
   ref([]),
@@ -166,7 +172,6 @@ const resourcesTableValues = (resourceContentValue) => {
 };
 
 async function handleSubmit() {
-  console.log(resourcesContent.value);
   const { valid } = await form.value.validate();
 
   if (resourcesContent.value.length <= 0 || productsContent.value.length <= 0) {
@@ -175,15 +180,22 @@ async function handleSubmit() {
 
   if (!valid) return;
 
+  authors.value.forEach((authorName, index) => {
+    const existingAuthor = allUsers.value.find((x) => x.name === authorName);
+    if (existingAuthor) {
+      authors.value[index] = existingAuthor.id;
+    }
+  });
+
   const product = {
     catalogNumber: catalogNumber.value,
     productionNumber: productionNumber.value,
     description: description.value,
-    owner: user.name,
+    owner: user.id,
     authors: authors.value,
     salePrice: salePrice.value,
-    resources: resourcesContent.value,
-    products: productsContent.value,
+    resourceContent: resourcesContent.value,
+    productsContent: productsContent.value,
   };
 
   try {
