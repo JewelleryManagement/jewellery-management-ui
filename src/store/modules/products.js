@@ -1,5 +1,5 @@
 import { reactive } from "vue";
-import { fetchProducts } from "@/services/HttpClientService.js";
+import { fetchProducts, postProduct } from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
@@ -12,7 +12,7 @@ export default {
       { key: "authors", title: "Authors" },
       { key: "inStock", title: "In Stock" },
       { key: "isSold", title: "Sold" },
-      { key: "owner", title: "Owner" },
+      { key: "ownerId", title: "Owner" },
       { key: "picture", title: "Picture" },
       { key: "salePrice", title: "Sale price" },
     ],
@@ -21,24 +21,21 @@ export default {
     setProducts(state, products) {
       state.products = products;
     },
-    addProduct(state, product) {
-      state.products.push(product);
-    }
   },
   actions: {
     async fetchProducts({ commit }) {
       const res = await fetchProducts();
       commit("setProducts", res);
     },
-    createProduct({ commit }, product) {
-      commit("addProduct", product);
+    async createProduct({ commit }, product) {
+      await postProduct(product)
     },
   },
   getters: {
     allProducts: (state) => {
       return state.products.map(product => ({
         ...product,
-        authors: Array.isArray(product.authors) ? product.authors.join(', ') : product.authors
+        authors: product.authors.map(author => author.name).join(', ')
       }))
     },
     getColumns: (state) => state.tableColumns,

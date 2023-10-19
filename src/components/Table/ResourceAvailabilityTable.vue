@@ -21,7 +21,11 @@
     >
       <template v-slot:item.remove="{ item }">
         <router-link
-          :to="{ name: 'Remove-Quantity', params: { id: item.selectable.id } }"
+          :to="{
+            name: 'Remove-Quantity',
+            params: { id: item.selectable.id },
+            query: { name: user.name, email: user.email, userId: user.id },
+          }"
         >
           <v-icon color="blue">mdi-minus</v-icon>
         </router-link>

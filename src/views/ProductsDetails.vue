@@ -148,7 +148,7 @@ const [catalogNumber, description, salePrice, productionNumber] = [
 const [authors, resourcesContent, productsContent] = [
   ref([]),
   ref([]),
-  ref(["g28a891r-df13-40eg-9e51-ce313h52f6fi"]),
+  ref([]),
 ];
 
 const resetForm = () => {
@@ -174,7 +174,9 @@ const resourcesTableValues = (resourceContentValue) => {
 async function handleSubmit() {
   const { valid } = await form.value.validate();
 
-  if (resourcesContent.value.length <= 0 || productsContent.value.length <= 0) {
+
+  // || productsContent.value.length <= 0
+  if (resourcesContent.value.length <= 0 ) {
     return;
   }
 
@@ -191,10 +193,10 @@ async function handleSubmit() {
     catalogNumber: catalogNumber.value,
     productionNumber: productionNumber.value,
     description: description.value,
-    owner: user.id,
+    ownerId: user.id,
     authors: authors.value,
     salePrice: salePrice.value,
-    resourceContent: resourcesContent.value,
+    resourcesContent: resourcesContent.value,
     productsContent: productsContent.value,
   };
 

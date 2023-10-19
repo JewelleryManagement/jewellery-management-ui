@@ -7,15 +7,15 @@
             <v-col cols="10" max-width="1600">
               <suspense>
                 <user-card
-                  :name="user.owner.name"
-                  :email="user.owner.email"
-                  :resourcesAndQuantities="user.resourcesAndQuantities"
+                  :name="user.name"
+                  :email="user.email"
+                  :resourcesAndQuantities="resourceItem"
                 ></user-card>
               </suspense>
               <resource-availability-table
                 :tableColumns="tableColumns"
                 :resourceItem="resourceItem"
-                :user="user.owner"
+                :user="user"
               ></resource-availability-table>
             </v-col>
           </v-row>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { computed, ref, inject } from "vue";
+import { computed, inject } from "vue";
 import { useStore } from "vuex";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
@@ -51,17 +51,10 @@ export default {
     } catch (error) {
       snackbarProvider.showErrorSnackbar("Failed to fetch products.");
     }
-    const user = computed(() => store.getters["users/getUserResources"]);
     const tableColumns = computed(() => store.getters["users/getColumns"]);
-    const resourceItem = ref([]);
+    const resourceItem = computed(() => store.getters["users/getUserResources"]);
+    const user = computed(() => store.getters["users/getUserById"](userId)).value;
 
-    for (let i = 0; i < user.value.resourcesAndQuantities.length; i++) {
-      let quantity = user.value.resourcesAndQuantities[i].quantity;
-      let resource = user.value.resourcesAndQuantities[i].resource;
-      resource.quantity = quantity;
-      resourceItem.value.push(resource);
-    }
-    
     return {
       user,
       tableColumns,

@@ -72,9 +72,8 @@ const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const { modelValue } = defineProps({ modelValue: Boolean });
 const search = ref("");
 
-const [quantityByProduct, resourcesContent, resources] = [
+const [quantityByProduct, resourcesContent, ] = [
   ref({}),
-  ref([]),
   ref([]),
 ];
 const tableColumns = [
@@ -83,19 +82,13 @@ const tableColumns = [
   ...computed(() => store.state.resources.tableColumns).value,
 ];
 
-const resourcesByUser = computed(() => store.getters["users/getUserResources"]);
+const resources = computed(() => store.getters["users/getUserResources"]);
 
-for (let i = 0; i < resourcesByUser.value.resourcesAndQuantities.length; i++) {
-  let quantity = resourcesByUser.value.resourcesAndQuantities[i].quantity;
-  let resource = resourcesByUser.value.resourcesAndQuantities[i].resource;
-  resource.quantity = quantity;
-  resources.value.push(resource);
-}
 
 const clearTableValues = () => {
   if (resourcesContent.value.length > 0) {
     for (let i = 0; i < resourcesContent.value.length; i++) {
-      const element = resourcesContent.value[i].resourceId;
+      const element = resourcesContent.value[i].id;
       quantityByProduct.value[element] = "";
     }
   } else {
@@ -111,13 +104,13 @@ const saveTableValues = () => {
     const quantity = e[1];
 
     const existingResource = resourcesContent.value.find(
-      (r) => r.resourceId === resourceId
+      (r) => r.id === resourceId
     );
 
     if (existingResource) {
       if (quantity == "" || quantity == 0 || quantity < 0) {
         const existingResourceIndex = resourcesContent.value.findIndex(
-          (r) => r.resourceId === resourceId
+          (r) => r.id === resourceId
         );
 
         resourcesContent.value.splice(existingResourceIndex, 1);

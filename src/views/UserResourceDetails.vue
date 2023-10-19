@@ -54,6 +54,7 @@ export default {
   },
   props: {
     id: String,
+    userId: String,
   },
   async setup(props) {
     const snackbarProvider = inject("snackbarProvider");
@@ -75,11 +76,12 @@ export default {
       resourceId
     );
 
+    console.log(resourceAvailability);
+
     if (route.path.includes("/remove")) {
-      const user = computed(() => store.getters["users/getUserResources"]);
-      selectedUser.value = user.value.owner.name;
+      selectedUser.value = route.query.name;
       const quantityByUser = resourceAvailability.usersAndQuantities.find(
-        (item) => item.owner.name === user.value.owner.name
+        (item) => item.owner.name === route.query.name
       ).quantity;
       quantityToSubmit.value = quantityByUser;
     }
@@ -98,11 +100,15 @@ export default {
         try {
           if (route.path.includes("/add")) {
             await store.dispatch("users/postResourcesToUser", data);
-            snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
+            snackbarProvider.showSuccessSnackbar(
+              "Successfully added quantity!"
+            );
             router.push("/resources");
           } else if (route.path.includes("/remove")) {
             await store.dispatch("resources/removeQuantityFromResource", data);
-            snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
+            snackbarProvider.showSuccessSnackbar(
+              "Successfully removed quantity"
+            );
             router.push(`/users/${findUser.id}`);
           }
         } catch (error) {
@@ -117,9 +123,14 @@ export default {
     return {
       route,
       router,
-      resource: computed(() =>store.getters["resources/getResourceById"](props.id)),
+      resource: computed(() =>
+        store.getters["resources/getResourceById"](props.id)
+      ),
       resourceAvailability: resourceAvailability,
-      resourceQuantity: await store.dispatch("resources/fetchQuantityByResourceId",resourceId),
+      resourceQuantity: await store.dispatch(
+        "resources/fetchQuantityByResourceId",
+        resourceId
+      ),
       handleSubmit,
       resetForm() {
         if (form.value) {
