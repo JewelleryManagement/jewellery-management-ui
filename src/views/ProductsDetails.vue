@@ -57,6 +57,7 @@
 
           <resources-dialog
             v-model="resourceDialog"
+            :inputResources="resourcesContent"
             @save-resources-dialog="resourcesTableValues"
             @close-dialog="closeDialog"
           ></resources-dialog>
@@ -174,6 +175,8 @@ const resourcesTableValues = (resourceContentValue) => {
   resourcesContent.value = resourceContentValue;
   closeDialog("resources");
 };
+
+// const getSelectedResourcesContent = () => ;
 
 const productsTableValues = (productsContentValue) => {
   productsContent.value = productsContentValue;

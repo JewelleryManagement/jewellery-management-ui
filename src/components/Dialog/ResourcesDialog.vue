@@ -1,11 +1,6 @@
 <template>
-  <v-dialog
-    :model-value="modelValue"
-    @update:model-value="modelValue"
-    transition="dialog-top-transition"
-    width="auto"
-  >
-    <template v-slot:default="{ isActive }">
+  <v-dialog transition="dialog-top-transition" width="auto">
+    <template v-slot:default>
       <v-card>
         <v-toolbar color="red" title="Reasources..."></v-toolbar>
         <v-card-title>
@@ -69,10 +64,11 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
-const { modelValue } = defineProps({ modelValue: Boolean });
+const { inputResources } = defineProps({
+  inputResources: Array,
+});
 const search = ref("");
-
-const [quantityByProduct, resourcesContent] = [ref({}), ref([])];
+const [quantityByProduct, resourcesContent] = [ref(inputResources), ref([])];
 const tableColumns = [
   computed(() => store.state.resources.tableColumnAddQuantity).value,
   computed(() => store.state.resources.tableColumnQuantity).value,
@@ -82,49 +78,30 @@ const tableColumns = [
 const resources = computed(() => store.getters["users/getUserResources"]);
 
 const clearTableValues = () => {
-  if (resourcesContent.value.length > 0) {
-    for (let i = 0; i < resourcesContent.value.length; i++) {
-      const element = resourcesContent.value[i].id;
-      quantityByProduct.value[element] = "";
-    }
-  } else {
-    quantityByProduct.value = {};
-  }
+  quantityByProduct.value = {};
 };
 
 const saveTableValues = () => {
+  if (areQuantitiesPositiveNumbers()) {
+    resourcesContent.value = [];
+    const currentInputFields = Object.entries(quantityByProduct.value);
+    currentInputFields.forEach(([resourceId, quantity]) => {
+      if (quantity > 0.0) {
+        resourcesContent.value.push({ id: resourceId, quantity: quantity });
+      }
+    });
+    console.log(resourcesContent.value);
+
+    emits("save-resources-dialog", resourcesContent.value);
+  }
+};
+
+const areQuantitiesPositiveNumbers = () => {
   const currentInputFields = Object.entries(quantityByProduct.value);
-
-  currentInputFields.forEach((e) => {
-    const resourceId = e[0];
-    const quantity = e[1];
-
-    const existingResource = resourcesContent.value.find(
-      (r) => r.id === resourceId
-    );
-
-    if (existingResource) {
-      if (quantity == "" || quantity == 0 || quantity < 0) {
-        const existingResourceIndex = resourcesContent.value.findIndex(
-          (r) => r.id === resourceId
-        );
-        quantityByProduct.value[resourceId] = "";
-
-        resourcesContent.value.splice(existingResourceIndex, 1);
-      } else {
-        if (quantity < 0) return;
-        existingResource.quantity = quantity;
-      }
-    } else {
-      if (quantity == "" || quantity == 0 || quantity < 0) {
-        quantityByProduct.value[resourceId] = "";
-
-        return;
-      }
-      resourcesContent.value.push({ id: resourceId, quantity });
-    }
-  });
-
-  emits("save-resources-dialog", resourcesContent.value);
+  return (
+    currentInputFields.filter(([resourceId, quantity]) => {
+      return quantity < 0.0;
+    }).length == 0
+  );
 };
 </script>
