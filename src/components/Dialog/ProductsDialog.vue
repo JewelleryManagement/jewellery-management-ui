@@ -19,7 +19,7 @@
         </v-card-text>
 
         <v-card-actions class="justify-end">
-          <v-btn color="green" variant="text"  @click="saveTableValues"
+          <v-btn color="green" variant="text" @click="saveTableValues"
             >Save</v-btn
           >
           <v-btn
@@ -36,13 +36,13 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import {ref} from 'vue'
+import { ref } from "vue";
 const { modelValue, userId } = defineProps({
   modelValue: Boolean,
   userId: String,
 });
 
-const productsIds = ref([])
+const productsIds = ref([]);
 
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);
 
@@ -52,5 +52,5 @@ const addProductById = (id) => {
 
 const saveTableValues = () => {
   emits("save-product-dialog", productsIds.value);
-}
+};
 </script>

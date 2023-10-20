@@ -72,10 +72,7 @@ const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const { modelValue } = defineProps({ modelValue: Boolean });
 const search = ref("");
 
-const [quantityByProduct, resourcesContent, ] = [
-  ref({}),
-  ref([]),
-];
+const [quantityByProduct, resourcesContent] = [ref({}), ref([])];
 const tableColumns = [
   computed(() => store.state.resources.tableColumnAddQuantity).value,
   computed(() => store.state.resources.tableColumnQuantity).value,
@@ -83,7 +80,6 @@ const tableColumns = [
 ];
 
 const resources = computed(() => store.getters["users/getUserResources"]);
-
 
 const clearTableValues = () => {
   if (resourcesContent.value.length > 0) {

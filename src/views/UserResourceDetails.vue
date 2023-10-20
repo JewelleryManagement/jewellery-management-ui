@@ -76,8 +76,6 @@ export default {
       resourceId
     );
 
-    console.log(resourceAvailability);
-
     if (route.path.includes("/remove")) {
       selectedUser.value = route.query.name;
       const quantityByUser = resourceAvailability.usersAndQuantities.find(

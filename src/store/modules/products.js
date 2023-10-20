@@ -48,9 +48,6 @@ export default {
       }));
     },
     getColumns: (state) => state.tableColumns,
-    getColumnsWithAdd: (state) => [
-      state.tableColumnAdd,
-      ...state.tableColumns,
-    ],
+    getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
   },
 };
