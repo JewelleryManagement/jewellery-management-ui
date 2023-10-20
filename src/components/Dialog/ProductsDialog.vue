@@ -9,11 +9,17 @@
       <v-card>
         <v-toolbar color="green" title="Products..."></v-toolbar>
         <v-card-text>
-          <products-table></products-table>
+          <products-table :userId="userId">
+            <template v-slot:item.add="{ item }">
+              <v-icon color="blue" @click="addProductById(item.selectable.id)"
+                >mdi-plus</v-icon
+              >
+            </template>
+          </products-table>
         </v-card-text>
 
         <v-card-actions class="justify-end">
-          <v-btn color="green" variant="text" @click="isActive.value = false"
+          <v-btn color="green" variant="text"  @click="saveTableValues"
             >Save</v-btn
           >
           <v-btn
@@ -30,10 +36,21 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-
-const { modelValue } = defineProps({
-    modelValue: Boolean,
+import {ref} from 'vue'
+const { modelValue, userId } = defineProps({
+  modelValue: Boolean,
+  userId: String,
 });
 
-const emits = defineEmits(["close-dialog"]);
+const productsIds = ref([])
+
+const emits = defineEmits(["save-product-dialog", "close-dialog"]);
+
+const addProductById = (id) => {
+  productsIds.value.push(id);
+};
+
+const saveTableValues = () => {
+  emits("save-product-dialog", productsIds.value);
+}
 </script>

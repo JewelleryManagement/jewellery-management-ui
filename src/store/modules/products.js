@@ -1,5 +1,9 @@
 import { reactive } from "vue";
-import { fetchProducts, postProduct } from "@/services/HttpClientService.js";
+import {
+  fetchProducts,
+  postProduct,
+  fetchProductsByOwner,
+} from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
@@ -16,6 +20,7 @@ export default {
       { key: "picture", title: "Picture" },
       { key: "salePrice", title: "Sale price" },
     ],
+    tableColumnAdd: { key: "add", title: "", slot: "add" },
   }),
   mutations: {
     setProducts(state, products) {
@@ -28,16 +33,24 @@ export default {
       commit("setProducts", res);
     },
     async createProduct({ commit }, product) {
-      await postProduct(product)
+      await postProduct(product);
+    },
+    async getProductsByOwner({ commit }, ownerId) {
+      const res = await fetchProductsByOwner(ownerId);
+      commit("setProducts", res);
     },
   },
   getters: {
     allProducts: (state) => {
-      return state.products.map(product => ({
+      return state.products.map((product) => ({
         ...product,
-        authors: product.authors.map(author => author.name).join(', ')
-      }))
+        authors: product.authors.map((author) => author.name).join(", "),
+      }));
     },
     getColumns: (state) => state.tableColumns,
+    getColumnsWithAdd: (state) => [
+      state.tableColumnAdd,
+      ...state.tableColumns,
+    ],
   },
 };

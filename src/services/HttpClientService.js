@@ -38,6 +38,10 @@ export async function fetchProducts() {
   return await fetchData("/products");
 }
 
+export async function fetchProductsByOwner(ownerId) {
+  return await fetchData(`/products/by-owner/${ownerId}`);
+}
+
 export async function fetchUsers() {
   return await fetchData("/users");
 }

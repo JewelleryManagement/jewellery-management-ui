@@ -61,7 +61,12 @@
             @close-dialog="closeDialog"
           ></resources-dialog>
 
-          <products-dialog v-model="productsDialog" @close-dialog="closeDialog">
+          <products-dialog
+            v-model="productsDialog"
+            @close-dialog="closeDialog"
+            @save-product-dialog="productsTableValues"
+            :userId="user.id"
+          >
           </products-dialog>
 
           <div class="d-flex flex-column">
@@ -125,7 +130,6 @@ const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
-
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = computed(() =>
   store.getters["users/allUsers"].map((user) => user.name)
@@ -171,12 +175,17 @@ const resourcesTableValues = (resourceContentValue) => {
   closeDialog("resources");
 };
 
+const productsTableValues = (productsContentValue) => {
+  productsContent.value = productsContentValue;
+  closeDialog("products");
+};
+
 async function handleSubmit() {
   const { valid } = await form.value.validate();
 
-
+  console.log(productsContent.value);
   // || productsContent.value.length <= 0
-  if (resourcesContent.value.length <= 0 ) {
+  if (resourcesContent.value.length <= 0) {
     return;
   }
 

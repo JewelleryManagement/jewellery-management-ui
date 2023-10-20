@@ -112,6 +112,7 @@ const saveTableValues = () => {
         const existingResourceIndex = resourcesContent.value.findIndex(
           (r) => r.id === resourceId
         );
+        quantityByProduct.value[resourceId] = "";
 
         resourcesContent.value.splice(existingResourceIndex, 1);
       } else {
@@ -120,6 +121,8 @@ const saveTableValues = () => {
       }
     } else {
       if (quantity == "" || quantity == 0 || quantity < 0) {
+        quantityByProduct.value[resourceId] = "";
+
         return;
       }
       resourcesContent.value.push({ id: resourceId, quantity });
