@@ -183,8 +183,6 @@ const productsTableValues = (productsContentValue) => {
 async function handleSubmit() {
   const { valid } = await form.value.validate();
 
-  console.log(productsContent.value);
-  // || productsContent.value.length <= 0
   if (resourcesContent.value.length <= 0) {
     return;
   }
