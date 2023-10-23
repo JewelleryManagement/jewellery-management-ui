@@ -32,30 +32,6 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="formData.dimensionX"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="dimensionX"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.dimensionY"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="dimensionY"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.dimensionZ"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="dimensionZ"
-    required
-  ></v-text-field>
-
-  <v-text-field
     v-model="formData.quantityType"
     :counter="10"
     :rules="textFieldRules"
