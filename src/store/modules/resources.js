@@ -30,9 +30,6 @@ export default {
       { key: "plating", title: "Plating" },
       { key: "carat", title: "Carat" },
       { key: "cut", title: "Cut" },
-      { key: "dimensionX", title: "dimensionX" },
-      { key: "dimensionY", title: "dimensionY" },
-      { key: "dimensionZ", title: "dimensionZ" },
       { key: "description", title: "Description" },
     ],
     tableColumnQuantity: { key: "quantity", title: "Quantity"},
@@ -128,9 +125,6 @@ export default {
         "carat",
         "cut",
         "clarity",
-        "dimensionX",
-        "dimensionY",
-        "dimensionZ",
       ]),
     getColumnsForLinkingPart: (state) =>
       filterColumnsByKey(state, [
