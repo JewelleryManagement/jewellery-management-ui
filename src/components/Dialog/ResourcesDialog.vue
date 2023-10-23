@@ -26,7 +26,7 @@
                 v-model="quantityByProduct[item.value]"
                 type="number"
                 min="0"
-                :rules="usePositiveNumberRules()"
+                :rules="usePositiveNumberRules(item.raw.quantity)"
                 :style="{
                   background: 'transparent',
                   border: 'none',
@@ -44,12 +44,7 @@
           <v-btn color="green" variant="text" @click="saveTableValues"
             >Save</v-btn
           >
-          <v-btn
-            color="red"
-            variant="text"
-            @click="() => $emit('close-dialog', 'resources')"
-            >Close</v-btn
-          >
+          <v-btn color="red" variant="text" @click="closeDialog()">Close</v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -82,7 +77,7 @@ const clearTableValues = () => {
 };
 
 const saveTableValues = () => {
-  if (areQuantitiesPositiveNumbers()) {
+  if (areQuantitiesValid()) {
     resourcesContent.value = [];
     const currentInputFields = Object.entries(quantityByProduct.value);
     currentInputFields.forEach(([resourceId, quantity]) => {
@@ -90,18 +85,28 @@ const saveTableValues = () => {
         resourcesContent.value.push({ id: resourceId, quantity: quantity });
       }
     });
-    console.log(resourcesContent.value);
 
     emits("save-resources-dialog", resourcesContent.value);
   }
 };
 
-const areQuantitiesPositiveNumbers = () => {
+const areQuantitiesValid = () => {
   const currentInputFields = Object.entries(quantityByProduct.value);
   return (
     currentInputFields.filter(([resourceId, quantity]) => {
-      return quantity < 0.0;
+      return (
+        quantity < 0.0 ||
+        quantity >
+          resources.value.find((resource) => resource.id === resourceId)
+            .quantity
+      );
     }).length == 0
   );
+};
+const closeDialog = () => {
+  resourcesContent.value.forEach(
+    ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
+  );
+  emits("close-dialog", "resources");
 };
 </script>
