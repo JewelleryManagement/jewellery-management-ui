@@ -11,8 +11,10 @@
         <v-card-text>
           <products-table :userId="userId">
             <template v-slot:item.add="{ item }">
-              <v-icon color="blue" @click="addProductById(item.selectable.id)"
-                >mdi-plus</v-icon
+              <v-icon
+                color="blue"
+                @click="addProductById(item.selectable.id)"
+                >{{ btnIcon[item.selectable.id] || "mdi-plus" }}</v-icon
               >
             </template>
           </products-table>
@@ -20,7 +22,9 @@
 
         <v-card-actions class="justify-space-between">
           <div>
-            <p>Products selected: {{ productsIds.length || 0 }}</p>
+            <p>
+              Products selected: {{ temporarySelectedProducts.length || 0 }}
+            </p>
           </div>
 
           <div>
@@ -31,10 +35,7 @@
             <v-btn color="green" variant="text" @click="saveTableValues"
               >Save</v-btn
             >
-            <v-btn
-              color="red"
-              variant="text"
-              @click="() => $emit('close-dialog', 'products')"
+            <v-btn color="red" variant="text" @click="closeDialog()"
               >Close</v-btn
             >
           </div>
@@ -52,19 +53,41 @@ const { modelValue, userId } = defineProps({
   userId: String,
 });
 
-const productsIds = ref([]);
+const savedProductsIds = ref([]);
+const temporarySelectedProducts = ref([]);
+const btnIcon = ref({});
 
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);
 
+const closeDialog = () => {
+  temporarySelectedProducts.value = [...savedProductsIds.value];
+  btnIcon.value = [];
+  savedProductsIds.value.forEach((id) => {
+    btnIcon.value[id] = "mdi-minus";
+  });
+  emits("close-dialog", "products");
+};
+
 const addProductById = (id) => {
-  productsIds.value.push(id);
+  const selectedProductIndex = temporarySelectedProducts.value.findIndex(
+    (selectedId) => selectedId === id
+  );
+  if (selectedProductIndex == -1) {
+    temporarySelectedProducts.value.push(id);
+    btnIcon.value[id] = "mdi-minus";
+  } else {
+    temporarySelectedProducts.value.splice(selectedProductIndex, 1);
+    btnIcon.value[id] = "mdi-plus";
+  }
 };
 
 const clearTableValues = () => {
-  productsIds.value = [];
-}
+  temporarySelectedProducts.value = [];
+  btnIcon.value = {};
+};
 
 const saveTableValues = () => {
-  emits("save-product-dialog", productsIds.value);
+  savedProductsIds.value = [...temporarySelectedProducts.value];
+  emits("save-product-dialog", savedProductsIds.value);
 };
 </script>
