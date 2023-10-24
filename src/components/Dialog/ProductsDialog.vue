@@ -18,16 +18,26 @@
           </products-table>
         </v-card-text>
 
-        <v-card-actions class="justify-end">
-          <v-btn color="green" variant="text" @click="saveTableValues"
-            >Save</v-btn
-          >
-          <v-btn
-            color="red"
-            variant="text"
-            @click="() => $emit('close-dialog', 'products')"
-            >Close</v-btn
-          >
+        <v-card-actions class="justify-space-between">
+          <div>
+            <p>Products selected: {{ productsIds.length || 0 }}</p>
+          </div>
+
+          <div>
+            <v-btn color="#7986CB" variant="text" @click="clearTableValues"
+              >Clear</v-btn
+            >
+
+            <v-btn color="green" variant="text" @click="saveTableValues"
+              >Save</v-btn
+            >
+            <v-btn
+              color="red"
+              variant="text"
+              @click="() => $emit('close-dialog', 'products')"
+              >Close</v-btn
+            >
+          </div>
         </v-card-actions>
       </v-card>
     </template>
@@ -49,6 +59,10 @@ const emits = defineEmits(["save-product-dialog", "close-dialog"]);
 const addProductById = (id) => {
   productsIds.value.push(id);
 };
+
+const clearTableValues = () => {
+  productsIds.value = [];
+}
 
 const saveTableValues = () => {
   emits("save-product-dialog", productsIds.value);
