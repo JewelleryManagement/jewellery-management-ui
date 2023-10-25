@@ -9,7 +9,7 @@
       hide-details
     ></v-text-field>
   </v-card-title>
-  <v-data-table :headers="tableColumns" :items="products" :search="search">
+  <v-data-table :headers="tableColumnsWithRCandPC ? tableColumnsWithRCandPC : tableColumns" :items="products" :search="search">
     <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope || {}" />
     </template>
@@ -22,7 +22,7 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 
-const { userId } = defineProps(["userId"]);
+const { userId, tableColumnsWithRCandPC } = defineProps(["userId", "tableColumnsWithRCandPC"]);
 
 const store = useStore();
 if (userId) {
@@ -35,9 +35,11 @@ if (userId) {
 
 const search = ref("");
 const products = computed(() => store.getters["products/allProducts"]);
+console.log(products.value);
 const tableColumns = userId
   ? computed(() => store.getters["products/getColumnsWithAdd"])
   : computed(() => store.getters["products/getColumns"]);
+
 </script>
 
 <style scoped></style>

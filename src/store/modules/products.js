@@ -16,11 +16,23 @@ export default {
       { key: "authors", title: "Authors" },
       { key: "inStock", title: "In Stock" },
       { key: "isSold", title: "Sold" },
-      { key: "ownerId", title: "Owner" },
       { key: "picture", title: "Picture" },
       { key: "salePrice", title: "Sale price" },
+      { key: "partOfProduct", title: "Part of product" },
     ],
+
     tableColumnAdd: { key: "add", title: "", slot: "add" },
+    tableColumnOwner: { key: "owner", title: "Owner", },
+    tableColumnResourcesContent: {
+      key: "resourceContent",
+      title: "Resources Content",
+      slot: "resourceContent",
+    },
+    tableColumnProductsContent: {
+      key: "productsContent",
+      title: "Products Content",
+      slot: "productsContent",
+    },
   }),
   mutations: {
     setProducts(state, products) {
@@ -47,7 +59,8 @@ export default {
         authors: product.authors.map((author) => author.name).join(", "),
       }));
     },
-    getColumns: (state) => state.tableColumns,
+    getColumns: (state) => [ ...state.tableColumns, state.tableColumnResourcesContent, state.tableColumnProductsContent],
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
+    getColumnsWithRCandPC: (state) => [ ...state.tableColumns, state.tableColumnResourcesContent, state.tableColumnProductsContent, state.tableColumnOwner],
   },
 };

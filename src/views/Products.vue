@@ -18,7 +18,15 @@
             >
           </div>
 
-          <products-table></products-table>
+          <products-table>
+            <template v-slot:item.resourceContent="{ item }">
+              <v-icon>mdi-gesture</v-icon>
+            </template>
+
+            <template v-slot:item.productsContent="{ item }">
+              <v-icon>mdi-reproduction</v-icon>
+            </template>
+          </products-table>
         </v-card>
       </v-col>
     </v-row>
