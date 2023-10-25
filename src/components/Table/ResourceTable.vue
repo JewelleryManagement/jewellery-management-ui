@@ -15,20 +15,20 @@
     :search="search"
   >
     <template v-slot:item.delete="{ item }">
-      <v-icon color="red" @click="onDelete(item.selectable.id)"
+      <v-icon color="red" @click="onDelete(item.id)"
         >mdi-delete</v-icon
       >
     </template>
     <template v-slot:item.edit="{ item }">
       <router-link
-        :to="{ name: 'Edit-Resource', params: { id: item.selectable.id } }"
+        :to="{ name: 'Edit-Resource', params: { id: item.id } }"
       >
         <v-icon color="green">mdi-pencil</v-icon>
       </router-link>
     </template>
     <template v-slot:item.add="{ item }">
       <router-link
-        :to="{ name: 'Add-Quantity', params: { id: item.selectable.id } }"
+        :to="{ name: 'Add-Quantity', params: { id: item.id } }"
       >
         <v-icon color="blue">mdi-plus</v-icon>
       </router-link>

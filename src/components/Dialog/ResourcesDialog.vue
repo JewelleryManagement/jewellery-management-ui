@@ -26,7 +26,7 @@
                 v-model="quantityByProduct[item.value]"
                 type="number"
                 min="0"
-                :rules="usePositiveNumberRules(item.raw.quantity)"
+                :rules="usePositiveNumberRules(item.quantity)"
                 :style="{
                   background: 'transparent',
                   border: 'none',
