@@ -5,17 +5,18 @@
     transition="dialog-top-transition"
     width="auto"
   >
-    <template v-slot:default="{ isActive }">
+    <template v-slot:default>
       <v-card>
         <v-toolbar color="green" title="Products..."></v-toolbar>
         <v-card-text>
-          <products-table :userId="userId">
+          <products-table
+            :products="ownedNonContentProducts"
+            :additionalColumns="addColumn"
+          >
             <template v-slot:item.add="{ item }">
-              <v-icon
-                color="blue"
-                @click="addProductById(item.selectable.id)"
-                >{{ btnIcon[item.selectable.id] || "mdi-plus" }}</v-icon
-              >
+              <v-icon color="blue" @click="addProductById(item.id)">{{
+                btnIcon[item.id] || ICON_ADD
+              }}</v-icon>
             </template>
           </products-table>
         </v-card-text>
@@ -47,11 +48,23 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
 const { modelValue, userId } = defineProps({
   modelValue: Boolean,
   userId: String,
 });
+const ICON_ADD = ref("mdi-plus");
+const ICON_REMOVE = ref("mdi-minus");
+
+await store.dispatch("products/fetchProductsByOwner", userId);
+const ownedNonContentProducts = computed(() =>
+  store.getters["products/getCurrentUserProducts"].filter(
+    (product) => product.contentOf === null
+  )
+);
+const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 
 const savedProductsIds = ref([]);
 const temporarySelectedProducts = ref([]);
@@ -63,7 +76,7 @@ const closeDialog = () => {
   temporarySelectedProducts.value = [...savedProductsIds.value];
   btnIcon.value = [];
   savedProductsIds.value.forEach((id) => {
-    btnIcon.value[id] = "mdi-minus";
+    btnIcon.value[id] = ICON_REMOVE;
   });
   emits("close-dialog", "products");
 };
@@ -74,10 +87,10 @@ const addProductById = (id) => {
   );
   if (selectedProductIndex == -1) {
     temporarySelectedProducts.value.push(id);
-    btnIcon.value[id] = "mdi-minus";
+    btnIcon.value[id] = ICON_REMOVE;
   } else {
     temporarySelectedProducts.value.splice(selectedProductIndex, 1);
-    btnIcon.value[id] = "mdi-plus";
+    btnIcon.value[id] = ICON_ADD;
   }
 };
 

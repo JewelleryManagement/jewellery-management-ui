@@ -161,6 +161,7 @@ const resetForm = () => {
     form.value.reset();
     form.value.resetValidation();
     resourcesContent.value = [];
+    productsContent.value = [];
     authors.value = [];
   }
 };
@@ -176,21 +177,17 @@ const resourcesTableValues = (resourceContentValue) => {
   closeDialog("resources");
 };
 
-// const getSelectedResourcesContent = () => ;
-
 const productsTableValues = (productsContentValue) => {
   productsContent.value = productsContentValue;
   closeDialog("products");
 };
 
 async function handleSubmit() {
-  const { valid } = await form.value.validate();
+  const { isFormValid } = await form.value.validate();
 
-  if (resourcesContent.value.length <= 0) {
+  if (resourcesContent.value.length <= 0 || !isFormValid) {
     return;
   }
-
-  if (!valid) return;
 
   authors.value.forEach((authorName, index) => {
     const existingAuthor = allUsers.value.find((x) => x.name === authorName);

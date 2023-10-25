@@ -9,6 +9,7 @@ export default {
   namespaced: true,
   state: reactive({
     products: [],
+    currentUserProducts: [],
     tableColumns: [
       { key: "catalogNumber", title: "Catalog Number" },
       { key: "productionNumber", title: "Production Number" },
@@ -26,6 +27,9 @@ export default {
     setProducts(state, products) {
       state.products = products;
     },
+    setCurrentUserProducts(state, products) {
+      state.currentUserProducts = products;
+    },
   },
   actions: {
     async fetchProducts({ commit }) {
@@ -35,9 +39,9 @@ export default {
     async createProduct({ commit }, product) {
       await postProduct(product);
     },
-    async getProductsByOwner({ commit }, ownerId) {
+    async fetchProductsByOwner({ commit }, ownerId) {
       const res = await fetchProductsByOwner(ownerId);
-      commit("setProducts", res);
+      commit("setCurrentUserProducts", res);
     },
   },
   getters: {
@@ -47,7 +51,9 @@ export default {
         authors: product.authors.map((author) => author.name).join(", "),
       }));
     },
+    getCurrentUserProducts: (state) => state.currentUserProducts,
     getColumns: (state) => state.tableColumns,
+    getAddColumn: (state) => state.tableColumnAdd,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
   },
 };
