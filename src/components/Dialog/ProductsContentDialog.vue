@@ -8,9 +8,12 @@
     <template v-slot:default="{ isActive }">
       <v-card>
         <v-toolbar color="green" title="Products Content..."></v-toolbar>
+        <products-table 
+        :tableColumnsWithRCandPC="tableColumnsProducts"
+        :propsProducts="productsContent"
+        ></products-table>
 
-
-        <v-card-actions class="justify-space-between">
+        <v-card-actions class="justify-end">
           <v-btn color="red" variant="text" @click="() => $emit('close-dialog')"
             >Close</v-btn
           >
@@ -21,11 +24,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { useStore } from "vuex";
+import { ref, computed} from "vue";
+const store = useStore()
+const tableColumnsProducts = computed(
+  () => store.getters["products/getColumnsWithRCandPC"]
+);
+import ProductsTable from "../Table/ProductsTable.vue";
 const { modelValue, data } = defineProps({
   modelValue: Boolean,
   data: Object,
 });
 const productsContent = ref(data.productsContent);
-console.log(productsContent.value);
 </script>

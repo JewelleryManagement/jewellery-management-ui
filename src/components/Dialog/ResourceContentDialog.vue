@@ -25,7 +25,7 @@
         >
         </v-data-table>
 
-        <v-card-actions class="justify-space-between">
+        <v-card-actions class="justify-end">
           <v-btn color="red" variant="text" @click="() => $emit('close-dialog')"
             >Close</v-btn
           >
@@ -44,7 +44,7 @@ const { modelValue, data } = defineProps({
   data: Object,
 });
 const store = useStore();
-const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
+const tableColumnsResources = computed(() => store.getters["resources/getTableColumns"]);
 const search = ref("");
 
 const resourceContent = ref(data.resourcesContent);
