@@ -23,7 +23,7 @@
             <template v-slot:item.addQuantity="{ item }">
               <v-text-field
                 variant="underlined"
-                v-model="quantityByProduct[item.value]"
+                v-model="quantityByProduct[item.id]"
                 type="number"
                 min="0"
                 :rules="usePositiveNumberRules(item.quantity)"
@@ -92,6 +92,7 @@ const saveTableValues = () => {
 
 const areQuantitiesValid = () => {
   const currentInputFields = Object.entries(quantityByProduct.value);
+  console.log(quantityByProduct.value);
   return (
     currentInputFields.filter(([resourceId, quantity]) => {
       return (
