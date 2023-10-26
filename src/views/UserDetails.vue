@@ -28,11 +28,15 @@
                   :userId="userId"
                 >
                   <template v-slot:item.resourceContent="{ item }">
-                    <v-btn @click="openDialog(item)">Resources Content</v-btn>
+                    <v-icon @click="openDialog(item, 'resources')"
+                      >mdi-gesture</v-icon
+                    >
                   </template>
 
                   <template v-slot:item.productsContent="{ item }">
-                    <v-btn>Products Content</v-btn>
+                    <v-icon @click="openDialog(item, 'products')"
+                      >mdi-reproduction</v-icon
+                    >
                   </template>
 
                   <template v-slot:item.owner="{ item }">
@@ -41,11 +45,19 @@
                 </products-table>
 
                 <resource-content-dialog
-                  v-if="resourceDialog"
-                  v-model="resourceDialog"
-                  :data="dialogData"
-                  @close-dialog="closeDialog"
+                  v-if="isResourceDialogOpen"
+                  v-model="isResourceDialogOpen"
+                  :data="resourceDialogData"
+                  @close-dialog="closeDialog('resources')"
                 ></resource-content-dialog>
+
+                <products-content-dialog
+                  v-if="isProductsDialogOpen"
+                  v-model="isProductsDialogOpen"
+                  :data="productsDialogData"
+                  @close-dialog="closeDialog('products')"
+                >
+                </products-content-dialog>
               </v-card>
             </v-col>
           </v-row>
@@ -64,9 +76,10 @@ import { useStore } from "vuex";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue";
+import ProductsContentDialog from "@/components/Dialog/ProductsContentDialog.vue";
 import UserCard from "@/components/Card/UserCard.vue";
-const resourceDialog = ref(false);
-const dialogData = ref({});
+const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
+const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
 const { id } = defineProps(["id"]);
 const userId = id;
@@ -87,13 +100,22 @@ const tableColumnsProducts = computed(
   () => store.getters["products/getColumnsWithRCandPC"]
 );
 
-const openDialog = (item) => {
-  dialogData.value = item;
-  resourceDialog.value = true;
+const openDialog = (item, content) => {
+  if (content == "resources") {
+    resourceDialogData.value = item;
+    isResourceDialogOpen.value = true;
+  } else {
+    productsDialogData.value = item;
+    isProductsDialogOpen.value = true;
+  }
 };
 
-const closeDialog = () => {
-  resourceDialog.value = false;
+const closeDialog = (content) => {
+  if (content === 'resources') {
+    isResourceDialogOpen.value = false;
+  } else {
+    isProductsDialogOpen.value = false;
+  }
 };
 </script>
 

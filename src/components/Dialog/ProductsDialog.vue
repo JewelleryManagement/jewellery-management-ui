@@ -11,7 +11,7 @@
         <v-card-text>
           <products-table :userId="userId">
             <template v-slot:item.add="{ item }">
-              <v-icon color="blue" @click="addProductById(item.selectable.id)"
+              <v-icon color="blue" @click="addProductById(item.id)"
                 >mdi-plus</v-icon
               >
             </template>

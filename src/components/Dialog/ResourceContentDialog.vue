@@ -8,24 +8,25 @@
     <template v-slot:default="{ isActive }">
       <v-card>
         <v-toolbar color="red" title="Resource Content..."></v-toolbar>
-        <v-card-text v-for="(resource, index) in resourceContent" :key="index">
-          <div
-            v-for="(resourceItem, header) in resource.resource"
-            :key="header"
-          >
-            <template v-if="header !== 'id'">
-              {{ header }} - {{ resourceItem }}
-              <hr />
-            </template>
-          </div>
-          Quantity: {{ resource.quantity }}
-        </v-card-text>
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
+        <v-data-table
+          :headers="tableColumnsResources"
+          :items="tableData"
+          :search="search"
+        >
+        </v-data-table>
 
         <v-card-actions class="justify-space-between">
-          <v-btn
-            color="red"
-            variant="text"
-            @click="() => $emit('close-dialog')"
+          <v-btn color="red" variant="text" @click="() => $emit('close-dialog')"
             >Close</v-btn
           >
         </v-card-actions>
@@ -35,10 +36,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { VDataTable } from "vuetify/labs/VDataTable";
+import { useStore } from "vuex";
 const { modelValue, data } = defineProps({
   modelValue: Boolean,
   data: Object,
 });
+const store = useStore();
+const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
+const search = ref("");
+
 const resourceContent = ref(data.resourcesContent);
+const tableData = resourceContent.value.map((item) => ({
+  quantity: item.quantity,
+  ...item.resource,
+}));
+
 </script>

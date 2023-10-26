@@ -23,10 +23,10 @@
             <template v-slot:item.addQuantity="{ item }">
               <v-text-field
                 variant="underlined"
-                v-model="quantityByProduct[item.value]"
+                v-model="quantityByProduct[item.id]"
                 type="number"
                 min="0"
-                :rules="usePositiveNumberRules(item.raw.quantity)"
+                :rules="usePositiveNumberRules(item.quantity)"
                 :style="{
                   background: 'transparent',
                   border: 'none',
