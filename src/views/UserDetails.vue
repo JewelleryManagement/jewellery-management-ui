@@ -28,16 +28,7 @@
                   :userId="userId"
                 >
                   <template v-slot:item.resourceContent="{ item }">
-                    <v-btn @click="resourceDialog = true"
-                      >Resources Content</v-btn
-                    >
-
-                    <dialog-data
-                      v-if="resourceDialog"
-                      v-model="resourceDialog"
-                      :data="item"
-                      @close-dialog="closeDialog"
-                    ></dialog-data>
+                    <v-btn @click="openDialog(item)">Resources Content</v-btn>
                   </template>
 
                   <template v-slot:item.productsContent="{ item }">
@@ -48,6 +39,13 @@
                     <v-icon>mdi-account-circle</v-icon>
                   </template>
                 </products-table>
+
+                <resource-content-dialog
+                  v-if="resourceDialog"
+                  v-model="resourceDialog"
+                  :data="dialogData"
+                  @close-dialog="closeDialog"
+                ></resource-content-dialog>
               </v-card>
             </v-col>
           </v-row>
@@ -65,9 +63,10 @@ import { computed, inject, ref } from "vue";
 import { useStore } from "vuex";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import DialogData from "@/components/Dialog/DialogData.vue";
+import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue";
 import UserCard from "@/components/Card/UserCard.vue";
 const resourceDialog = ref(false);
+const dialogData = ref({});
 
 const { id } = defineProps(["id"]);
 const userId = id;
@@ -88,9 +87,14 @@ const tableColumnsProducts = computed(
   () => store.getters["products/getColumnsWithRCandPC"]
 );
 
+const openDialog = (item) => {
+  dialogData.value = item;
+  resourceDialog.value = true;
+};
+
 const closeDialog = () => {
-  resourceDialog.value = false
-}
+  resourceDialog.value = false;
+};
 </script>
 
 <style scoped></style>

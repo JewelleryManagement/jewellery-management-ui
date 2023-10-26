@@ -23,7 +23,7 @@
         <router-link
           :to="{
             name: 'Remove-Quantity',
-            params: { id: item.selectable.id },
+            params: { id: item.id },
             query: { name: user.name, email: user.email, userId: user.id },
           }"
         >

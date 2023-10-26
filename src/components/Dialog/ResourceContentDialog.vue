@@ -7,7 +7,7 @@
   >
     <template v-slot:default="{ isActive }">
       <v-card>
-        <v-toolbar color="green" title="Resource Content..."></v-toolbar>
+        <v-toolbar color="red" title="Resource Content..."></v-toolbar>
         <v-card-text v-for="(resource, index) in resourceContent" :key="index">
           <div
             v-for="(resourceItem, header) in resource.resource"
@@ -40,6 +40,5 @@ const { modelValue, data } = defineProps({
   modelValue: Boolean,
   data: Object,
 });
-const resourceContent = ref(data.selectable.resourcesContent);
-console.log(resourceContent.value);
+const resourceContent = ref(data.resourcesContent);
 </script>
