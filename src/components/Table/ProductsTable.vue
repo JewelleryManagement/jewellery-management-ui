@@ -35,7 +35,6 @@ if (userId) {
 
 const search = ref("");
 const products = computed(() => store.getters["products/allProducts"]);
-console.log(products.value);
 const tableColumns = userId
   ? computed(() => store.getters["products/getColumnsWithAdd"])
   : computed(() => store.getters["products/getColumns"]);

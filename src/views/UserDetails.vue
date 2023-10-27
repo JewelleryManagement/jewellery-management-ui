@@ -75,8 +75,6 @@ import { computed, inject, ref } from "vue";
 import { useStore } from "vuex";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue";
-import ProductsContentDialog from "@/components/Dialog/ProductsContentDialog.vue";
 import UserCard from "@/components/Card/UserCard.vue";
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];

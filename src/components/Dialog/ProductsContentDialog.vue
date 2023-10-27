@@ -36,4 +36,9 @@ const { modelValue, data } = defineProps({
   data: Object,
 });
 const productsContent = ref(data.productsContent);
+productsContent.value = productsContent.value.map(product => ({
+  ...product,
+  authors: product.authors.map(a => a.name).join(', ')
+}));
+
 </script>

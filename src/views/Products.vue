@@ -20,48 +20,78 @@
 
           <products-table>
             <template v-slot:item.resourceContent="{ item }">
-              <v-icon>mdi-gesture</v-icon>
+              <v-icon @click="openDialog(item, 'resources')"
+                >mdi-gesture</v-icon
+              >
             </template>
 
             <template v-slot:item.productsContent="{ item }">
-              <v-icon>mdi-reproduction</v-icon>
+              <v-icon @click="openDialog(item, 'products')"
+                >mdi-reproduction</v-icon
+              >
             </template>
           </products-table>
+
+          <resource-content-dialog
+                  v-if="isResourceDialogOpen"
+                  v-model="isResourceDialogOpen"
+                  :data="resourceDialogData"
+                  @close-dialog="closeDialog('resources')"
+                ></resource-content-dialog>
+
+                <products-content-dialog
+                  v-if="isProductsDialogOpen"
+                  v-model="isProductsDialogOpen"
+                  :data="productsDialogData"
+                  @close-dialog="closeDialog('products')"
+                >
+                </products-content-dialog>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script>
+<script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { onMounted, inject, computed } from "vue";
+import { onMounted, inject, computed, ref } from "vue";
 import { useStore } from "vuex";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
+const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
-export default {
-  components: {
-    ProductsTable,
-  },
-  setup() {
-    const store = useStore();
-    const snackbarProvider = inject("snackbarProvider");
+const store = useStore();
+const snackbarProvider = inject("snackbarProvider");
 
-    onMounted(async () => {
-      try {
-        await store.dispatch("products/fetchProducts");
-      } catch (error) {
-        snackbarProvider.showErrorSnackbar("Failed to fetch products");
-      }
-    });
+onMounted(async () => {
+  try {
+    await store.dispatch("products/fetchProducts");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch products");
+  }
+});
 
-    return {
-      isSmallScreen: computed(() => {
-        return useDisplay().smAndDown.value;
-      }),
-    };
-  },
+const openDialog = (item, content) => {
+  if (content == "resources") {
+    resourceDialogData.value = item;
+    isResourceDialogOpen.value = true;
+  } else {
+    productsDialogData.value = item;
+    isProductsDialogOpen.value = true;
+  }
 };
+
+const closeDialog = (content) => {
+  if (content === "resources") {
+    isResourceDialogOpen.value = false;
+  } else {
+    isProductsDialogOpen.value = false;
+  }
+};
+
+const isSmallScreen = computed(() => {
+  return useDisplay().smAndDown.value;
+});
 </script>
 
 <style scoped></style>

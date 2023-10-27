@@ -54,13 +54,17 @@ export default {
   },
   getters: {
     allProducts: (state) => {
-      return state.products.map((product) => ({
-        ...product,
-        authors: product.authors.map((author) => author.name).join(", "),
-      }));
+      return state.products.map(formatAuthors);
     },
     getColumns: (state) => [ ...state.tableColumns, state.tableColumnResourcesContent, state.tableColumnProductsContent],
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
     getColumnsWithRCandPC: (state) => [ ...state.tableColumns, state.tableColumnResourcesContent, state.tableColumnProductsContent, state.tableColumnOwner],
   },
 };
+
+function formatAuthors(product) { 
+  return {
+    ...product,
+    authors: product.authors.map((author) => author.name).join(", ")
+  }
+}
