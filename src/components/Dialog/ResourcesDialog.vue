@@ -90,16 +90,19 @@ const saveTableValues = () => {
   }
 };
 
+const quantityMoreThanTotalQuantity = (quantity, resourceId) => {
+  return (
+    quantity >
+    resources.value.find((resource) => resource.id === resourceId).quantity
+  );
+};
+
 const areQuantitiesValid = () => {
   const currentInputFields = Object.entries(quantityByProduct.value);
-  console.log(quantityByProduct.value);
   return (
     currentInputFields.filter(([resourceId, quantity]) => {
       return (
-        quantity < 0.0 ||
-        quantity >
-          resources.value.find((resource) => resource.id === resourceId)
-            .quantity
+        quantity <= 0.0 || quantityMoreThanTotalQuantity(quantity, resourceId)
       );
     }).length == 0
   );

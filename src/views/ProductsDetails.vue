@@ -182,20 +182,21 @@ const productsTableValues = (productsContentValue) => {
   closeDialog("products");
 };
 
-async function handleSubmit() {
+const isFormValid = async () => {
   const { isFormValid } = await form.value.validate();
+  return resourcesContent.value.length > 0 && isFormValid;
+};
 
-  if (resourcesContent.value.length <= 0 || !isFormValid) {
-    return;
-  }
-
+const fillAuthorsWithExistingUsers = () => {
   authors.value.forEach((authorName, index) => {
     const existingAuthor = allUsers.value.find((x) => x.name === authorName);
     if (existingAuthor) {
       authors.value[index] = existingAuthor.id;
     }
   });
+};
 
+const submitProduct = async () => {
   const product = {
     catalogNumber: catalogNumber.value,
     productionNumber: productionNumber.value,
@@ -206,13 +207,26 @@ async function handleSubmit() {
     resourcesContent: resourcesContent.value,
     productsContent: productsContent.value,
   };
-
   try {
     await store.dispatch("products/createProduct", product);
-    resetForm();
-    router.push("/products");
+    return true;
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not create the product");
+  }
+  return false;
+};
+
+async function handleSubmit() {
+  if (await !isFormValid()) {
+    return;
+  }
+
+  fillAuthorsWithExistingUsers();
+
+  let isSubmitSuccessful = await submitProduct();
+  if (isSubmitSuccessful) {
+    resetForm();
+    router.push("/products");
   }
 }
 </script>
