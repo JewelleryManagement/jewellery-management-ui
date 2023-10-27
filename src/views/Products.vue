@@ -20,32 +20,34 @@
 
           <products-table>
             <template v-slot:item.resourceContent="{ item }">
-              <v-icon @click="openDialog(item, 'resources')"
-                >mdi-gesture</v-icon
-              >
+              <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
             </template>
 
             <template v-slot:item.productsContent="{ item }">
               <v-icon @click="openDialog(item, 'products')"
-                >mdi-reproduction</v-icon
+                >mdi-cube-outline</v-icon
               >
+            </template>
+
+            <template v-slot:item.owner="{ item }">
+              <v-icon>mdi-account-circle</v-icon>
             </template>
           </products-table>
 
           <resource-content-dialog
-                  v-if="isResourceDialogOpen"
-                  v-model="isResourceDialogOpen"
-                  :data="resourceDialogData"
-                  @close-dialog="closeDialog('resources')"
-                ></resource-content-dialog>
+            v-if="isResourceDialogOpen"
+            v-model="isResourceDialogOpen"
+            :data="resourceDialogData"
+            @close-dialog="closeDialog('resources')"
+          ></resource-content-dialog>
 
-                <products-content-dialog
-                  v-if="isProductsDialogOpen"
-                  v-model="isProductsDialogOpen"
-                  :data="productsDialogData"
-                  @close-dialog="closeDialog('products')"
-                >
-                </products-content-dialog>
+          <products-content-dialog
+            v-if="isProductsDialogOpen"
+            v-model="isProductsDialogOpen"
+            :data="productsDialogData"
+            @close-dialog="closeDialog('products')"
+          >
+          </products-content-dialog>
         </v-card>
       </v-col>
     </v-row>
@@ -93,5 +95,3 @@ const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
 </script>
-
-<style scoped></style>

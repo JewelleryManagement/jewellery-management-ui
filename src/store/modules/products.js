@@ -22,7 +22,7 @@ export default {
     ],
 
     tableColumnAdd: { key: "add", title: "", slot: "add" },
-    tableColumnOwner: { key: "owner", title: "Owner", },
+    tableColumnOwner: { key: "owner", title: "Owner" },
     tableColumnResourcesContent: {
       key: "resourceContent",
       title: "Resources Content",
@@ -56,15 +56,24 @@ export default {
     allProducts: (state) => {
       return state.products.map(formatAuthors);
     },
-    getColumns: (state) => [ ...state.tableColumns, state.tableColumnResourcesContent, state.tableColumnProductsContent],
+    getColumns: (state) => [
+      ...state.tableColumns,
+      state.tableColumnResourcesContent,
+      state.tableColumnProductsContent,
+      state.tableColumnOwner,
+    ],
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
-    getColumnsWithRCandPC: (state) => [ ...state.tableColumns, state.tableColumnResourcesContent, state.tableColumnProductsContent, state.tableColumnOwner],
+    getColumnsWithRCandPC: (state) => [
+      ...state.tableColumns,
+      state.tableColumnResourcesContent,
+      state.tableColumnProductsContent,
+    ],
   },
 };
 
-function formatAuthors(product) { 
+function formatAuthors(product) {
   return {
     ...product,
-    authors: product.authors.map((author) => author.name).join(", ")
-  }
+    authors: product.authors.map((author) => author.name).join(", "),
+  };
 }

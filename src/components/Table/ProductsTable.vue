@@ -9,7 +9,11 @@
       hide-details
     ></v-text-field>
   </v-card-title>
-  <v-data-table :headers="tableColumnsWithRCandPC ? tableColumnsWithRCandPC : tableColumns" :items="propsProducts ? propsProducts : products" :search="search">
+  <v-data-table
+    :headers="tableColumnsWithRCandPC ? tableColumnsWithRCandPC : tableColumns"
+    :items="propsProducts ? propsProducts : products"
+    :search="search"
+  >
     <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope || {}" />
     </template>
@@ -22,7 +26,11 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 
-const { userId, tableColumnsWithRCandPC, propsProducts } = defineProps(["userId", "tableColumnsWithRCandPC", "propsProducts"]);
+const { userId, tableColumnsWithRCandPC, propsProducts } = defineProps([
+  "userId",
+  "tableColumnsWithRCandPC",
+  "propsProducts",
+]);
 
 const store = useStore();
 if (userId) {
@@ -38,7 +46,6 @@ const products = computed(() => store.getters["products/allProducts"]);
 const tableColumns = userId
   ? computed(() => store.getters["products/getColumnsWithAdd"])
   : computed(() => store.getters["products/getColumns"]);
-
 </script>
 
 <style scoped></style>

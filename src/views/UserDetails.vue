@@ -29,13 +29,13 @@
                 >
                   <template v-slot:item.resourceContent="{ item }">
                     <v-icon @click="openDialog(item, 'resources')"
-                      >mdi-gesture</v-icon
+                      >mdi-cube</v-icon
                     >
                   </template>
 
                   <template v-slot:item.productsContent="{ item }">
                     <v-icon @click="openDialog(item, 'products')"
-                      >mdi-reproduction</v-icon
+                      >mdi-cube-outline</v-icon
                     >
                   </template>
 
@@ -109,7 +109,7 @@ const openDialog = (item, content) => {
 };
 
 const closeDialog = (content) => {
-  if (content === 'resources') {
+  if (content === "resources") {
     isResourceDialogOpen.value = false;
   } else {
     isProductsDialogOpen.value = false;

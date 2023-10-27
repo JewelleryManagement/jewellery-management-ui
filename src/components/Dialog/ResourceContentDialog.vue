@@ -44,7 +44,9 @@ const { modelValue, data } = defineProps({
   data: Object,
 });
 const store = useStore();
-const tableColumnsResources = computed(() => store.getters["resources/getTableColumns"]);
+const tableColumnsResources = computed(
+  () => store.getters["resources/getTableColumns"]
+);
 const search = ref("");
 
 const resourceContent = ref(data.resourcesContent);
@@ -52,5 +54,4 @@ const tableData = resourceContent.value.map((item) => ({
   quantity: item.quantity,
   ...item.resource,
 }));
-
 </script>
