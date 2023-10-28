@@ -65,19 +65,16 @@
                       >
                     </template>
 
-                    <template v-slot:item.owner="{ item }">
-                      <v-icon>mdi-account-circle</v-icon>
-                    </template>
                   </products-table>
                 </v-card>
               </transition>
+
               <resource-content-dialog
                 v-if="isResourceDialogOpen"
                 v-model="isResourceDialogOpen"
                 :data="resourceDialogData"
                 @close-dialog="closeDialog('resources')"
               ></resource-content-dialog>
-
               <products-content-dialog
                 v-if="isProductsDialogOpen"
                 v-model="isProductsDialogOpen"

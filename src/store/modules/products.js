@@ -22,7 +22,7 @@ export default {
     ],
 
     tableColumnAdd: { key: "add", title: "", slot: "add" },
-    tableColumnOwner: { key: "owner", title: "Owner" },
+    tableColumnOwner: { key: "owner", title: "Owner", slot: "owner"},
     tableColumnResourcesContent: {
       key: "resourceContent",
       title: "Resources Content",
