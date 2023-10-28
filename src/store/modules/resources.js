@@ -101,6 +101,10 @@ export default {
   getters: {
     getTableColumns: (state) => state.tableColumns,
     allResources: (state) => state.resources,
+    getColumnsWithQuantity: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
     getColumns: (state) => [
       state.tableColumnQuantity,
       ...state.tableColumns,

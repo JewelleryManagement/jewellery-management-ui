@@ -45,7 +45,7 @@ const { modelValue, data } = defineProps({
 });
 const store = useStore();
 const tableColumnsResources = computed(
-  () => store.getters["resources/getTableColumns"]
+  () => store.getters["resources/getColumnsWithQuantity"]
 );
 const search = ref("");
 
