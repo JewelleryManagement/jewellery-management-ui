@@ -125,6 +125,7 @@ async function isDisassambleConfirmed(productId) {
   try {
     await store.dispatch("products/disassemblyProduct", productId);
     await store.dispatch("products/fetchProducts");
+    letsSee();
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(

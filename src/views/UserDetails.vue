@@ -153,7 +153,6 @@ const closeDialog = (content) => {
   }
 };
 
-
 const disassemblyProduct = async (product) => {
   const catalogNumber = product.catalogNumber;
   const productId = product.id;
