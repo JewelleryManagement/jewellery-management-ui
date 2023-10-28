@@ -45,7 +45,10 @@ const search = ref("");
 const products = computed(() => store.getters["products/allProducts"]);
 const tableColumns = userId
   ? computed(() => store.getters["products/getColumnsWithAdd"])
-  : computed(() => store.getters["products/getColumns"]);
+  : [
+      ...computed(() => store.getters["products/getColumns"]).value,
+      computed(() => store.state.products.tableColumnDisassembly).value,
+    ];
 </script>
 
 <style scoped></style>

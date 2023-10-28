@@ -65,6 +65,11 @@
                       >
                     </template>
 
+                    <template v-slot:item.disassembly="{ item }">
+                      <v-icon @click="disassemblyProduct(item)"
+                        >mdi-cart-off</v-icon
+                      >
+                    </template>
                   </products-table>
                 </v-card>
               </transition>
@@ -125,9 +130,10 @@ const resourceItemResources = computed(
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
 
-const tableColumnsProducts = computed(
-  () => store.getters["products/getColumnsWithRCandPC"]
-);
+const tableColumnsProducts = [
+  ...computed(() => store.getters["products/getColumnsWithRCandPC"]).value,
+  computed(() => store.state.products.tableColumnDisassembly).value,
+];
 
 const openDialog = (item, content) => {
   if (content == "resources") {
@@ -146,6 +152,31 @@ const closeDialog = (content) => {
     isProductsDialogOpen.value = false;
   }
 };
+
+
+const disassemblyProduct = async (product) => {
+  const catalogNumber = product.catalogNumber;
+  const productId = product.id;
+  const confirmation = window.confirm(
+    `Are you sure that you would like to disassemble ${catalogNumber}?`
+  );
+
+  if (confirmation) {
+    await isDisassambleConfirmed(productId);
+  }
+};
+
+async function isDisassambleConfirmed(productId) {
+  try {
+    await store.dispatch("products/disassemblyProduct", productId);
+    await store.dispatch("products/fetchProducts");
+    snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Failed to disassemble product! Could be a part of another product."
+    );
+  }
+}
 </script>
 
 <style scoped>

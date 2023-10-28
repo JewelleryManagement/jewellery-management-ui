@@ -77,6 +77,7 @@ const { modelValue, data } = defineProps({
 });
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
+const emits = defineEmits(["close-dialog"]);
 
 const productsContent = ref(data.productsContent);
 productsContent.value = productsContent.value.map((product) => ({

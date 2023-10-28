@@ -3,6 +3,7 @@ import {
   fetchProducts,
   postProduct,
   fetchProductsByOwner,
+  disassemblyProduct
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -14,11 +15,9 @@ export default {
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
       { key: "authors", title: "Authors" },
-      { key: "inStock", title: "In Stock" },
-      { key: "isSold", title: "Sold" },
-      { key: "picture", title: "Picture" },
+      { key: "sold", title: "Sold" },
       { key: "salePrice", title: "Sale price" },
-      { key: "partOfProduct", title: "Part of product" },
+      { key: "contentOf", title: "Part of product" },
     ],
 
     tableColumnAdd: { key: "add", title: "", slot: "add" },
@@ -26,16 +25,25 @@ export default {
       key: "owner",
       title: "Owner",
       slot: "owner",
+      align: 'center'
+
     },
     tableColumnResourcesContent: {
       key: "resourceContent",
       title: "Resources Content",
       slot: "resourceContent",
+      align: 'center',
     },
     tableColumnProductsContent: {
       key: "productsContent",
       title: "Products Content",
       slot: "productsContent",
+      align: 'center',
+    },
+    tableColumnDisassembly: {
+      key: "disassembly",
+      title: "Disassembly",
+      align: 'center',
     },
   }),
   mutations: {
@@ -55,6 +63,9 @@ export default {
       const res = await fetchProductsByOwner(ownerId);
       commit("setProducts", res);
     },
+    async disassemblyProduct({commit}, productId) {
+      await disassemblyProduct(productId)
+    }
   },
   getters: {
     allProducts: (state) => {

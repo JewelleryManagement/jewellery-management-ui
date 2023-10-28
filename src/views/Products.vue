@@ -34,7 +34,7 @@
                 style="text-decoration: none; color: inherit"
                 :to="`/users/${item.owner.id}`"
               >
-                <v-btn variant="plain" >
+                <v-btn variant="plain">
                   <v-icon size="25">mdi-account-circle</v-icon>
                   <v-tooltip activator="parent" location="top">
                     <div>Name: {{ item.owner.name }}</div>
@@ -42,6 +42,10 @@
                   </v-tooltip>
                 </v-btn>
               </router-link>
+            </template>
+
+            <template v-slot:item.disassembly="{ item }">
+              <v-icon @click="disassemblyProduct(item)">mdi-cart-off</v-icon>
             </template>
           </products-table>
 
@@ -72,7 +76,6 @@ import { useStore } from "vuex";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
-
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 
@@ -105,4 +108,28 @@ const closeDialog = (content) => {
 const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
+
+const disassemblyProduct = async (product) => {
+  const catalogNumber = product.catalogNumber;
+  const productId = product.id;
+  const confirmation = window.confirm(
+    `Are you sure that you would like to disassemble ${catalogNumber}?`
+  );
+
+  if (confirmation) {
+    await isDisassambleConfirmed(productId);
+  }
+};
+
+async function isDisassambleConfirmed(productId) {
+  try {
+    await store.dispatch("products/disassemblyProduct", productId);
+    await store.dispatch("products/fetchProducts");
+    snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Failed to disassemble product! Could be a part of another product."
+    );
+  }
+}
 </script>
