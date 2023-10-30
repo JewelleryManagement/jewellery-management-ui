@@ -11,33 +11,49 @@
   </v-card-title>
   <v-data-table
     :headers="tableColumns"
-    :items="products"
+    :items="productsInTable"
     :search="search"
-  ></v-data-table>
+  >
+    <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
+      <slot :name="slot" v-bind="scope || {}" />
+    </template>
+  </v-data-table>
 </template>
 
-<script>
-import { ref, computed } from "vue";
+<script setup>
+import { ref, computed, inject } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
+const snackbarProvider = inject("snackbarProvider");
 
-export default {
-  components: {
-    VDataTable,
-  },
-  setup() {
-    const search = ref("");
-    const store = useStore();
-    const products = computed(() => store.getters["products/allProducts"]);
-    const tableColumns = computed(() => store.getters["products/getColumns"]);
+const { products, additionalColumns } = defineProps({
+  products: Array,
+  additionalColumns: Array,
+});
 
-    return {
-      search,
-      tableColumns,
-      products,
-    };
-  },
+const tableColumns = computed(() =>
+  additionalColumns
+    ? [...additionalColumns, ...store.getters["products/getColumns"]]
+    : store.getters["products/getColumns"]
+);
+
+const store = useStore();
+const productsInTable = ref([]);
+const fillProducts = async () => {
+  if (products) {
+    return products;
+  } else {
+    try {
+      await store.dispatch("products/fetchProducts");
+    } catch (error) {
+      snackbarProvider.showErrorSnackbar("Failed to fetch products");
+    }
+    return store.getters["products/allProducts"];
+  }
 };
+productsInTable.value = await fillProducts();
+
+const search = ref("");
 </script>
 
 <style scoped></style>

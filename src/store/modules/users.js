@@ -45,7 +45,14 @@ export default {
     },
     getUserById: (state) => (id) => state.users.find((user) => user.id === id),
     getUserResources(state) {
-      return state.usersResources;
+      return state.usersResources.resourcesAndQuantities.map(
+        (resourceQuantity) => {
+          return {
+            quantity: resourceQuantity.quantity,
+            ...resourceQuantity.resource,
+          };
+        }
+      );
     },
   },
 };
