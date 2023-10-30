@@ -58,12 +58,17 @@ const { modelValue, userId } = defineProps({
 const ICON_ADD = ref("mdi-plus");
 const ICON_REMOVE = ref("mdi-minus");
 
-await store.dispatch("products/fetchProductsByOwner", userId);
+try {
+  await store.dispatch("products/fetchProductsByOwner", userId);
+} catch (error) {
+  snackbarProvider.showErrorSnackbar("Failed to fetch products.");
+}
 const ownedNonContentProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
     (product) => product.contentOf === null
   )
 );
+
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 
 const savedProductsIds = ref([]);

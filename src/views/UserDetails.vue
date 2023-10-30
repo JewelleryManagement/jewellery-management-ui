@@ -13,7 +13,7 @@
                 ></user-card>
               </suspense>
               <resource-availability-table
-                :tableColumns="tableColumns"
+                :tableColumns="userTableColumns"
                 :resourceItem="resourceItem"
                 :user="user"
               ></resource-availability-table>
@@ -23,7 +23,9 @@
                   <h1>{{ user.name }}'s products table</h1>
                 </div>
 
-                <products-table :userId="userId" />
+                <products-table
+                  :products="userProducts"
+                />
               </v-card>
             </v-col>
           </v-row>
@@ -51,10 +53,20 @@ const snackbarProvider = inject("snackbarProvider");
 try {
   await store.dispatch("users/fetchResourcesForUser", userId);
 } catch (error) {
+  snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
+}
+const resourceItem = computed(() => store.getters["users/getUserResources"]);
+
+try {
+  await store.dispatch("products/fetchProductsByOwner", userId);
+} catch (error) {
   snackbarProvider.showErrorSnackbar("Failed to fetch products.");
 }
-const tableColumns = computed(() => store.getters["users/getColumns"]);
-const resourceItem = computed(() => store.getters["users/getUserResources"]);
+const userProducts = computed(
+  () => store.getters["products/getCurrentUserProducts"]
+);
+
+const userTableColumns = computed(() => store.getters["users/getColumns"]);
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
 </script>
 

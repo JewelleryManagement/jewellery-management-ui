@@ -43,7 +43,11 @@ const fillProducts = async () => {
   if (products) {
     return products;
   } else {
-    await store.dispatch("products/fetchProducts");
+    try {
+      await store.dispatch("products/fetchProducts");
+    } catch (error) {
+      snackbarProvider.showErrorSnackbar("Failed to fetch products");
+    }
     return store.getters["products/allProducts"];
   }
 };
