@@ -10,8 +10,8 @@
     ></v-text-field>
   </v-card-title>
   <v-data-table
-    :headers="tableColumnsWithRCandPC ? tableColumnsWithRCandPC : tableColumns"
-    :items="propsProducts ? propsProducts : products"
+    :headers="tableColumns"
+    :items="productsInTable"
     :search="search"
   >
     <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -26,29 +26,34 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 
-const { userId, tableColumnsWithRCandPC, propsProducts } = defineProps([
-  "userId",
-  "tableColumnsWithRCandPC",
-  "propsProducts",
-]);
+const { products, additionalColumns } = defineProps({
+  products: Array,
+  additionalColumns: Array,
+});
+
+const tableColumns = computed(() =>
+  additionalColumns
+    ? [...additionalColumns, ...store.getters["products/getColumns"]]
+    : store.getters["products/getColumns"]
+);
 
 const store = useStore();
-if (userId) {
-  try {
-    await store.dispatch("products/getProductsByOwner", userId);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch the user products");
+const productsInTable = ref([]);
+const fillProducts = async () => {
+  if (products) {
+    return products;
+  } else {
+    try {
+      await store.dispatch("products/fetchProducts");
+    } catch (error) {
+      snackbarProvider.showErrorSnackbar("Failed to fetch products");
+    }
+    return store.getters["products/allProducts"];
   }
-}
+};
+productsInTable.value = await fillProducts();
 
 const search = ref("");
-const products = computed(() => store.getters["products/allProducts"]);
-const tableColumns = userId
-  ? computed(() => store.getters["products/getColumnsWithAdd"])
-  : [
-      ...computed(() => store.getters["products/getColumns"]).value,
-      computed(() => store.state.products.tableColumnDisassembly).value,
-    ];
 </script>
 
 <style scoped></style>

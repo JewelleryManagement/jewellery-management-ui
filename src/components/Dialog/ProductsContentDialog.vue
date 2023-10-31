@@ -9,8 +9,7 @@
       <v-card>
         <v-toolbar color="green" title="Products Content..."></v-toolbar>
         <products-table
-          :tableColumnsWithRCandPC="tableColumnsProducts"
-          :propsProducts="productsContent"
+          :products="productsContent"
         >
           <template v-slot:item.resourceContent="{ item }">
             <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
@@ -67,9 +66,6 @@
 import { useStore } from "vuex";
 import { ref, computed } from "vue";
 const store = useStore();
-const tableColumnsProducts = computed(
-  () => store.getters["products/getColumns"]
-);
 import ProductsTable from "../Table/ProductsTable.vue";
 const { modelValue, data } = defineProps({
   modelValue: Boolean,
@@ -84,7 +80,6 @@ productsContent.value = productsContent.value.map((product) => ({
   ...product,
   authors: product.authors.map((a) => a.name).join(", "),
 }));
-
 
 const openDialog = (item, content) => {
   if (content == "resources") {

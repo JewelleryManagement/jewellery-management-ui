@@ -30,17 +30,19 @@ export default {
       { key: "plating", title: "Plating" },
       { key: "carat", title: "Carat" },
       { key: "cut", title: "Cut" },
-      { key: "dimensionX", title: "dimensionX" },
-      { key: "dimensionY", title: "dimensionY" },
-      { key: "dimensionZ", title: "dimensionZ" },
       { key: "description", title: "Description" },
     ],
-    tableColumnQuantity: { key: "quantity", title: "Quantity" },
+    tableColumnQuantity: { key: "quantity", title: "Quantity"},
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
     tableColumnAdd: { key: "add", title: "", slot: "add" },
     tableColumnRemoveQuantity: { key: "remove", title: "", slot: "remove" },
-    tableColumnAddQuantity: { key: "addQuantity", title: "", slot: "addQuantity"},
+    tableColumnAddQuantity: {
+      key: "addQuantity",
+      title: "",
+      slot: "addQuantity",
+      width: "100px" 
+    },
   }),
   mutations: {
     setResources(state, resources) {
@@ -128,14 +130,12 @@ export default {
         "quantity",
         "clazz",
         "quantityType",
+        "size",
         "color",
         "shape",
         "carat",
         "cut",
         "clarity",
-        "dimensionX",
-        "dimensionY",
-        "dimensionZ",
       ]),
     getColumnsForLinkingPart: (state) =>
       filterColumnsByKey(state, [

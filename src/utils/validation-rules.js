@@ -42,7 +42,7 @@ export function usePasswordFieldRules() {
 
 export function usePositiveNumberRules(currentValue) {
   return [
-    (v) => (v >= 0) || "Please enter a positive number",
+    (v) => (v > 0) || "Please enter a positive number",
     (v) => (v <= currentValue) || "Value must be less than total quantity",
   ];
 }

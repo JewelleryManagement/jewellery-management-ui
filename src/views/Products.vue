@@ -18,7 +18,7 @@
             >
           </div>
 
-          <products-table>
+          <products-table :additionalColumns="disassemblyColumn">
             <template v-slot:item.resourceContent="{ item }">
               <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
             </template>
@@ -78,6 +78,8 @@ const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
+
+const disassemblyColumn = computed(() => [store.state.products.tableColumnDisassembly])
 
 onMounted(async () => {
   try {

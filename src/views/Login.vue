@@ -89,7 +89,6 @@ const submitHandler = async () => {
 const userLogin = async (data) => {
   try {
     const user = await store.dispatch("auth/login", data);
-    await store.dispatch("users/fetchUsers");
     snackbarProvider.showSuccessSnackbar("Successfully logged in!");
     user ? router.push("/home") : "";
   } catch (error) {

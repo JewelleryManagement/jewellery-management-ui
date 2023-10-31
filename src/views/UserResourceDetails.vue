@@ -1,7 +1,6 @@
 <template>
   <v-container class="my-12" fluid>
     <resource-availability-card
-      :resource="resource"
       :resourceAvailability="resourceAvailability"
       :resourceQuantity="resourceQuantity"
     ></resource-availability-card>
@@ -41,109 +40,83 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { useNumberFieldRules } from "../utils/validation-rules";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
 
-export default {
-  components: {
-    ResourceAvailabilityCard,
-  },
-  props: {
-    id: String,
-    userId: String,
-  },
-  async setup(props) {
-    const snackbarProvider = inject("snackbarProvider");
-    const form = ref(null);
-    const numberFieldRules = useNumberFieldRules();
-    const store = useStore();
-    const route = useRoute();
-    const router = useRouter();
-    const pageTitle = ref(route.meta.title);
-    const quantityToSubmit = ref("");
-    const resourceId = props.id;
-    const allUsers = computed(() => store.getters["users/allUsers"]);
-    const selectedUser = ref("");
-    const userOptions = computed(() =>
-      store.getters["users/allUsers"].map((user) => user.name)
-    );
-    const resourceAvailability = await store.dispatch(
-      "resources/fetchAvailabilityResourceById",
-      resourceId
-    );
+const { resourceId, userId } = defineProps({
+  resourceId: String,
+  userId: String,
+});
+const snackbarProvider = inject("snackbarProvider");
+const form = ref(null);
+const numberFieldRules = useNumberFieldRules();
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+const pageTitle = ref(route.meta.title);
+const quantityToSubmit = ref("");
+const allUsers = computed(() => store.getters["users/allUsers"]);
+const selectedUser = ref("");
+const userOptions = computed(() =>
+  store.getters["users/allUsers"].map((user) => user.name)
+);
+const resourceAvailability = ref({});
+resourceAvailability.value = await store.dispatch(
+  "resources/fetchAvailabilityResourceById",
+  resourceId
+);
+const resourceQuantity = ref({});
+resourceQuantity.value = await store.dispatch(
+  "resources/fetchQuantityByResourceId",
+  resourceId
+);
+if (route.path.includes("/remove")) {
+  selectedUser.value = allUsers.value.find((user) => user.id === userId).name;
+  const quantityByUser = resourceAvailability.value.usersAndQuantities.find(
+    (item) => item.owner.id === userId
+  ).quantity;
+  quantityToSubmit.value = quantityByUser;
+}
 
-    if (route.path.includes("/remove")) {
-      selectedUser.value = route.query.name;
-      const quantityByUser = resourceAvailability.usersAndQuantities.find(
-        (item) => item.owner.name === route.query.name
-      ).quantity;
-      quantityToSubmit.value = quantityByUser;
-    }
-
-    const handleSubmit = async () => {
-      const { valid } = await form.value.validate();
-      const findUser = allUsers.value.find(
-        (user) => user.name == selectedUser.value
-      );
-      if (valid) {
-        const data = {
-          userId: findUser.id,
-          resourceId: props.id,
-          quantity: quantityToSubmit.value,
-        };
-        try {
-          if (route.path.includes("/add")) {
-            await store.dispatch("users/postResourcesToUser", data);
-            snackbarProvider.showSuccessSnackbar(
-              "Successfully added quantity!"
-            );
-            router.push("/resources");
-          } else if (route.path.includes("/remove")) {
-            await store.dispatch("resources/removeQuantityFromResource", data);
-            snackbarProvider.showSuccessSnackbar(
-              "Successfully removed quantity"
-            );
-            router.push(`/users/${findUser.id}`);
-          }
-        } catch (error) {
-          const errorMessage = route.path.includes("/add")
-            ? "Couldn't add quantity"
-            : "Couldn't update quantity";
-          snackbarProvider.showErrorSnackbar(errorMessage);
-        }
+const handleSubmit = async () => {
+  const { valid } = await form.value.validate();
+  const findUser = allUsers.value.find(
+    (user) => user.name == selectedUser.value
+  );
+  if (valid) {
+    const data = {
+      userId: findUser.id,
+      resourceId: resourceId,
+      quantity: quantityToSubmit.value,
+    };
+    try {
+      if (route.path.includes("/add")) {
+        await store.dispatch("users/postResourcesToUser", data);
+        snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
+        router.push("/resources");
+      } else if (route.path.includes("/remove")) {
+        await store.dispatch("resources/removeQuantityFromResource", data);
+        snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
+        router.push(`/users/${findUser.id}`);
       }
-    };
+    } catch (error) {
+      const errorMessage = route.path.includes("/add")
+        ? "Couldn't add quantity"
+        : "Couldn't update quantity";
+      snackbarProvider.showErrorSnackbar(errorMessage);
+    }
+  }
+};
 
-    return {
-      route,
-      router,
-      resource: computed(() =>
-        store.getters["resources/getResourceById"](props.id)
-      ),
-      resourceAvailability: resourceAvailability,
-      resourceQuantity: await store.dispatch(
-        "resources/fetchQuantityByResourceId",
-        resourceId
-      ),
-      handleSubmit,
-      resetForm() {
-        if (form.value) {
-          form.value.reset();
-          form.value.resetValidation();
-        }
-      },
-      form,
-      pageTitle,
-      quantityToSubmit,
-      numberFieldRules,
-      userOptions,
-      selectedUser,
-    };
-  },
+const resetForm = () => {
+  if (form.value) {
+    form.value.reset();
+    form.value.resetValidation();
+  }
 };
 </script>
 

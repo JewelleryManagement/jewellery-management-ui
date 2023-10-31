@@ -161,6 +161,7 @@ const resetForm = () => {
     form.value.reset();
     form.value.resetValidation();
     resourcesContent.value = [];
+    productsContent.value = [];
     authors.value = [];
   }
 };
@@ -176,29 +177,26 @@ const resourcesTableValues = (resourceContentValue) => {
   closeDialog("resources");
 };
 
-// const getSelectedResourcesContent = () => ;
-
 const productsTableValues = (productsContentValue) => {
   productsContent.value = productsContentValue;
   closeDialog("products");
 };
 
-async function handleSubmit() {
-  const { valid } = await form.value.validate();
+const isFormValid = async () => {
+  const { isFormValid } = await form.value.validate();
+  return resourcesContent.value.length > 0 && isFormValid;
+};
 
-  if (resourcesContent.value.length <= 0) {
-    return;
-  }
-
-  if (!valid) return;
-
+const fillAuthorsWithExistingUsers = () => {
   authors.value.forEach((authorName, index) => {
     const existingAuthor = allUsers.value.find((x) => x.name === authorName);
     if (existingAuthor) {
       authors.value[index] = existingAuthor.id;
     }
   });
+};
 
+const submitProduct = async () => {
   const product = {
     catalogNumber: catalogNumber.value,
     productionNumber: productionNumber.value,
@@ -209,13 +207,26 @@ async function handleSubmit() {
     resourcesContent: resourcesContent.value,
     productsContent: productsContent.value,
   };
-
   try {
     await store.dispatch("products/createProduct", product);
-    resetForm();
-    router.push("/products");
+    return true;
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not create the product");
+  }
+  return false;
+};
+
+const handleSubmit = async () => {
+  if (!(await isFormValid())) {
+    return;
+  }
+
+  fillAuthorsWithExistingUsers();
+
+  let isSubmitSuccessful = await submitProduct();
+  if (isSubmitSuccessful) {
+    resetForm();
+    router.push("/products");
   }
 }
 </script>

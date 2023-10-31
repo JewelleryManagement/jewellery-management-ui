@@ -23,8 +23,7 @@
         <router-link
           :to="{
             name: 'Remove-Quantity',
-            params: { id: item.id },
-            query: { name: user.name, email: user.email, userId: user.id },
+            params: { resourceId: item.id, userId: user.id },
           }"
         >
           <v-icon color="blue">mdi-minus</v-icon>

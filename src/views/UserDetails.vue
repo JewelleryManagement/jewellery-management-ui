@@ -50,8 +50,8 @@
                   </div>
 
                   <products-table
-                    :tableColumnsWithRCandPC="tableColumnsProducts"
-                    :userId="userId"
+                    :products="userProducts"
+                    :additionalColumns="disassemblyColumns"
                   >
                     <template v-slot:item.resourceContent="{ item }">
                       <v-icon @click="openDialog(item, 'resources')"
@@ -69,6 +69,21 @@
                       <v-icon @click="disassemblyProduct(item)"
                         >mdi-cart-off</v-icon
                       >
+                    </template>
+
+                    <template v-slot:item.owner="{ item }">
+                      <router-link
+                        style="text-decoration: none; color: inherit"
+                        :to="`/users/${item.owner.id}`"
+                      >
+                        <v-btn variant="plain">
+                          <v-icon size="25">mdi-account-circle</v-icon>
+                          <v-tooltip activator="parent" location="top">
+                            <div>Name: {{ item.owner.name }}</div>
+                            <div>Email: {{ item.owner.email }}</div>
+                          </v-tooltip>
+                        </v-btn>
+                      </router-link>
                     </template>
                   </products-table>
                 </v-card>
@@ -122,18 +137,26 @@ const snackbarProvider = inject("snackbarProvider");
 try {
   await store.dispatch("users/fetchResourcesForUser", userId);
 } catch (error) {
+  snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
+}
+
+try {
+  await store.dispatch("products/fetchProductsByOwner", userId);
+} catch (error) {
   snackbarProvider.showErrorSnackbar("Failed to fetch products.");
 }
+
+const userProducts = computed(
+  () => store.getters["products/getCurrentUserProducts"]
+);
+
+console.log(userProducts.value);
+
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const resourceItemResources = computed(
   () => store.getters["users/getUserResources"]
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
-
-const tableColumnsProducts = [
-  ...computed(() => store.getters["products/getColumnsWithRCandPC"]).value,
-  computed(() => store.state.products.tableColumnDisassembly).value,
-];
 
 const openDialog = (item, content) => {
   if (content == "resources") {
@@ -152,6 +175,10 @@ const closeDialog = (content) => {
     isProductsDialogOpen.value = false;
   }
 };
+
+const disassemblyColumns = computed(() => [
+  store.state.products.tableColumnDisassembly,
+]);
 
 const disassemblyProduct = async (product) => {
   const catalogNumber = product.catalogNumber;

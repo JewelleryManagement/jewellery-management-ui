@@ -3,13 +3,14 @@ import {
   fetchProducts,
   postProduct,
   fetchProductsByOwner,
-  disassemblyProduct
+  disassemblyProduct,
 } from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
   state: reactive({
     products: [],
+    currentUserProducts: [],
     tableColumns: [
       { key: "catalogNumber", title: "Catalog Number" },
       { key: "productionNumber", title: "Production Number" },
@@ -25,30 +26,32 @@ export default {
       key: "owner",
       title: "Owner",
       slot: "owner",
-      align: 'center'
-
+      align: "center",
     },
     tableColumnResourcesContent: {
       key: "resourceContent",
       title: "Resources Content",
       slot: "resourceContent",
-      align: 'center',
+      align: "center",
     },
     tableColumnProductsContent: {
       key: "productsContent",
       title: "Products Content",
       slot: "productsContent",
-      align: 'center',
+      align: "center",
     },
     tableColumnDisassembly: {
       key: "disassembly",
       title: "Disassembly",
-      align: 'center',
+      align: "center",
     },
   }),
   mutations: {
     setProducts(state, products) {
       state.products = products;
+    },
+    setCurrentUserProducts(state, products) {
+      state.currentUserProducts = products;
     },
   },
   actions: {
@@ -59,13 +62,13 @@ export default {
     async createProduct({ commit }, product) {
       await postProduct(product);
     },
-    async getProductsByOwner({ commit }, ownerId) {
+    async fetchProductsByOwner({ commit }, ownerId) {
       const res = await fetchProductsByOwner(ownerId);
-      commit("setProducts", res);
+      commit("setCurrentUserProducts", res);
     },
-    async disassemblyProduct({commit}, productId) {
-      await disassemblyProduct(productId)
-    }
+    async disassemblyProduct({ commit }, productId) {
+      await disassemblyProduct(productId);
+    },
   },
   getters: {
     allProducts: (state) => {
@@ -77,6 +80,8 @@ export default {
       state.tableColumnProductsContent,
       state.tableColumnOwner,
     ],
+    getCurrentUserProducts: (state) => state.currentUserProducts.map(formatAuthors),
+    getAddColumn: (state) => state.tableColumnAdd,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
     getColumnsWithRCandPC: (state) => [
       ...state.tableColumns,

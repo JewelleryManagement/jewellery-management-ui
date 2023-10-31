@@ -19,7 +19,7 @@ export default {
 
     onMounted(async () => {
       try {
-        await store.dispatch("resources/fetchResources");
+        await store.dispatch("users/fetchUsers");
       } catch (error) {
         snackbarProvider.showErrorSnackbar("Failed to fetch users.");
       }

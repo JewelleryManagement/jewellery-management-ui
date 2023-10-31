@@ -41,14 +41,14 @@ const routes = [
     meta: { title: "Users Details", requiresAuth: true },
   },
   {
-    path: "/resources/availability/add/:id",
+    path: "/resources/availability/add/:resourceId",
     props: true,
     name: "Add-Quantity",
     component: UserResourceDetails,
     meta: { title: "Add Quantity", requiresAuth: true },
   },
   {
-    path: "/resources/availability/remove/:id",
+    path: "/resources/availability/remove/:resourceId/:userId",
     props: true,
     name: "Remove-Quantity",
     component: UserResourceDetails,

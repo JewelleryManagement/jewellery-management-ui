@@ -45,15 +45,14 @@ export default {
     },
     getUserById: (state) => (id) => state.users.find((user) => user.id === id),
     getUserResources(state) {
-      const resourcesByUser = state.usersResources
-      const resources = []
-      for (let i = 0; i < resourcesByUser.resourcesAndQuantities.length; i++) {
-        let quantity = resourcesByUser.resourcesAndQuantities[i].quantity;
-        let resource = resourcesByUser.resourcesAndQuantities[i].resource;
-        resource.quantity = quantity;
-        resources.push(resource);
-      }
-      return resources;
+      return state.usersResources.resourcesAndQuantities.map(
+        (resourceQuantity) => {
+          return {
+            quantity: resourceQuantity.quantity,
+            ...resourceQuantity.resource,
+          };
+        }
+      );
     },
   },
 };
