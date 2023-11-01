@@ -19,15 +19,6 @@
               }}</v-icon>
             </template>
 
-            <template v-slot:item.resourceContent="{ item }">
-              <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
-            </template>
-
-            <template v-slot:item.productsContent="{ item }">
-              <v-icon @click="openDialog(item, 'products')"
-                >mdi-cube-outline</v-icon
-              >
-            </template>
 
             <template v-slot:item.owner="{ item }">
               <router-link
@@ -69,21 +60,6 @@
       </v-card>
     </template>
   </v-dialog>
-
-  <resource-content-dialog
-    v-if="isResourceDialogOpen"
-    v-model="isResourceDialogOpen"
-    :data="resourceDialogData"
-    @close-dialog="closeDialog('resources')"
-  ></resource-content-dialog>
-
-  <products-content-dialog
-    v-if="isProductsDialogOpen"
-    v-model="isProductsDialogOpen"
-    :data="productsDialogData"
-    @close-dialog="closeDialog('products')"
-  >
-  </products-content-dialog>
 </template>
 
 <script setup>
@@ -97,18 +73,6 @@ const { modelValue, userId } = defineProps({
 });
 const ICON_ADD = ref("mdi-plus");
 const ICON_REMOVE = ref("mdi-minus");
-const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
-const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
-
-const openDialog = (item, content) => {
-  if (content == "resources") {
-    resourceDialogData.value = item;
-    isResourceDialogOpen.value = true;
-  } else {
-    productsDialogData.value = item;
-    isProductsDialogOpen.value = true;
-  }
-};
 
 try {
   await store.dispatch("products/fetchProductsByOwner", userId);
