@@ -53,55 +53,14 @@
                     :products="userProducts"
                     :additionalColumnsRight="disassemblyColumns"
                   >
-                    <template v-slot:item.resourceContent="{ item }">
-                      <v-icon @click="openDialog(item, 'resources')"
-                        >mdi-cube</v-icon
-                      >
-                    </template>
-
-                    <template v-slot:item.productsContent="{ item }">
-                      <v-icon @click="openDialog(item, 'products')"
-                        >mdi-cube-outline</v-icon
-                      >
-                    </template>
-
                     <template v-slot:item.disassembly="{ item }">
                       <v-icon @click="disassemblyProduct(item)"
                         >mdi-cart-off</v-icon
                       >
                     </template>
-
-                    <template v-slot:item.owner="{ item }">
-                      <router-link
-                        style="text-decoration: none; color: inherit"
-                        :to="`/users/${item.owner.id}`"
-                      >
-                        <v-btn variant="plain">
-                          <v-icon size="25">mdi-account-circle</v-icon>
-                          <v-tooltip activator="parent" location="top">
-                            <div>Name: {{ item.owner.name }}</div>
-                            <div>Email: {{ item.owner.email }}</div>
-                          </v-tooltip>
-                        </v-btn>
-                      </router-link>
-                    </template>
                   </products-table>
                 </v-card>
               </transition>
-
-              <resource-content-dialog
-                v-if="isResourceDialogOpen"
-                v-model="isResourceDialogOpen"
-                :data="resourceDialogData"
-                @close-dialog="closeDialog('resources')"
-              ></resource-content-dialog>
-              <products-content-dialog
-                v-if="isProductsDialogOpen"
-                v-model="isProductsDialogOpen"
-                :data="productsDialogData"
-                @close-dialog="closeDialog('products')"
-              >
-              </products-content-dialog>
             </v-col>
           </v-row>
         </v-container>
@@ -119,16 +78,9 @@ import { useStore } from "vuex";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
-const [isResourceDialogOpen, resourceDialogData, isResourceTableVisible] = [
-  ref(false),
-  ref({}),
-  ref(false),
-];
-const [isProductsDialogOpen, productsDialogData, isProductsTableVisible] = [
-  ref(false),
-  ref({}),
-  ref(false),
-];
+const isResourceTableVisible = ref(false);
+const isProductsTableVisible = ref(false);
+
 
 const { id } = defineProps(["id"]);
 const userId = id;
@@ -155,24 +107,6 @@ const resourceItemResources = computed(
   () => store.getters["users/getUserResources"]
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
-
-const openDialog = (item, content) => {
-  if (content == "resources") {
-    resourceDialogData.value = item;
-    isResourceDialogOpen.value = true;
-  } else {
-    productsDialogData.value = item;
-    isProductsDialogOpen.value = true;
-  }
-};
-
-const closeDialog = (content) => {
-  if (content === "resources") {
-    isResourceDialogOpen.value = false;
-  } else {
-    isProductsDialogOpen.value = false;
-  }
-};
 
 const disassemblyColumns = computed(() => [
   store.state.products.tableColumnDisassembly,

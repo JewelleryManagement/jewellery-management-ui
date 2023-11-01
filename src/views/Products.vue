@@ -18,8 +18,7 @@
             >
           </div>
 
-          <products-table :additionalColumnsRight="disassemblyColumn">
-
+          <products-table :additionalColumnsRight="disassemblyAndUserColumn">
             <template v-slot:item.owner="{ item }">
               <router-link
                 style="text-decoration: none; color: inherit"
@@ -36,10 +35,11 @@
             </template>
 
             <template v-slot:item.disassembly="{ item }">
-              <v-icon @click="disassemblyProduct(item)">mdi-cart-off</v-icon>
+              <v-btn variant="plain" :disabled="item.contentOf === 'Yes'" @click="disassemblyProduct(item)">
+                <v-icon size="25">mdi-cart-off</v-icon>
+              </v-btn>
             </template>
           </products-table>
-
         </v-card>
       </v-col>
     </v-row>
@@ -48,13 +48,16 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { onMounted, inject, computed, ref } from "vue";
+import { onMounted, inject, computed } from "vue";
 import { useStore } from "vuex";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 
-const disassemblyColumn = computed(() => [store.state.products.tableColumnDisassembly])
+const disassemblyAndUserColumn = computed(() => [
+  store.state.products.tableColumnOwner,
+  store.state.products.tableColumnDisassembly,
+]);
 
 onMounted(async () => {
   try {

@@ -78,7 +78,6 @@ export default {
       ...state.tableColumns,
       state.tableColumnResourcesContent,
       state.tableColumnProductsContent,
-      state.tableColumnOwner,
     ],
     getCurrentUserProducts: (state) => state.currentUserProducts.map(formatAuthors),
     getAddColumn: (state) => state.tableColumnAdd,
@@ -95,5 +94,7 @@ function formatAuthors(product) {
   return {
     ...product,
     authors: product.authors.map((author) => author.name).join(", "),
+    contentOf: product.contentOf ? "Yes" : "No",
   };
 }
+// contentOf: product.contentOf ? "Yes" : "No",

@@ -183,8 +183,8 @@ const productsTableValues = (productsContentValue) => {
 };
 
 const isFormValid = async () => {
-  const { isFormValid } = await form.value.validate();
-  return resourcesContent.value.length > 0 && isFormValid;
+  const { valid } = await form.value.validate();
+  return resourcesContent.value.length > 0 && valid;
 };
 
 const fillAuthorsWithExistingUsers = () => {
