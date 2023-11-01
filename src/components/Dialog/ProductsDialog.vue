@@ -11,14 +11,38 @@
         <v-card-text>
           <products-table
             :products="ownedNonContentProducts"
-            :additionalColumns="addColumn"
+            :additionalColumnsLeft="addColumn"
           >
             <template v-slot:item.add="{ item }">
               <v-icon color="blue" @click="addProductById(item.id)">{{
                 btnIcon[item.id] || ICON_ADD
               }}</v-icon>
             </template>
-          
+
+            <template v-slot:item.resourceContent="{ item }">
+              <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
+            </template>
+
+            <template v-slot:item.productsContent="{ item }">
+              <v-icon @click="openDialog(item, 'products')"
+                >mdi-cube-outline</v-icon
+              >
+            </template>
+
+            <template v-slot:item.owner="{ item }">
+              <router-link
+                style="text-decoration: none; color: inherit"
+                :to="`/users/${item.owner.id}`"
+              >
+                <v-btn variant="plain">
+                  <v-icon size="25">mdi-account-circle</v-icon>
+                  <v-tooltip activator="parent" location="top">
+                    <div>Name: {{ item.owner.name }}</div>
+                    <div>Email: {{ item.owner.email }}</div>
+                  </v-tooltip>
+                </v-btn>
+              </router-link>
+            </template>
           </products-table>
         </v-card-text>
 
@@ -45,6 +69,21 @@
       </v-card>
     </template>
   </v-dialog>
+
+  <resource-content-dialog
+    v-if="isResourceDialogOpen"
+    v-model="isResourceDialogOpen"
+    :data="resourceDialogData"
+    @close-dialog="closeDialog('resources')"
+  ></resource-content-dialog>
+
+  <products-content-dialog
+    v-if="isProductsDialogOpen"
+    v-model="isProductsDialogOpen"
+    :data="productsDialogData"
+    @close-dialog="closeDialog('products')"
+  >
+  </products-content-dialog>
 </template>
 
 <script setup>
@@ -58,6 +97,18 @@ const { modelValue, userId } = defineProps({
 });
 const ICON_ADD = ref("mdi-plus");
 const ICON_REMOVE = ref("mdi-minus");
+const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
+const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
+
+const openDialog = (item, content) => {
+  if (content == "resources") {
+    resourceDialogData.value = item;
+    isResourceDialogOpen.value = true;
+  } else {
+    productsDialogData.value = item;
+    isProductsDialogOpen.value = true;
+  }
+};
 
 try {
   await store.dispatch("products/fetchProductsByOwner", userId);
@@ -69,7 +120,6 @@ const ownedNonContentProducts = computed(() =>
     (product) => product.contentOf === null
   )
 );
-console.log(ownedNonContentProducts);
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 
 const savedProductsIds = ref([]);

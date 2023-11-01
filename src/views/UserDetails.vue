@@ -51,7 +51,7 @@
 
                   <products-table
                     :products="userProducts"
-                    :additionalColumns="disassemblyColumns"
+                    :additionalColumnsRight="disassemblyColumns"
                   >
                     <template v-slot:item.resourceContent="{ item }">
                       <v-icon @click="openDialog(item, 'resources')"
@@ -149,8 +149,6 @@ try {
 const userProducts = computed(
   () => store.getters["products/getCurrentUserProducts"]
 );
-
-console.log(userProducts.value);
 
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const resourceItemResources = computed(

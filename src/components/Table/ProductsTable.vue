@@ -26,15 +26,20 @@ import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 
-const { products, additionalColumns } = defineProps({
-  products: Array,
-  additionalColumns: Array,
-});
+const { products, additionalColumnsLeft, additionalColumnsRight } = defineProps(
+  {
+    products: Array,
+    additionalColumnsLeft: Array,
+    additionalColumnsRight: Array,
+  }
+);
 
 const tableColumns = computed(() =>
-  additionalColumns
-    ? [...additionalColumns, ...store.getters["products/getColumns"]]
-    : store.getters["products/getColumns"]
+  additionalColumnsLeft
+    ? [...additionalColumnsLeft, ...store.getters["products/getColumns"]]
+    : additionalColumnsRight
+    ? [...store.getters["products/getColumns"], ...additionalColumnsRight]
+    : [...store.getters["products/getColumns"]]
 );
 
 const store = useStore();

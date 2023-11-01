@@ -18,7 +18,7 @@
             >
           </div>
 
-          <products-table :additionalColumns="disassemblyColumn">
+          <products-table :additionalColumnsRight="disassemblyColumn">
             <template v-slot:item.resourceContent="{ item }">
               <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
             </template>
@@ -127,7 +127,6 @@ async function isDisassambleConfirmed(productId) {
   try {
     await store.dispatch("products/disassemblyProduct", productId);
     await store.dispatch("products/fetchProducts");
-    letsSee();
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
