@@ -77,8 +77,8 @@
 </template>
 
 <script setup>
-import { computed, inject, ref, onMounted } from "vue";
-import { useStore } from "vuex";
+import { watch, reactive, computed, inject, ref, onCreated } from "vue";
+import { useStore, mapGetters } from "vuex";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
@@ -89,14 +89,16 @@ const { id } = defineProps(["id"]);
 const userId = id;
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
-const userProducts = ref(null);
+// const userProducts = ref([]);
+const userProducts = computed(
+  () => store.getters["products/getCurrentUserProducts"] ?? []
+);
+// watch(userProducts, (oldValue, newValue) => {
+//   console.log(oldValue);
+//   console.log(newValue);
+// });
 
-onMounted(() => {
-  FetchResourcesForUser();
-  fetchProductsForUser();
-});
-
-async function FetchResourcesForUser() {
+async function fetchResourcesForUser() {
   try {
     await store.dispatch("users/fetchResourcesForUser", userId);
   } catch (error) {
@@ -107,11 +109,13 @@ async function FetchResourcesForUser() {
 async function fetchProductsForUser() {
   try {
     await store.dispatch("products/fetchProductsByOwner", userId);
-    userProducts.value = store.getters["products/getCurrentUserProducts"];
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch products.");
   }
 }
+
+await fetchResourcesForUser();
+await fetchProductsForUser();
 
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const resourceItemResources = computed(

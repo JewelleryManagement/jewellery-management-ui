@@ -9,11 +9,7 @@
       hide-details
     ></v-text-field>
   </v-card-title>
-  <v-data-table
-    :headers="tableColumns"
-    :items="allProducts"
-    :search="search"
-  >
+  <v-data-table :headers="tableColumns" :items="allProducts" :search="search">
     <template v-slot:item.resourceContent="{ item }">
       <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
     </template>
@@ -44,23 +40,25 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, toRefs } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 
-const { products, additionalColumnsLeft, additionalColumnsRight } = defineProps(
-  {
-    products: Array,
-    additionalColumnsLeft: Array,
-    additionalColumnsRight: Array,
-  }
-);
+const props = defineProps({
+  products: Array,
+  additionalColumnsLeft: Array,
+  additionalColumnsRight: Array,
+});
+console.log(props);
+
+const { products, additionalColumnsLeft, additionalColumnsRight } =
+  toRefs(props);
 
 const tableColumns = computed(() =>
-  additionalColumnsLeft
-    ? [...additionalColumnsLeft, ...store.getters["products/getColumns"]]
-    : additionalColumnsRight
-    ? [...store.getters["products/getColumns"], ...additionalColumnsRight]
+  additionalColumnsLeft.value
+    ? [...additionalColumnsLeft.value, ...store.getters["products/getColumns"]]
+    : additionalColumnsRight.value
+    ? [...store.getters["products/getColumns"], ...additionalColumnsRight.value]
     : [...store.getters["products/getColumns"]]
 );
 
@@ -71,8 +69,10 @@ const store = useStore();
 const search = ref("");
 
 await store.dispatch("products/fetchProducts");
-const allProducts = products ? products :  computed(() => store.getters["products/allProducts"]);
-
+const allProducts = computed(
+  () => products.value ?? store.getters["products/allProducts"]
+);
+console.log(allProducts.value);
 
 const openDialog = (item, content) => {
   if (content == "resources") {
