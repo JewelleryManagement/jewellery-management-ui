@@ -11,7 +11,7 @@
   </v-card-title>
   <v-data-table
     :headers="tableColumns"
-    :items="productsInTable"
+    :items="allProducts"
     :search="search"
   >
     <template v-slot:item.resourceContent="{ item }">
@@ -44,10 +44,9 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue";
+import { ref, computed, watch } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
-const snackbarProvider = inject("snackbarProvider");
 
 const { products, additionalColumnsLeft, additionalColumnsRight } = defineProps(
   {
@@ -70,20 +69,9 @@ const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
 const store = useStore();
 const search = ref("");
-const productsInTable = ref([]);
-const fillProducts = async () => {
-  if (products) {
-    return products;
-  } else {
-    try {
-      await store.dispatch("products/fetchProducts");
-    } catch (error) {
-      snackbarProvider.showErrorSnackbar("Failed to fetch products");
-    }
-    return store.getters["products/allProducts"];
-  }
-};
-productsInTable.value = await fillProducts();
+
+await store.dispatch("products/fetchProducts");
+const allProducts = products ? products :  computed(() => store.getters["products/allProducts"]);
 
 
 const openDialog = (item, content) => {
