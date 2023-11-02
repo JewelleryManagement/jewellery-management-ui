@@ -97,4 +97,3 @@ function formatAuthors(product) {
     contentOf: product.contentOf ? "Yes" : "No",
   };
 }
-// contentOf: product.contentOf ? "Yes" : "No",

@@ -54,9 +54,13 @@
                     :additionalColumnsRight="disassemblyColumns"
                   >
                     <template v-slot:item.disassembly="{ item }">
-                      <v-icon @click="disassemblyProduct(item)"
-                        >mdi-cart-off</v-icon
+                      <v-btn
+                        variant="plain"
+                        :disabled="item.contentOf === 'Yes'"
+                        @click="disassemblyProduct(item)"
                       >
+                        <v-icon size="25">mdi-cart-off</v-icon>
+                      </v-btn>
                     </template>
                   </products-table>
                 </v-card>
@@ -73,7 +77,7 @@
 </template>
 
 <script setup>
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
@@ -81,26 +85,34 @@ import UserCard from "@/components/Card/UserCard.vue";
 const isResourceTableVisible = ref(false);
 const isProductsTableVisible = ref(false);
 
-
 const { id } = defineProps(["id"]);
 const userId = id;
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
-try {
-  await store.dispatch("users/fetchResourcesForUser", userId);
-} catch (error) {
-  snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
+const userProducts = ref(null)
+
+onMounted(() => {
+  FetchResourcesForUser();
+  fetchProductsForUser();
+});
+
+async function FetchResourcesForUser() {
+  try {
+    await store.dispatch("users/fetchResourcesForUser", userId);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
+  }
 }
 
-try {
-  await store.dispatch("products/fetchProductsByOwner", userId);
-} catch (error) {
-  snackbarProvider.showErrorSnackbar("Failed to fetch products.");
+async function fetchProductsForUser() {
+  try {
+    await store.dispatch("products/fetchProductsByOwner", userId);
+    userProducts.value = store.getters["products/getCurrentUserProducts"]
+    console.log();
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch products.");
+  }
 }
-
-const userProducts = computed(
-  () => store.getters["products/getCurrentUserProducts"]
-);
 
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const resourceItemResources = computed(
@@ -127,7 +139,7 @@ const disassemblyProduct = async (product) => {
 async function isDisassambleConfirmed(productId) {
   try {
     await store.dispatch("products/disassemblyProduct", productId);
-    await store.dispatch("products/fetchProducts");
+    await fetchProductsForUser()
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
