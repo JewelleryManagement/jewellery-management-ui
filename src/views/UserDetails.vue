@@ -89,7 +89,7 @@ const { id } = defineProps(["id"]);
 const userId = id;
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
-const userProducts = ref(null)
+const userProducts = ref(null);
 
 onMounted(() => {
   FetchResourcesForUser();
@@ -107,7 +107,7 @@ async function FetchResourcesForUser() {
 async function fetchProductsForUser() {
   try {
     await store.dispatch("products/fetchProductsByOwner", userId);
-    userProducts.value = store.getters["products/getCurrentUserProducts"]
+    userProducts.value = store.getters["products/getCurrentUserProducts"];
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch products.");
   }
@@ -138,7 +138,7 @@ const disassemblyProduct = async (product) => {
 async function isDisassambleConfirmed(productId) {
   try {
     await store.dispatch("products/disassemblyProduct", productId);
-    await fetchProductsForUser()
+    await fetchProductsForUser();
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
