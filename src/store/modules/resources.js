@@ -34,7 +34,7 @@ export default {
       { key: "note", title: "Note" },
       { key: "description", title: "Description" },
     ],
-    tableColumnQuantity: { key: "quantity", title: "Quantity"},
+    tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
     tableColumnAdd: { key: "add", title: "", slot: "add" },
@@ -43,7 +43,7 @@ export default {
       key: "addQuantity",
       title: "",
       slot: "addQuantity",
-      width: "100px" 
+      width: "100px",
     },
   }),
   mutations: {
@@ -127,7 +127,7 @@ export default {
         "color",
         "shape",
       ]),
-    getColumnsForGemstone: (state) =>
+    getColumnsForPreciousStone: (state) =>
       filterColumnsByKey(state, [
         "quantity",
         "clazz",
@@ -139,14 +139,25 @@ export default {
         "cut",
         "clarity",
       ]),
-    getColumnsForLinkingPart: (state) =>
+    getColumnsForSemiPreciousStone: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "quantityType",
+        "size",
+        "color",
+        "shape",
+        "cut",
+        "clarity",
+      ]),
+    getColumnsForElement: (state) =>
       filterColumnsByKey(state, [
         "quantity",
         "clazz",
         "description",
         "quantityType",
       ]),
-    getColumnsForPreciousMetal: (state) =>
+    getColumnsForMetal: (state) =>
       filterColumnsByKey(state, [
         "quantity",
         "clazz",

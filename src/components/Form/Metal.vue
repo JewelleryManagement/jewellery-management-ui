@@ -40,27 +40,17 @@
   ></v-text-field>
 </template>
 
-<script>
+<script setup>
 import { useStore } from "vuex";
 import {
   useTextFieldRules,
   useNumberFieldRules,
 } from "../../utils/validation-rules.js";
 
-export default {
-  setup() {
-    const store = useStore();
-    const formData = store.getters["resources/getResourceDetails"];
+const store = useStore();
+const formData = store.getters["resources/getResourceDetails"];
 
-    const nameRules = useTextFieldRules();
-    const numberFieldRules = useNumberFieldRules();
-
-    return {
-      formData,
-      nameRules,
-      numberFieldRules,
-    };
-  },
-};
+const nameRules = useTextFieldRules();
+const numberFieldRules = useNumberFieldRules();
 </script>
 <style scoped></style>

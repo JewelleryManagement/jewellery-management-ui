@@ -3,7 +3,7 @@
     v-model="formData.description"
     :counter="100"
     :rules="descriptionRules"
-    rows=2
+    rows="2"
     label="Description"
     required
   ></v-textarea>
@@ -15,31 +15,19 @@
     label="Quantity Type"
     required
   ></v-text-field>
-
 </template>
 
-<script>
+<script setup>
 import { useStore } from "vuex";
 import {
   useTextFieldRules,
   useTextAreaFieldRules,
 } from "../../utils/validation-rules.js";
 
+const store = useStore();
+const formData = store.getters["resources/getResourceDetails"];
 
-export default {
-  setup() {
-    const store = useStore();
-    const formData = store.getters["resources/getResourceDetails"];
-
-    const nameRules = useTextFieldRules();
-    const descriptionRules = useTextAreaFieldRules();
-
-    return {
-      formData,
-      nameRules,
-      descriptionRules
-    };
-  },
-};
+const nameRules = useTextFieldRules();
+const descriptionRules = useTextAreaFieldRules();
 </script>
 <style scoped></style>

@@ -56,49 +56,41 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import { onMounted, inject, ref, computed } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 
-export default {
-  components: {
-    ResourceTable,
-  },
-  setup() {
-    const store = useStore();
-    const snackbarProvider = inject("snackbarProvider");
-    const selectedResourceType = ref("All");
+const store = useStore();
+const snackbarProvider = inject("snackbarProvider");
+const selectedResourceType = ref("All");
 
-    const filterResourcesByType = (title) => {
-      selectedResourceType.value = title;
-    };
+const resourceTypes = ref([
+  "All",
+  "Pearl",
+  "Metal",
+  "Element",
+  "PreciousStone",
+  "SemiPreciousStone",
+]);
 
-    onMounted(async () => {
-      try {
-        await store.dispatch("resources/fetchResources");
-      } catch (error) {
-        snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
-      }
-    });
-
-    return {
-      isSmallScreen: computed(() => {
-        return useDisplay().smAndDown.value;
-      }),
-      filterResourcesByType,
-      selectedResourceType,
-      resourceTypes: [
-        "All",
-        "Pearl",
-        "LinkingPart",
-        "Gemstone",
-        "PreciousMetal",
-      ],
-    };
-  },
+const filterResourcesByType = (title) => {
+  selectedResourceType.value = title;
 };
+
+onMounted(async () => {
+  try {
+    await store.dispatch("resources/fetchResources");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
+  }
+});
+
+const isSmallScreen = computed(() => {
+  return useDisplay().smAndDown.value;
+});
+
 </script>
 
 <style scoped></style>

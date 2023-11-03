@@ -8,14 +8,6 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="formData.carat"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="Carat"
-    required
-  ></v-text-field>
-
-  <v-text-field
     v-model="formData.cut"
     :counter="10"
     :rules="textFieldRules"
@@ -32,26 +24,10 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="formData.dimensionX"
+    v-model="formData.size"
     :counter="10"
     :rules="numberFieldRules"
-    label="dimensionX"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.dimensionY"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="dimensionY"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.dimensionZ"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="dimensionZ"
+    label="Size"
     required
   ></v-text-field>
 
@@ -72,27 +48,17 @@
   ></v-text-field>
 </template>
 
-<script>
+<script setup>
 import { useStore } from "vuex";
 import {
   useTextFieldRules,
   useNumberFieldRules,
 } from "../../utils/validation-rules.js";
 
-export default {
-  setup() {
-    const store = useStore();
-    const formData = store.getters["resources/getResourceDetails"];
+const store = useStore();
+const formData = store.getters["resources/getResourceDetails"];
 
-    const textFieldRules = useTextFieldRules();
-    const numberFieldRules = useNumberFieldRules();
-    
-    return {
-      formData,
-      textFieldRules,
-      numberFieldRules,
-    };
-  },
-};
+const textFieldRules = useTextFieldRules();
+const numberFieldRules = useNumberFieldRules();
 </script>
 <style scoped></style>
