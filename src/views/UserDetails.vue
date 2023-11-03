@@ -77,8 +77,8 @@
 </template>
 
 <script setup>
-import { watch, reactive, computed, inject, ref, onCreated } from "vue";
-import { useStore, mapGetters } from "vuex";
+import { computed, inject, ref } from "vue";
+import { useStore } from "vuex";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
@@ -89,14 +89,9 @@ const { id } = defineProps(["id"]);
 const userId = id;
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
-// const userProducts = ref([]);
 const userProducts = computed(
   () => store.getters["products/getCurrentUserProducts"] ?? []
 );
-// watch(userProducts, (oldValue, newValue) => {
-//   console.log(oldValue);
-//   console.log(newValue);
-// });
 
 async function fetchResourcesForUser() {
   try {

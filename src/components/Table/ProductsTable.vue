@@ -49,7 +49,6 @@ const props = defineProps({
   additionalColumnsLeft: Array,
   additionalColumnsRight: Array,
 });
-console.log(props);
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);
@@ -72,7 +71,6 @@ await store.dispatch("products/fetchProducts");
 const allProducts = computed(
   () => products.value ?? store.getters["products/allProducts"]
 );
-console.log(allProducts.value);
 
 const openDialog = (item, content) => {
   if (content == "resources") {

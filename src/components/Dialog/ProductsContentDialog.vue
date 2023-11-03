@@ -6,7 +6,7 @@
     width="auto"
   >
     <v-card>
-      <v-toolbar color="green" title="Products Content..."></v-toolbar>
+      <v-toolbar color="green" :title="productsContentTitle"></v-toolbar>
       <products-table :products="productsContent"> </products-table>
       <v-card-actions class="justify-end">
         <v-btn color="red" variant="text" @click="() => $emit('close-dialog')"
@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import ProductsTable from "../Table/ProductsTable.vue";
 
 const { modelValue, data } = defineProps({
@@ -34,4 +34,11 @@ productsContent.value = productsContent.value.map((product) => ({
   authors: product.authors.map((a) => a.name).join(", "),
   contentOf: product.contentOf ? "Yes" : "No",
 }));
+
+const productsContentTitle = computed(() =>
+  productsContent.value.length > 0
+    ? productsContent.value.map((x) => x.catalogNumber).join(", ") +
+      "'s content"
+    : "Products content...."
+);
 </script>
