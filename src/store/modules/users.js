@@ -37,6 +37,7 @@ export default {
   getters: {
     getColumns: (state, getters, rootState, rootGetters) => [
       rootState.resources.tableColumnRemoveQuantity,
+      rootState.resources.tableColumnRemoveTransfer,
       rootState.resources.tableColumnQuantity,
       ...rootState.resources.tableColumns,
     ],
