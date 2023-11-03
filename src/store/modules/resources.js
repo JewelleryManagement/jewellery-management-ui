@@ -126,6 +126,8 @@ export default {
         "quantityType",
         "color",
         "shape",
+        "pricePerQuantity",
+        "note"
       ]),
     getColumnsForPreciousStone: (state) =>
       filterColumnsByKey(state, [
@@ -138,6 +140,8 @@ export default {
         "carat",
         "cut",
         "clarity",
+        "pricePerQuantity",
+        "note"
       ]),
     getColumnsForSemiPreciousStone: (state) =>
       filterColumnsByKey(state, [
@@ -149,6 +153,8 @@ export default {
         "shape",
         "cut",
         "clarity",
+        "pricePerQuantity",
+        "note"
       ]),
     getColumnsForElement: (state) =>
       filterColumnsByKey(state, [
@@ -156,6 +162,8 @@ export default {
         "clazz",
         "description",
         "quantityType",
+        "pricePerQuantity",
+        "note"
       ]),
     getColumnsForMetal: (state) =>
       filterColumnsByKey(state, [
@@ -166,6 +174,8 @@ export default {
         "purity",
         "color",
         "plating",
+        "pricePerQuantity",
+        "note"
       ]),
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
