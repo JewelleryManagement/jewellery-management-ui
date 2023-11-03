@@ -9,6 +9,7 @@ const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
 const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
+const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
 const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
 const NotFound = () => import("../views/NotFound.vue");
@@ -53,6 +54,13 @@ const routes = [
     name: "Remove-Quantity",
     component: UserResourceDetails,
     meta: { title: "Remove Quantity", requiresAuth: true },
+  },
+  {
+    path: "/resources/availability/transfer/:resourceId/:userId",
+    props: true,
+    name: "Transfer-Quantity",
+    component: UserResourceTransfer,
+    meta: { title: "Transfer Quantity", requiresAuth: true },
   },
   {
     path: "/resources",

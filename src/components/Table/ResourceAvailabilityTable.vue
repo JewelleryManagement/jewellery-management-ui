@@ -31,8 +31,14 @@
       </template>
 
       <template v-slot:item.transfer="{ item }">
- 
-          <v-icon color="#607D8B">mdi-rotate-left</v-icon>
+        <router-link
+          :to="{
+            name: 'Transfer-Quantity',
+            params: { resourceId: item.id, userId: user.id },
+          }"
+        >
+        <v-icon color="#607D8B">mdi-rotate-left</v-icon>
+        </router-link>
       </template>
     </v-data-table>
   </v-card>

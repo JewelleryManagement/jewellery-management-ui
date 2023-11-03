@@ -6,10 +6,6 @@
         {{ resource.clazz }}
         <v-icon color="pink">mdi-diamond</v-icon>
       </v-card-title>
-      <v-card-subtitle
-        >Current quantity:
-        {{ currentQuantity === "" ? "0" : currentQuantity }}</v-card-subtitle
-      >
 
       <v-card-subtitle v-for="item in usersAndQuantities" :key="item.id">
         User: {{ item.owner.name }} - Quantity: {{ item.quantity }}
@@ -48,7 +44,6 @@ export default {
       resourceQuantity: props.resourceQuantity,
       resource: props.resourceAvailability.resource,
       formattedResource: formatResource(props.resourceAvailability.resource),
-      currentQuantity: props.resourceQuantity.quantity,
       usersAndQuantities: props.resourceAvailability.usersAndQuantities,
     };
   },

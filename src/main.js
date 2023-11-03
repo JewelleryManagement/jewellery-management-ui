@@ -5,7 +5,9 @@ const app = createApp(App);
 registerPlugins(app);
 import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue";
 import ProductsContentDialog from "@/components/Dialog/ProductsContentDialog.vue";
+import UserResourceForm from "@/components/Form/UserResourceForm"
 
+app.component('user-resource-form', UserResourceForm)
 app.component("resource-content-dialog", ResourceContentDialog);
 app.component("products-content-dialog", ProductsContentDialog);
 app.mount("#app");

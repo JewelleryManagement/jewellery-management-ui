@@ -2,6 +2,7 @@ import { reactive } from "vue";
 import {
   fetchResources,
   postResources,
+  postResourceAvailabilityTransfer,
   removeResource,
   updateResource,
   removeResourceQuantity,
@@ -18,6 +19,7 @@ export default {
   state: reactive({
     resources: [],
     resourceDetails: {},
+    resourceForm: {},
     tableColumns: [
       { key: "clazz", title: "Resource Type" },
       { key: "color", title: "Color" },
@@ -62,6 +64,9 @@ export default {
     setResourceDetails(state, payload) {
       state.resourceDetails = payload;
     },
+    setResourcForm(state, payload) {
+      state.resourceForm = payload;
+    },
     updateResource(state, updatedResource) {
       const index = state.resources.findIndex(
         (resource) => resource.id === updatedResource.id
@@ -88,6 +93,12 @@ export default {
     },
     setResourceDetails({ commit }, data) {
       commit("setResourceDetails", data);
+    },
+    setResourceForm({ commit }, data) {
+      commit("setResourcForm", data);
+    },
+    async resourceAvailabilityTransfer({commit}, data) {
+      await postResourceAvailabilityTransfer(data)
     },
     async updateResource({ commit }, { id, ...resourceWithoutId }) {
       const updatedResource = await updateResource(id, resourceWithoutId);
@@ -181,5 +192,6 @@ export default {
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
     getResourceDetails: (state) => state.resourceDetails,
+    getResourceForm: (state) => state.resourceForm,
   },
 };
