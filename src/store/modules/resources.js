@@ -30,6 +30,8 @@ export default {
       { key: "plating", title: "Plating" },
       { key: "carat", title: "Carat" },
       { key: "cut", title: "Cut" },
+      { key: "pricePerQuantity", title: "Price per quantity" },
+      { key: "note", title: "Note" },
       { key: "description", title: "Description" },
     ],
     tableColumnQuantity: { key: "quantity", title: "Quantity"},
