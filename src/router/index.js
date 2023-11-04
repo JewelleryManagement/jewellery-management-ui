@@ -8,7 +8,6 @@ const ProductsDetails = () => import("../views/ProductsDetails.vue");
 const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
-const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
 const UserResourceAdd = () => import("../views/UserResourceAdd.vue");
 const UserResourceRemove = () => import("../views/UserResourceRemove.vue");
 const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
