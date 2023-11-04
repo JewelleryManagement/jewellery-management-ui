@@ -40,14 +40,30 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const numberFieldRules = useNumberFieldRules();
+const formData = store.getters["resources/getResourceForm"];
 
 const userOptions = computed(() =>
-store.getters["users/allUsers"].map((user) => user.name)
+  store.getters["users/allUsers"].map((user) => user.name)
 );
+
+if (route.path.includes("/remove")) {
+  const resourceId = route.params.resourceId;
+  const currentlyLoggedUser = store.getters["auth/getUser"];
+  formData.userOption = currentlyLoggedUser.name;
+  const resourceAvailability = ref({});
+
+  resourceAvailability.value = await store.dispatch(
+    "resources/fetchAvailabilityResourceById",
+    resourceId
+  );
+  const quantityByUser = resourceAvailability.value.usersAndQuantities.find(
+    (item) => item.owner.id === currentlyLoggedUser.id
+  ).quantity;
+  formData.quantity = quantityByUser;
+}
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 
-const formData = store.getters["resources/getResourceForm"];
 const emits = defineEmits(["handle-submit"]);
 
 const handleSubmit = async () => {
