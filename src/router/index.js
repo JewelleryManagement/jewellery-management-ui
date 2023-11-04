@@ -9,6 +9,7 @@ const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
 const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
+const UserResourceAdd = () => import("../views/UserResourceAdd.vue");
 const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
 const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
@@ -45,7 +46,7 @@ const routes = [
     path: "/resources/availability/add/:resourceId",
     props: true,
     name: "Add-Quantity",
-    component: UserResourceDetails,
+    component: UserResourceAdd,
     meta: { title: "Add Quantity", requiresAuth: true },
   },
   {
