@@ -57,7 +57,7 @@
                       <v-btn
                         variant="plain"
                         :disabled="item.contentOf === 'Yes'"
-                        @click="disassemblyProduct(item)"
+                        @click="disassmebleProduct(item)"
                       >
                         <v-icon size="25">mdi-cart-off</v-icon>
                       </v-btn>
@@ -122,7 +122,7 @@ const disassemblyColumns = computed(() => [
   store.state.products.tableColumnDisassembly,
 ]);
 
-const disassemblyProduct = async (product) => {
+const disassmebleProduct = async (product) => {
   const catalogNumber = product.catalogNumber;
   const productId = product.id;
   const confirmation = window.confirm(
@@ -130,13 +130,13 @@ const disassemblyProduct = async (product) => {
   );
 
   if (confirmation) {
-    await isDisassambleConfirmed(productId);
+    await sendDisassembleRequest(productId);
   }
 };
 
-async function isDisassambleConfirmed(productId) {
+async function sendDisassembleRequest(productId) {
   try {
-    await store.dispatch("products/disassemblyProduct", productId);
+    await store.dispatch("products/disassmebleProduct", productId);
     await fetchProductsForUser();
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {

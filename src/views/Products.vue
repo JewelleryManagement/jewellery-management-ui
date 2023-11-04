@@ -18,7 +18,7 @@
             >
           </div>
 
-          <products-table :additionalColumnsRight="disassemblyAndUserColumn">
+          <products-table :additionalColumnsRight="disassemblyAndUserColumns">
             <template v-slot:item.owner="{ item }">
               <router-link
                 style="text-decoration: none; color: inherit"
@@ -35,7 +35,7 @@
             </template>
 
             <template v-slot:item.disassembly="{ item }">
-              <v-btn variant="plain" :disabled="item.contentOf === 'Yes'" @click="disassemblyProduct(item)">
+              <v-btn variant="plain" :disabled="item.contentOf === 'Yes'" @click="disassmebleProduct(item)">
                 <v-icon size="25">mdi-cart-off</v-icon>
               </v-btn>
             </template>
@@ -48,18 +48,18 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { onMounted, inject, computed } from "vue";
+import { onBeforeMount, inject, computed } from "vue";
 import { useStore } from "vuex";
 import { useDisplay } from "vuetify/lib/framework.mjs";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 
-const disassemblyAndUserColumn = computed(() => [
+const disassemblyAndUserColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.products.tableColumnDisassembly,
 ]);
 
-onMounted(async () => {
+onBeforeMount(async () => {
   try {
     await store.dispatch("products/fetchProducts");
   } catch (error) {
@@ -71,7 +71,7 @@ const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
 
-const disassemblyProduct = async (product) => {
+const disassmebleProduct = async (product) => {
   const catalogNumber = product.catalogNumber;
   const productId = product.id;
   const confirmation = window.confirm(
@@ -79,13 +79,13 @@ const disassemblyProduct = async (product) => {
   );
 
   if (confirmation) {
-    await isDisassambleConfirmed(productId);
+    await sendDisassembleRequest(productId);
   }
 };
 
-async function isDisassambleConfirmed(productId) {
+async function sendDisassembleRequest(productId) {
   try {
-    await store.dispatch("products/disassemblyProduct", productId);
+    await store.dispatch("products/disassmebleProduct", productId);
     await store.dispatch("products/fetchProducts");
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {

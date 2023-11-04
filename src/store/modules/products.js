@@ -3,7 +3,7 @@ import {
   fetchProducts,
   postProduct,
   fetchProductsByOwner,
-  disassemblyProduct,
+  disassmebleProduct,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -66,8 +66,8 @@ export default {
       const res = await fetchProductsByOwner(ownerId);
       commit("setCurrentUserProducts", res);
     },
-    async disassemblyProduct({ commit }, productId) {
-      await disassemblyProduct(productId);
+    async disassmebleProduct({ commit }, productId) {
+      await disassmebleProduct(productId);
     },
   },
   getters: {
