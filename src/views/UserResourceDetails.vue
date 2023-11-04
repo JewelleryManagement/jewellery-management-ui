@@ -2,7 +2,6 @@
   <v-container class="my-12" fluid>
     <resource-availability-card
       :resourceAvailability="resourceAvailability"
-      :resourceQuantity="resourceQuantity"
     ></resource-availability-card>
 
     <v-sheet width="300" class="mx-auto">

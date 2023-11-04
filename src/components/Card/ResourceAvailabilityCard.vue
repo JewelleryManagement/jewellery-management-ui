@@ -18,36 +18,34 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import { useStore } from "vuex";
 
-export default {
-  props: ['resourceAvailability', 'resourceQuantity'],
-  
-  setup(props) {
-    
-    let formatResource = (jsonObj) => {
-      const store = useStore();
-      const allTable = store.getters["resources/getTableColumns"];
-      let output = "";
-      for (const column of allTable) {
-        const key = column.key;
-        const title = column.title;
-        if (jsonObj.hasOwnProperty(key) ) {
-          output += `<p>${title}: ${jsonObj[key]}</p>`;
-        }
-      }
-      return output;
-    };
+const { resourceAvailability } = defineProps({
+  resourceAvailability: Object,
+});
 
-    return {
-      resourceQuantity: props.resourceQuantity,
-      resource: props.resourceAvailability.resource,
-      formattedResource: formatResource(props.resourceAvailability.resource),
-      usersAndQuantities: props.resourceAvailability.usersAndQuantities,
-    };
-  },
+const formatResource = (jsonObj) => {
+  const store = useStore();
+  const allTable = store.getters["resources/getTableColumns"];
+  let output = "";
+
+  for (const column of allTable) {
+    const key = column.key;
+    const title = column.title;
+
+    if (jsonObj.hasOwnProperty(key)) {
+      output += `<p>${title}: ${jsonObj[key]}</p>`;
+    }
+  }
+
+  return output;
 };
+
+const resource = resourceAvailability.resource;
+const formattedResource = formatResource(resourceAvailability.resource);
+const usersAndQuantities = resourceAvailability.usersAndQuantities;
 </script>
+
 
 <style scoped></style>
