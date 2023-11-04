@@ -35,9 +35,9 @@
             </template>
 
             <template v-slot:item.disassembly="{ item }">
-              <v-btn variant="plain" :disabled="item.contentOf === 'Yes'" @click="disassmebleProduct(item)">
-                <v-icon size="25">mdi-cart-off</v-icon>
-              </v-btn>
+              <disassembly-button
+                :item="item"
+              ></disassembly-button>
             </template>
           </products-table>
         </v-card>
@@ -71,27 +71,4 @@ const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
 
-const disassmebleProduct = async (product) => {
-  const catalogNumber = product.catalogNumber;
-  const productId = product.id;
-  const confirmation = window.confirm(
-    `Are you sure that you would like to disassemble ${catalogNumber}?`
-  );
-
-  if (confirmation) {
-    await sendDisassembleRequest(productId);
-  }
-};
-
-async function sendDisassembleRequest(productId) {
-  try {
-    await store.dispatch("products/disassmebleProduct", productId);
-    await store.dispatch("products/fetchProducts");
-    snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar(
-      "Failed to disassemble product! Could be a part of another product."
-    );
-  }
-}
 </script>
