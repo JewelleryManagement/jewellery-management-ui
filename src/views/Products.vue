@@ -18,7 +18,7 @@
             >
           </div>
 
-          <products-table :additionalColumnsRight="disassemblyAndUserColumns">
+          <products-table :additionalColumnsRight="disassembleAndUserColumns">
             <template v-slot:item.owner="{ item }">
               <router-link
                 style="text-decoration: none; color: inherit"
@@ -54,7 +54,7 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 
-const disassemblyAndUserColumns = computed(() => [
+const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.products.tableColumnDisassembly,
 ]);
