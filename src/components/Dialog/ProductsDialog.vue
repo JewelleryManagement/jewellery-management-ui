@@ -20,11 +20,11 @@
             </template>
 
             <template v-slot:item.resourceContent="{ item }">
-              <v-icon @click="OpenInnerDialog(item, 'resources')">mdi-cube</v-icon>
+              <v-icon @click="openInnerDialog(item, 'resources')">mdi-cube</v-icon>
             </template>
 
             <template v-slot:item.productsContent="{ item }">
-              <v-icon @click="OpenInnerDialog(item, 'products')"
+              <v-icon @click="openInnerDialog(item, 'products')"
                 >mdi-cube-outline</v-icon
               >
             </template>
@@ -123,7 +123,7 @@ const btnIcon = ref({});
 
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);
 
-const OpenInnerDialog = (item, type) => {
+const openInnerDialog = (item, type) => {
   if (type == dialogTypes.RESOURCE) {
     resourceDialogData.value = item;
     isResourceDialogOpen.value = true;
