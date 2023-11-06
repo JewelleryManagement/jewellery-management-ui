@@ -3,6 +3,7 @@ import {
   fetchProducts,
   postProduct,
   fetchProductsByOwner,
+  disassmebleProduct,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -15,13 +16,35 @@ export default {
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
       { key: "authors", title: "Authors" },
-      { key: "inStock", title: "In Stock" },
-      { key: "isSold", title: "Sold" },
-      { key: "ownerId", title: "Owner" },
-      { key: "picture", title: "Picture" },
+      { key: "sold", title: "Sold" },
       { key: "salePrice", title: "Sale price" },
+      { key: "contentOf", title: "Part of product" },
     ],
+
     tableColumnAdd: { key: "add", title: "", slot: "add" },
+    tableColumnOwner: {
+      key: "owner",
+      title: "Owner",
+      slot: "owner",
+      align: "center",
+    },
+    tableColumnResourcesContent: {
+      key: "resourceContent",
+      title: "Resources Content",
+      slot: "resourceContent",
+      align: "center",
+    },
+    tableColumnProductsContent: {
+      key: "productsContent",
+      title: "Products Content",
+      slot: "productsContent",
+      align: "center",
+    },
+    tableColumnDisassembly: {
+      key: "disassembly",
+      title: "Disassembly",
+      align: "center",
+    },
   }),
   mutations: {
     setProducts(state, products) {
@@ -43,17 +66,34 @@ export default {
       const res = await fetchProductsByOwner(ownerId);
       commit("setCurrentUserProducts", res);
     },
+    async disassmebleProduct({ commit }, productId) {
+      await disassmebleProduct(productId);
+    },
   },
   getters: {
     allProducts: (state) => {
-      return state.products.map((product) => ({
-        ...product,
-        authors: product.authors.map((author) => author.name).join(", "),
-      }));
+      return state.products.map(formatAuthors);
     },
-    getCurrentUserProducts: (state) => state.currentUserProducts,
-    getColumns: (state) => state.tableColumns,
+    getColumns: (state) => [
+      ...state.tableColumns,
+      state.tableColumnResourcesContent,
+      state.tableColumnProductsContent,
+    ],
+    getCurrentUserProducts: (state) => state.currentUserProducts.map(formatAuthors),
     getAddColumn: (state) => state.tableColumnAdd,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
+    getColumnsWithRCandPC: (state) => [
+      ...state.tableColumns,
+      state.tableColumnResourcesContent,
+      state.tableColumnProductsContent,
+    ],
   },
 };
+
+function formatAuthors(product) {
+  return {
+    ...product,
+    authors: product.authors.map((author) => author.name).join(", "),
+    contentOf: product.contentOf ? "Yes" : "No",
+  };
+}

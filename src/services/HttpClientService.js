@@ -94,6 +94,10 @@ export async function removeResourceQuantity(userId, resourceId, quantity) {
   );
 }
 
+export async function disassmebleProduct(productId) {
+  return await removeData(`/products/${productId}`);
+}
+
 // PUT REQUEST
 
 async function updateData(endpoint, data) {

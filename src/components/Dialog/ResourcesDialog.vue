@@ -81,9 +81,7 @@ const saveTableValues = () => {
     resourcesContent.value = [];
     const currentInputFields = Object.entries(quantityByProduct.value);
     currentInputFields.forEach(([resourceId, quantity]) => {
-      if (quantity > 0.0) {
-        resourcesContent.value.push({ id: resourceId, quantity: quantity });
-      }
+      resourcesContent.value.push({ id: resourceId, quantity: quantity });
     });
 
     emits("save-resources-dialog", resourcesContent.value);
@@ -108,6 +106,8 @@ const areQuantitiesValid = () => {
   );
 };
 const closeDialog = () => {
+  quantityByProduct.value = [];
+  
   resourcesContent.value.forEach(
     ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
   );

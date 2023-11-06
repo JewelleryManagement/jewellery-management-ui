@@ -18,42 +18,57 @@
             >
           </div>
 
-          <products-table></products-table>
+          <products-table :additionalColumnsRight="disassembleAndUserColumns">
+            <template v-slot:item.owner="{ item }">
+              <router-link
+                style="text-decoration: none; color: inherit"
+                :to="`/users/${item.owner.id}`"
+              >
+                <v-btn variant="plain">
+                  <v-icon size="25">mdi-account-circle</v-icon>
+                  <v-tooltip activator="parent" location="top">
+                    <div>Name: {{ item.owner.name }}</div>
+                    <div>Email: {{ item.owner.email }}</div>
+                  </v-tooltip>
+                </v-btn>
+              </router-link>
+            </template>
+
+            <template v-slot:item.disassembly="{ item }">
+              <disassembly-button
+                :item="item"
+              ></disassembly-button>
+            </template>
+          </products-table>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script>
+<script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { onMounted, inject, computed } from "vue";
+import { onBeforeMount, inject, computed } from "vue";
 import { useStore } from "vuex";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+const store = useStore();
+const snackbarProvider = inject("snackbarProvider");
 
-export default {
-  components: {
-    ProductsTable,
-  },
-  setup() {
-    const store = useStore();
-    const snackbarProvider = inject("snackbarProvider");
+const disassembleAndUserColumns = computed(() => [
+  store.state.products.tableColumnOwner,
+  store.state.products.tableColumnDisassembly,
+]);
 
-    onMounted(async () => {
-      try {
-        await store.dispatch("products/fetchProducts");
-      } catch (error) {
-        snackbarProvider.showErrorSnackbar("Failed to fetch products");
-      }
-    });
+onBeforeMount(async () => {
+  try {
+    await store.dispatch("products/fetchProducts");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch products");
+  }
+});
 
-    return {
-      isSmallScreen: computed(() => {
-        return useDisplay().smAndDown.value;
-      }),
-    };
-  },
-};
+const isSmallScreen = computed(() => {
+  return useDisplay().smAndDown.value;
+});
+
 </script>
-
-<style scoped></style>
