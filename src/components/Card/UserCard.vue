@@ -9,9 +9,9 @@
       <div>Resource Availability: {{ resourcesAndQuantities.length }}</div>
       <div
         v-for="resource in resourcesAndQuantities"
-        :key="resource.resource.id"
+        :key="resource.id"
       >
-        <p>{{ resource.resource.clazz }} - {{ resource.quantity }}</p>
+        <p>{{ resource.clazz }} - {{ resource.quantity }}</p>
       </div>
     </v-card-text>
   </v-card>

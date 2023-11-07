@@ -26,7 +26,7 @@
 import { useStore } from "vuex";
 
 export default {
-  props: ["resource", 'resourceAvailability', 'resourceQuantity'],
+  props: ['resourceAvailability', 'resourceQuantity'],
   
   setup(props) {
     
@@ -47,7 +47,7 @@ export default {
     return {
       resourceQuantity: props.resourceQuantity,
       resource: props.resourceAvailability.resource,
-      formattedResource: formatResource(props.resource),
+      formattedResource: formatResource(props.resourceAvailability.resource),
       currentQuantity: props.resourceQuantity.quantity,
       usersAndQuantities: props.resourceAvailability.usersAndQuantities,
     };

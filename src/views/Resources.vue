@@ -17,7 +17,7 @@
                   variant="outlined"
                   class="mx-4"
                   rounded="xs"
-                  :size="isSmAndDown ? 'small' : 'x-large'"
+                  :size="isSmallScreen ? 'small' : 'x-large'"
                   color="red"
                   v-bind="props"
                 >
@@ -40,7 +40,7 @@
             <v-btn
               class="mx-4"
               rounded="xs"
-              :size="isSmAndDown ? 'small' : 'x-large'"
+              :size="isSmallScreen ? 'small' : 'x-large'"
               color="red"
               to="/resources/add"
               >Add resource</v-btn
@@ -84,7 +84,7 @@ export default {
     });
 
     return {
-      isSmAndDown: computed(() => {
+      isSmallScreen: computed(() => {
         return useDisplay().smAndDown.value;
       }),
       filterResourcesByType,

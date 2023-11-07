@@ -38,6 +38,10 @@ export async function fetchProducts() {
   return await fetchData("/products");
 }
 
+export async function fetchProductsByOwner(ownerId) {
+  return await fetchData(`/products/by-owner/${ownerId}`);
+}
+
 export async function fetchUsers() {
   return await fetchData("/users");
 }
@@ -62,6 +66,10 @@ export async function postResourceAvailability(data) {
   return await postData("/resources/availability", data);
 }
 
+export async function postProduct(data) {
+  return await postData("/products", data);
+}
+
 export async function postUserLogin(user) {
   return await postData("/login", user);
 }
@@ -84,6 +92,10 @@ export async function removeResourceQuantity(userId, resourceId, quantity) {
   return await removeData(
     `/resources/availability/${userId}/${resourceId}/${quantity}`
   );
+}
+
+export async function disassmebleProduct(productId) {
+  return await removeData(`/products/${productId}`);
 }
 
 // PUT REQUEST
