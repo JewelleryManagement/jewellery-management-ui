@@ -4,7 +4,14 @@ import {
   postResources,
   removeResource,
   updateResource,
+  removeResourceQuantity,
+  fetchAvailabilityResourceById,
+  fetchQuantityByResourceId,
 } from "@/services/HttpClientService.js";
+
+const filterColumnsByKey = (state, keys) => {
+  return state.tableColumns.filter((column) => keys.includes(column.key));
+};
 
 export default {
   namespaced: true,
@@ -23,13 +30,19 @@ export default {
       { key: "plating", title: "Plating" },
       { key: "carat", title: "Carat" },
       { key: "cut", title: "Cut" },
-      { key: "dimensionX", title: "dimensionX" },
-      { key: "dimensionY", title: "dimensionY" },
-      { key: "dimensionZ", title: "dimensionZ" },
       { key: "description", title: "Description" },
-      { key: "delete", title: "", slot: "delete" },
-      { key: "edit", title: "", slot: "edit" },
     ],
+    tableColumnQuantity: { key: "quantity", title: "Quantity"},
+    tableColumnDelete: { key: "delete", title: "", slot: "delete" },
+    tableColumnEdit: { key: "edit", title: "", slot: "edit" },
+    tableColumnAdd: { key: "add", title: "", slot: "add" },
+    tableColumnRemoveQuantity: { key: "remove", title: "", slot: "remove" },
+    tableColumnAddQuantity: {
+      key: "addQuantity",
+      title: "",
+      slot: "addQuantity",
+      width: "100px" 
+    },
   }),
   mutations: {
     setResources(state, resources) {
@@ -47,17 +60,22 @@ export default {
       state.resourceDetails = payload;
     },
     updateResource(state, updatedResource) {
-      const index = state.resources.findIndex((resource) => resource.id === updatedResource.id);
+      const index = state.resources.findIndex(
+        (resource) => resource.id === updatedResource.id
+      );
       if (index !== -1) state.resources[index] = updatedResource;
     },
   },
   actions: {
     async fetchResources({ commit }) {
       const res = await fetchResources();
-      commit("setResources", res);
+      const formattedResponse = Object.values(res).map((item) => ({
+        ...item.resource,
+        quantity: item.quantity,
+      }));
+      commit("setResources", formattedResponse);
     },
     async createResource({ commit }, formData) {
-      
       const res = await postResources(formData);
       commit("createResource", res);
     },
@@ -68,14 +86,74 @@ export default {
     setResourceDetails({ commit }, data) {
       commit("setResourceDetails", data);
     },
-    async updateResource({ commit },  { id, ...resourceWithoutId } ) {
+    async updateResource({ commit }, { id, ...resourceWithoutId }) {
       const updatedResource = await updateResource(id, resourceWithoutId);
       commit("updateResource", updatedResource);
     },
+    async removeQuantityFromResource({ commit }, data) {
+      await removeResourceQuantity(data.userId, data.resourceId, data.quantity);
+    },
+    async fetchAvailabilityResourceById({ commit }, resourceId) {
+      return await fetchAvailabilityResourceById(resourceId);
+    },
+    async fetchQuantityByResourceId({ commit }, resourceId) {
+      return await fetchQuantityByResourceId(resourceId);
+    },
   },
   getters: {
+    getTableColumns: (state) => state.tableColumns,
     allResources: (state) => state.resources,
-    getColumns: (state) => state.tableColumns,
+    getColumnsWithQuantity: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
+    getColumns: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+      state.tableColumnDelete,
+      state.tableColumnEdit,
+      state.tableColumnAdd,
+    ],
+    getColumnsForPearl: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "type",
+        "size",
+        "quality",
+        "quantityType",
+        "color",
+        "shape",
+      ]),
+    getColumnsForGemstone: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "quantityType",
+        "size",
+        "color",
+        "shape",
+        "carat",
+        "cut",
+        "clarity",
+      ]),
+    getColumnsForLinkingPart: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "description",
+        "quantityType",
+      ]),
+    getColumnsForPreciousMetal: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "type",
+        "quantityType",
+        "purity",
+        "color",
+        "plating",
+      ]),
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
     getResourceDetails: (state) => state.resourceDetails,

@@ -3,18 +3,53 @@
     <v-row justify="center">
       <v-col cols="10" max-width="1600">
         <v-card class="elevation-12">
-          <div class="text-center">
-            <h1>Resources table</h1>
-          </div>
-          <div class="d-flex justify-end">
-            <v-col cols="12" sm="6" md="4" class="text-end">
-              <v-btn rounded="xs" size="x-large" color="red" to="/resources/add"
-                >Add resource</v-btn
-              >
-            </v-col>
+          <v-container class="text-center text-h4 font-weight-bold">
+            {{
+              selectedResourceType === "All"
+                ? "All resources table"
+                : `${selectedResourceType}'s resources table`
+            }}
+          </v-container>
+          <div class="d-flex justify-space-between">
+            <v-menu>
+              <template v-slot:activator="{ props }">
+                <v-btn
+                  variant="outlined"
+                  class="mx-4"
+                  rounded="xs"
+                  :size="isSmallScreen ? 'small' : 'x-large'"
+                  color="red"
+                  v-bind="props"
+                >
+                  Resource Type
+                </v-btn>
+              </template>
+              <v-list>
+                <v-list-item
+                  v-for="resourceType in resourceTypes"
+                  :key="resourceType"
+                  :value="resourceType"
+                >
+                  <v-list-item-title
+                    @click="filterResourcesByType(resourceType)"
+                    >{{ resourceType }}</v-list-item-title
+                  >
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-btn
+              class="mx-4"
+              rounded="xs"
+              :size="isSmallScreen ? 'small' : 'x-large'"
+              color="red"
+              to="/resources/add"
+              >Add resource</v-btn
+            >
           </div>
 
-          <resource-table></resource-table>
+          <resource-table
+            :selectedResourceType="selectedResourceType"
+          ></resource-table>
         </v-card>
       </v-col>
     </v-row>
@@ -22,9 +57,10 @@
 </template>
 
 <script>
-import { onMounted, inject } from "vue";
-import ResourceTable from "@/components/Tables/ResourceTable.vue";
+import { onMounted, inject, ref, computed } from "vue";
+import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
+import { useDisplay } from "vuetify/lib/framework.mjs";
 
 export default {
   components: {
@@ -32,22 +68,35 @@ export default {
   },
   setup() {
     const store = useStore();
-    const showSnackbar = inject("showSnackbar");
+    const snackbarProvider = inject("snackbarProvider");
+    const selectedResourceType = ref("All");
+
+    const filterResourcesByType = (title) => {
+      selectedResourceType.value = title;
+    };
 
     onMounted(async () => {
       try {
         await store.dispatch("resources/fetchResources");
       } catch (error) {
-        showSnackbar({
-          message: "Failed to fetch resources.",
-          color: "error",
-          timeout: 4000,
-          location: "top right",
-        });
+        snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
       }
     });
 
-    return {};
+    return {
+      isSmallScreen: computed(() => {
+        return useDisplay().smAndDown.value;
+      }),
+      filterResourcesByType,
+      selectedResourceType,
+      resourceTypes: [
+        "All",
+        "Pearl",
+        "LinkingPart",
+        "Gemstone",
+        "PreciousMetal",
+      ],
+    };
   },
 };
 </script>

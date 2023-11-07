@@ -6,42 +6,69 @@
           <div class="text-center">
             <h1>Products table</h1>
           </div>
-          <products-table></products-table>
+
+          <div class="d-flex justify-end">
+            <v-btn
+              class="mx-4"
+              rounded="xs"
+              :size="isSmallScreen ? 'small' : 'x-large'"
+              color="red"
+              to="/products/add"
+              >Add Product</v-btn
+            >
+          </div>
+
+          <products-table :additionalColumnsRight="disassembleAndUserColumns">
+            <template v-slot:item.owner="{ item }">
+              <router-link
+                style="text-decoration: none; color: inherit"
+                :to="`/users/${item.owner.id}`"
+              >
+                <v-btn variant="plain">
+                  <v-icon size="25">mdi-account-circle</v-icon>
+                  <v-tooltip activator="parent" location="top">
+                    <div>Name: {{ item.owner.name }}</div>
+                    <div>Email: {{ item.owner.email }}</div>
+                  </v-tooltip>
+                </v-btn>
+              </router-link>
+            </template>
+
+            <template v-slot:item.disassembly="{ item }">
+              <disassembly-button
+                :item="item"
+              ></disassembly-button>
+            </template>
+          </products-table>
         </v-card>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
-<script>
-import ProductsTable from "@/components/Tables/ProductsTable.vue";
-import { onMounted, inject } from "vue";
+<script setup>
+import ProductsTable from "@/components/Table/ProductsTable.vue";
+import { onBeforeMount, inject, computed } from "vue";
 import { useStore } from "vuex";
+import { useDisplay } from "vuetify/lib/framework.mjs";
+const store = useStore();
+const snackbarProvider = inject("snackbarProvider");
 
-export default {
-  components: {
-    ProductsTable,
-  },
-  setup() {
-    const store = useStore();
-    const showSnackbar = inject("showSnackbar");
+const disassembleAndUserColumns = computed(() => [
+  store.state.products.tableColumnOwner,
+  store.state.products.tableColumnDisassembly,
+]);
 
-    onMounted(async () => {
-      try {
-        await store.dispatch("products/fetchProducts");
-      } catch (error) {
-        showSnackbar({
-          message: "Failed to fetch products.",
-          color: "error",
-          timeout: 4000,
-          location: "top right",
-        });
-      }
-    });
+onBeforeMount(async () => {
+  try {
+    await store.dispatch("products/fetchProducts");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch products");
+  }
+});
 
-    return {};
-  },
-};
+const isSmallScreen = computed(() => {
+  return useDisplay().smAndDown.value;
+});
+
 </script>
-
-<style scoped></style>

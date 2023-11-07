@@ -1,25 +1,24 @@
-import { fetchUsers } from "@/services/HttpClientService.js";
+import {
+  fetchUsers,
+  fetchResourcePerUser,
+  postResourceAvailability,
+} from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
   state: {
     users: [],
-    isSorting: false,
-    isBeingSorted: false,
-    isAscending: true,
+    usersResources: {},
   },
   mutations: {
     setUsers(state, users) {
       state.users = users;
     },
-    setIsSorting(state, isSorting) {
-      state.isSorting = isSorting;
+    setUsersResources(state, usersResources) {
+      state.usersResources = usersResources;
     },
-    setIsBeingSorted(state, isBeingSorted) {
-      state.isBeingSorted = isBeingSorted;
-    },
-    setIsAscending(state, isAscending) {
-      state.isAscending = isAscending;
+    setAllResourcesByUsers(state, usersResources) {
+      state.allResourcesByUser.push(usersResources);
     },
   },
   actions: {
@@ -27,38 +26,33 @@ export default {
       const res = await fetchUsers();
       commit("setUsers", res);
     },
-    toggleSorting({ commit, state }) {
-      commit("setIsSorting", true);
-      commit("setIsBeingSorted", true)
-      setTimeout(() => {
-        // commit("setIsAscending", !state.isAscending);
-        commit("setIsSorting", false);
-      }, 100);
+    async fetchResourcesForUser({ commit }, userId) {
+      const res = await fetchResourcePerUser(userId);
+      commit("setUsersResources", res);
+    },
+    async postResourcesToUser({ commit }, data) {
+      await postResourceAvailability(data);
     },
   },
   getters: {
-    isSorting(state) {
-      return state.isSorting;
-    },
-    isBeingSorted(state) {
-      return state.isBeingSorted;
-    },
+    getColumns: (state, getters, rootState, rootGetters) => [
+      rootState.resources.tableColumnRemoveQuantity,
+      rootState.resources.tableColumnQuantity,
+      ...rootState.resources.tableColumns,
+    ],
     allUsers(state) {
       return state.users;
     },
-    sortedUsers(state) {
-      return state.users.slice().sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-        if (state.isAscending) {
-          if (nameA < nameB) return -1;
-          if (nameA > nameB) return 1;
-        } else {
-          if (nameA > nameB) return -1;
-          if (nameA < nameB) return 1;
+    getUserById: (state) => (id) => state.users.find((user) => user.id === id),
+    getUserResources(state) {
+      return state.usersResources.resourcesAndQuantities.map(
+        (resourceQuantity) => {
+          return {
+            quantity: resourceQuantity.quantity,
+            ...resourceQuantity.resource,
+          };
         }
-        return 0;
-      });
+      );
     },
   },
 };
