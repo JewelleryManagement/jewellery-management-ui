@@ -39,16 +39,15 @@ import {
   useTextFieldRules,
   useTextAreaFieldRules,
   useTextFieldLargeRules,
-  useNumberFieldRules
+  useNumberFieldRules,
 } from "../../utils/validation-rules.js";
 
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
 
 const smallInputRules = useTextFieldRules();
-const largeFieldRules = useTextFieldLargeRules()
+const largeFieldRules = useTextFieldLargeRules();
 const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
-
 </script>
 <style scoped></style>

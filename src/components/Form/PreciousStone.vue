@@ -93,14 +93,14 @@ import { useStore } from "vuex";
 import {
   useTextFieldRules,
   useNumberFieldRules,
-  useTextFieldLargeRules
+  useTextFieldLargeRules,
 } from "../../utils/validation-rules.js";
 
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
 
 const smallFieldRules = useTextFieldRules();
-const largeFieldRules = useTextFieldLargeRules()
+const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 </script>
 <style scoped></style>
