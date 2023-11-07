@@ -53,13 +53,13 @@ const props = defineProps({
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);
 
-const tableColumns = computed(() =>
-  additionalColumnsLeft.value
-    ? [...additionalColumnsLeft.value, ...store.getters["products/getColumns"]]
-    : additionalColumnsRight.value
-    ? [...store.getters["products/getColumns"], ...additionalColumnsRight.value]
-    : [...store.getters["products/getColumns"]]
-);
+const tableColumns = computed(() => {
+  const leftColumns = additionalColumnsLeft.value || [];
+  const rightColumns = additionalColumnsRight.value || [];
+  const defaultColumns = store.getters["products/getColumns"];
+
+  return [...leftColumns, ...defaultColumns, ...rightColumns];
+});
 
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];

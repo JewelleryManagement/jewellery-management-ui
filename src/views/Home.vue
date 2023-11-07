@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
+import { ref, onBeforeMount, inject } from "vue";
 import PageViewer from "../components/PageViewer.vue";
 import { useStore } from "vuex";
 const store = useStore();
@@ -13,7 +13,7 @@ const pageTitle = ref("Home Page");
 const content = ref("This is the home content");
 const snackbarProvider = inject("snackbarProvider");
 
-onMounted(async () => {
+onBeforeMount(async () => {
   try {
     await Promise.all([
       store.dispatch("users/fetchUsers"),
