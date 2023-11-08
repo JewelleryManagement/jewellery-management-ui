@@ -30,9 +30,11 @@ export default {
       { key: "plating", title: "Plating" },
       { key: "carat", title: "Carat" },
       { key: "cut", title: "Cut" },
+      { key: "pricePerQuantity", title: "Price per quantity" },
+      { key: "note", title: "Note" },
       { key: "description", title: "Description" },
     ],
-    tableColumnQuantity: { key: "quantity", title: "Quantity"},
+    tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
     tableColumnAdd: { key: "add", title: "", slot: "add" },
@@ -41,7 +43,7 @@ export default {
       key: "addQuantity",
       title: "",
       slot: "addQuantity",
-      width: "100px" 
+      width: "100px",
     },
   }),
   mutations: {
@@ -124,8 +126,10 @@ export default {
         "quantityType",
         "color",
         "shape",
+        "pricePerQuantity",
+        "note"
       ]),
-    getColumnsForGemstone: (state) =>
+    getColumnsForPreciousStone: (state) =>
       filterColumnsByKey(state, [
         "quantity",
         "clazz",
@@ -136,15 +140,32 @@ export default {
         "carat",
         "cut",
         "clarity",
+        "pricePerQuantity",
+        "note"
       ]),
-    getColumnsForLinkingPart: (state) =>
+    getColumnsForSemiPreciousStone: (state) =>
+      filterColumnsByKey(state, [
+        "quantity",
+        "clazz",
+        "quantityType",
+        "size",
+        "color",
+        "shape",
+        "cut",
+        "clarity",
+        "pricePerQuantity",
+        "note"
+      ]),
+    getColumnsForElement: (state) =>
       filterColumnsByKey(state, [
         "quantity",
         "clazz",
         "description",
         "quantityType",
+        "pricePerQuantity",
+        "note"
       ]),
-    getColumnsForPreciousMetal: (state) =>
+    getColumnsForMetal: (state) =>
       filterColumnsByKey(state, [
         "quantity",
         "clazz",
@@ -153,6 +174,8 @@ export default {
         "purity",
         "color",
         "plating",
+        "pricePerQuantity",
+        "note"
       ]),
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
