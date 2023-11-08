@@ -20,11 +20,11 @@
             </template>
 
             <template v-slot:item.resourceContent="{ item }">
-              <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
+              <v-icon @click="openInnerDialog(item, 'resources')">mdi-cube</v-icon>
             </template>
 
             <template v-slot:item.productsContent="{ item }">
-              <v-icon @click="openDialog(item, 'products')"
+              <v-icon @click="openInnerDialog(item, 'products')"
                 >mdi-cube-outline</v-icon
               >
             </template>
@@ -61,7 +61,7 @@
             <v-btn color="green" variant="text" @click="saveTableValues"
               >Save</v-btn
             >
-            <v-btn color="red" variant="text" @click="closeDialog()"
+            <v-btn color="red" variant="text" @click="closeOuterDialog()"
               >Close</v-btn
             >
           </div>
@@ -74,14 +74,14 @@
     v-if="isResourceDialogOpen"
     v-model="isResourceDialogOpen"
     :data="resourceDialogData"
-    @close-dialog="closeDialog('resources')"
+    @close-dialog="closeInnerDialog(dialogTypes.RESOURCE)"
   ></resource-content-dialog>
 
   <products-content-dialog
     v-if="isProductsDialogOpen"
     v-model="isProductsDialogOpen"
     :data="productsDialogData"
-    @close-dialog="closeDialog('products')"
+    @close-dialog="closeInnerDialog(dialogTypes.PRODUCT)"
   >
   </products-content-dialog>
 </template>
@@ -97,6 +97,11 @@ const { modelValue, userId } = defineProps({
 });
 const ICON_ADD = ref("mdi-plus");
 const ICON_REMOVE = ref("mdi-minus");
+const dialogTypes = {
+  RESOURCE: "resources",
+  PRODUCT: "products",
+};
+
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
@@ -107,7 +112,7 @@ try {
 }
 const ownedNonContentProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
-    (product) => product.contentOf === 'No'
+    (product) => product.contentOf === "No"
   )
 );
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
@@ -118,8 +123,8 @@ const btnIcon = ref({});
 
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);
 
-const openDialog = (item, content) => {
-  if (content == "resources") {
+const openInnerDialog = (item, type) => {
+  if (type == dialogTypes.RESOURCE) {
     resourceDialogData.value = item;
     isResourceDialogOpen.value = true;
   } else {
@@ -128,20 +133,18 @@ const openDialog = (item, content) => {
   }
 };
 
-const closeDialog = (content) => {
-  if (content === "resources") {
-    isResourceDialogOpen.value = false;
-  } else if (content === "products") {
-    isProductsDialogOpen.value = false;
-  } else {
-    temporarySelectedProducts.value = [...savedProductsIds.value];
-    btnIcon.value = [];
-    savedProductsIds.value.forEach((id) => {
-      btnIcon.value[id] = ICON_REMOVE;
-    });
-    emits("close-dialog", "products");
-  }
+const closeInnerDialog = (type) => {
+  if (type === dialogTypes.RESOURCE) isResourceDialogOpen.value = false;
+  if (type === dialogTypes.PRODUCT) isProductsDialogOpen.value = false;
+};
 
+const closeOuterDialog = () => {
+  temporarySelectedProducts.value = [...savedProductsIds.value];
+  btnIcon.value = [];
+  savedProductsIds.value.forEach((id) => {
+    btnIcon.value[id] = ICON_REMOVE;
+  });
+  emits("close-dialog", dialogTypes.PRODUCT);
 };
 
 const addProductById = (id) => {
