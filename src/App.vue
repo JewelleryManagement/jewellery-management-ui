@@ -117,7 +117,7 @@ export default {
       },
     };
 
-    const hamburgerMenuPages = ref([
+     const hamburgerMenuPages = ref([
       ...mainMenuPages,
       {
         link: {
