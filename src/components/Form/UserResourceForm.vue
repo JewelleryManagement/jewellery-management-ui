@@ -50,21 +50,34 @@ const userOptions = computed(() =>
 if (route.path.includes("/remove")) {
   const resourceId = route.params.resourceId;
   const requestedUserId = route.params.userId;
+  
   const loggedUserDetails = computed(() =>
     store.getters["users/getUserById"](requestedUserId)
   ).value;
-  selectedUser.value = loggedUserDetails.name;
-  const resourceAvailability = ref({});
 
+  selectedUser.value = loggedUserDetails.name;
+
+  const resourceAvailability = await fetchResourceAvailability(resourceId);
+  
+  const quantityByUser = findQuantityByUser(resourceAvailability, loggedUserDetails.id);
+  quantity.value = quantityByUser;
+}
+
+async function fetchResourceAvailability(resourceId) {
+  const resourceAvailability = ref({});
   resourceAvailability.value = await store.dispatch(
     "resources/fetchAvailabilityResourceById",
     resourceId
   );
-  const quantityByUser = resourceAvailability.value.usersAndQuantities.find(
-    (item) => item.owner.id === loggedUserDetails.id
-  ).quantity;
-  quantity.value = quantityByUser;
+  return resourceAvailability.value;
 }
+
+function findQuantityByUser(resourceAvailability, userId) {
+  return resourceAvailability.usersAndQuantities.find(
+    (item) => item.owner.id === userId
+  ).quantity;
+}
+
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 
