@@ -48,7 +48,8 @@ const userOptions = computed(() =>
 
 if (route.path.includes("/remove")) {
   const resourceId = route.params.resourceId;
-  const currentlyLoggedUser = store.getters["auth/getUser"];
+  const loggedUser = route.params.userId;
+  const currentlyLoggedUser = computed(() => store.getters["users/getUserById"](loggedUser)).value
   formData.userOption = currentlyLoggedUser.name;
   const resourceAvailability = ref({});
 

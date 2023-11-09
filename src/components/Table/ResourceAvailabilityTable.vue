@@ -37,7 +37,7 @@
             params: { resourceId: item.id, userId: user.id },
           }"
         >
-        <v-icon color="#607D8B">mdi-rotate-left</v-icon>
+        <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
         </router-link>
       </template>
     </v-data-table>

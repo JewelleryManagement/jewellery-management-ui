@@ -27,11 +27,11 @@ resourceAvailability.value = await store.dispatch(
   "resources/fetchAvailabilityResourceById",
   resourceId
 );
-const resourceQuantity = ref({});
-resourceQuantity.value = await store.dispatch(
-  "resources/fetchQuantityByResourceId",
-  resourceId
-);
+// const resourceQuantity = ref({});
+// resourceQuantity.value = await store.dispatch(
+//   "resources/fetchQuantityByResourceId",
+//   resourceId
+// );
 
 const resourceDetails = computed(
   () => store.getters["resources/getResourceForm"]
