@@ -41,7 +41,7 @@ export default {
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
     tableColumnAdd: { key: "add", title: "", slot: "add" },
     tableColumnRemoveQuantity: { key: "remove", title: "", slot: "remove" },
-    tableColumnRemoveTransfer: { key: "transfer", title: "", slot: "transfer" },
+    tableColumnTransferQuantity: { key: "transfer", title: "", slot: "transfer" },
     tableColumnAddQuantity: {
       key: "addQuantity",
       title: "",

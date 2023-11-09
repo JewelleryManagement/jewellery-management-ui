@@ -2,7 +2,6 @@
   <v-container class="my-12" fluid>
     <resource-availability-card
       :resourceAvailability="resourceAvailability"
-      :resourceQuantity="resourceQuantity"
     ></resource-availability-card>
     <user-resource-form @handle-submit="handleSubmit"></user-resource-form>
   </v-container>
@@ -25,11 +24,6 @@ const allUsers = computed(() => store.getters["users/allUsers"]);
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
   "resources/fetchAvailabilityResourceById",
-  resourceId
-);
-const resourceQuantity = ref({});
-resourceQuantity.value = await store.dispatch(
-  "resources/fetchQuantityByResourceId",
   resourceId
 );
 
