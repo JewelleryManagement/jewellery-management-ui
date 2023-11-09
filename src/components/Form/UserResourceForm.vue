@@ -49,17 +49,17 @@ const userOptions = computed(() =>
 
 if (route.path.includes("/remove")) {
   const resourceId = route.params.resourceId;
-  const requestedUserId = route.params.userId;
+  const affectedUserId = route.params.userId;
   
-  const loggedUserDetails = computed(() =>
-    store.getters["users/getUserById"](requestedUserId)
+  const affectedUser = computed(() =>
+    store.getters["users/getUserById"](affectedUserId)
   ).value;
 
-  selectedUser.value = loggedUserDetails.name;
+  selectedUser.value = affectedUser.name;
 
   const resourceAvailability = await fetchResourceAvailability(resourceId);
   
-  const quantityByUser = findQuantityByUser(resourceAvailability, loggedUserDetails.id);
+  const quantityByUser = findQuantityByUser(resourceAvailability, affectedUser.id);
   quantity.value = quantityByUser;
 }
 
