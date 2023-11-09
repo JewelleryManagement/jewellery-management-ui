@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, watch } from "vue";
+import { ref, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
@@ -26,30 +26,22 @@ resourceAvailability.value = await store.dispatch(
   resourceId
 );
 
-const resourceDetails = computed(
-  () => store.getters["resources/getResourceForm"]
-);
+const handleSubmit = async (inputsData) => {
+  const { selectedUser, quantity } = inputsData;
+  const userId = route.params.userId;
 
-watch(route, (newValue) => {
-  store.dispatch("resources/setResourceForm", {});
-});
-
-const handleSubmit = async () => {
-  const { userOption, quantity } = resourceDetails.value;
-  const userId = route.params.userId
-
-    const data = {
-      userId: userId,
-      resourceId: resourceId,
-      quantity: Number(quantity),
-    };
-    try {
-      await store.dispatch("resources/removeQuantityFromResource", data);
-      snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
-      router.push(`/users/${userId}`);
-    } catch (error) {
-      snackbarProvider.showErrorSnackbar("Couldn't update quantity");
-    }
+  const data = {
+    userId: userId,
+    resourceId: resourceId,
+    quantity: Number(quantity),
+  };
+  try {
+    await store.dispatch("resources/removeQuantityFromResource", data);
+    snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
+    router.push(`/users/${userId}`);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Couldn't update quantity");
+  }
 };
 </script>
 

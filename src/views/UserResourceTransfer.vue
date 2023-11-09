@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, watch } from "vue";
+import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
@@ -27,25 +27,17 @@ resourceAvailability.value = await store.dispatch(
   resourceId
 );
 
-const resourceDetails = computed(
-  () => store.getters["resources/getResourceForm"]
-);
-
-watch(route, (newValue) => {
-  store.dispatch("resources/setResourceForm", {});
-});
-
-const handleSubmit = async () => {
-  const { userOption, quantity } = resourceDetails.value;
+const handleSubmit = async (inputsData) => {
+  const { selectedUser, quantity } = inputsData;
   const selectedNewOwner = allUsers.value.find(
-    (user) => user.name == userOption
+    (user) => user.name == selectedUser
   );
 
   const data = {
     previousOwnerId: userId,
     newOwnerId: selectedNewOwner.id,
     transferredResourceId: resourceId,
-    quantity: quantity,
+    quantity: Number(quantity),
   };
 
   try {

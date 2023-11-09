@@ -9,8 +9,8 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ref, computed, inject } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
 const { resourceId, userId } = defineProps({
@@ -19,7 +19,6 @@ const { resourceId, userId } = defineProps({
 });
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
-const route = useRoute();
 const router = useRouter();
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const resourceAvailability = ref({});
@@ -28,22 +27,13 @@ resourceAvailability.value = await store.dispatch(
   resourceId
 );
 
-const resourceDetails = computed(
-  () => store.getters["resources/getResourceForm"]
-);
-
-watch(route, (newValue) => {
-  store.dispatch("resources/setResourceForm", {});
-});
-
-const handleSubmit = async () => {
-  const { userOption, quantity } = resourceDetails.value;
-  const selectedUser = allUsers.value.find((user) => user.name == userOption);
-
+const handleSubmit = async (inputsData) => {
+  const { selectedUser, quantity } = inputsData;
+  const userId = allUsers.value.find((user) => user.name == selectedUser);
   const data = {
-    userId: selectedUser.id,
+    userId: userId.id,
     resourceId: resourceId,
-    quantity: quantity,
+    quantity: Number(quantity),
   };
   try {
     await store.dispatch("users/postResourcesToUser", data);
