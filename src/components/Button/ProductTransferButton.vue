@@ -80,7 +80,6 @@ const handleSubmit = async () => {
     userId ? await fetchProductsForUser() : await fetchProducts();
     snackbarProvider.showSuccessSnackbar("Successfully transferred product!");
     closeDialog();
-    form.value.reset()
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Couldn't transfer the product!");
   }
@@ -91,6 +90,7 @@ const openDialog = () => {
 };
 
 const closeDialog = () => {
+  form.value.reset()
   dialog.value = false;
 };
 </script>
