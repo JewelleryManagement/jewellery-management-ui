@@ -39,9 +39,7 @@
             </template>
 
             <template v-slot:item.transfer="{ item }">
-              <router-link :to="`/products/${item.id}/transfer`">
-                <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
-              </router-link>
+              <product-transfer-button :item="item" />
             </template>
           </products-table>
         </v-card>
