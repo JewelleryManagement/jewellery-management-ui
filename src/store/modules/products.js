@@ -45,6 +45,11 @@ export default {
       title: "Disassembly",
       align: "center",
     },
+    tableColumnTransfer: {
+      key: "transfer",
+      title: "Transfer",
+      align: "center",
+    },
   }),
   mutations: {
     setProducts(state, products) {

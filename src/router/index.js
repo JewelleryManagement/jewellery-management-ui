@@ -13,6 +13,7 @@ const UserResourceRemove = () => import("../views/UserResourceRemove.vue");
 const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
 const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
+const ProductTransfer = () => import("../views/ProductTransfer.vue");
 const NotFound = () => import("../views/NotFound.vue");
 
 const routes = [
@@ -87,6 +88,12 @@ const routes = [
     name: "Products",
     component: Products,
     meta: { title: "Products page", requiresAuth: true },
+  },
+  {
+    path: "/products/:productId/transfer",
+    name: "Product Transfer",
+    component: ProductTransfer,
+    meta: { title: "Product Transfer", requiresAuth: true },
   },
   {
     path: "/products/add",

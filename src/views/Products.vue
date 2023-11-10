@@ -35,9 +35,13 @@
             </template>
 
             <template v-slot:item.disassembly="{ item }">
-              <disassembly-button
-                :item="item"
-              ></disassembly-button>
+              <disassembly-button :item="item"></disassembly-button>
+            </template>
+
+            <template v-slot:item.transfer="{ item }">
+              <router-link :to="`/products/${item.id}/transfer`">
+                <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
+              </router-link>
             </template>
           </products-table>
         </v-card>
@@ -57,6 +61,7 @@ const snackbarProvider = inject("snackbarProvider");
 const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.products.tableColumnDisassembly,
+  store.state.products.tableColumnTransfer,
 ]);
 
 onBeforeMount(async () => {
@@ -70,5 +75,4 @@ onBeforeMount(async () => {
 const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
-
 </script>
