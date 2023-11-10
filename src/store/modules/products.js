@@ -4,6 +4,7 @@ import {
   postProduct,
   fetchProductsByOwner,
   disassmebleProduct,
+  transferProduct,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -74,6 +75,10 @@ export default {
     async disassmebleProduct({ commit }, productId) {
       await disassmebleProduct(productId);
     },
+    async transferProduct({ commit }, data) {
+      const { productId, recipientId } = data;
+      await transferProduct(productId, recipientId)
+    },
   },
   getters: {
     allProducts: (state) => {
@@ -84,7 +89,8 @@ export default {
       state.tableColumnResourcesContent,
       state.tableColumnProductsContent,
     ],
-    getCurrentUserProducts: (state) => state.currentUserProducts.map(formatAuthors),
+    getCurrentUserProducts: (state) =>
+      state.currentUserProducts.map(formatAuthors),
     getAddColumn: (state) => state.tableColumnAdd,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
     getColumnsWithRCandPC: (state) => [

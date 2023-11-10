@@ -118,3 +118,7 @@ async function updateData(endpoint, data) {
 export async function updateResource(id, data) {
   return await updateData(`/resources/${id}`, data);
 }
+
+export async function transferProduct(productId, recipientId) {
+  return await updateData(`/products/${productId}/transfer/${recipientId}`);
+}
