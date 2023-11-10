@@ -1,5 +1,5 @@
 <template>
-  <v-dialog :model-value="modelValue" @update:model-value="modelValue">
+  <v-dialog :model-value="modelValue" @update:model-value="modelValue" persistent @click:outside="closeDialog">
     <v-form @submit.prevent="handleSubmit" ref="form" class="mt-4">
       <v-card class="mx-auto text-center pa-2" max-width="400" min-width="200">
         <v-card-title> Catalog Number: {{ item.catalogNumber }} </v-card-title>
