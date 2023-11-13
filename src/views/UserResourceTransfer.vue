@@ -41,11 +41,11 @@ const handleSubmit = async (inputsData) => {
   };
 
   try {
-    store.dispatch("resources/resourceAvailabilityTransfer", data);
+    await store.dispatch("resources/resourceAvailabilityTransfer", data);
     snackbarProvider.showSuccessSnackbar("Successfully transfered!");
     router.push(`/users/${userId}`);
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to transfer resource");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 </script>

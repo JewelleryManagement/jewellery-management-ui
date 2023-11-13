@@ -48,13 +48,9 @@ export async function fetchUsers() {
 
 // POSTS REQUESTS
 async function postData(endpoint, data) {
-  try {
-    const response = await axios.post(endpoint, data);
-    if (response.status === 201) {
-      return response.data;
-    }
-  } catch (error) {
-    throw new Error("Failed to post data to the server.");
+  const response = await axios.post(endpoint, data);
+  if (response.status === 201) {
+    return response.data;
   }
 }
 
