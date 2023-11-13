@@ -1,20 +1,16 @@
 <template>
   <v-btn
-    v-if="!item.sold && item.contentOf === 'No'"
+    :disabled="item.sold || item.contentOf === 'Yes'"
     variant="plain"
     @click="openDialog"
   >
     <v-icon color="#607D8B" size="25">mdi-swap-horizontal</v-icon>
   </v-btn>
 
-  <v-btn v-else variant="plain" disabled>
-    <v-icon color="#607D8B" size="25">mdi-swap-horizontal</v-icon>
-  </v-btn>
-
   <product-transfer-dialog
     v-if="isResourceDialogOpen"
     v-model="isResourceDialogOpen"
-    :item="item"
+    :product="item"
     :userId="userId"
     @close-dialog="closeDialog"
   />

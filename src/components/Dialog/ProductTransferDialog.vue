@@ -2,7 +2,7 @@
   <v-dialog :model-value="modelValue" @update:model-value="modelValue" persistent @click:outside="closeDialog">
     <v-form @submit.prevent="handleSubmit" ref="form" class="mt-4">
       <v-card class="mx-auto text-center pa-2" max-width="400" min-width="200">
-        <v-card-title> Catalog Number: {{ item.catalogNumber }} </v-card-title>
+        <v-card-title> Catalog Number: {{ product.catalogNumber }} </v-card-title>
         <v-select
           :items="userOptions"
           v-model="user"
@@ -24,8 +24,8 @@ import { validateUser } from "@/utils/validation-rules";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
-const props = defineProps(["modelValue", "item", "userId"]);
-const { modelValue, item, userId } = props;
+const props = defineProps(["modelValue", "product", "userId"]);
+const { modelValue, product, userId } = props;
 const [user, form] = [ref(""), ref(null)];
 const store = useStore();
 
@@ -57,7 +57,7 @@ const handleSubmit = async () => {
   if (!valid) return;
 
   const data = {
-    productId: item.id,
+    productId: product.id,
     recipientId: allUsers.value.find((user) => user.name == selectedUser).id,
   };
   try {
