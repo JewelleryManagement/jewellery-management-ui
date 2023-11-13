@@ -19,7 +19,7 @@ async function fetchData(endpoint) {
   }
 }
 export async function fetchResources() {
-  return await fetchData("/resources/quantity ");
+  return await fetchData("/resources/quantity");
 }
 
 export async function fetchResourcePerUser(userId) {
@@ -48,13 +48,9 @@ export async function fetchUsers() {
 
 // POSTS REQUESTS
 async function postData(endpoint, data) {
-  try {
-    const response = await axios.post(endpoint, data);
-    if (response.status === 201) {
-      return response.data;
-    }
-  } catch (error) {
-    throw new Error("Failed to post data to the server.");
+  const response = await axios.post(endpoint, data);
+  if (response.status === 201) {
+    return response.data;
   }
 }
 
@@ -64,6 +60,10 @@ export async function postResources(data) {
 
 export async function postResourceAvailability(data) {
   return await postData("/resources/availability", data);
+}
+
+export async function postResourceAvailabilityTransfer(data) {
+  return await postData("/resources/availability/transfer", data);
 }
 
 export async function postProduct(data) {

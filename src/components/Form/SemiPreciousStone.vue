@@ -1,9 +1,25 @@
 <template>
   <v-text-field
-    v-model="formData.type"
+    v-model="formData.color"
     :counter="10"
     :rules="smallFieldRules"
-    label="Type"
+    label="Color"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.cut"
+    :counter="10"
+    :rules="smallFieldRules"
+    label="Cut"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.clarity"
+    :counter="10"
+    :rules="smallFieldRules"
+    label="Clarity"
     required
   ></v-text-field>
 
@@ -16,26 +32,10 @@
   ></v-text-field>
 
   <v-text-field
-    v-model="formData.quality"
-    :counter="10"
-    :rules="smallFieldRules"
-    label="Quality"
-    required
-  ></v-text-field>
-
-  <v-text-field
     v-model="formData.quantityType"
     :counter="10"
     :rules="smallFieldRules"
     label="Quantity Type"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.color"
-    :counter="10"
-    :rules="smallFieldRules"
-    label="Color"
     required
   ></v-text-field>
 

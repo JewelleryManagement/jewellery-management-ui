@@ -8,7 +8,9 @@ const ProductsDetails = () => import("../views/ProductsDetails.vue");
 const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
-const UserResourceDetails = () => import("../views/UserResourceDetails.vue");
+const UserResourceAdd = () => import("../views/UserResourceAdd.vue");
+const UserResourceRemove = () => import("../views/UserResourceRemove.vue");
+const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
 const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
 const NotFound = () => import("../views/NotFound.vue");
@@ -44,15 +46,22 @@ const routes = [
     path: "/resources/availability/add/:resourceId",
     props: true,
     name: "Add-Quantity",
-    component: UserResourceDetails,
+    component: UserResourceAdd,
     meta: { title: "Add Quantity", requiresAuth: true },
   },
   {
     path: "/resources/availability/remove/:resourceId/:userId",
     props: true,
     name: "Remove-Quantity",
-    component: UserResourceDetails,
+    component: UserResourceRemove,
     meta: { title: "Remove Quantity", requiresAuth: true },
+  },
+  {
+    path: "/resources/availability/transfer/:resourceId/:userId",
+    props: true,
+    name: "Transfer-Quantity",
+    component: UserResourceTransfer,
+    meta: { title: "Transfer Quantity", requiresAuth: true },
   },
   {
     path: "/resources",

@@ -42,14 +42,14 @@ export function usePasswordFieldRules() {
 
 export function usePositiveNumberRules(currentValue) {
   return [
-    (v) => (v > 0) || "Please enter a positive number",
-    (v) => (v <= currentValue) || "Value must be less than total quantity",
+    (v) => v > 0 || "Please enter a positive number",
+    (v) => v <= currentValue || "Value must be less than total quantity",
   ];
 }
 
 export function validateAuthors(authors) {
   if (authors.length === 0) {
-    return 'Please select at least one author.';
+    return "Please select at least one author.";
   }
   return true;
 }
