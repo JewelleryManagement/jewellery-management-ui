@@ -45,7 +45,7 @@ const handleSubmit = async (inputsData) => {
     snackbarProvider.showSuccessSnackbar("Successfully transfered!");
     router.push(`/users/${userId}`);
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to transfer resource");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 </script>
