@@ -1,8 +1,15 @@
 <template>
-  <v-dialog :model-value="modelValue" @update:model-value="modelValue" persistent @click:outside="closeDialog">
+  <v-dialog
+    :model-value="modelValue"
+    @update:model-value="modelValue"
+    persistent
+    @click:outside="closeDialog"
+  >
     <v-form @submit.prevent="handleSubmit" ref="form" class="mt-4">
       <v-card class="mx-auto text-center pa-2" max-width="400" min-width="200">
-        <v-card-title> Catalog Number: {{ product.catalogNumber }} </v-card-title>
+        <v-card-title>
+          Catalog Number: {{ product.catalogNumber }}
+        </v-card-title>
         <v-select
           :items="userOptions"
           v-model="user"
@@ -25,7 +32,7 @@ import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps(["modelValue", "product", "userId"]);
-const { modelValue, product, userId } = props;
+const { modelValue, product } = props;
 const [user, form] = [ref(""), ref(null)];
 const store = useStore();
 
@@ -33,22 +40,6 @@ const emits = defineEmits(["close-dialog"]);
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const userOptions = allUsers.value.map((user) => user.name);
-
-async function fetchProducts() {
-  try {
-    store.dispatch("products/fetchProducts");
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch products.");
-  }
-}
-
-async function fetchProductsForUser() {
-  try {
-    await store.dispatch("products/fetchProductsByOwner", userId);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch user products.");
-  }
-}
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
@@ -62,17 +53,16 @@ const handleSubmit = async () => {
   };
   try {
     await store.dispatch("products/transferProduct", data);
-    userId ? await fetchProductsForUser() : await fetchProducts();
     snackbarProvider.showSuccessSnackbar("Successfully transferred product!");
-    closeDialog();
+    closeDialog("submitted");
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Couldn't transfer the product!");
   }
 };
 
-const closeDialog = async () => {
+const closeDialog = async (response) => {
   resetForm();
-  emits("close-dialog");
+  emits("close-dialog", response);
 };
 
 const resetForm = () => {

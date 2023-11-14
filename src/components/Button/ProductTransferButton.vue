@@ -18,7 +18,10 @@
 
 <script setup>
 import ProductTransferDialog from "../Dialog/ProductTransferDialog.vue";
-import { ref } from "vue";
+import { ref, inject } from "vue";
+const snackbarProvider = inject("snackbarProvider");
+import { useStore } from "vuex";
+const store = useStore();
 
 const props = defineProps({
   item: Object,
@@ -31,7 +34,30 @@ const openDialog = () => {
   isResourceDialogOpen.value = true;
 };
 
-const closeDialog = () => {
+const closeDialog = async (response) => {
+  response === "submitted"
+    ? await submittedHandler()
+    : (isResourceDialogOpen.value = false);
+};
+
+const submittedHandler = async () => {
+  userId ? await fetchProductsForUser() : await fetchProducts();
   isResourceDialogOpen.value = false;
 };
+
+async function fetchProducts() {
+  try {
+    await store.dispatch("products/fetchProducts");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch products.");
+  }
+}
+
+async function fetchProductsForUser() {
+  try {
+    await store.dispatch("products/fetchProductsByOwner", userId);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch user products.");
+  }
+}
 </script>
