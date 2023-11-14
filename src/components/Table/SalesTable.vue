@@ -3,6 +3,17 @@
     <div class="text-center">
       <h1>Sales table</h1>
     </div>
+
+    <div class="d-flex justify-end">
+      <v-btn
+        class="mx-4"
+        rounded="xs"
+        :size="isSmallScreen ? 'small' : 'x-large'"
+        color="red"
+        to="/sales/add"
+        >New Sale</v-btn
+      >
+    </div>
     <v-card-title>
       <v-spacer></v-spacer>
       <v-text-field
@@ -22,10 +33,14 @@
 </template>
 
 <script setup>
+import { useDisplay } from "vuetify/lib/framework.mjs";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed } from "vue";
 const search = ref("");
 
+const isSmallScreen = computed(() => {
+  return useDisplay().smAndDown.value;
+});
 const tableColumns = [
   { key: "productName", title: "Product Name" },
   { key: "price", title: "Price" },
