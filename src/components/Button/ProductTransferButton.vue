@@ -36,28 +36,20 @@ const openDialog = () => {
 
 const closeDialog = async (response) => {
   response === "submitted"
-    ? await submittedHandler()
+    ? await fetchData()
     : (isResourceDialogOpen.value = false);
 };
 
-const submittedHandler = async () => {
-  userId ? await fetchProductsForUser() : await fetchProducts();
-  isResourceDialogOpen.value = false;
+const fetchData = async () => {
+  const actionType = userId ? "products/fetchProductsByOwner" : "products/fetchProducts";
+  const errorMessage = userId ? "Failed to fetch user products." : "Failed to fetch products.";
+
+  try {
+    await store.dispatch(actionType, userId);
+    isResourceDialogOpen.value = false;
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(errorMessage);
+  }
 };
 
-async function fetchProducts() {
-  try {
-    await store.dispatch("products/fetchProducts");
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch products.");
-  }
-}
-
-async function fetchProductsForUser() {
-  try {
-    await store.dispatch("products/fetchProductsByOwner", userId);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch user products.");
-  }
-}
 </script>
