@@ -24,10 +24,10 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const props = defineProps({
-  item: Object,
+  product: Object,
   userId: { type: String, default: null },
 });
-const [product, userId] = [props.item, props.userId];
+const [product, userId] = [props.product, props.userId];
 const isResourceDialogOpen = ref(false);
 
 const openDialog = () => {

@@ -61,7 +61,7 @@
                     </template>
 
                     <template v-slot:item.transfer="{ item }">
-                      <product-transfer-button :item="item" :userId="userId" />
+                      <product-transfer-button :product="item" :userId="userId" />
                     </template>
                   </products-table>
                 </v-card>
