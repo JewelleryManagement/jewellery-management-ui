@@ -14,7 +14,7 @@
             :additionalColumnsLeft="addColumn"
           >
             <template v-slot:item.add="{ item }">
-              <v-icon color="blue" @click="addProductById(item.id)">{{
+              <v-icon color="blue" @click="addProductById(item)">{{
                 btnIcon[item.id] || ICON_ADD
               }}</v-icon>
             </template>
@@ -110,15 +110,20 @@ const dialogTypes = {
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
-watch(() => props.userId, async (newId, oldId) => {
-  await store.dispatch("products/fetchProductsByOwner", newId);
-});
+watch(
+  () => props.userId,
+  async (newId, oldId) => {
+    await store.dispatch("products/fetchProductsByOwner", newId);
+    clearTableValues();
+  }
+);
 
 try {
   await store.dispatch("products/fetchProductsByOwner", props.userId);
 } catch (error) {
   snackbarProvider.showErrorSnackbar("Failed to fetch products.");
 }
+
 const ownedNonContentProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
     (product) => product.contentOf === "No"
@@ -126,7 +131,7 @@ const ownedNonContentProducts = computed(() =>
 );
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 
-const savedProductsIds = ref([]);
+const savedProducts = ref([]);
 const temporarySelectedProducts = ref([]);
 const btnIcon = ref({});
 
@@ -148,24 +153,24 @@ const closeInnerDialog = (type) => {
 };
 
 const closeOuterDialog = () => {
-  temporarySelectedProducts.value = [...savedProductsIds.value];
+  temporarySelectedProducts.value = [...savedProducts.value];
   btnIcon.value = [];
-  savedProductsIds.value.forEach((id) => {
-    btnIcon.value[id] = ICON_REMOVE;
+  savedProducts.value.forEach((product) => {
+    btnIcon.value[product.id] = ICON_REMOVE;
   });
   emits("close-dialog", dialogTypes.PRODUCT);
 };
 
-const addProductById = (id) => {
+const addProductById = (product) => {
   const selectedProductIndex = temporarySelectedProducts.value.findIndex(
-    (selectedId) => selectedId === id
+    (existingProduct) => existingProduct.id === product.id
   );
   if (selectedProductIndex == -1) {
-    temporarySelectedProducts.value.push(id);
-    btnIcon.value[id] = ICON_REMOVE;
+    temporarySelectedProducts.value.push(product);
+    btnIcon.value[product.id] = ICON_REMOVE;
   } else {
     temporarySelectedProducts.value.splice(selectedProductIndex, 1);
-    btnIcon.value[id] = ICON_ADD;
+    btnIcon.value[product.id] = ICON_ADD;
   }
 };
 
@@ -175,7 +180,7 @@ const clearTableValues = () => {
 };
 
 const saveTableValues = () => {
-  savedProductsIds.value = [...temporarySelectedProducts.value];
-  emits("save-product-dialog", savedProductsIds.value);
+  savedProducts.value = [...temporarySelectedProducts.value];
+  emits("save-product-dialog", savedProducts.value);
 };
 </script>

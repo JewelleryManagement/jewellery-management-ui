@@ -178,7 +178,7 @@ const resourcesTableValues = (resourceContentValue) => {
 };
 
 const productsTableValues = (productsContentValue) => {
-  productsContent.value = productsContentValue;
+  productsContent.value = productsContentValue.map(product => product.id);
   closeDialog("products");
 };
 

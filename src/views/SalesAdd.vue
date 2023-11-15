@@ -4,7 +4,7 @@
       <div class="mx-auto text-center" style="font-size: 24px">
         {{ pageTitle }}
       </div>
-      <v-form>
+      <v-form @submit.prevent="handleSubmit">
         <v-select label="Seller" v-model="seller" :items="allUsersNames">
         </v-select>
 
@@ -16,19 +16,25 @@
         >
         </v-select>
 
-        <v-btn color="primary" @click="openDialog" :disabled="!selectedProduct"> Products </v-btn>
+        <v-btn color="primary" @click="openDialog" :disabled="!selectedUser">
+          Products
+        </v-btn>
 
         <v-container v-if="productsContent.length > 0">
           <p>
             Currently selected products:
-            <span v-for="product in productsContent" :key="product">{{
-              product
-            }}</span>
+            <span v-for="(product, i) in productsContent" :key="product">
+              <v-text-field
+                label="Price"
+                v-model="productsContent[i].salePrice"
+              >
+              </v-text-field>
+            </span>
           </p>
         </v-container>
 
         <div class="d-flex flex-column mt-4">
-          <p>Total amount: {{ totalAmount }}</p>
+          <p>Total amount: {{ totalAmount || 0 }}</p>
           <p>Discounted amount: {{ discountedAmount }}</p>
           <p>Total Discount: {{ totalDiscount }}</p>
         </div>
@@ -43,11 +49,11 @@
       </v-form>
     </v-sheet>
     <products-dialog
-      v-if="selectedProduct"
+      v-if="selectedUser"
       v-model="productsDialog"
       @close-dialog="closeDialog"
       @save-product-dialog="productsTableValues"
-      :userId="selectedProduct.id"
+      :userId="selectedUser.id"
     >
     </products-dialog>
   </v-container>
@@ -63,16 +69,19 @@ const route = useRoute();
 const router = useRouter();
 const seller = ref([]);
 
-const selectedProduct = ref("");
+const selectedUser = ref("");
 watch(seller, (newValue) => {
-  selectedProduct.value = allUsers.value.find((user) => user.name == seller.value);
+  selectedUser.value = allUsers.value.find((user) => user.name == seller.value);
+  productsContent.value = [];
 });
 
 const buyer = ref([]);
 const store = useStore();
 const pageTitle = ref(route.meta.title);
-
-const [totalAmount, discountedAmount, totalDiscount] = [ref(0), ref(0), ref(0)];
+const totalAmount = computed(() =>
+  productsContent.value.reduce((acc, cur) => acc + Number(cur.salePrice), 0)
+);
+const [discountedAmount, totalDiscount] = [ ref(0), ref(0)];
 const [productsDialog, productsContent] = [ref(false), ref([])];
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
@@ -89,5 +98,9 @@ const closeDialog = () => {
 const productsTableValues = (productsContentValue) => {
   productsContent.value = productsContentValue;
   closeDialog("products");
+};
+
+const handleSubmit = () => {
+  console.log(productsContent.value);
 };
 </script>
