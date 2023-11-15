@@ -20,23 +20,34 @@
           Products
         </v-btn>
 
-        <v-container v-if="productsContent.length > 0">
-          <p>
-            Currently selected products:
-            <span v-for="(product, i) in productsContent" :key="product">
-              <v-text-field
-                label="Price"
-                v-model="productsContent[i].salePrice"
-              >
-              </v-text-field>
-            </span>
-          </p>
-        </v-container>
+        <div v-if="productsContent.length > 0">
+          Currently selected products:
+          <span v-for="(product, i) in productsContent" :key="product">
+            <v-row class="mt-4">
+              <v-col cols="8" class="pa-0">
+                <v-text-field
+                  prefix="€"
+                  label="Price"
+                  v-model="productsContent[i].salePrice"
+                ></v-text-field>
+              </v-col>
+              <v-divider vertical style="height: 3.5rem"></v-divider>
+
+              <v-col cols="4" class="pa-0">
+                <v-text-field
+                  suffix="%"
+                  label="Discount"
+                  v-model="productsContent[i].discount"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </span>
+        </div>
 
         <div class="d-flex flex-column mt-4">
           <p>Total amount: {{ totalAmount || 0 }}</p>
-          <p>Discounted amount: {{ discountedAmount }}</p>
-          <p>Total Discount: {{ totalDiscount }}</p>
+          <p>Discounted amount: {{ discountedAmount || 0 }}</p>
+          <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </div>
 
         <div class="d-flex flex-column">
@@ -81,7 +92,29 @@ const pageTitle = ref(route.meta.title);
 const totalAmount = computed(() =>
   productsContent.value.reduce((acc, cur) => acc + Number(cur.salePrice), 0)
 );
-const [discountedAmount, totalDiscount] = [ ref(0), ref(0)];
+
+const discountedSmallAmount = computed(() =>
+  productsContent.value.reduce(
+    (acc, cur) => acc + (cur.salePrice * cur.discount) / 100,
+    0
+  )
+);
+
+const discountedAmount = computed(
+  () => totalAmount.value - discountedSmallAmount.value
+);
+
+const totalDiscount = computed(() => {
+  const totalAmountValue = totalAmount.value;
+  const discountedAmountValue = discountedAmount.value;
+
+  if (totalAmountValue === 0 || isNaN(discountedAmountValue)) {
+    return 0;
+  }
+
+  return 100 - ((discountedAmountValue / totalAmountValue) * 100);
+});
+
 const [productsDialog, productsContent] = [ref(false), ref([])];
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
