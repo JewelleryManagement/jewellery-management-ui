@@ -9,7 +9,7 @@
           label="Seller"
           v-model="seller"
           :items="allUsersNames"
-          :rules="[() => validateAuthors(seller)]"
+          :rules="[validateAuthors(seller)]"
           lazy-rules
         >
         </v-select>
@@ -18,7 +18,7 @@
           v-model="buyer"
           label="Buyer"
           :items="allUsersNames"
-          :rules="[() => validateAuthors(buyer)]"
+          :rules="[validateAuthors(buyer)]"
           lazy-rules
         >
         </v-select>
@@ -36,28 +36,11 @@
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected products:
           </div>
-          <v-row
-            class="mt-4"
+          <ProductRow
             v-for="(product, i) in productsContent"
             :key="product"
-          >
-            <v-col cols="8" class="pa-0">
-              <v-text-field
-                prefix="€"
-                label="Price"
-                v-model="productsContent[i].salePrice"
-              ></v-text-field>
-            </v-col>
-            <v-divider vertical style="height: 3.5rem"></v-divider>
-
-            <v-col cols="4" class="pa-0">
-              <v-text-field
-                suffix="%"
-                label="Discount"
-                v-model="productsContent[i].discount"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+            :product="productsContent[i]"
+          />
         </v-container>
 
         <v-container class="d-flex flex-column mt-4">
@@ -75,7 +58,7 @@
             :disabled="!formValid"
             >Submit</v-btn
           >
-          <v-btn color="error" class="mt-4" block>Reset</v-btn>
+          <v-btn color="error" class="mt-4" block @click="resetForm">Reset</v-btn>
           <v-btn color="warning" class="mt-4" block @click="router.go(-1)"
             >Go Back</v-btn
           >
@@ -94,6 +77,7 @@
 </template>
 
 <script setup>
+import ProductRow from "../components/ProductRow.vue";
 import { validateAuthors } from "../utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -110,11 +94,11 @@ const [productsDialog, productsContent] = [ref(false), ref([])];
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = allUsers.value.map((user) => user.name);
 
-// Watches the form value and disables submit button
+// Watches the form value and Products Content value and disables submit button
 watchEffect(() => {
   if (form.value) {
     form.value.validate().then(({ valid }) => {
-      formValid.value = valid;
+      formValid.value = valid && productsContent.value.length > 0;;
     });
   }
 });
@@ -158,6 +142,14 @@ const toggleDialog = (isOpen) => {
 const productsTableValues = (productsContentValue) => {
   productsContent.value = productsContentValue;
   toggleDialog(false);
+};
+
+const resetForm = () => {
+  if (form.value) {
+    seller.value = []
+    buyer.value = []
+    productsContent.value = [];
+  }
 };
 
 const handleSubmit = async () => {
