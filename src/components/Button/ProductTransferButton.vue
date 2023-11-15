@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    :disabled="item.sold || item.contentOf === 'Yes'"
+    :disabled="product.sold || product.contentOf === 'Yes'"
     variant="plain"
     @click="openDialog"
   >
@@ -10,7 +10,7 @@
   <product-transfer-dialog
     v-if="isResourceDialogOpen"
     v-model="isResourceDialogOpen"
-    :product="item"
+    :product="product"
     :userId="userId"
     @close-dialog="closeDialog"
   />
@@ -27,7 +27,7 @@ const props = defineProps({
   item: Object,
   userId: { type: String, default: null },
 });
-const [item, userId] = [props.item, props.userId];
+const [product, userId] = [props.item, props.userId];
 const isResourceDialogOpen = ref(false);
 
 const openDialog = () => {

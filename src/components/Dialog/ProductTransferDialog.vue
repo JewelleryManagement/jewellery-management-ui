@@ -31,7 +31,10 @@ import { validateUser } from "@/utils/validation-rules";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
-const props = defineProps(["modelValue", "product", "userId"]);
+const props = defineProps({
+  modelValue: Boolean,
+  product: Object,
+});
 const { modelValue, product } = props;
 const [user, form] = [ref(""), ref(null)];
 const store = useStore();
