@@ -5,19 +5,27 @@
         {{ pageTitle }}
       </div>
       <v-form>
-        <v-select label="Seller" v-model="currentLoggedUser.name" :items="allUsersNames">
+        <v-select label="Seller" v-model="seller" :items="allUsersNames">
         </v-select>
 
         <v-select
           v-model="buyer"
-          clearable
           label="Buyer"
           :items="allUsersNames"
           :rules="[validateAuthors(buyer)]"
         >
         </v-select>
 
-        <v-btn color="primary" @click="productsDialog = true"> Products </v-btn>
+        <v-btn color="primary" @click="openDialog" :disabled="!selectedProduct"> Products </v-btn>
+
+        <v-container v-if="productsContent.length > 0">
+          <p>
+            Currently selected products:
+            <span v-for="product in productsContent" :key="product">{{
+              product
+            }}</span>
+          </p>
+        </v-container>
 
         <div class="d-flex flex-column mt-4">
           <p>Total amount: {{ totalAmount }}</p>
@@ -34,12 +42,12 @@
         </div>
       </v-form>
     </v-sheet>
-
     <products-dialog
+      v-if="selectedProduct"
       v-model="productsDialog"
       @close-dialog="closeDialog"
       @save-product-dialog="productsTableValues"
-      :userId="currentLoggedUser.id"
+      :userId="selectedProduct.id"
     >
     </products-dialog>
   </v-container>
@@ -50,34 +58,36 @@ import { validateAuthors } from "../utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 const route = useRoute();
 const router = useRouter();
-const saller = ref("");
+const seller = ref([]);
+
+const selectedProduct = ref("");
+watch(seller, (newValue) => {
+  selectedProduct.value = allUsers.value.find((user) => user.name == seller.value);
+});
+
 const buyer = ref([]);
 const store = useStore();
 const pageTitle = ref(route.meta.title);
 
 const [totalAmount, discountedAmount, totalDiscount] = [ref(0), ref(0), ref(0)];
-const productsDialog = ref(false);
-const productsContent = ref([]);
+const [productsDialog, productsContent] = [ref(false), ref([])];
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = allUsers.value.map((user) => user.name);
 
-const currentLoggedUser = computed(() => store.getters["auth/getUser"]);
-
-const userProducts = computed(
-  () => store.getters["products/getCurrentUserProducts"] ?? []
-);
-let date = new Date().toLocaleDateString("en-GB");
+const openDialog = () => {
+  productsDialog.value = true;
+};
 
 const closeDialog = () => {
   productsDialog.value = false;
 };
 
 const productsTableValues = (productsContentValue) => {
-//   productsContent.value = productsContentValue;
-//   closeDialog("products");
+  productsContent.value = productsContentValue;
+  closeDialog("products");
 };
 </script>

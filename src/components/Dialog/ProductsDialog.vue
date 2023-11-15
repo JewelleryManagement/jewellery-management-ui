@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :model-value="modelValue"
-    @update:model-value="modelValue"
+    :model-value="props.modelValue"
+    @update:model-value="props.modelValue"
     transition="dialog-top-transition"
     width="auto"
   >
@@ -20,7 +20,9 @@
             </template>
 
             <template v-slot:item.resourceContent="{ item }">
-              <v-icon @click="openInnerDialog(item, 'resources')">mdi-cube</v-icon>
+              <v-icon @click="openInnerDialog(item, 'resources')"
+                >mdi-cube</v-icon
+              >
             </template>
 
             <template v-slot:item.productsContent="{ item }">
@@ -88,13 +90,16 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { ref, computed } from "vue";
+import { ref, computed, inject, watch } from "vue";
+const snackbarProvider = inject("snackbarProvider");
+
 import { useStore } from "vuex";
 const store = useStore();
-const { modelValue, userId } = defineProps({
+const props = defineProps({
   modelValue: Boolean,
   userId: String,
 });
+
 const ICON_ADD = ref("mdi-plus");
 const ICON_REMOVE = ref("mdi-minus");
 const dialogTypes = {
@@ -105,8 +110,12 @@ const dialogTypes = {
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
+watch(() => props.userId, async (newId, oldId) => {
+  await store.dispatch("products/fetchProductsByOwner", newId);
+});
+
 try {
-  await store.dispatch("products/fetchProductsByOwner", userId);
+  await store.dispatch("products/fetchProductsByOwner", props.userId);
 } catch (error) {
   snackbarProvider.showErrorSnackbar("Failed to fetch products.");
 }
