@@ -10,7 +10,6 @@
           v-model="seller"
           :items="allUsersNames"
           :rules="[validateAuthors(seller)]"
-          lazy-rules
         >
         </v-select>
 
@@ -19,7 +18,6 @@
           label="Buyer"
           :items="allUsersNames"
           :rules="[validateAuthors(buyer)]"
-          lazy-rules
         >
         </v-select>
 
@@ -49,20 +47,7 @@
           <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </v-container>
 
-        <div class="d-flex flex-column">
-          <v-btn
-            color="success"
-            class="mt-4"
-            block
-            type="submit"
-            :disabled="!formValid"
-            >Submit</v-btn
-          >
-          <v-btn color="error" class="mt-4" block @click="resetForm">Reset</v-btn>
-          <v-btn color="warning" class="mt-4" block @click="router.go(-1)"
-            >Go Back</v-btn
-          >
-        </div>
+        <submit-buttons :formValid="formValid" @reset-form="resetForm" />
       </v-form>
     </v-sheet>
     <products-dialog

@@ -7,7 +7,9 @@ import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue
 import ProductsContentDialog from "@/components/Dialog/ProductsContentDialog.vue";
 import UserResourceForm from "@/components/Form/UserResourceForm"
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue"
+import SubmitButtons from "@/components/Button/SubmitButtons.vue"
 
+app.component('submit-buttons', SubmitButtons)
 app.component('user-resource-form', UserResourceForm)
 app.component('disassembly-button', DisassemblyButton)
 app.component("resource-content-dialog", ResourceContentDialog);
