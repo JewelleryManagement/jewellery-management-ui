@@ -37,7 +37,7 @@ const openDialog = (item) => {
   isProductsDialogOpen.value = true;
 };
 
-const closeDialog = (content) => {
+const closeDialog = () => {
   isProductsDialogOpen.value = false;
 };
 </script>

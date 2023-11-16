@@ -21,6 +21,14 @@
         >
         </v-select>
 
+        <h4
+          class="mx-auto text-center"
+          :style="{ visibility: isProductSelected ? 'visible' : 'hidden' }"
+          style="font-size: 16px; height: 3rem; color: red"
+        >
+          Please select a product!
+        </h4>
+
         <v-btn
           color="primary"
           @click="toggleDialog(true)"
@@ -47,7 +55,7 @@
           <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </v-container>
 
-        <submit-buttons :formValid="formValid" @reset-form="resetForm" />
+        <submit-buttons @reset-form="resetForm" />
       </v-form>
     </v-sheet>
     <products-dialog
@@ -67,7 +75,7 @@ import { validateAuthors } from "../utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref, computed, watch, watchEffect, inject } from "vue";
+import { ref, computed, watch, inject } from "vue";
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
@@ -76,20 +84,11 @@ const [seller, buyer] = [ref([]), ref([])];
 const [form, formValid] = [ref(null), ref(true)];
 const selectedUser = ref("");
 const [productsDialog, productsContent] = [ref(false), ref([])];
+const isProductSelected = ref(false);
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = allUsers.value.map((user) => user.name);
 
-// Watches the form value and Products Content value and disables submit button
-watchEffect(() => {
-  if (form.value) {
-    form.value.validate().then(({ valid }) => {
-      formValid.value = valid && productsContent.value.length > 0;
-    });
-  }
-});
-
-// Watches for changes in seller input in order to trigger product's dialog for the seller only
 watch(seller, (newValue) => {
   selectedUser.value = allUsers.value.find((user) => user.name == seller.value);
   productsContent.value = [];
@@ -132,9 +131,12 @@ const productsTableValues = (productsContentValue) => {
 
 const resetForm = () => {
   if (form.value) {
+    form.value.reset();
+    form.value.resetValidation();
     seller.value = [];
     buyer.value = [];
     productsContent.value = [];
+    isProductSelected.value = false;
   }
 };
 
@@ -149,6 +151,15 @@ const getCurrentDate = () => {
 };
 
 const handleSubmit = async () => {
+  const { valid } = await form.value.validate();
+
+  if (!valid) return;
+
+  if (productsContent.value.length <= 0) {
+    isProductSelected.value = true;
+    return;
+  }
+
   const getUserById = (username) =>
     allUsers.value.find((user) => user.name === username).id;
 
@@ -169,12 +180,11 @@ const handleSubmit = async () => {
   };
 
   try {
-    await store.dispatch('sales/postSale', data)
+    await store.dispatch("sales/postSale", data);
     snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
     router.push("/sales");
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Couldn't sale the product");
   }
-
 };
 </script>

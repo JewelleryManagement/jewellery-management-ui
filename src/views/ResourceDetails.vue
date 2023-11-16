@@ -23,17 +23,7 @@
           <Element v-if="selected === 'Element'" />
 
           <div v-if="selected" class="d-flex flex-column">
-            <v-btn color="success" class="mt-4" block type="submit">
-              Submit
-            </v-btn>
-
-            <v-btn color="error" class="mt-4" block @click="resetForm">
-              Reset
-            </v-btn>
-
-            <v-btn color="warning" class="mt-4" block to="/resources">
-              Go Back
-            </v-btn>
+            <submit-buttons @reset-form="resetForm" />
           </div>
         </v-form>
       </v-sheet>

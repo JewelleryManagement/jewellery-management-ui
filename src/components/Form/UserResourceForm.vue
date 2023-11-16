@@ -20,25 +20,19 @@
         required
       ></v-text-field>
 
-      <div class="d-flex flex-column">
-        <v-btn color="success" class="mt-4" block type="submit">Submit</v-btn>
-        <v-btn color="error" class="mt-4" block @click="resetForm">Reset</v-btn>
-        <v-btn color="warning" class="mt-4" block @click="router.go(-1)"
-          >Go Back</v-btn
-        >
-      </div>
+      <submit-buttons @reset-form="resetForm" />
     </v-form>
   </v-sheet>
 </template>
 
 <script setup>
+console.log('here');
 import { useStore } from "vuex";
 import { ref, computed } from "vue";
 import { useNumberFieldRules } from "../../utils/validation-rules";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 const store = useStore();
 const route = useRoute();
-const router = useRouter();
 const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
 const quantity = ref("");
