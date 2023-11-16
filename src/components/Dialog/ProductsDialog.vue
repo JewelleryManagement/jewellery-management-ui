@@ -10,7 +10,7 @@
         <v-toolbar color="green" title="Products..."></v-toolbar>
         <v-card-text>
           <products-table
-            :products="ownedNonContentProducts"
+            :products="ownedNonContentAndSoldProducts"
             :additionalColumnsLeft="addColumn"
           >
             <template v-slot:item.add="{ item }">
@@ -123,12 +123,12 @@ try {
 } catch (error) {
   snackbarProvider.showErrorSnackbar("Failed to fetch products.");
 }
-
-const ownedNonContentProducts = computed(() =>
+const ownedNonContentAndSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
-    (product) => product.contentOf === "No"
+    (product) => product.contentOf === "No" && !product.sold
   )
 );
+
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 
 const savedProducts = ref([]);
