@@ -53,3 +53,7 @@ export function validateAuthors(authors) {
   }
   return true;
 }
+
+export function validateUser(value) {
+  return !!value || "Please select a user";
+}
