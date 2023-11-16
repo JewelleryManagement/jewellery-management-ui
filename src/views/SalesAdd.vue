@@ -100,7 +100,7 @@ const totalAmount = computed(() =>
 
 const discountedSmallAmount = computed(() =>
   productsContent.value.reduce(
-    (acc, cur) => acc + (cur.salePrice * cur.discount) / 100,
+    (acc, cur) => acc + (cur.salePrice * (cur.discount ?? 0)) / 100,
     0
   )
 );
@@ -138,6 +138,14 @@ const resetForm = () => {
 };
 
 const handleSubmit = async () => {
-  console.log(productsContent.value);
+  const selectedSeller = computed(() => allUsers.value.find(user => user.name === seller.value)).value.id
+  const selectedBuyer = computed(() => allUsers.value.find(user => user.name === buyer.value)).value.id
+  const products = [];
+  productsContent.value.map(product => products.push({
+    productId: product.id,
+    salePrice: Number(product.salePrice),
+    discount: Number(product.discount)
+  }))
+  console.log(products); 
 };
 </script>
