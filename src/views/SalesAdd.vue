@@ -83,7 +83,7 @@ const allUsersNames = allUsers.value.map((user) => user.name);
 watchEffect(() => {
   if (form.value) {
     form.value.validate().then(({ valid }) => {
-      formValid.value = valid && productsContent.value.length > 0;;
+      formValid.value = valid && productsContent.value.length > 0;
     });
   }
 });
@@ -131,21 +131,41 @@ const productsTableValues = (productsContentValue) => {
 
 const resetForm = () => {
   if (form.value) {
-    seller.value = []
-    buyer.value = []
+    seller.value = [];
+    buyer.value = [];
     productsContent.value = [];
   }
 };
 
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+
+  const formattedDate = `${year}-${month}-${day}`;
+  return formattedDate;
+};
+
 const handleSubmit = async () => {
-  const selectedSeller = computed(() => allUsers.value.find(user => user.name === seller.value)).value.id
-  const selectedBuyer = computed(() => allUsers.value.find(user => user.name === buyer.value)).value.id
-  const products = [];
-  productsContent.value.map(product => products.push({
+  const getUserById = (username) =>
+    allUsers.value.find((user) => user.name === username).id;
+
+  const selectedSeller = getUserById(seller.value);
+  const selectedBuyer = getUserById(buyer.value);
+
+  const selectedProducts = productsContent.value.map((product) => ({
     productId: product.id,
     salePrice: Number(product.salePrice),
-    discount: Number(product.discount)
-  }))
-  console.log(products); 
+    discount: Number(product.discount) || 0,
+  }));
+
+  const data = {
+    sellerId: selectedSeller,
+    buyerId: selectedBuyer,
+    products: selectedProducts,
+    date: getCurrentDate(),
+  };
+
 };
 </script>
