@@ -36,19 +36,15 @@
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed } from "vue";
+import { useStore } from "vuex";
 const search = ref("");
+const store = useStore()
+
+const tableColumns = computed(() => store.getters['sales/getColumns'])
+const products = computed(() => store.getters['sales/getProducts'])
 
 const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
-const tableColumns = [
-  { key: "productName", title: "Product Name" },
-  { key: "price", title: "Price" },
-  { key: "discount", title: "Discount" },
-];
 
-const products = [
-  { productName: "Product 1", price: 10, discount: 0 },
-  { productName: "Product 2", price: 15, discount: 5 },
-];
 </script>
