@@ -46,6 +46,10 @@ export async function fetchUsers() {
   return await fetchData("/users");
 }
 
+export async function fetchSales() {
+  return await fetchData("/sales");
+}
+
 // POSTS REQUESTS
 async function postData(endpoint, data) {
   try {
@@ -76,6 +80,9 @@ export async function postProduct(data) {
 
 export async function postUserLogin(user) {
   return await postData("/login", user);
+}
+export async function postSale(data) {
+  return await postData("/sales", data);
 }
 
 // DELETE REQUESTS

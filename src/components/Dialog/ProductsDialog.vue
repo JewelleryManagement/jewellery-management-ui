@@ -12,6 +12,7 @@
           <products-table
             :products="ownedNonContentAndSoldProducts"
             :additionalColumnsLeft="addColumn"
+            :additionalColumnsRight="userColumn"
           >
             <template v-slot:item.add="{ item }">
               <v-icon color="blue" @click="addProductById(item)">{{
@@ -32,18 +33,7 @@
             </template>
 
             <template v-slot:item.owner="{ item }">
-              <router-link
-                style="text-decoration: none; color: inherit"
-                :to="`/users/${item.owner.id}`"
-              >
-                <v-btn variant="plain">
-                  <v-icon size="25">mdi-account-circle</v-icon>
-                  <v-tooltip activator="parent" location="top">
-                    <div>Name: {{ item.owner.name }}</div>
-                    <div>Email: {{ item.owner.email }}</div>
-                  </v-tooltip>
-                </v-btn>
-              </router-link>
+              <user-tool-tip :user="item.owner" />
             </template>
           </products-table>
         </v-card-text>
@@ -130,6 +120,7 @@ const ownedNonContentAndSoldProducts = computed(() =>
 );
 
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
+const userColumn = computed(() => [store.getters["products/getUserColumn"]]);
 
 const savedProducts = ref([]);
 const temporarySelectedProducts = ref([]);

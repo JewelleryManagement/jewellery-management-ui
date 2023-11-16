@@ -67,7 +67,8 @@ import { validateAuthors } from "../utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref, computed, watch, watchEffect } from "vue";
+import { ref, computed, watch, watchEffect, inject } from "vue";
+const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const pageTitle = ref(route.meta.title);
@@ -166,6 +167,14 @@ const handleSubmit = async () => {
     products: selectedProducts,
     date: getCurrentDate(),
   };
+
+  try {
+    await store.dispatch('sales/postSale', data)
+    snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
+    router.push("/sales");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Couldn't sale the product");
+  }
 
 };
 </script>

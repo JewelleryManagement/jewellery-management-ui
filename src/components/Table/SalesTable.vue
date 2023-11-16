@@ -24,7 +24,7 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="tableColumns" :items="products" :search="search">
+    <v-data-table :headers="tableColumns" :items="sales" :search="search">
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
         <slot :name="slot" v-bind="scope || {}" />
       </template>
@@ -35,14 +35,19 @@
 <script setup>
 import { useDisplay } from "vuetify/lib/framework.mjs";
 import { VDataTable } from "vuetify/labs/VDataTable";
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
+const snackbarProvider = inject("snackbarProvider");
 const search = ref("");
 const store = useStore()
 
+try {
+  await store.dispatch('sales/fetchSales')
+} catch (error) {
+  snackbarProvider.showErrorSnackbar("Couldn't fetch the sales!");
+}
 const tableColumns = computed(() => store.getters['sales/getColumns'])
-const products = computed(() => store.getters['sales/getProducts'])
-
+const sales = computed(() => store.getters['sales/getSales'])
 const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });

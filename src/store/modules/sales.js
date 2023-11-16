@@ -1,21 +1,39 @@
+import { fetchSales, postSale } from "@/services/HttpClientService";
+
 export default {
   namespaced: true,
   state: {
-    products: [
-      { productName: "Product 1", price: 10, discount: 0 },
-      { productName: "Product 2", price: 15, discount: 5 },
-      { productName: "Product 3", price: 123, discount: 15 },
-    ],
+    sales: [],
     tableColumns: [
-      { key: "productName", title: "Product Name" },
-      { key: "price", title: "Price" },
-      { key: "discount", title: "Discount" },
+      { key: "seller", title: "Seller" },
+      { key: "buyer", title: "Buyer" },
+      { key: "products", title: "Products", align: "center" },
+      { key: "totalPrice", title: "Total Price" },
+      { key: "totalDiscountedPrice", title: "Discount" },
+      { key: "totalDiscount", title: "Final price" },
     ],
   },
-  mutations: {},
-  actions: {},
+  mutations: {
+    setSales(state, sales) {
+      state.sales = sales.map((product) => ({
+        ...product,
+        totalPrice: `€${product.totalPrice}`,
+        totalDiscountedPrice: `${product.totalDiscountedPrice}%`,
+        totalDiscount: `€${product.totalDiscount}`,
+      }));
+    },
+  },
+  actions: {
+    async fetchSales({ commit }) {
+      const res = await fetchSales();
+      commit("setSales", res);
+    },
+    async postSale({ commit }, data) {
+      await postSale(data);
+    },
+  },
   getters: {
-    getProducts: (state) => state.products,
+    getSales: (state) => state.sales,
     getColumns: (state) => [...state.tableColumns],
   },
 };

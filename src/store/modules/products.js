@@ -81,6 +81,7 @@ export default {
     ],
     getCurrentUserProducts: (state) => state.currentUserProducts.map(formatAuthors),
     getAddColumn: (state) => state.tableColumnAdd,
+    getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
     getColumnsWithRCandPC: (state) => [
       ...state.tableColumns,
