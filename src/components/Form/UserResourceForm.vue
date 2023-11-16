@@ -26,7 +26,6 @@
 </template>
 
 <script setup>
-console.log('here');
 import { useStore } from "vuex";
 import { ref, computed } from "vue";
 import { useNumberFieldRules } from "../../utils/validation-rules";
