@@ -16,7 +16,7 @@ export default {
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
       { key: "authors", title: "Authors" },
-      { key: "sold", title: "Sold" },
+      { key: "partOfSale", title: "Sold" },
       { key: "salePrice", title: "Sale price" },
       { key: "contentOf", title: "Part of product" },
     ],
@@ -96,5 +96,6 @@ function formatAuthors(product) {
     ...product,
     authors: product.authors.map((author) => author.name).join(", "),
     contentOf: product.contentOf ? "Yes" : "No",
+    partOfSale: product.partOfSale ? "Yes" : "No",
   };
 }

@@ -33,8 +33,13 @@ import SalesTable from "@/components/Table/SalesTable.vue";
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
 const openDialog = (item) => {
-  productsDialogData.value = item[0];
+  productsDialogData.value = {
+    productsContent: item.map((product) => ({
+      ...product,
+    })),
+  };
   isProductsDialogOpen.value = true;
+
 };
 
 const closeDialog = () => {

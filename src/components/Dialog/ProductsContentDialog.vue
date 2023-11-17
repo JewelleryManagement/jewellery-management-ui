@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import ProductsTable from "../Table/ProductsTable.vue";
 
 const { modelValue, data } = defineProps({
@@ -33,5 +33,6 @@ productsContent.value = productsContent.value.map((product) => ({
   ...product,
   authors: product.authors.map((a) => a.name).join(", "),
   contentOf: product.contentOf ? "Yes" : "No",
+  partOfSale: product.partOfSale ? "Yes" : "No",
 }));
 </script>
