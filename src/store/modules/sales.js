@@ -18,8 +18,8 @@ export default {
       state.sales = sales.map((product) => ({
         ...product,
         totalPrice: `€${product.totalPrice}`,
-        totalDiscountedPrice: `${product.totalDiscountedPrice}%`,
-        totalDiscount: `€${product.totalDiscount}`,
+        totalDiscountedPrice: `${(+product.totalDiscountedPrice).toFixed(2)}%`,
+        totalDiscount: `€${(+product.totalDiscount).toFixed(2)}`,  
       }));
     },
   },

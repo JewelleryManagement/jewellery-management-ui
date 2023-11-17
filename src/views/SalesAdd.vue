@@ -50,8 +50,8 @@
         </v-container>
 
         <v-container class="d-flex flex-column mt-4">
-          <p>Total amount: € {{ totalAmount || 0 }}</p>
-          <p>Discounted amount: € {{ discountedAmount || 0 }}</p>
+          <p>Total amount: € {{ totalAmount.toFixed(2) || 0 }}</p>
+          <p>Discounted amount: € {{ discountedAmount.toFixed(2) || 0 }}</p>
           <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </v-container>
 
@@ -81,7 +81,7 @@ const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const pageTitle = ref(route.meta.title);
 const [seller, buyer] = [ref([]), ref([])];
-const [form, formValid] = [ref(null), ref(true)];
+const [form] = ref(null);
 const selectedUser = ref("");
 const [productsDialog, productsContent] = [ref(false), ref([])];
 const isProductSelected = ref(false);
