@@ -26,7 +26,6 @@ export default {
       key: "owner",
       title: "Owner",
       slot: "owner",
-      align: "center",
     },
     tableColumnResourcesContent: {
       key: "resourceContent",
@@ -79,7 +78,8 @@ export default {
       state.tableColumnResourcesContent,
       state.tableColumnProductsContent,
     ],
-    getCurrentUserProducts: (state) => state.currentUserProducts.map(formatAuthors),
+    getCurrentUserProducts: (state) =>
+      state.currentUserProducts.map(formatAuthors),
     getAddColumn: (state) => state.tableColumnAdd,
     getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],

@@ -70,7 +70,7 @@
           >
           </products-dialog>
 
-          <submit-buttons @reset-form="resetForm">
+          <div class="d-flex flex-column">
             <div class="d-flex justify-space-between">
               <v-btn color="primary" @click="resourceDialog = true">
                 Resources
@@ -90,7 +90,9 @@
                 Products selected: {{ productsContent.length || 0 }}
               </p>
             </div>
-          </submit-buttons>
+          </div>
+
+          <submit-buttons @reset-form="resetForm" />
         </v-form>
       </v-sheet>
     </v-card>
