@@ -59,6 +59,10 @@
                         :userId="userId"
                       ></disassembly-button>
                     </template>
+
+                    <template v-slot:item.transfer="{ item }">
+                      <product-transfer-button :product="item" :userId="userId" />
+                    </template>
                   </products-table>
                 </v-card>
               </transition>
@@ -117,6 +121,7 @@ const user = computed(() => store.getters["users/getUserById"](userId)).value;
 
 const disassemblyColumns = computed(() => [
   store.state.products.tableColumnDisassembly,
+  store.state.products.tableColumnTransfer,
 ]);
 </script>
 

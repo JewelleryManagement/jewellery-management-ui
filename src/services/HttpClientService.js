@@ -52,13 +52,9 @@ export async function fetchSales() {
 
 // POSTS REQUESTS
 async function postData(endpoint, data) {
-  try {
-    const response = await axios.post(endpoint, data);
-    if (response.status === 201) {
-      return response.data;
-    }
-  } catch (error) {
-    throw new Error("Failed to post data to the server.");
+  const response = await axios.post(endpoint, data);
+  if (response.status === 201) {
+    return response.data;
   }
 }
 
@@ -124,4 +120,8 @@ async function updateData(endpoint, data) {
 
 export async function updateResource(id, data) {
   return await updateData(`/resources/${id}`, data);
+}
+
+export async function transferProduct(productId, recipientId) {
+  return await updateData(`/products/${productId}/transfer/${recipientId}`);
 }

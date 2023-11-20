@@ -4,6 +4,7 @@ import {
   postProduct,
   fetchProductsByOwner,
   disassmebleProduct,
+  transferProduct,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -44,6 +45,11 @@ export default {
       title: "Disassembly",
       align: "center",
     },
+    tableColumnTransfer: {
+      key: "transfer",
+      title: "Transfer",
+      align: "center",
+    },
   }),
   mutations: {
     setProducts(state, products) {
@@ -67,6 +73,10 @@ export default {
     },
     async disassmebleProduct({ commit }, productId) {
       await disassmebleProduct(productId);
+    },
+    async transferProduct({ commit }, data) {
+      const { productId, recipientId } = data;
+      await transferProduct(productId, recipientId)
     },
   },
   getters: {

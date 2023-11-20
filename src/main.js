@@ -9,11 +9,13 @@ import UserResourceForm from "@/components/Form/UserResourceForm"
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue"
 import SubmitButtons from "@/components/Button/SubmitButtons.vue"
 import UserToolTip from './components/Tooltip/UserToolTip.vue'
+import ProductTransferButton from "@/components/Button/ProductTransferButton.vue"
 
 app.component('user-tool-tip', UserToolTip)
 app.component('submit-buttons', SubmitButtons)
 app.component('user-resource-form', UserResourceForm)
 app.component('disassembly-button', DisassemblyButton)
+app.component('product-transfer-button', ProductTransferButton)
 app.component("resource-content-dialog", ResourceContentDialog);
 app.component("products-content-dialog", ProductsContentDialog);
 app.mount("#app");
