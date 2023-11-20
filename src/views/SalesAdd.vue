@@ -21,22 +21,19 @@
         >
         </v-select>
 
-        <h4
-          class="mx-auto text-center"
-          :style="{ visibility: isProductSelected ? 'visible' : 'hidden' }"
-          style="font-size: 16px; height: 3rem; color: red"
-        >
-          Please select a product!
-        </h4>
+        <v-container class="d-flex justify-space-between">
+          <v-btn
+            color="primary"
+            @click="toggleDialog(true)"
+            :disabled="!selectedUser"
+          >
+            Products
+          </v-btn>
 
-        <v-btn
-          color="primary"
-          @click="toggleDialog(true)"
-          block
-          :disabled="!selectedUser"
-        >
-          Products
-        </v-btn>
+          <v-btn color="green lighten-1" @click="() => (calendarDialog = true)"
+            >Calendar</v-btn
+          >
+        </v-container>
 
         <v-container v-if="productsContent.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
@@ -66,10 +63,17 @@
       :userId="selectedUser.id"
     >
     </products-dialog>
+
+    <calendar-dialog
+      v-model="calendarDialog"
+      @close-dialog="handleCloseCalendar"
+      :formattedDate="formattedDate"
+    />
   </v-container>
 </template>
 
 <script setup>
+import CalendarDialog from "../components/Dialog/CalendarDialog.vue";
 import ProductRow from "../components/ProductRow.vue";
 import { validateAuthors } from "../utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
@@ -84,7 +88,9 @@ const [seller, buyer] = [ref([]), ref([])];
 const form = ref(null);
 const selectedUser = ref("");
 const [productsDialog, productsContent] = [ref(false), ref([])];
-const isProductSelected = ref(false);
+const calendarDialog = ref(false);
+const [isProductSelected, isDateSelected] = [ref(false), ref(false)];
+const formattedDate = ref("");
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = allUsers.value.map((user) => user.name);
@@ -124,6 +130,13 @@ const toggleDialog = (isOpen) => {
   productsDialog.value = isOpen;
 };
 
+function handleCloseCalendar(isOpen, selectedDate) {
+  calendarDialog.value = isOpen;
+  formattedDate.value = selectedDate;
+  isDateSelected.value = true;
+  console.log("Selected Date:", selectedDate);
+}
+
 const productsTableValues = (productsContentValue) => {
   productsContent.value = productsContentValue;
   toggleDialog(false);
@@ -137,17 +150,8 @@ const resetForm = () => {
     buyer.value = [];
     productsContent.value = [];
     isProductSelected.value = false;
+    isDateSelected.value = false;
   }
-};
-
-const getCurrentDate = () => {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear();
-  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-  const day = String(currentDate.getDate()).padStart(2, "0");
-
-  const formattedDate = `${year}-${month}-${day}`;
-  return formattedDate;
 };
 
 const handleSubmit = async () => {
@@ -156,7 +160,12 @@ const handleSubmit = async () => {
   if (!valid) return;
 
   if (productsContent.value.length <= 0) {
-    isProductSelected.value = true;
+    snackbarProvider.showErrorSnackbar("Please select a product!");
+    return;
+  }
+
+  if (formattedDate.value.length <= 0) {
+    snackbarProvider.showErrorSnackbar("Please select a date!");
     return;
   }
 
@@ -176,7 +185,7 @@ const handleSubmit = async () => {
     sellerId: selectedSeller,
     buyerId: selectedBuyer,
     products: selectedProducts,
-    date: getCurrentDate(),
+    date: formattedDate.value,
   };
 
   try {
