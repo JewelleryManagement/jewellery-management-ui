@@ -67,7 +67,6 @@
     <calendar-dialog
       v-model="calendarDialog"
       @close-dialog="handleCloseCalendar"
-      :formattedDate="formattedDate"
     />
   </v-container>
 </template>
@@ -134,7 +133,6 @@ function handleCloseCalendar(isOpen, selectedDate) {
   calendarDialog.value = isOpen;
   formattedDate.value = selectedDate;
   isDateSelected.value = true;
-  console.log("Selected Date:", selectedDate);
 }
 
 const productsTableValues = (productsContentValue) => {

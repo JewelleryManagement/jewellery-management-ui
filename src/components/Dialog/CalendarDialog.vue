@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :model-value="modelValue"
-    @update:model-value="modelValue"
+    :model-value="props.modelValue"
+    @update:model-value="props.modelValue"
     transition="dialog-top-transition"
     width="auto"
   >
@@ -19,9 +19,8 @@
 <script setup>
 import { ref, computed } from "vue";
 import { VDatePicker } from "vuetify/lib/labs/components.mjs";
-const { modelValue, formattedDate } = defineProps({
+const props = defineProps({
   modelValue: Boolean,
-  formattedDate: String,
 });
 
 const datePicker = ref(new Date().toISOString().substr(0, 10));
