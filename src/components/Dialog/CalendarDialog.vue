@@ -6,9 +6,13 @@
     width="auto"
   >
     <v-card>
-      <v-date-picker v-model="datePicker" color="green lighten-1" readonly></v-date-picker>
+      <v-date-picker
+        v-model="datePicker"
+        color="green lighten-1"
+        @update:model-value="dateHandler"
+        @click:cancel="dateHandler"
+      ></v-date-picker>
     </v-card>
-    <v-btn @click="closeDialog">Close</v-btn>
   </v-dialog>
 </template>
 
@@ -34,7 +38,7 @@ const adjustTheDate = computed(() => {
   return `${year}-${month}-${day}`;
 });
 
-function closeDialog() {
+function dateHandler() {
   emits("close-dialog", false, adjustTheDate.value);
 }
 </script>
