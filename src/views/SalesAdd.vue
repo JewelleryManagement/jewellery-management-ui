@@ -30,7 +30,10 @@
             Products
           </v-btn>
 
-          <v-btn color="green lighten-1" @click="() => (calendarDialog = true)"
+          <v-btn
+            color="green lighten-1"
+            @click="() => (calendarDialog = true)"
+            :disabled="!selectedUser"
             >Calendar</v-btn
           >
         </v-container>
