@@ -86,7 +86,7 @@ const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const pageTitle = ref(route.meta.title);
-const [sellerName, buyerName] = [ref(''), ref('')];
+const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
 const selectedUser = ref("");
 const [productsDialog, productsForSale] = [ref(false), ref([])];
@@ -97,17 +97,23 @@ const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = allUsers.value.map((user) => user.name);
 
 watch(sellerName, (newValue) => {
-  selectedUser.value = allUsers.value.find((user) => user.name == sellerName.value);
+  selectedUser.value = allUsers.value.find(
+    (user) => user.name == sellerName.value
+  );
   productsForSale.value = [];
 });
 
 const totalAmount = computed(() =>
-  productsForSale.value.reduce((amount, product) => amount + Number(product.salePrice), 0)
+  productsForSale.value.reduce(
+    (amount, product) => amount + Number(product.salePrice),
+    0
+  )
 );
 
 const discountedSmallAmount = computed(() =>
   productsForSale.value.reduce(
-    (amount, product) => amount + (product.salePrice * (product.discount ?? 0)) / 100,
+    (amount, product) =>
+      amount + (product.salePrice * (product.discount ?? 0)) / 100,
     0
   )
 );
@@ -151,46 +157,68 @@ const resetForm = () => {
   }
 };
 
-const handleSubmit = async () => {
+const isFormValid = async () => {
   const { valid } = await form.value.validate();
+  return valid;
+};
 
-  if (!valid) return;
-
+const IsProductsValidated = () => {
   if (productsForSale.value.length <= 0) {
     snackbarProvider.showErrorSnackbar("Please select a product!");
-    return;
+    return false;
   }
+  return true;
+};
 
+const isDateValidated = () => {
   if (formattedDate.value.length <= 0) {
     snackbarProvider.showErrorSnackbar("Please select a date!");
-    return;
+    return false;
   }
+  return true;
+};
 
+const mapSelectedProducts = () => {
+  return productsForSale.value.map((product) => ({
+    productId: product.id,
+    salePrice: Number(product.salePrice),
+    discount: Number(product.discount) || 0,
+  }));
+};
+
+const buildDataObject = () => {
   const getUserById = (username) =>
     allUsers.value.find((user) => user.name === username).id;
 
   const selectedSeller = getUserById(sellerName.value);
   const selectedBuyer = getUserById(buyerName.value);
 
-  const selectedProducts = productsForSale.value.map((product) => ({
-    productId: product.id,
-    salePrice: Number(product.salePrice),
-    discount: Number(product.discount) || 0,
-  }));
-
-  const data = {
+  return {
     sellerId: selectedSeller,
     buyerId: selectedBuyer,
-    products: selectedProducts,
+    products: mapSelectedProducts(),
     date: formattedDate.value,
   };
+};
 
+const postSale = async (data) => {
   try {
     await store.dispatch("sales/postSale", data);
     snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
     router.push("/sales");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't sale the product");
+    snackbarProvider.showErrorSnackbar("Couldn't sell the product");
   }
+};
+
+
+const handleSubmit = async () => {
+  if (!(await isFormValid())) return;
+  if (!IsProductsValidated()) return;
+  if (!isDateValidated()) return;
+
+  const data = buildDataObject();
+
+  await postSale(data);
 };
 </script>
