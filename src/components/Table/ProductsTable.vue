@@ -71,6 +71,7 @@ await store.dispatch("products/fetchProducts");
 const allProducts = computed(
   () => products.value ?? store.getters["products/allProducts"]
 );
+
 const openDialog = (item, content) => {
   if (content == "resources") {
     resourceDialogData.value = item;
