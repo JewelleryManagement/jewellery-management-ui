@@ -11,6 +11,7 @@ export default {
       { key: "totalPrice", title: "Total Price" },
       { key: "totalDiscountedPrice", title: "Discount" },
       { key: "totalDiscount", title: "Final price" },
+      { key: "date", title: "Date" },
     ],
   },
   mutations: {
@@ -20,6 +21,7 @@ export default {
         totalPrice: `€${product.totalPrice}`,
         totalDiscountedPrice: `${(+product.totalDiscountedPrice).toFixed(2)}%`,
         totalDiscount: `€${(+product.totalDiscount).toFixed(2)}`,  
+        date: new Date(product.date).toISOString().split('T')[0],
       }));
     },
   },

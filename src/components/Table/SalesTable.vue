@@ -48,6 +48,7 @@ try {
 }
 const tableColumns = computed(() => store.getters['sales/getColumns'])
 const sales = computed(() => store.getters['sales/getSales'])
+console.log(sales.value);
 const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
