@@ -38,7 +38,6 @@ const formattedDate = computed(() => {
 });
 
 function closeDialog() {
-  console.log(formattedDate.value);
   emits("close-dialog", formattedDate.value);
 }
 </script>

@@ -19,9 +19,9 @@ export default {
       state.sales = sales.map((product) => ({
         ...product,
         totalPrice: `€${product.totalPrice}`,
-        totalDiscountedPrice: `${(+product.totalDiscount).toFixed(2)}%`,  
+        totalDiscountedPrice: `${(+product.totalDiscount).toFixed(2)}%`,
         totalDiscount: `€${(+product.totalDiscountedPrice).toFixed(2)}`,
-        date: new Date(product.date).toISOString().split('T')[0],
+        date: new Date(product.date).toISOString().split("T")[0],
       }));
     },
   },

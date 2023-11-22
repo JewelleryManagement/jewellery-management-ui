@@ -39,18 +39,16 @@ import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 const search = ref("");
-const store = useStore()
+const store = useStore();
 
 try {
-  await store.dispatch('sales/fetchSales')
+  await store.dispatch("sales/fetchSales");
 } catch (error) {
   snackbarProvider.showErrorSnackbar("Couldn't fetch the sales!");
 }
-const tableColumns = computed(() => store.getters['sales/getColumns'])
-const sales = computed(() => store.getters['sales/getSales'])
-console.log(sales.value);
+const tableColumns = computed(() => store.getters["sales/getColumns"]);
+const sales = computed(() => store.getters["sales/getSales"]);
 const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
-
 </script>

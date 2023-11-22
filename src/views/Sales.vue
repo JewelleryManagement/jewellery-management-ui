@@ -39,7 +39,6 @@ const openDialog = (products) => {
     })),
   };
   isProductsDialogOpen.value = true;
-
 };
 
 const closeDialog = () => {
