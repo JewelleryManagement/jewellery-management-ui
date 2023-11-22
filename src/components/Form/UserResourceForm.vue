@@ -20,7 +20,7 @@
         required
       ></v-text-field>
 
-      <submit-buttons @reset-form="resetForm" />
+      <form-buttons @reset-form="resetForm" />
     </v-form>
   </v-sheet>
 </template>

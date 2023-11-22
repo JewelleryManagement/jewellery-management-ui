@@ -23,7 +23,7 @@
           <Element v-if="selected === 'Element'" />
 
           <div v-if="selected" class="d-flex flex-column">
-            <submit-buttons @reset-form="resetForm" />
+            <form-buttons @reset-form="resetForm" />
           </div>
         </v-form>
       </v-sheet>

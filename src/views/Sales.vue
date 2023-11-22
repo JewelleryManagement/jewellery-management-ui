@@ -32,9 +32,9 @@ import { ref } from "vue";
 import SalesTable from "@/components/Table/SalesTable.vue";
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
-const openDialog = (item) => {
+const openDialog = (products) => {
   productsDialogData.value = {
-    productsContent: item.map((product) => ({
+    productsContent: products.map((product) => ({
       ...product,
     })),
   };

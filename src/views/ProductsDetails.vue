@@ -92,7 +92,7 @@
             </div>
           </div>
 
-          <submit-buttons @reset-form="resetForm" />
+          <form-buttons @reset-form="resetForm" />
         </v-form>
       </v-sheet>
     </v-card>

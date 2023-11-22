@@ -7,24 +7,24 @@
       <v-form @submit.prevent="handleSubmit" ref="form">
         <v-select
           label="Seller"
-          v-model="seller"
+          v-model="sellerName"
           :items="allUsersNames"
-          :rules="[validateAuthors(seller)]"
+          :rules="[validateAuthors(sellerName)]"
         >
         </v-select>
 
         <v-select
-          v-model="buyer"
+          v-model="buyerName"
           label="Buyer"
           :items="allUsersNames"
-          :rules="[validateAuthors(buyer)]"
+          :rules="[validateAuthors(buyerName)]"
         >
         </v-select>
 
         <v-container class="d-flex justify-space-between">
           <v-btn
             color="primary"
-            @click="toggleDialog(true)"
+            @click="toggleProductsDialog(true)"
             :disabled="!selectedUser"
           >
             Products
@@ -38,14 +38,14 @@
           >
         </v-container>
 
-        <v-container v-if="productsContent.length > 0">
+        <v-container v-if="productsForSale.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected products:
           </div>
-          <ProductRow
-            v-for="(product, i) in productsContent"
+          <Product-price-discount-row
+            v-for="(product, i) in productsForSale"
             :key="product"
-            :product="productsContent[i]"
+            :product="productsForSale[i]"
           />
         </v-container>
 
@@ -55,14 +55,14 @@
           <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </v-container>
 
-        <submit-buttons @reset-form="resetForm" />
+        <form-buttons @reset-form="resetForm" />
       </v-form>
     </v-sheet>
     <products-dialog
       v-if="selectedUser"
       v-model="productsDialog"
-      @close-dialog="toggleDialog(false)"
-      @save-product-dialog="productsTableValues"
+      @close-dialog="toggleProductsDialog(false)"
+      @save-product-dialog="setProductsForSale"
       :userId="selectedUser.id"
     >
     </products-dialog>
@@ -76,7 +76,7 @@
 
 <script setup>
 import CalendarDialog from "../components/Dialog/CalendarDialog.vue";
-import ProductRow from "../components/ProductRow.vue";
+import ProductPriceDiscountRow from "../components/ProductPriceDiscountRow.vue";
 import { validateAuthors } from "../utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -86,29 +86,28 @@ const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const pageTitle = ref(route.meta.title);
-const [seller, buyer] = [ref([]), ref([])];
+const [sellerName, buyerName] = [ref(''), ref('')];
 const form = ref(null);
 const selectedUser = ref("");
-const [productsDialog, productsContent] = [ref(false), ref([])];
+const [productsDialog, productsForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
-const [isProductSelected, isDateSelected] = [ref(false), ref(false)];
 const formattedDate = ref("");
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = allUsers.value.map((user) => user.name);
 
-watch(seller, (newValue) => {
-  selectedUser.value = allUsers.value.find((user) => user.name == seller.value);
-  productsContent.value = [];
+watch(sellerName, (newValue) => {
+  selectedUser.value = allUsers.value.find((user) => user.name == sellerName.value);
+  productsForSale.value = [];
 });
 
 const totalAmount = computed(() =>
-  productsContent.value.reduce((acc, cur) => acc + Number(cur.salePrice), 0)
+  productsForSale.value.reduce((amount, product) => amount + Number(product.salePrice), 0)
 );
 
 const discountedSmallAmount = computed(() =>
-  productsContent.value.reduce(
-    (acc, cur) => acc + (cur.salePrice * (cur.discount ?? 0)) / 100,
+  productsForSale.value.reduce(
+    (amount, product) => amount + (product.salePrice * (product.discount ?? 0)) / 100,
     0
   )
 );
@@ -128,30 +127,27 @@ const totalDiscount = computed(() => {
   return 100 - (discountedAmountValue / totalAmountValue) * 100;
 });
 
-const toggleDialog = (isOpen) => {
+const toggleProductsDialog = (isOpen) => {
   productsDialog.value = isOpen;
 };
 
-function handleCloseCalendar(isOpen, selectedDate) {
-  calendarDialog.value = isOpen;
+function handleCloseCalendar(selectedDate) {
+  calendarDialog.value = false;
   formattedDate.value = selectedDate;
-  isDateSelected.value = true;
 }
 
-const productsTableValues = (productsContentValue) => {
-  productsContent.value = productsContentValue;
-  toggleDialog(false);
+const setProductsForSale = (selectedProductsForSale) => {
+  productsForSale.value = selectedProductsForSale;
+  toggleProductsDialog(false);
 };
 
 const resetForm = () => {
   if (form.value) {
     form.value.reset();
     form.value.resetValidation();
-    seller.value = [];
-    buyer.value = [];
-    productsContent.value = [];
-    isProductSelected.value = false;
-    isDateSelected.value = false;
+    sellerName.value = [];
+    buyerName.value = [];
+    productsForSale.value = [];
   }
 };
 
@@ -160,7 +156,7 @@ const handleSubmit = async () => {
 
   if (!valid) return;
 
-  if (productsContent.value.length <= 0) {
+  if (productsForSale.value.length <= 0) {
     snackbarProvider.showErrorSnackbar("Please select a product!");
     return;
   }
@@ -173,10 +169,10 @@ const handleSubmit = async () => {
   const getUserById = (username) =>
     allUsers.value.find((user) => user.name === username).id;
 
-  const selectedSeller = getUserById(seller.value);
-  const selectedBuyer = getUserById(buyer.value);
+  const selectedSeller = getUserById(sellerName.value);
+  const selectedBuyer = getUserById(buyerName.value);
 
-  const selectedProducts = productsContent.value.map((product) => ({
+  const selectedProducts = productsForSale.value.map((product) => ({
     productId: product.id,
     salePrice: Number(product.salePrice),
     discount: Number(product.discount) || 0,

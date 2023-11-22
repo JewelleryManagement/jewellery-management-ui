@@ -9,8 +9,8 @@
       <v-date-picker
         v-model="datePicker"
         color="green lighten-1"
-        @update:model-value="dateHandler"
-        @click:cancel="dateHandler"
+        @update:model-value="closeDialog"
+        @click:cancel="closeDialog"
       ></v-date-picker>
     </v-card>
   </v-dialog>
@@ -26,7 +26,7 @@ const props = defineProps({
 const datePicker = ref(new Date().toISOString().substr(0, 10));
 const emits = defineEmits(["close-dialog"]);
 
-const adjustTheDate = computed(() => {
+const formattedDate = computed(() => {
   if (!datePicker.value) return "";
 
   const selectedDate = new Date(datePicker.value);
@@ -37,7 +37,8 @@ const adjustTheDate = computed(() => {
   return `${year}-${month}-${day}`;
 });
 
-function dateHandler() {
-  emits("close-dialog", false, adjustTheDate.value);
+function closeDialog() {
+  console.log(formattedDate.value);
+  emits("close-dialog", formattedDate.value);
 }
 </script>

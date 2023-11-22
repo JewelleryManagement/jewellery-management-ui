@@ -7,12 +7,12 @@ import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue
 import ProductsContentDialog from "@/components/Dialog/ProductsContentDialog.vue";
 import UserResourceForm from "@/components/Form/UserResourceForm"
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue"
-import SubmitButtons from "@/components/Button/SubmitButtons.vue"
+import FormButtons from "@/components/Button/FormButtons.vue"
 import UserToolTip from './components/Tooltip/UserToolTip.vue'
 import ProductTransferButton from "@/components/Button/ProductTransferButton.vue"
 
 app.component('user-tool-tip', UserToolTip)
-app.component('submit-buttons', SubmitButtons)
+app.component('form-buttons', FormButtons)
 app.component('user-resource-form', UserResourceForm)
 app.component('disassembly-button', DisassemblyButton)
 app.component('product-transfer-button', ProductTransferButton)
