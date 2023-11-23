@@ -223,8 +223,6 @@ const handleSubmit = async () => {
 
   const data = buildSaleRequestData();
 
-  if (isPictureValidated()) await postPicture();
-
   await postSale(data);
 };
 </script>

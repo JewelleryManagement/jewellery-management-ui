@@ -5,12 +5,11 @@
       variant="solo-filled"
       prepend-icon="mdi-camera"
       v-model="chosenFile"
-      accept="image/png, image/jpg, image/jpeg"
+      accept=".jpeg, .jpg, .png"
       @change="emitPicture"
     ></v-file-input>
   </v-container>
 </template>
-<!-- png, jpg, jpeg -->
 <script setup>
 import {ref} from 'vue'
 const chosenFile = ref(null)
