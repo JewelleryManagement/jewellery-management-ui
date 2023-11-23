@@ -92,6 +92,11 @@
             </div>
           </div>
 
+          <picture-button
+            :isDisabled="true"
+            @picture-selected="handlePictureSelected"
+          />
+
           <form-buttons @reset-form="resetForm" />
         </v-form>
       </v-sheet>
@@ -145,6 +150,7 @@ const [authors, resourcesContent, productsContent] = [
   ref([]),
   ref([]),
 ];
+const selectedPicture = ref(null);
 
 const resetForm = () => {
   if (form.value) {
@@ -198,12 +204,36 @@ const submitProduct = async () => {
     productsContent: productsContent.value,
   };
   try {
-    await store.dispatch("products/createProduct", product);
-    return true;
+    return await store.dispatch("products/createProduct", product);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not create the product");
   }
   return false;
+};
+
+const handlePictureSelected = (chosenFile) => {
+  selectedPicture.value = chosenFile;
+};
+
+const isPictureValidated = () => {
+  if (selectedPicture.value <= 0) {
+    return false;
+  }
+  return true;
+};
+
+const postPicture = async (id) => {
+  const imageFile = selectedPicture.value;
+  try {
+    await store.dispatch("products/postPicture", id, imageFile);
+    snackbarProvider.showSuccessSnackbar(
+      "Successfully added picture to the product!"
+    );
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Couldn't add the picture to the product!"
+    );
+  }
 };
 
 const handleSubmit = async () => {
@@ -215,6 +245,12 @@ const handleSubmit = async () => {
 
   let isSubmitSuccessful = await submitProduct();
   if (isSubmitSuccessful) {
+    if (isPictureValidated()) {
+      const { id } = isSubmitSuccessful;
+      await postPicture(id);
+      resetForm();
+      router.push("/products");
+    }
     resetForm();
     router.push("/products");
   }

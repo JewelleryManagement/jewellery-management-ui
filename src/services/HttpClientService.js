@@ -86,7 +86,7 @@ export async function postPicture(productId, imagefile) {
     "Content-Type": "Image/*",
   };
 
-  return await postData(`/products/${productId}`, imagefile, { headers });
+  return await postData(`/products/${productId}/picture`, imagefile, { headers });
 }
 
 // DELETE REQUESTS

@@ -38,11 +38,6 @@
           >
         </v-container>
 
-        <picture-button
-          :isDisabled="!!productsForSale.length > 0"
-          @picture-selected="handlePictureSelected"
-        />
-
         <v-container v-if="productsForSale.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected products:
@@ -97,7 +92,6 @@ const selectedUser = ref("");
 const [productsDialog, productsForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const formattedDate = ref("");
-const selectedPicture = ref(null);
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = allUsers.value.map((user) => user.name);
@@ -217,31 +211,6 @@ const postSale = async (data) => {
   }
 };
 
-const handlePictureSelected = (chosenFile) => {
-  selectedPicture.value = chosenFile;
-};
-
-const isPictureValidated = () => {
-  if (selectedPicture.value <= 0) {
-    return false;
-  }
-  return true;
-};
-
-const postPicture = async () => {
-  const imageFile = selectedPicture.value;
-  try {
-    await store.dispatch("sales/postPicture", imageFile);
-    snackbarProvider.showSuccessSnackbar(
-      "Successfully added picture to the product!"
-    );
-    router.push("/sales");
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar(
-      "Couldn't add the picture to the product!"
-    );
-  }
-};
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
