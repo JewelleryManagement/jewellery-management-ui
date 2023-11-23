@@ -51,7 +51,7 @@ export async function fetchSales() {
 }
 
 // POSTS REQUESTS
-async function postData(endpoint, data) {
+async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data);
   if (response.status === 201) {
     return response.data;
@@ -79,6 +79,14 @@ export async function postUserLogin(user) {
 }
 export async function postSale(data) {
   return await postData("/sales", data);
+}
+
+export async function postPicture(productId, imagefile) {
+  const headers = {
+    "Content-Type": "Image/*",
+  };
+
+  return await postData(`/products/${productId}`, imagefile, { headers });
 }
 
 // DELETE REQUESTS

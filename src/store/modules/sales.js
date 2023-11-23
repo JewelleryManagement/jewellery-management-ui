@@ -1,4 +1,4 @@
-import { fetchSales, postSale } from "@/services/HttpClientService";
+import { fetchSales, postSale, postPicture } from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
@@ -33,6 +33,9 @@ export default {
     async postSale({ commit }, data) {
       await postSale(data);
     },
+    async postPicture(_, imagefile) {
+      await postPicture(imagefile)
+    }
   },
   getters: {
     getSales: (state) => state.sales,

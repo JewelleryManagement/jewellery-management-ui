@@ -6,8 +6,9 @@
       prepend-icon="mdi-camera"
       v-model="chosenFile"
       :disabled="!isDisabled"
+      accept="image/*"
+      @change="emitPicture"
     ></v-file-input>
-    {{ props.selectedUser }}
   </v-container>
 </template>
 
@@ -16,5 +17,10 @@ import {ref, computed} from 'vue'
 const chosenFile = ref(null)
 const props = defineProps({isDisabled: Boolean})
 const isDisabled = computed(() => props.isDisabled)
+
+const emit = defineEmits()
+const emitPicture = () => {
+    emit('picture-selected', chosenFile.value)
+}
 </script>
 
