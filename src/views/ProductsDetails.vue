@@ -90,19 +90,9 @@
                 Products selected: {{ productsContent.length || 0 }}
               </p>
             </div>
-
-            <v-btn color="success" class="mt-4" block type="submit">
-              Submit
-            </v-btn>
-
-            <v-btn color="error" class="mt-4" block @click="resetForm">
-              Reset
-            </v-btn>
-
-            <v-btn color="warning" class="mt-4" block @click="router.go(-1)">
-              Go Back
-            </v-btn>
           </div>
+
+          <form-buttons @reset-form="resetForm" />
         </v-form>
       </v-sheet>
     </v-card>
@@ -178,7 +168,7 @@ const resourcesTableValues = (resourceContentValue) => {
 };
 
 const productsTableValues = (productsContentValue) => {
-  productsContent.value = productsContentValue;
+  productsContent.value = productsContentValue.map((product) => product.id);
   closeDialog("products");
 };
 
@@ -228,5 +218,5 @@ const handleSubmit = async () => {
     resetForm();
     router.push("/products");
   }
-}
+};
 </script>

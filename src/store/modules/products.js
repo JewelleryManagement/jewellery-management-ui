@@ -17,7 +17,7 @@ export default {
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
       { key: "authors", title: "Authors" },
-      { key: "sold", title: "Sold" },
+      { key: "partOfSale", title: "Sold" },
       { key: "salePrice", title: "Sale price" },
       { key: "contentOf", title: "Part of product" },
     ],
@@ -27,7 +27,6 @@ export default {
       key: "owner",
       title: "Owner",
       slot: "owner",
-      align: "center",
     },
     tableColumnResourcesContent: {
       key: "resourceContent",
@@ -92,6 +91,7 @@ export default {
     getCurrentUserProducts: (state) =>
       state.currentUserProducts.map(formatAuthors),
     getAddColumn: (state) => state.tableColumnAdd,
+    getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
     getColumnsWithRCandPC: (state) => [
       ...state.tableColumns,
@@ -106,5 +106,6 @@ function formatAuthors(product) {
     ...product,
     authors: product.authors.map((author) => author.name).join(", "),
     contentOf: product.contentOf ? "Yes" : "No",
+    partOfSale: product.partOfSale ? "Yes" : "No",
   };
 }

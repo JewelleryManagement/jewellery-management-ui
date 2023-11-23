@@ -3,11 +3,12 @@ import resourcesModule from "./modules/resources";
 import productsModule from "./modules/products";
 import usersModule from "./modules/users";
 import authModule from "./modules/auth";
-import VuexPersistence from 'vuex-persist' 
+import salesModule from "./modules/sales";
+import VuexPersistence from "vuex-persist";
 
 const vuexLocal = new VuexPersistence({
-  storage: window.localStorage
-})
+  storage: window.localStorage,
+});
 
 const store = createStore({
   modules: {
@@ -15,8 +16,9 @@ const store = createStore({
     products: productsModule,
     users: usersModule,
     auth: authModule,
+    sales: salesModule,
   },
-  plugins: [vuexLocal.plugin]
+  plugins: [vuexLocal.plugin],
 });
 
 export default store;

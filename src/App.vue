@@ -103,6 +103,9 @@ export default {
       {
         link: { text: "Products", url: "/products" },
       },
+      {
+        link: { text: "Sales", url: "/sales" },
+      },
     ];
 
     const profileDropdown = {
