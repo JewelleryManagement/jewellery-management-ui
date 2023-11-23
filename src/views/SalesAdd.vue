@@ -21,21 +21,26 @@
         >
         </v-select>
 
-        <v-container class="d-flex justify-space-between">
-          <v-btn
-            color="primary"
-            @click="toggleProductsDialog(true)"
-            :disabled="!selectedUser"
-          >
-            Products
-          </v-btn>
-
+        <v-container class="d-flex flex-column">
           <v-btn
             color="green lighten-1"
             @click="() => (calendarDialog = true)"
             :disabled="!selectedUser"
             >Calendar</v-btn
           >
+
+          <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
+            Selected date: {{ formattedDate }}
+          </p>
+
+          <v-btn
+            class="mt-2"
+            color="primary"
+            @click="toggleProductsDialog(true)"
+            :disabled="!selectedUser"
+          >
+            Products
+          </v-btn>
         </v-container>
 
         <v-container v-if="productsForSale.length > 0">
@@ -162,7 +167,7 @@ const isFormValid = async () => {
   return valid;
 };
 
-const IsProductsValidated = () => {
+const isProductsValidated = () => {
   if (productsForSale.value.length <= 0) {
     snackbarProvider.showErrorSnackbar("Please select a product!");
     return false;
@@ -186,7 +191,7 @@ const mapSelectedProducts = () => {
   }));
 };
 
-const buildDataObject = () => {
+const buildSaleRequestData = () => {
   const getUserById = (username) =>
     allUsers.value.find((user) => user.name === username).id;
 
@@ -211,13 +216,12 @@ const postSale = async (data) => {
   }
 };
 
-
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
-  if (!IsProductsValidated()) return;
+  if (!isProductsValidated()) return;
   if (!isDateValidated()) return;
 
-  const data = buildDataObject();
+  const data = buildSaleRequestData();
 
   if (isPictureValidated()) await postPicture();
 
