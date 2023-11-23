@@ -38,6 +38,9 @@
           >
         </v-container>
 
+        <picture-button :isDisabled="!!productsForSale.length > 0" />
+
+
         <v-container v-if="productsForSale.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected products:
@@ -210,7 +213,6 @@ const postSale = async (data) => {
     snackbarProvider.showErrorSnackbar("Couldn't sell the product");
   }
 };
-
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
