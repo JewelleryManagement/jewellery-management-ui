@@ -21,21 +21,26 @@
         >
         </v-select>
 
-        <v-container class="d-flex justify-space-between">
-          <v-btn
-            color="primary"
-            @click="toggleProductsDialog(true)"
-            :disabled="!selectedUser"
-          >
-            Products
-          </v-btn>
-
+        <v-container class="d-flex flex-column">
           <v-btn
             color="green lighten-1"
             @click="() => (calendarDialog = true)"
             :disabled="!selectedUser"
             >Calendar</v-btn
           >
+
+          <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
+            Selected date: {{ formattedDate }}
+          </p>
+
+          <v-btn
+            class="mt-2"
+            color="primary"
+            @click="toggleProductsDialog(true)"
+            :disabled="!selectedUser"
+          >
+            Products
+          </v-btn>
         </v-container>
 
         <v-container v-if="productsForSale.length > 0">
@@ -210,7 +215,6 @@ const postSale = async (data) => {
     snackbarProvider.showErrorSnackbar("Couldn't sell the product");
   }
 };
-
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
