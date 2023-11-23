@@ -80,8 +80,8 @@ export default {
       const { productId, recipientId } = data;
       await transferProduct(productId, recipientId)
     },
-    async postPicture(_, productId, imagefile) {
-      await postPicture(productId, imagefile)
+    async postPicture({commit}, {productId, image}) {
+      await postPicture(productId, image)
     }
   },
   getters: {

@@ -92,10 +92,7 @@
             </div>
           </div>
 
-          <picture-button
-            :isDisabled="true"
-            @picture-selected="handlePictureSelected"
-          />
+          <picture-button @picture-selected="handlePictureSelected" />
 
           <form-buttons @reset-form="resetForm" />
         </v-form>
@@ -204,7 +201,9 @@ const submitProduct = async () => {
     productsContent: productsContent.value,
   };
   try {
-    return await store.dispatch("products/createProduct", product);
+    const res = await store.dispatch("products/createProduct", product);
+    snackbarProvider.showSuccessSnackbar("Successfully added product!");
+    return res;
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not create the product");
   }
@@ -222,12 +221,11 @@ const isPictureValidated = () => {
   return true;
 };
 
-const postPicture = async (id) => {
-  const imageFile = selectedPicture.value;
+const postPicture = async (id, image) => {
   try {
-    await store.dispatch("products/postPicture", id, imageFile);
+    await store.dispatch("products/postPicture", { productId: id, image });
     snackbarProvider.showSuccessSnackbar(
-      "Successfully added picture to the product!"
+      "Successfully added product and picture!"
     );
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
@@ -236,6 +234,13 @@ const postPicture = async (id) => {
   }
 };
 
+async function submitPicture(productResponse, selectedImage) {
+  if (productResponse && isPictureValidated()) {
+    const { id } = productResponse;
+    await postPicture(id, selectedImage);
+  }
+}
+
 const handleSubmit = async () => {
   if (!(await isFormValid())) {
     return;
@@ -243,16 +248,10 @@ const handleSubmit = async () => {
 
   fillAuthorsWithExistingUsers();
 
-  let isSubmitSuccessful = await submitProduct();
-  if (isSubmitSuccessful) {
-    if (isPictureValidated()) {
-      const { id } = isSubmitSuccessful;
-      await postPicture(id);
-      resetForm();
-      router.push("/products");
-    }
-    resetForm();
-    router.push("/products");
-  }
+  let productResponse = await submitProduct();
+  await submitPicture(productResponse, selectedPicture.value);
+
+  resetForm();
+  router.push("/products");
 };
 </script>
