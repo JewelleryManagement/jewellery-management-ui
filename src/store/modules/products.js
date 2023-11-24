@@ -6,6 +6,7 @@ import {
   disassmebleProduct,
   transferProduct,
 } from "@/services/HttpClientService.js";
+import { formatProducts } from '../../utils/utils.js'
 
 export default {
   namespaced: true,
@@ -81,7 +82,7 @@ export default {
   },
   getters: {
     allProducts: (state) => {
-      return state.products.map(formatAuthors);
+      return state.products.map(formatProducts);
     },
     getColumns: (state) => [
       ...state.tableColumns,
@@ -89,7 +90,7 @@ export default {
       state.tableColumnProductsContent,
     ],
     getCurrentUserProducts: (state) =>
-      state.currentUserProducts.map(formatAuthors),
+      state.currentUserProducts.map(formatProducts),
     getAddColumn: (state) => state.tableColumnAdd,
     getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
@@ -100,12 +101,3 @@ export default {
     ],
   },
 };
-
-function formatAuthors(product) {
-  return {
-    ...product,
-    authors: product.authors.map((author) => author.name).join(", "),
-    contentOf: product.contentOf ? "Yes" : "No",
-    partOfSale: product.partOfSale ? "Yes" : "No",
-  };
-}

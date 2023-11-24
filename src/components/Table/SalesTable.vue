@@ -43,9 +43,12 @@ import { useDisplay } from "vuetify/lib/framework.mjs";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 const snackbarProvider = inject("snackbarProvider");
 const search = ref("");
 const store = useStore();
+const router = useRouter();
+
 
 try {
   await store.dispatch("sales/fetchSales");
@@ -59,10 +62,9 @@ const isSmallScreen = computed(() => {
 });
 
 const rowHandler = (sale) => {
-  const rowIndex = sale.currentTarget.rowIndex;
-
-  const rowData = sales.value[rowIndex];
-
-  console.log("Row clicked:", rowData);
+  const rowIndex = sale.currentTarget.rowIndex - 1;
+  const saleData = sales.value[rowIndex];
+  router.push(`/sales/${saleData.id}`)
 };
+
 </script>
