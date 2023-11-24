@@ -14,7 +14,7 @@
 
     <v-spacer></v-spacer>
 
-    <v-toolbar-items class="hidden-sm-and-down" v-if="!isSmallScreen">
+    <v-toolbar-items class="hidden-sm-and-down" v-if="!isSmallScreen()">
       <template v-for="(page, index) in defaultMenuPages">
         <v-btn
           v-if="!page.isMenuDropdown"
@@ -43,7 +43,7 @@
       </template>
     </v-toolbar-items>
 
-    <v-menu v-if="isSmallScreen">
+    <v-menu v-if="isSmallScreen()">
       <template v-slot:activator="{ props }">
         <v-app-bar-nav-icon v-bind="props" size="x-large"></v-app-bar-nav-icon>
       </template>
@@ -63,24 +63,12 @@
   </v-app-bar>
 </template>
 
-<script>
-import { computed } from "vue";
-import { useDisplay } from "vuetify/lib/framework.mjs";
-
-export default {
-  props: ["defaultMenuPages", "hamburgerMenuPages"],
-  setup() {
-    const mobile = useDisplay();
-    const isSmallScreen = computed(() => {
-      return mobile.smAndDown.value;
-    });
-
-
-    return {
-      isSmallScreen,
-    };
-  },
-};
+<script setup>
+import { isSmallScreen } from "@/utils/utils";
+const {defaultMenuPages, hamburgerMenuPages} = defineProps({
+  defaultMenuPages: Object,
+  hamburgerMenuPages: Object,
+});
 </script>
 
 <style></style>

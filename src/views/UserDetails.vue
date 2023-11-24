@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <suspense>
       <template #default>
         <v-container>
@@ -14,6 +14,8 @@
           <div class="d-flex justify-center mt-10">
             <v-btn
               color="red"
+              :size="isSmallScreen() ? 'small' : 'x-large'"
+
               @click="() => (isResourceTableVisible = !isResourceTableVisible)"
               >{{
                 isResourceTableVisible ? "Hide Resources" : "Show Resources"
@@ -21,6 +23,8 @@
             >
             <v-btn
               color="green"
+              :size="isSmallScreen() ? 'small' : 'x-large'"
+
               @click="() => (isProductsTableVisible = !isProductsTableVisible)"
               >{{
                 isProductsTableVisible ? "Hide Products" : "Show Products"
@@ -64,12 +68,13 @@
         <span>Loading...</span>
       </template>
     </suspense>
-  </div>
+  </v-container>
 </template>
 
 <script setup>
 import { computed, inject, ref } from "vue";
 import { useStore } from "vuex";
+import { isSmallScreen } from "@/utils/utils";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";

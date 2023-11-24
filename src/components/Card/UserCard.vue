@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto pa-10 elevation-12" width="500" height="auto">
+  <v-card class="mx-auto pa-10 elevation-12" max-width="500" height="auto">
     <v-card-title class="text-h6">
       <v-icon>mdi-account</v-icon>
       {{ name }}

@@ -14,7 +14,7 @@
             variant="outlined"
             class="mx-4"
             rounded="xs"
-            :size="isSmallScreen ? 'small' : 'x-large'"
+            :size="isSmallScreen() ? 'small' : 'x-large'"
             color="red"
             v-bind="props"
           >
@@ -36,7 +36,7 @@
       <v-btn
         class="mx-4"
         rounded="xs"
-        :size="isSmallScreen ? 'small' : 'x-large'"
+        :size="isSmallScreen() ? 'small' : 'x-large'"
         color="red"
         to="/resources/add"
         >Add resource</v-btn
@@ -50,10 +50,10 @@
 </template>
 
 <script setup>
-import { onMounted, inject, ref, computed } from "vue";
+import { onMounted, inject, ref } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { isSmallScreen } from "@/utils/utils";
 
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
@@ -80,9 +80,6 @@ onMounted(async () => {
   }
 });
 
-const isSmallScreen = computed(() => {
-  return useDisplay().smAndDown.value;
-});
 </script>
 
 <style scoped></style>

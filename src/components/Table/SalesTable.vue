@@ -8,7 +8,7 @@
       <v-btn
         class="mx-4"
         rounded="xs"
-        :size="isSmallScreen ? 'small' : 'x-large'"
+        :size="isSmallScreen() ? 'small' : 'x-large'"
         color="red"
         to="/sales/add"
         >New Sale</v-btn
@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { isSmallScreen } from "@/utils/utils";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
@@ -56,9 +56,6 @@ try {
 }
 const tableColumns = computed(() => store.getters["sales/getColumns"]);
 const sales = computed(() => store.getters["sales/getSales"]);
-const isSmallScreen = computed(() => {
-  return useDisplay().smAndDown.value;
-});
 
 const rowHandler = (sale) => {
   const rowIndex = sale.currentTarget.rowIndex - 1;

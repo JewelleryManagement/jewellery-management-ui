@@ -10,7 +10,7 @@
           <v-btn
             class="mx-4"
             rounded="xs"
-            :size="isSmallScreen ? 'small' : 'x-large'"
+            :size="isSmallScreen() ? 'small' : 'x-large'"
             color="red"
             to="/products/add"
           >
@@ -39,7 +39,7 @@
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import { onBeforeMount, inject, computed } from "vue";
 import { useStore } from "vuex";
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { isSmallScreen } from "@/utils/utils";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const disassembleAndUserColumns = computed(() => [
@@ -56,7 +56,4 @@ onBeforeMount(async () => {
   }
 });
 
-const isSmallScreen = computed(() => {
-  return useDisplay().smAndDown.value;
-});
 </script>
