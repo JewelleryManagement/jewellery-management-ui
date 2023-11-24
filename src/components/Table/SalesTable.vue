@@ -24,7 +24,13 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="tableColumns" :items="sales" :search="search">
+    <v-data-table
+      :headers="tableColumns"
+      :items="sales"
+      :search="search"
+      @click:row="rowHandler"
+      hover
+    >
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
         <slot :name="slot" v-bind="scope || {}" />
       </template>
@@ -51,4 +57,12 @@ const sales = computed(() => store.getters["sales/getSales"]);
 const isSmallScreen = computed(() => {
   return useDisplay().smAndDown.value;
 });
+
+const rowHandler = (sale) => {
+  const rowIndex = sale.currentTarget.rowIndex;
+
+  const rowData = sales.value[rowIndex];
+
+  console.log("Row clicked:", rowData);
+};
 </script>

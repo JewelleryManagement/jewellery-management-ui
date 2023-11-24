@@ -4,15 +4,17 @@
       <v-col cols="10" max-width="1600">
         <sales-table>
           <template v-slot:item.seller="{ item }">
-            <user-tool-tip :user="item.seller" />
+            <user-tool-tip :user="item.seller" @click.stop />
           </template>
 
           <template v-slot:item.buyer="{ item }">
-            <user-tool-tip :user="item.buyer" />
+            <user-tool-tip :user="item.buyer" @click.stop />
           </template>
 
           <template v-slot:item.products="{ item }">
-            <v-icon @click="openDialog(item.products)">mdi-cube-outline</v-icon>
+            <v-icon @click="openDialog(item.products)" @click.stop
+              >mdi-cube-outline</v-icon
+            >
           </template>
         </sales-table>
       </v-col>
