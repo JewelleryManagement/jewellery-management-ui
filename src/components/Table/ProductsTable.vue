@@ -1,27 +1,46 @@
 <template>
-  <v-card-title>
-    <v-spacer></v-spacer>
-    <v-text-field
-      v-model="search"
-      append-icon="mdi-magnify"
-      label="Search"
-      single-line
-      hide-details
-    ></v-text-field>
-  </v-card-title>
-  <v-data-table :headers="tableColumns" :items="allProducts" :search="search">
-    <template v-slot:item.resourceContent="{ item }">
-      <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
-    </template>
+  <v-row justify="center" class="mt-10">
+    <v-col cols="10" max-width="1600">
+      <v-card class="elevation-12">
+        <slot>
+          <div class="text-center">
+            <h1>{{ title }}</h1>
+          </div>
+        </slot>
+        <slot name="button"> </slot>
 
-    <template v-slot:item.productsContent="{ item }">
-      <v-icon @click="openDialog(item, 'products')">mdi-cube-outline</v-icon>
-    </template>
+        <v-card-title>
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+        </v-card-title>
+        <v-data-table
+          :headers="tableColumns"
+          :items="allProducts"
+          :search="search"
+        >
+          <template v-slot:item.resourceContent="{ item }">
+            <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
+          </template>
 
-    <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
-      <slot :name="slot" v-bind="scope || {}" />
-    </template>
-  </v-data-table>
+          <template v-slot:item.productsContent="{ item }">
+            <v-icon @click="openDialog(item, 'products')"
+              >mdi-cube-outline</v-icon
+            >
+          </template>
+
+          <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
+            <slot :name="slot" v-bind="scope || {}" />
+          </template>
+        </v-data-table>
+      </v-card>
+    </v-col>
+  </v-row>
 
   <resource-content-dialog
     v-if="isResourceDialogOpen"
@@ -40,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, toRefs } from "vue";
+import { ref, computed, toRefs } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 
@@ -48,6 +67,7 @@ const props = defineProps({
   products: Array,
   additionalColumnsLeft: Array,
   additionalColumnsRight: Array,
+  title: String,
 });
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
