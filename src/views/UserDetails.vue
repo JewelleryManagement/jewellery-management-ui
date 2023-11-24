@@ -2,7 +2,7 @@
   <div>
     <suspense>
       <template #default>
-        <div>
+        <v-container>
           <suspense>
             <user-card
               :name="user.name"
@@ -58,7 +58,7 @@
               </products-table>
             </base-card>
           </transition>
-        </div>
+        </v-container>
       </template>
       <template #fallback>
         <span>Loading...</span>
