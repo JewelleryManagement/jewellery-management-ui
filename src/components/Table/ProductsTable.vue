@@ -2,11 +2,9 @@
   <v-row justify="center" class="mt-10">
     <v-col cols="10" max-width="1600">
       <v-card class="elevation-12">
-        <slot>
-          <div class="text-center">
-            <h1>{{ title }}</h1>
-          </div>
-        </slot>
+        <div class="text-center">
+          <h1>{{ title }}</h1>
+        </div>
         <slot name="button"> </slot>
 
         <v-card-title>
