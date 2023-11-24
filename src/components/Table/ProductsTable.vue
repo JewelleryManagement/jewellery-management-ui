@@ -1,59 +1,49 @@
 <template>
-  <v-row justify="center" class="mt-10">
-    <v-col cols="10" max-width="1600">
-      <v-card class="elevation-12">
-        <div class="text-center">
-          <h1>{{ title }}</h1>
-        </div>
-        <slot name="button"> </slot>
+  <div>
+    <div class="text-center">
+      <h1>{{ title }}</h1>
+    </div>
+    <slot name="button"> </slot>
 
-        <v-card-title>
-          <v-spacer></v-spacer>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-          ></v-text-field>
-        </v-card-title>
-        <v-data-table
-          :headers="tableColumns"
-          :items="allProducts"
-          :search="search"
-        >
-          <template v-slot:item.resourceContent="{ item }">
-            <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
-          </template>
+    <v-card-title>
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+    <v-data-table :headers="tableColumns" :items="allProducts" :search="search">
+      <template v-slot:item.resourceContent="{ item }">
+        <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
+      </template>
 
-          <template v-slot:item.productsContent="{ item }">
-            <v-icon @click="openDialog(item, 'products')"
-              >mdi-cube-outline</v-icon
-            >
-          </template>
+      <template v-slot:item.productsContent="{ item }">
+        <v-icon @click="openDialog(item, 'products')">mdi-cube-outline</v-icon>
+      </template>
 
-          <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
-            <slot :name="slot" v-bind="scope || {}" />
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-col>
-  </v-row>
+      <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
+        <slot :name="slot" v-bind="scope || {}" />
+      </template>
+    </v-data-table>
 
-  <resource-content-dialog
-    v-if="isResourceDialogOpen"
-    v-model="isResourceDialogOpen"
-    :data="resourceDialogData"
-    @close-dialog="closeDialog('resources')"
-  ></resource-content-dialog>
+    <resource-content-dialog
+      v-if="isResourceDialogOpen"
+      v-model="isResourceDialogOpen"
+      :data="resourceDialogData"
+      @close-dialog="closeDialog('resources')"
+    ></resource-content-dialog>
 
-  <products-content-dialog
-    v-if="isProductsDialogOpen"
-    v-model="isProductsDialogOpen"
-    :data="productsDialogData"
-    @close-dialog="closeDialog('products')"
-  >
-  </products-content-dialog>
+    <products-content-dialog
+      v-if="isProductsDialogOpen"
+      v-model="isProductsDialogOpen"
+      :data="productsDialogData"
+      @close-dialog="closeDialog('products')"
+    >
+    </products-content-dialog>
+  </div>
 </template>
 
 <script setup>

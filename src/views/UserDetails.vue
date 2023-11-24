@@ -1,80 +1,70 @@
 <template>
-  <v-container>
+  <div>
     <suspense>
       <template #default>
-        <v-container class="my-12" fluid>
-          <v-row justify="center">
-            <v-col cols="10" max-width="1600">
-              <suspense>
-                <user-card
-                  :name="user.name"
-                  :email="user.email"
-                  :resourcesAndQuantities="resourceItemResources"
-                ></user-card>
-              </suspense>
+        <div>
+          <suspense>
+            <user-card
+              :name="user.name"
+              :email="user.email"
+              :resourcesAndQuantities="resourceItemResources"
+            ></user-card>
+          </suspense>
 
-              <div class="d-flex justify-center mt-10">
-                <v-btn
-                  color="red"
-                  @click="
-                    () => (isResourceTableVisible = !isResourceTableVisible)
-                  "
-                  >{{
-                    isResourceTableVisible ? "Hide Resources" : "Show Resources"
-                  }}</v-btn
-                >
-                <v-btn
-                  color="green"
-                  @click="
-                    () => (isProductsTableVisible = !isProductsTableVisible)
-                  "
-                  >{{
-                    isProductsTableVisible ? "Hide Products" : "Show Products"
-                  }}</v-btn
-                >
-              </div>
+          <div class="d-flex justify-center mt-10">
+            <v-btn
+              color="red"
+              @click="() => (isResourceTableVisible = !isResourceTableVisible)"
+              >{{
+                isResourceTableVisible ? "Hide Resources" : "Show Resources"
+              }}</v-btn
+            >
+            <v-btn
+              color="green"
+              @click="() => (isProductsTableVisible = !isProductsTableVisible)"
+              >{{
+                isProductsTableVisible ? "Hide Products" : "Show Products"
+              }}</v-btn
+            >
+          </div>
 
-              <transition>
-                <resource-availability-table
-                  v-if="isResourceTableVisible"
-                  :tableColumns="tableColumnsResources"
-                  :resourceItem="resourceItemResources"
-                  :user="user"
-                ></resource-availability-table>
-              </transition>
+          <transition>
+            <base-card v-if="isResourceTableVisible">
+              <resource-availability-table
+                :tableColumns="tableColumnsResources"
+                :resourceItem="resourceItemResources"
+                :user="user"
+              ></resource-availability-table>
+            </base-card>
+          </transition>
 
-              <transition>
-                <v-card class="elevation-12 mt-4" v-if="isProductsTableVisible">
-                  <div class="text-center">
-                    <h1>{{ user.name }}'s products table</h1>
-                  </div>
+          <transition>
+            <base-card v-if="isProductsTableVisible">
+              <products-table
+                :products="userProducts"
+                :additionalColumnsRight="disassemblyColumns"
+                :title="`${user.name}'s products table`"
+              >
+                <template v-slot:item.disassembly="{ item }">
+                  <disassembly-button
+                    :item="item"
+                    :userId="userId"
+                  ></disassembly-button>
+                </template>
 
-                  <products-table
-                    :products="userProducts"
-                    :additionalColumnsRight="disassemblyColumns"
-                  >
-                    <template v-slot:item.disassembly="{ item }">
-                      <disassembly-button
-                        :item="item"
-                        :userId="userId"
-                      ></disassembly-button>
-                    </template>
-
-                    <template v-slot:item.transfer="{ item }">
-                      <product-transfer-button :product="item" :userId="userId" />
-                    </template>
-                  </products-table>
-                </v-card>
-              </transition>
-            </v-col>
-          </v-row>
-        </v-container>
+                <template v-slot:item.transfer="{ item }">
+                  <product-transfer-button :product="item" :userId="userId" />
+                </template>
+              </products-table>
+            </base-card>
+          </transition>
+        </div>
       </template>
       <template #fallback>
         <span>Loading...</span>
       </template>
     </suspense>
-  </v-container>
+  </div>
 </template>
 
 <script setup>

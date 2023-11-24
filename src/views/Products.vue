@@ -1,5 +1,6 @@
 <template>
   <v-container class="my-12" fluid>
+    <base-card>
     <products-table
       :additionalColumnsRight="disassembleAndUserColumns"
       title="Products Table"
@@ -30,6 +31,7 @@
         <product-transfer-button :product="item" />
       </template>
     </products-table>
+  </base-card>
   </v-container>
 </template>
 

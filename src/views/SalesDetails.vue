@@ -2,15 +2,17 @@
   <v-container fluid>
     <sale-card :current-sale="currentSale" />
 
-    <products-table
-      :products="saleProducts"
-      :additionalColumnsRight="ownerColumn"
-      title="Products in the current sale"
-    >
-      <template v-slot:item.owner="{ item }">
-        <user-tool-tip :user="item.owner" />
-      </template>
-    </products-table>
+    <base-card>
+      <products-table
+        :products="saleProducts"
+        :additionalColumnsRight="ownerColumn"
+        title="Products in the current sale"
+      >
+        <template v-slot:item.owner="{ item }">
+          <user-tool-tip :user="item.owner" />
+        </template>
+      </products-table>
+    </base-card>
   </v-container>
 </template>
 
