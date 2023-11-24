@@ -6,7 +6,7 @@ import {
   disassmebleProduct,
   transferProduct,
 } from "@/services/HttpClientService.js";
-import { formatProducts } from '../../utils/utils.js'
+import { formatProducts } from "../../utils/utils.js";
 
 export default {
   namespaced: true,
@@ -77,7 +77,7 @@ export default {
     },
     async transferProduct({ commit }, data) {
       const { productId, recipientId } = data;
-      await transferProduct(productId, recipientId)
+      await transferProduct(productId, recipientId);
     },
   },
   getters: {

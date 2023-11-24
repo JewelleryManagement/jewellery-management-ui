@@ -49,7 +49,6 @@ const search = ref("");
 const store = useStore();
 const router = useRouter();
 
-
 try {
   await store.dispatch("sales/fetchSales");
 } catch (error) {
@@ -64,7 +63,6 @@ const isSmallScreen = computed(() => {
 const rowHandler = (sale) => {
   const rowIndex = sale.currentTarget.rowIndex - 1;
   const saleData = sales.value[rowIndex];
-  router.push(`/sales/${saleData.id}`)
+  router.push(`/sales/${saleData.id}`);
 };
-
 </script>
