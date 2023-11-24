@@ -215,10 +215,7 @@ const handlePictureSelected = (chosenFile) => {
 };
 
 const isPictureValidated = () => {
-  if (selectedPicture.value <= 0) {
-    return false;
-  }
-  return true;
+  return !!selectedPicture.value;
 };
 
 const postPicture = async (id, image) => {
@@ -234,10 +231,10 @@ const postPicture = async (id, image) => {
   }
 };
 
-async function submitPicture(productResponse, selectedImage) {
+async function submitPicture(productResponse) {
   if (productResponse && isPictureValidated()) {
     const { id } = productResponse;
-    await postPicture(id, selectedImage);
+    await postPicture(id, selectedPicture.value);
   }
 }
 
@@ -249,7 +246,7 @@ const handleSubmit = async () => {
   fillAuthorsWithExistingUsers();
 
   let productResponse = await submitProduct();
-  await submitPicture(productResponse, selectedPicture.value);
+  await submitPicture(productResponse);
 
   resetForm();
   router.push("/products");

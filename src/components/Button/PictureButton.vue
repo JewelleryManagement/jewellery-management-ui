@@ -11,13 +11,11 @@
   </v-container>
 </template>
 <script setup>
-import {ref} from 'vue'
-const chosenFile = ref(null)
-const props = defineProps({isDisabled: Boolean})
+import { ref } from "vue";
+const chosenFile = ref(null);
 
-const emit = defineEmits()
+const emit = defineEmits();
 const emitPicture = () => {
-    emit('picture-selected', chosenFile.value)
-}
+  emit("picture-selected", chosenFile.value);
+};
 </script>
-
