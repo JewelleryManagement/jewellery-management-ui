@@ -19,7 +19,7 @@
 <script setup>
 import { formatProducts } from "../utils/utils.js";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import SaleCard from "@/components/Card/SaleCard.vue";
+import SaleCard from "@/components/Sale/SaleCard.vue";
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
