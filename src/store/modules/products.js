@@ -5,6 +5,7 @@ import {
   fetchProductsByOwner,
   disassmebleProduct,
   transferProduct,
+  postPicture
 } from "@/services/HttpClientService.js";
 import { formatProducts } from "../../utils/utils.js";
 
@@ -66,7 +67,8 @@ export default {
       commit("setProducts", res);
     },
     async createProduct({ commit }, product) {
-      await postProduct(product);
+      const res = await postProduct(product);
+      return res
     },
     async fetchProductsByOwner({ commit }, ownerId) {
       const res = await fetchProductsByOwner(ownerId);
@@ -79,6 +81,9 @@ export default {
       const { productId, recipientId } = data;
       await transferProduct(productId, recipientId);
     },
+    async postPicture({commit}, {productId, image}) {
+      await postPicture(productId, image)
+    }
   },
   getters: {
     allProducts: (state) => {

@@ -51,8 +51,10 @@ export async function fetchSales() {
 }
 
 // POSTS REQUESTS
-async function postData(endpoint, data) {
-  const response = await axios.post(endpoint, data);
+async function postData(endpoint, data, customHeaders = {}) {
+  const response = await axios.post(endpoint, data, {
+    headers: customHeaders,
+  });
   if (response.status === 201) {
     return response.data;
   }
@@ -79,6 +81,17 @@ export async function postUserLogin(user) {
 }
 export async function postSale(data) {
   return await postData("/sales", data);
+}
+
+export async function postPicture(productId, image) {
+  const formData = new FormData();
+  formData.append("image", image[0]);
+
+  const headers = {
+    "Content-Type": "multipart/form-data",
+  };
+
+  return await postData(`/products/${productId}/picture`, formData, headers);
 }
 
 // DELETE REQUESTS
