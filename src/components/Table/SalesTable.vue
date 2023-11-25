@@ -39,6 +39,7 @@
 </template>
 
 <script setup>
+import { navigateToItemDetails } from "../../utils/utils.js";
 import { isSmallScreen } from "@/utils/utils";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed, inject } from "vue";
@@ -58,8 +59,6 @@ const tableColumns = computed(() => store.getters["sales/getColumns"]);
 const sales = computed(() => store.getters["sales/getSales"]);
 
 const rowHandler = (sale) => {
-  const rowIndex = sale.currentTarget.rowIndex - 1;
-  const saleData = sales.value[rowIndex];
-  router.push(`/sales/${saleData.id}`);
+  navigateToItemDetails(router, sales, sale, "sales");
 };
 </script>

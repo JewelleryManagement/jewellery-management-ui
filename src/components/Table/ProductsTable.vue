@@ -15,7 +15,13 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="tableColumns" :items="allProducts" :search="search">
+    <v-data-table
+      :headers="tableColumns"
+      :items="allProducts"
+      :search="search"
+      @click:row="rowHandler"
+      hover
+    >
       <template v-slot:item.resourceContent="{ item }">
         <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
       </template>
@@ -47,10 +53,12 @@
 </template>
 
 <script setup>
+import { navigateToItemDetails } from "../../utils/utils.js";
 import { ref, computed, toRefs } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
   products: Array,
   additionalColumnsLeft: Array,
@@ -96,6 +104,9 @@ const closeDialog = (content) => {
   } else {
     isProductsDialogOpen.value = false;
   }
+};
+const rowHandler = (product) => {
+  navigateToItemDetails(router, allProducts, product, "products");
 };
 </script>
 
