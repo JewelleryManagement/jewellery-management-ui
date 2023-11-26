@@ -65,6 +65,7 @@ const props = defineProps({
   additionalColumnsRight: Array,
   title: String,
 });
+const store = useStore();
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);
@@ -80,7 +81,6 @@ const tableColumns = computed(() => {
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
-const store = useStore();
 const search = ref("");
 
 await store.dispatch("products/fetchProducts");

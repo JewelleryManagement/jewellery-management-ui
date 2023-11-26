@@ -39,6 +39,8 @@ const store = useStore()
 const route = useRoute()
 const currentProductId = route.params.productId
 const currentProductInfo = computed(() => store.getters['products/allProducts']).value.find(product => product.id === currentProductId)
-console.log(currentProductInfo);
+// const picture =  await store.dispatch('products/getPicutre',currentProductId ) || null
+
+// console.log(picture);
 </script>
 

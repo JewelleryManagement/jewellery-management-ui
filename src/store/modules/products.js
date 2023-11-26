@@ -5,7 +5,8 @@ import {
   fetchProductsByOwner,
   disassmebleProduct,
   transferProduct,
-  postPicture
+  postPicture,
+  fetchPicture,
 } from "@/services/HttpClientService.js";
 import { formatProducts } from "../../utils/utils.js";
 
@@ -15,6 +16,7 @@ export default {
     products: [],
     currentUserProducts: [],
     tableColumns: [
+      { key: "id", title: "Id", align: ' d-none'  },
       { key: "catalogNumber", title: "Catalog Number" },
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
@@ -68,7 +70,7 @@ export default {
     },
     async createProduct({ commit }, product) {
       const res = await postProduct(product);
-      return res
+      return res;
     },
     async fetchProductsByOwner({ commit }, ownerId) {
       const res = await fetchProductsByOwner(ownerId);
@@ -81,9 +83,13 @@ export default {
       const { productId, recipientId } = data;
       await transferProduct(productId, recipientId);
     },
-    async postPicture({commit}, {productId, image}) {
-      await postPicture(productId, image)
-    }
+    async postPicture({ commit }, { productId, image }) {
+      await postPicture(productId, image);
+    },
+    async getPicutre({ commit }, productId) {
+      const res = await fetchPicture(productId);
+      return res;
+    },
   },
   getters: {
     allProducts: (state) => {
