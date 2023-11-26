@@ -16,7 +16,7 @@ export default {
     products: [],
     currentUserProducts: [],
     tableColumns: [
-      { key: "id", title: "Id", align: ' d-none'  },
+      { key: "id", title: "Id", align: " d-none" },
       { key: "catalogNumber", title: "Catalog Number" },
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
@@ -87,8 +87,12 @@ export default {
       await postPicture(productId, image);
     },
     async getPicutre({ commit }, productId) {
-      const res = await fetchPicture(productId);
-      return res;
+      try {
+        const res = await fetchPicture(productId);
+        return URL.createObjectURL(new Blob([res], { type: "image/png" }));
+      } catch (error) {
+        return null
+      }
     },
   },
   getters: {
