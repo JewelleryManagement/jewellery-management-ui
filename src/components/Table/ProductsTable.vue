@@ -23,11 +23,11 @@
       hover
     >
       <template v-slot:item.resourceContent="{ item }">
-        <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
+        <v-icon @click="openDialog(item, 'resources')" @click.stop>mdi-cube</v-icon>
       </template>
 
       <template v-slot:item.productsContent="{ item }">
-        <v-icon @click="openDialog(item, 'products')">mdi-cube-outline</v-icon>
+        <v-icon @click="openDialog(item, 'products')" @click.stop>mdi-cube-outline</v-icon>
       </template>
 
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
