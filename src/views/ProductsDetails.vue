@@ -90,19 +90,11 @@
                 Products selected: {{ productsContent.length || 0 }}
               </p>
             </div>
-
-            <v-btn color="success" class="mt-4" block type="submit">
-              Submit
-            </v-btn>
-
-            <v-btn color="error" class="mt-4" block @click="resetForm">
-              Reset
-            </v-btn>
-
-            <v-btn color="warning" class="mt-4" block @click="router.go(-1)">
-              Go Back
-            </v-btn>
           </div>
+
+          <picture-button @picture-selected="handlePictureSelected" />
+
+          <form-buttons @reset-form="resetForm" />
         </v-form>
       </v-sheet>
     </v-card>
@@ -155,6 +147,7 @@ const [authors, resourcesContent, productsContent] = [
   ref([]),
   ref([]),
 ];
+const selectedPicture = ref(null);
 
 const resetForm = () => {
   if (form.value) {
@@ -178,7 +171,7 @@ const resourcesTableValues = (resourceContentValue) => {
 };
 
 const productsTableValues = (productsContentValue) => {
-  productsContent.value = productsContentValue;
+  productsContent.value = productsContentValue.map((product) => product.id);
   closeDialog("products");
 };
 
@@ -208,13 +201,42 @@ const submitProduct = async () => {
     productsContent: productsContent.value,
   };
   try {
-    await store.dispatch("products/createProduct", product);
-    return true;
+    const res = await store.dispatch("products/createProduct", product);
+    snackbarProvider.showSuccessSnackbar("Successfully added product!");
+    return res;
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not create the product");
   }
   return false;
 };
+
+const handlePictureSelected = (chosenFile) => {
+  selectedPicture.value = chosenFile;
+};
+
+const isPictureValidated = () => {
+  return !!selectedPicture.value;
+};
+
+const postPicture = async (id, image) => {
+  try {
+    await store.dispatch("products/postPicture", { productId: id, image });
+    snackbarProvider.showSuccessSnackbar(
+      "Successfully added product and picture!"
+    );
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Couldn't add the picture to the product!"
+    );
+  }
+};
+
+async function submitPicture(productResponse) {
+  if (productResponse && isPictureValidated()) {
+    const { id } = productResponse;
+    await postPicture(id, selectedPicture.value);
+  }
+}
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) {
@@ -223,10 +245,10 @@ const handleSubmit = async () => {
 
   fillAuthorsWithExistingUsers();
 
-  let isSubmitSuccessful = await submitProduct();
-  if (isSubmitSuccessful) {
-    resetForm();
-    router.push("/products");
-  }
-}
+  let productResponse = await submitProduct();
+  await submitPicture(productResponse);
+
+  resetForm();
+  router.push("/products");
+};
 </script>

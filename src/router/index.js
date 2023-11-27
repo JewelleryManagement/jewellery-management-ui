@@ -13,6 +13,8 @@ const UserResourceRemove = () => import("../views/UserResourceRemove.vue");
 const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
 const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
+const Sales = () => import("../views/Sales.vue");
+const SalesAdd = () => import("../views/SalesAdd.vue");
 const NotFound = () => import("../views/NotFound.vue");
 
 const routes = [
@@ -101,7 +103,18 @@ const routes = [
     component: Profile,
     meta: { title: "Profile page", requiresAuth: true },
   },
-
+  {
+    path: "/sales",
+    name: "Sales",
+    component: Sales,
+    meta: { title: "Sales page", requiresAuth: true },
+  },
+  {
+    path: "/sales/add",
+    name: "New Sale",
+    component: SalesAdd,
+    meta: { title: "New Sale", requiresAuth: true },
+  },
   { path: "/logout", redirect: "/login" },
   {
     path: "/:notFound(.*)",
