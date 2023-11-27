@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import SaleParticipantsInfo from "./SaleParticipantsInfo.vue";
+import SaleParticipantsInfo from "./SaleParticipantInfo.vue";
 import SaleInformation from "./SaleInformation.vue";
 const { currentSale } = defineProps({ currentSale: Object });
 </script>

@@ -7,7 +7,7 @@ import {
   transferProduct,
   postPicture
 } from "@/services/HttpClientService.js";
-import { formatProducts } from "../../utils/utils.js";
+import { formatProducts } from "../../utils/data-formatter.js";
 
 export default {
   namespaced: true,

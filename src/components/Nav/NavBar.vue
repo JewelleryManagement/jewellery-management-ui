@@ -64,8 +64,8 @@
 </template>
 
 <script setup>
-import { isSmallScreen } from "@/utils/utils";
-const {defaultMenuPages, hamburgerMenuPages} = defineProps({
+import { isSmallScreen } from "@/utils/display";
+const { defaultMenuPages, hamburgerMenuPages } = defineProps({
   defaultMenuPages: Object,
   hamburgerMenuPages: Object,
 });

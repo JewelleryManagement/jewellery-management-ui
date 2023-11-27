@@ -15,7 +15,7 @@ const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
 const Sales = () => import("../views/Sales.vue");
 const SalesAdd = () => import("../views/SalesAdd.vue");
-const SalesDetails = () => import("../views/SalesDetails.vue");
+const SaleDetails = () => import("../views/SaleDetails.vue");
 const NotFound = () => import("../views/NotFound.vue");
 
 const routes = [
@@ -118,8 +118,8 @@ const routes = [
   },
   {
     path: "/sales/:saleId",
-    name: "Sales-Details",
-    component: SalesDetails,
+    name: "Sale-Details",
+    component: SaleDetails,
     meta: { title: "Sale Details", requiresAuth: true },
   },
   { path: "/logout", redirect: "/login" },
