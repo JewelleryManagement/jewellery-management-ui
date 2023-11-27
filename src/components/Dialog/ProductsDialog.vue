@@ -15,25 +15,25 @@
             :additionalColumnsRight="userColumn"
           >
             <template v-slot:item.add="{ item }">
-              <v-icon color="blue" @click="addProductById(item)">{{
+              <v-icon color="blue" @click="addProductById(item)" @click.stop>{{
                 btnIcon[item.id] || ICON_ADD
               }}</v-icon>
             </template>
 
             <template v-slot:item.resourceContent="{ item }">
-              <v-icon @click="openInnerDialog(item, 'resources')"
+              <v-icon @click="openInnerDialog(item, 'resources')" @click.stop
                 >mdi-cube</v-icon
               >
             </template>
 
             <template v-slot:item.productsContent="{ item }">
-              <v-icon @click="openInnerDialog(item, 'products')"
+              <v-icon @click="openInnerDialog(item, 'products')" @click.stop
                 >mdi-cube-outline</v-icon
               >
             </template>
 
             <template v-slot:item.owner="{ item }">
-              <user-tool-tip :user="item.owner" />
+              <user-tool-tip :user="item.owner" @click.stop />
             </template>
           </products-table>
         </v-card-text>
