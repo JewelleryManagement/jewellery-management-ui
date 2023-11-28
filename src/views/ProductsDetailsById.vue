@@ -44,7 +44,7 @@
         </div>
 
         <strong>Part of Sale: </strong>
-        <PartOfsale :partOfSale="currentProductInfo.partOfSale" description="N/A" />
+        <PartOfSale :partOfSale="currentProductInfo.partOfSale" description="N/A" />
         <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
         <picture-button @picture-selected="handlePictureSelected" />
@@ -82,7 +82,7 @@ import { isMediumScreen } from "@/utils/display";
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import PartOfsale from "@/components/Tooltip/PartOfsale.vue";
+import PartOfSale from "@/components/Tooltip/PartOfSale.vue";
 const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
 const isProductsDialogOpen = ref(false);

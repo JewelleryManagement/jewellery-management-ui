@@ -23,7 +23,7 @@
       hover
     >
       <template v-slot:item.partOfSale="{ item }">
-        <PartOfsale
+        <PartOfSale
           :partOfSale="item.partOfSale"
           description="No"
           @click.stop
@@ -78,7 +78,7 @@ const props = defineProps({
   title: String,
 });
 const store = useStore();
-import PartOfsale from "../Tooltip/PartOfsale.vue";
+import PartOfSale from "../Tooltip/PartOfSale.vue";
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);
