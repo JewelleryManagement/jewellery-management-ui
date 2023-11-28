@@ -6,7 +6,6 @@ export function isSmallScreen() {
 }
 
 export function formatProducts(product) {
-  console.log(product);
   return {
     ...product,
     contentOf: product.contentOf ? "Yes" : "No",
