@@ -59,7 +59,9 @@
 
           <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
-            <picture-button @picture-selected="handlePictureSelected"></picture-button>
+          <picture-button
+            @picture-selected="handlePictureSelected"
+          ></picture-button>
 
           <div class="d-flex justify-center mt-10">
             <v-btn color="red" @click="openDialog('resources')" @click.stop
@@ -92,7 +94,7 @@
 
 <script setup>
 import { ref, computed, inject } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 const snackbarProvider = inject("snackbarProvider");
@@ -101,11 +103,12 @@ const isProductsDialogOpen = ref(false);
 const defaultPicture = require("../assets/logo.png");
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
+
 const currentProductId = route.params.productId;
 const currentProductInfo = computed(
   () => store.getters["products/allProducts"]
 ).value.find((product) => product.id === currentProductId);
-console.log(currentProductInfo);
 const picture =
   (await store.dispatch("products/getPicutre", currentProductId)) || null;
 
@@ -125,20 +128,18 @@ const closeDialog = (content) => {
   }
 };
 
-
 const handlePictureSelected = async (picture) => {
-  if (!picture) return
+  if (!picture) return;
 
-  await postPicture(currentProductId, picture)
-  location.reload()
-}
-
+  await postPicture(currentProductId, picture);
+  router.go();
+};
 
 const postPicture = async (id, image) => {
   try {
     await store.dispatch("products/postPicture", { productId: id, image });
     snackbarProvider.showSuccessSnackbar(
-      "Successfully added product and picture!"
+      "Successfully added picture to the product!"
     );
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
