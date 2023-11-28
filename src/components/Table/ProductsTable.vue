@@ -22,8 +22,8 @@
       @click:row="rowHandler"
       hover
     >
-      <template v-slot:item.partOfSale="{ item }" @click.stop>
-        <PartOfsale :partOfSale="item.partOfSale">No</PartOfsale>
+      <template v-slot:item.partOfSale="{ item }">
+        <PartOfsale :partOfSale="item.partOfSale"  @click.stop>No</PartOfsale>
       </template>
 
       <template v-slot:item.resourceContent="{ item }">

@@ -22,7 +22,7 @@
         </template>
 
         <template v-slot:item.owner="{ item }">
-          <user-tool-tip :user="item.owner" />
+          <user-tool-tip :user="item.owner" @click.stop />
         </template>
       </products-table>
     </base-card>
