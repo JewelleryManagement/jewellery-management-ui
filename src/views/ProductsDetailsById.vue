@@ -53,10 +53,13 @@
             <strong>Sale price:</strong> ${{ currentProductInfo.salePrice }}
           </div>
           <div>
-            <strong>Discount:</strong> {{ (currentProductInfo.discount).toFixed(2) }}%
+            <strong>Discount:</strong>
+            {{ currentProductInfo.discount.toFixed(2) }}%
           </div>
 
           <bar-code :productionNumber="currentProductInfo.productionNumber" />
+
+            <picture-button @picture-selected="handlePictureSelected"></picture-button>
 
           <div class="d-flex justify-center mt-10">
             <v-btn color="red" @click="openDialog('resources')" @click.stop
@@ -88,10 +91,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
+const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
 const isProductsDialogOpen = ref(false);
 const defaultPicture = require("../assets/logo.png");
@@ -118,6 +122,28 @@ const closeDialog = (content) => {
     isResourceDialogOpen.value = false;
   } else {
     isProductsDialogOpen.value = false;
+  }
+};
+
+
+const handlePictureSelected = async (picture) => {
+  if (!picture) return
+
+  await postPicture(currentProductId, picture)
+  location.reload()
+}
+
+
+const postPicture = async (id, image) => {
+  try {
+    await store.dispatch("products/postPicture", { productId: id, image });
+    snackbarProvider.showSuccessSnackbar(
+      "Successfully added product and picture!"
+    );
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Couldn't add the picture to the product!"
+    );
   }
 };
 </script>

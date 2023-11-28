@@ -86,15 +86,15 @@
 import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { isSmallScreen } from "@/utils/utils";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
 const isResourceTableVisible = ref(false);
 const isProductsTableVisible = ref(false);
 const route = useRoute()
-
-watch(() => route.fullPath, () => location.reload())
+const router = useRouter()
+watch(() => route.fullPath, () => router.go(route.fullPath))
 
 const { id } = defineProps(["id"]);
 const userId = id;
