@@ -111,7 +111,6 @@ const currentProductInfo = computed(
 ).value.find((product) => product.id === currentProductId);
 const picture =
   (await store.dispatch("products/getPicutre", currentProductId)) || null;
-
 const openDialog = (content) => {
   if (content == "resources") {
     isResourceDialogOpen.value = true;
