@@ -29,29 +29,33 @@
           <v-icon color="blue">mdi-minus</v-icon>
         </router-link>
       </template>
+
+      <template v-slot:item.transfer="{ item }">
+        <router-link
+          :to="{
+            name: 'Transfer-Quantity',
+            params: { resourceId: item.id, userId: user.id },
+          }"
+        >
+        <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
+        </router-link>
+      </template>
     </v-data-table>
   </v-card>
 </template>
 
-<script>
+<script setup>
 import { VDataTable } from "vuetify/labs/VDataTable";
-import { ref } from "vue";
-export default {
-  props: ["tableColumns", "resourceItem", "user"],
-  components: {
-    VDataTable,
-  },
-  setup(props) {
-    const search = ref("");
+import { ref, toRefs } from "vue";
 
-    return {
-      tableColumns: props.tableColumns,
-      resourceItem: props.resourceItem,
-      search,
-      user: props.user,
-    };
-  },
-};
+const props = defineProps({
+  tableColumns: Array,
+  resourceItem: Object,
+  user: Object,
+});
+const { tableColumns, resourceItem, user } = toRefs(props);
+
+const search = ref("");
 </script>
 
 <style scoped></style>

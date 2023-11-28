@@ -17,22 +17,13 @@
 
         <v-form @submit.prevent="handleSubmit" ref="form">
           <Pearl v-if="selected === 'Pearl'" />
-          <PreciousMetal v-if="selected === 'PreciousMetal'" />
-          <Gemstone v-if="selected === 'Gemstone'" />
-          <LinkingPart v-if="selected === 'LinkingPart'" />
+          <Metal v-if="selected === 'Metal'" />
+          <PreciousStone v-if="selected === 'PreciousStone'" />
+          <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
+          <Element v-if="selected === 'Element'" />
 
           <div v-if="selected" class="d-flex flex-column">
-            <v-btn color="success" class="mt-4" block type="submit">
-              Submit
-            </v-btn>
-
-            <v-btn color="error" class="mt-4" block @click="resetForm">
-              Reset
-            </v-btn>
-
-            <v-btn color="warning" class="mt-4" block to="/resources">
-              Go Back
-            </v-btn>
+            <form-buttons @reset-form="resetForm" />
           </div>
         </v-form>
       </v-sheet>
@@ -40,101 +31,88 @@
   </v-container>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, watch, inject } from "vue";
 import Pearl from "../components/Form/Pearl.vue";
-import PreciousMetal from "../components/Form/PreciousMetal.vue";
-import Gemstone from "../components/Form/Gemstone.vue";
-import LinkingPart from "../components/Form/LinkingPart.vue";
+import Metal from "../components/Form/Metal.vue";
+import PreciousStone from "../components/Form/PreciousStone.vue";
+import Element from "../components/Form/Element.vue";
+import SemiPreciousStone from "../components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
-export default {
-  components: {
-    Pearl,
-    PreciousMetal,
-    Gemstone,
-    LinkingPart,
-  },
-  props: {
-    id: String,
-  },
-  setup(props) {
-    const store = useStore();
-    const route = useRoute();
-    const router = useRouter();
-    const options = ref(["Pearl", "Gemstone", "PreciousMetal", "LinkingPart"]);
-    const pageTitle = ref(route.meta.title);
-    const resourceDetails = computed(
-      () => store.getters["resources/getResourceDetails"]
-    );
-    const snackbarProvider = inject("snackbarProvider");
-    const selected = ref("");
-    const isEditState = props.id !== undefined;
+const props = defineProps({
+  id: String,
+});
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+const options = ref([
+  "Pearl",
+  "Metal",
+  "Element",
+  "PreciousStone",
+  "SemiPreciousStone",
+]);
+const pageTitle = ref(route.meta.title);
+const resourceDetails = computed(
+  () => store.getters["resources/getResourceDetails"]
+);
+const snackbarProvider = inject("snackbarProvider");
+const selected = ref("");
+const isEditState = props.id !== undefined;
 
-    const form = ref(null);
+const form = ref(null);
 
+if (isEditState) {
+  const resourceDetails = computed(() =>
+    store.getters["resources/getResourceById"](props.id)
+  );
+  store.dispatch("resources/setResourceDetails", resourceDetails.value);
+  selected.value = resourceDetails.value.clazz;
+}
+
+watch(selected, (newValue) => {
+  //Reset input data on selection change
+  store.dispatch("resources/setResourceDetails", { clazz: newValue });
+});
+
+const resetForm = () => {
+  if (form.value) {
+    form.value.reset();
+    form.value.resetValidation();
+  }
+};
+
+const handleSubmit = async () => {
+  const { valid } = await form.value.validate();
+  if (valid) {
     if (isEditState) {
-      const resourceDetails = computed(() =>
-        store.getters["resources/getResourceById"](props.id)
-      );
-      store.dispatch("resources/setResourceDetails", resourceDetails.value);
-      selected.value = resourceDetails.value.clazz;
+      editResource();
+    } else {
+      createResource();
     }
+  }
+};
 
-    watch(selected, (newValue) => {
-      //Reset input data on selection change
-      store.dispatch("resources/setResourceDetails", { clazz: newValue });
-    });
+const editResource = async () => {
+  try {
+    await store.dispatch("resources/updateResource", resourceDetails.value);
+    snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
+    router.push("/resources");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Couldn't edit resouce");
+  }
+};
 
-    const resetForm = () => {
-      if (form.value) {
-        form.value.reset();
-        form.value.resetValidation();
-      }
-    };
-
-    const handleSubmit = async () => {
-      const { valid } = await form.value.validate();
-      if (valid) {
-        if (isEditState) {
-          editResource();
-        } else {
-          createResource();
-        }
-      }
-    };
-
-    const editResource = async () => {
-      try {
-        await store.dispatch("resources/updateResource", resourceDetails.value);
-        snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
-        router.push("/resources");
-      } catch (error) {
-        snackbarProvider.showErrorSnackbar("Couldn't edit resouce");
-      }
-    };
-
-    const createResource = async () => {
-      try {
-        await store.dispatch("resources/createResource", resourceDetails.value);
-        snackbarProvider.showSuccessSnackbar("Successfully created resource!");
-        router.push("/resources");
-      } catch (error) {
-        snackbarProvider.showErrorSnackbar("Couldn't create resource");
-      }
-    };
-
-    return {
-      isEditState,
-      handleSubmit,
-      resetForm,
-      form,
-      pageTitle,
-      selected,
-      options,
-    };
-  },
+const createResource = async () => {
+  try {
+    await store.dispatch("resources/createResource", resourceDetails.value);
+    snackbarProvider.showSuccessSnackbar("Successfully created resource!");
+    router.push("/resources");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Couldn't create resource");
+  }
 };
 </script>
 
