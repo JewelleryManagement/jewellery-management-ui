@@ -31,7 +31,7 @@
 <script setup>
 import { ref } from "vue";
 import ProductsTable from "../Table/ProductsTable.vue";
-import { formatProducts } from "@/utils/utils";
+import { formatProducts } from "@/utils/data-formatter";
 const { modelValue, data } = defineProps({
   modelValue: Boolean,
   data: Object,

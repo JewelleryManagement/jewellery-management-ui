@@ -39,8 +39,8 @@
 </template>
 
 <script setup>
-import { navigateToItemDetails } from "../../utils/utils.js";
-import { isSmallScreen } from "@/utils/utils";
+import { isSmallScreen } from "@/utils/display";
+import { navigateToItemDetails } from "@/utils/row-handler";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";

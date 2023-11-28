@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { navigateToItemDetails } from "../../utils/utils.js";
+import { navigateToItemDetails } from "../../utils/row-handler.js";
 import { ref, computed, toRefs } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";

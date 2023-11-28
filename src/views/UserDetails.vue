@@ -86,7 +86,7 @@
 <script setup>
 import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
-import { isSmallScreen } from "@/utils/utils";
+import { isSmallScreen } from "@/utils/display";
 import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";

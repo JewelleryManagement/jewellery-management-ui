@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { formatProducts } from "../utils/utils.js";
+import { formatProducts } from "../utils/data-formatter.js";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import SaleCard from "@/components/Sale/SaleCard.vue";
 import { computed } from "vue";

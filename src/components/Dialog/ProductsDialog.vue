@@ -102,7 +102,7 @@ const props = defineProps({
   modelValue: Boolean,
   userId: String,
 });
-
+console.log(props.userId);
 const ICON_ADD = ref("mdi-plus");
 const ICON_REMOVE = ref("mdi-minus");
 const dialogTypes = {
@@ -128,7 +128,7 @@ try {
 }
 const ownedNonContentAndNonSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
-    (product) => product.contentOf === "No" && product.partOfSale === "No"
+    (product) => product.contentOf === "No" && product.partOfSale === null
   )
 );
 

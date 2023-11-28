@@ -53,8 +53,7 @@
 import { onMounted, inject, ref } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
-import { isSmallScreen } from "@/utils/utils";
-
+import { isSmallScreen } from "@/utils/display";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const selectedResourceType = ref("All");
@@ -79,7 +78,6 @@ onMounted(async () => {
     snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
   }
 });
-
 </script>
 
 <style scoped></style>

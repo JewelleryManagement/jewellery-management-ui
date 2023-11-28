@@ -50,7 +50,7 @@
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import { onBeforeMount, inject, computed } from "vue";
 import { useStore } from "vuex";
-import { isSmallScreen } from "@/utils/utils";
+import { isSmallScreen } from "@/utils/display";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const disassembleAndUserColumns = computed(() => [
