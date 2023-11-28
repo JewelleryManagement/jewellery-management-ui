@@ -9,7 +9,7 @@ export function formatProducts(product) {
   return {
     ...product,
     contentOf: product.contentOf ? "Yes" : "No",
-    partOfSale: product.partOfSale ? "Yes" : "No",
+    // partOfSale: product.partOfSale ? "Yes" : "No",
   };
 }
 

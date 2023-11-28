@@ -22,6 +22,9 @@
       @click:row="rowHandler"
       hover
     >
+      <template v-slot:item.partOfSale="{ item }" @click.stop>
+        <PartOfsale :partOfSale="item.partOfSale">No</PartOfsale>
+      </template>
 
       <template v-slot:item.resourceContent="{ item }">
         <v-icon @click="openDialog(item, 'resources')" @click.stop
@@ -71,6 +74,7 @@ const props = defineProps({
   title: String,
 });
 const store = useStore();
+import PartOfsale from "../Tooltip/PartOfsale.vue";
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);

@@ -64,6 +64,7 @@
                   <disassembly-button
                     :item="item"
                     :userId="userId"
+                    @click.stop
                   ></disassembly-button>
                 </template>
 
@@ -92,9 +93,12 @@ import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
 const isResourceTableVisible = ref(false);
 const isProductsTableVisible = ref(false);
-const route = useRoute()
-const router = useRouter()
-watch(() => route.fullPath, () => router.go(route.fullPath))
+const route = useRoute();
+const router = useRouter();
+watch(
+  () => route.fullPath,
+  () => router.go(route.fullPath)
+);
 
 const { id } = defineProps(["id"]);
 const userId = id;

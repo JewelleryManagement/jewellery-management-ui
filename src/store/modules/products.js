@@ -21,7 +21,7 @@ export default {
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
       { key: "authors", title: "Authors", slot: "authors" },
-      { key: "partOfSale", title: "Sold" },
+      { key: "partOfSale", title: "Sold", slot: "partOfSale" },
       { key: "salePrice", title: "Sale price" },
       { key: "contentOf", title: "Part of product" },
     ],

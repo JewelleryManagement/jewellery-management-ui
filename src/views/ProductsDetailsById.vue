@@ -46,22 +46,14 @@
           <div>
             <strong>Content of:</strong> {{ currentProductInfo.contentOf }}
           </div>
-          <div>
-            <strong>Part of sale:</strong> {{ currentProductInfo.partOfSale }}
-          </div>
-          <div>
-            <strong>Sale price:</strong> ${{ currentProductInfo.salePrice }}
-          </div>
-          <div>
-            <strong>Discount:</strong>
-            {{ currentProductInfo.discount.toFixed(2) }}%
-          </div>
 
+          <strong>Part of Sale: </strong>
+          <PartOfsale :partOfSale="currentProductInfo.partOfSale"
+            >N/A</PartOfsale
+          >
           <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
-          <picture-button
-            @picture-selected="handlePictureSelected"
-          ></picture-button>
+          <picture-button @picture-selected="handlePictureSelected" />
 
           <div class="d-flex justify-center mt-10">
             <v-btn color="red" @click="openDialog('resources')" @click.stop
@@ -96,7 +88,7 @@
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-
+import PartOfsale from "@/components/Tooltip/PartOfsale.vue";
 const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
 const isProductsDialogOpen = ref(false);
@@ -111,6 +103,7 @@ const currentProductInfo = computed(
 ).value.find((product) => product.id === currentProductId);
 const picture =
   (await store.dispatch("products/getPicutre", currentProductId)) || null;
+
 const openDialog = (content) => {
   if (content == "resources") {
     isResourceDialogOpen.value = true;
