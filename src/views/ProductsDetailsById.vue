@@ -26,8 +26,23 @@
           <div>
             <strong>Description:</strong> {{ currentProductInfo.description }}
           </div>
-          <div class="d-flex"><strong>Owner:&nbsp;</strong><user-tool-tip :user="currentProductInfo.owner" /></div>
-          <div><strong>Authors:</strong> {{ currentProductInfo.authors }}</div>
+          <div class="d-flex">
+            <strong>Owner:&nbsp;</strong
+            ><user-tool-tip :user="currentProductInfo.owner" />
+          </div>
+          <div>
+            <strong>Authors:&nbsp;</strong>
+            <user-tool-tip
+              :user="author"
+              v-for="(author, index) in currentProductInfo.authors"
+              :key="author"
+              @click.stop
+            >
+              <template v-if="index < currentProductInfo.authors.length - 1"
+                >&comma;&nbsp;</template
+              >
+            </user-tool-tip>
+          </div>
           <div>
             <strong>Content of:</strong> {{ currentProductInfo.contentOf }}
           </div>
@@ -38,7 +53,7 @@
             <strong>Sale price:</strong> ${{ currentProductInfo.salePrice }}
           </div>
           <div>
-            <strong>Discount:</strong> {{ currentProductInfo.discount }}
+            <strong>Discount:</strong> {{ (currentProductInfo.discount).toFixed(2) }}%
           </div>
 
           <bar-code :productionNumber="currentProductInfo.productionNumber" />

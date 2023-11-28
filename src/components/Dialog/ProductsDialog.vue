@@ -14,6 +14,19 @@
             :additionalColumnsLeft="addColumn"
             :additionalColumnsRight="userColumn"
           >
+            <template v-slot:item.authors="{ item }">
+              <user-tool-tip
+                :user="author"
+                v-for="(author, index) in item.authors"
+                :key="item.id"
+                @click.stop
+              >
+                <template v-if="index < item.authors.length - 1"
+                  >&comma;&nbsp;</template
+                >
+              </user-tool-tip>
+            </template>
+            
             <template v-slot:item.add="{ item }">
               <v-icon color="blue" @click="addProductById(item)" @click.stop>{{
                 btnIcon[item.id] || ICON_ADD
