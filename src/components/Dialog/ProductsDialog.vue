@@ -26,7 +26,7 @@
                 >
               </user-tool-tip>
             </template>
-            
+
             <template v-slot:item.add="{ item }">
               <v-icon color="blue" @click="addProductById(item)" @click.stop>{{
                 btnIcon[item.id] || ICON_ADD
@@ -102,7 +102,7 @@ const props = defineProps({
   modelValue: Boolean,
   userId: String,
 });
-console.log(props.userId);
+
 const ICON_ADD = ref("mdi-plus");
 const ICON_REMOVE = ref("mdi-minus");
 const dialogTypes = {

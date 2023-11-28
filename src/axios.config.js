@@ -3,7 +3,7 @@ import store from "@/store/store";
 
 const instance = axios.create({
     baseURL: 'http://localhost:8080',
-    timeout: 15000,
+    timeout: 5000,
     headers: { 'Content-Type': 'application/json' },
 });
 
