@@ -59,6 +59,6 @@ const tableColumns = computed(() => store.getters["sales/getColumns"]);
 const sales = computed(() => store.getters["sales/getSales"]);
 
 const rowHandler = (sale) => {
-  navigateToItemDetails(router, sales, sale, "sales");
+  navigateToItemDetails(router, sale, "sales");
 };
 </script>

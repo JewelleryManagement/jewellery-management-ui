@@ -6,16 +6,17 @@ export function isSmallScreen() {
 }
 
 export function formatProducts(product) {
+  console.log(product);
   return {
     ...product,
     contentOf: product.contentOf ? "Yes" : "No",
+    salePrice: `€${(product.salePrice).toFixed(2)}`
     // partOfSale: product.partOfSale ? "Yes" : "No",
   };
 }
 
 export const navigateToItemDetails = (
   router,
-  collection,
   item,
   routePrefix
 ) => {

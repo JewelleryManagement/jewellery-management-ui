@@ -115,7 +115,7 @@ const closeDialog = (content) => {
   }
 };
 const rowHandler = (product) => {
-  navigateToItemDetails(router, allProducts, product, "products");
+  navigateToItemDetails(router, product, "products");
 };
 </script>
 
