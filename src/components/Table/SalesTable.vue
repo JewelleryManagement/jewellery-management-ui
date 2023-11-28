@@ -8,7 +8,7 @@
       <v-btn
         class="mx-4"
         rounded="xs"
-        :size="isSmallScreen ? 'small' : 'x-large'"
+        :size="isSmallScreen() ? 'small' : 'x-large'"
         color="red"
         to="/sales/add"
         >New Sale</v-btn
@@ -24,7 +24,13 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="tableColumns" :items="sales" :search="search">
+    <v-data-table
+      :headers="tableColumns"
+      :items="sales"
+      :search="search"
+      @click:row="rowClick"
+      hover
+    >
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
         <slot :name="slot" v-bind="scope || {}" />
       </template>
@@ -33,13 +39,15 @@
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { isSmallScreen } from "@/utils/display";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 const snackbarProvider = inject("snackbarProvider");
 const search = ref("");
 const store = useStore();
+const router = useRouter();
 
 try {
   await store.dispatch("sales/fetchSales");
@@ -48,7 +56,10 @@ try {
 }
 const tableColumns = computed(() => store.getters["sales/getColumns"]);
 const sales = computed(() => store.getters["sales/getSales"]);
-const isSmallScreen = computed(() => {
-  return useDisplay().smAndDown.value;
-});
+
+const rowClick = (sale) => {
+  const rowIndex = sale.currentTarget.rowIndex - 1;
+  const saleData = sales.value[rowIndex];
+  router.push(`/sales/${saleData.id}`);
+};
 </script>

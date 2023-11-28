@@ -7,6 +7,7 @@ import {
   transferProduct,
   postPicture
 } from "@/services/HttpClientService.js";
+import { formatProducts } from "../../utils/data-formatter.js";
 
 export default {
   namespaced: true,
@@ -78,7 +79,7 @@ export default {
     },
     async transferProduct({ commit }, data) {
       const { productId, recipientId } = data;
-      await transferProduct(productId, recipientId)
+      await transferProduct(productId, recipientId);
     },
     async postPicture({commit}, {productId, image}) {
       await postPicture(productId, image)
@@ -86,7 +87,7 @@ export default {
   },
   getters: {
     allProducts: (state) => {
-      return state.products.map(formatAuthors);
+      return state.products.map(formatProducts);
     },
     getColumns: (state) => [
       ...state.tableColumns,
@@ -94,7 +95,7 @@ export default {
       state.tableColumnProductsContent,
     ],
     getCurrentUserProducts: (state) =>
-      state.currentUserProducts.map(formatAuthors),
+      state.currentUserProducts.map(formatProducts),
     getAddColumn: (state) => state.tableColumnAdd,
     getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
@@ -105,12 +106,3 @@ export default {
     ],
   },
 };
-
-function formatAuthors(product) {
-  return {
-    ...product,
-    authors: product.authors.map((author) => author.name).join(", "),
-    contentOf: product.contentOf ? "Yes" : "No",
-    partOfSale: product.partOfSale ? "Yes" : "No",
-  };
-}

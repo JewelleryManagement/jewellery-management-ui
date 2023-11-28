@@ -1,39 +1,37 @@
 <template>
   <v-container class="my-12" fluid>
-    <v-row justify="center">
-      <v-col cols="10" max-width="1600">
-        <v-card class="elevation-12">
-          <div class="text-center">
-            <h1>Products table</h1>
-          </div>
-
+    <base-card>
+      <products-table
+        :additionalColumnsRight="disassembleAndUserColumns"
+        title="Products Table"
+      >
+        <template v-slot:button>
           <div class="d-flex justify-end">
             <v-btn
               class="mx-4"
               rounded="xs"
-              :size="isSmallScreen ? 'small' : 'x-large'"
+              :size="isSmallScreen() ? 'small' : 'x-large'"
               color="red"
               to="/products/add"
-              >Add Product</v-btn
             >
+              Add Product
+            </v-btn>
           </div>
+        </template>
 
-          <products-table :additionalColumnsRight="disassembleAndUserColumns">
-            <template v-slot:item.owner="{ item }">
-              <user-tool-tip :user="item.owner" />
-            </template>
+        <template v-slot:item.owner="{ item }">
+          <user-tool-tip :user="item.owner" />
+        </template>
 
-            <template v-slot:item.disassembly="{ item }">
-              <disassembly-button :item="item"></disassembly-button>
-            </template>
+        <template v-slot:item.disassembly="{ item }">
+          <disassembly-button :item="item"></disassembly-button>
+        </template>
 
-            <template v-slot:item.transfer="{ item }">
-              <product-transfer-button :product="item" />
-            </template>
-          </products-table>
-        </v-card>
-      </v-col>
-    </v-row>
+        <template v-slot:item.transfer="{ item }">
+          <product-transfer-button :product="item" />
+        </template>
+      </products-table>
+    </base-card>
   </v-container>
 </template>
 
@@ -41,7 +39,7 @@
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import { onBeforeMount, inject, computed } from "vue";
 import { useStore } from "vuex";
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { isSmallScreen } from "@/utils/display";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const disassembleAndUserColumns = computed(() => [
@@ -56,9 +54,5 @@ onBeforeMount(async () => {
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch products");
   }
-});
-
-const isSmallScreen = computed(() => {
-  return useDisplay().smAndDown.value;
 });
 </script>

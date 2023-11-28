@@ -37,5 +37,8 @@ export default {
   getters: {
     getSales: (state) => state.sales,
     getColumns: (state) => [...state.tableColumns],
+    getSaleById: (state) => (saleId) => {
+      return state.sales.find((sale) => sale.id === saleId);
+    },
   },
 };
