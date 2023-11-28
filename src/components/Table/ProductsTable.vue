@@ -23,7 +23,11 @@
       hover
     >
       <template v-slot:item.partOfSale="{ item }">
-        <PartOfsale :partOfSale="item.partOfSale"  @click.stop>No</PartOfsale>
+        <PartOfsale
+          :partOfSale="item.partOfSale"
+          description="No"
+          @click.stop
+        />
       </template>
 
       <template v-slot:item.resourceContent="{ item }">

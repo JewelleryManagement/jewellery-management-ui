@@ -14,7 +14,7 @@
           <div class="d-flex justify-center mt-10">
             <v-btn
               color="red"
-              :size="isSmallScreen() ? 'small' : 'x-large'"
+              :size="isSmallScreen() ? 'small' : 'large'"
               @click="() => (isResourceTableVisible = !isResourceTableVisible)"
               >{{
                 isResourceTableVisible ? "Hide Resources" : "Show Resources"
@@ -22,7 +22,7 @@
             >
             <v-btn
               color="green"
-              :size="isSmallScreen() ? 'small' : 'x-large'"
+              :size="isSmallScreen() ? 'small' : 'large'"
               @click="() => (isProductsTableVisible = !isProductsTableVisible)"
               >{{
                 isProductsTableVisible ? "Hide Products" : "Show Products"

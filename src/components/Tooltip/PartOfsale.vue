@@ -2,12 +2,13 @@
   <span v-if="props.partOfSale">
     <router-link :to="`/sales/${props.partOfSale}`">Yes</router-link>
   </span>
-  <slot v-else></slot>
+  <span v-else>{{ props.description }}</span>
 </template>
 
 <script setup>
 const props = defineProps({
   partOfSale: String,
+  description: String,
 });
 </script>
 

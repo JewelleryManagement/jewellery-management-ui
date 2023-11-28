@@ -44,7 +44,7 @@
         </div>
 
         <strong>Part of Sale: </strong>
-        <PartOfsale :partOfSale="currentProductInfo.partOfSale">N/A</PartOfsale>
+        <PartOfsale :partOfSale="currentProductInfo.partOfSale" description="N/A" />
         <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
         <picture-button @picture-selected="handlePictureSelected" />
