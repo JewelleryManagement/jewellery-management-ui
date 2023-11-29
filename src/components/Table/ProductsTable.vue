@@ -25,7 +25,6 @@
       <template v-slot:item.partOfSale="{ item }">
         <part-of-product
           :partOfProduct="item.partOfSale"
-          isPartOfProduct="No"
           routerPreFix="sales"
           @click.stop
         />
@@ -34,7 +33,6 @@
       <template v-slot:item.contentOf="{ item }">
         <part-of-product
           :partOfProduct="item.contentOf"
-          isPartOfProduct="No"
           routerPreFix="products"
           @click.stop
         />

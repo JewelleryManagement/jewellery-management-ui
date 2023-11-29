@@ -10,7 +10,7 @@
         :lazy-src="defaultPicture"
         :src="picture ?? defaultPicture"
         cover
-        :max-width="isMediumScreen() ? '100%': '60%'" 
+        :max-width="isMediumScreen() ? '100%' : '60%'"
       >
       </v-img>
 
@@ -40,12 +40,18 @@
           </user-tool-tip>
         </div>
         <div>
-          <strong>Content of:</strong> 
-          <part-of-product :partOfProduct="currentProductInfo.contentOf" isPartOfProduct="No" routerPreFix="products" />
+          <strong>Content of:</strong>
+          <part-of-product
+            :partOfProduct="currentProductInfo.contentOf"
+            routerPreFix="products"
+          />
         </div>
 
         <strong>Part of Sale: </strong>
-        <part-of-product :partOfProduct="currentProductInfo.partOfSale" isPartOfProduct="N/A" routerPreFix="sales" />
+        <part-of-product
+          :partOfProduct="currentProductInfo.partOfSale"
+          routerPreFix="sales"
+        />
         <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
         <picture-button @picture-selected="handlePictureSelected" />
