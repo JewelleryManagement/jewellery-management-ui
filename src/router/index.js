@@ -5,6 +5,7 @@ const Home = () => import("../views/Home.vue");
 const Resources = () => import("../views/Resources.vue");
 const Products = () => import("../views/Products.vue");
 const ProductsDetails = () => import("../views/ProductsDetails.vue");
+const ProductsDetailsById = () => import("../views/ProductsDetailsById.vue");
 const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
@@ -97,6 +98,13 @@ const routes = [
     props: true,
     component: ProductsDetails,
     meta: { title: "Add product", requiresAuth: true },
+  },
+  {
+    path: "/products/:productId",
+    name: "Product Details",
+    props: true,
+    component: ProductsDetailsById,
+    meta: { title: "Product details", requiresAuth: true },
   },
   {
     path: "/profile",

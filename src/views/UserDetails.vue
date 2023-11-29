@@ -14,7 +14,7 @@
           <div class="d-flex justify-center mt-10">
             <v-btn
               color="red"
-              :size="isSmallScreen() ? 'small' : 'x-large'"
+              :size="isSmallScreen() ? 'small' : 'large'"
               @click="() => (isResourceTableVisible = !isResourceTableVisible)"
               >{{
                 isResourceTableVisible ? "Hide Resources" : "Show Resources"
@@ -22,7 +22,7 @@
             >
             <v-btn
               color="green"
-              :size="isSmallScreen() ? 'small' : 'x-large'"
+              :size="isSmallScreen() ? 'small' : 'large'"
               @click="() => (isProductsTableVisible = !isProductsTableVisible)"
               >{{
                 isProductsTableVisible ? "Hide Products" : "Show Products"
@@ -47,10 +47,24 @@
                 :additionalColumnsRight="disassemblyColumns"
                 :title="`${user.name}'s products table`"
               >
+                <template v-slot:item.authors="{ item }">
+                  <user-tool-tip
+                    :user="author"
+                    v-for="(author, index) in item.authors"
+                    :key="item.id"
+                    @click.stop
+                  >
+                    <template v-if="index < item.authors.length - 1"
+                      >&comma;&nbsp;</template
+                    >
+                  </user-tool-tip>
+                </template>
+
                 <template v-slot:item.disassembly="{ item }">
                   <disassembly-button
                     :item="item"
                     :userId="userId"
+                    @click.stop
                   ></disassembly-button>
                 </template>
 
@@ -70,14 +84,21 @@
 </template>
 
 <script setup>
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { isSmallScreen } from "@/utils/display";
+import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
 const isResourceTableVisible = ref(false);
 const isProductsTableVisible = ref(false);
+const route = useRoute();
+const router = useRouter();
+watch(
+  () => route.fullPath,
+  () => router.go(route.fullPath)
+);
 
 const { id } = defineProps(["id"]);
 const userId = id;

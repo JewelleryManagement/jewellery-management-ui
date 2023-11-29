@@ -28,7 +28,7 @@
       :headers="tableColumns"
       :items="sales"
       :search="search"
-      @click:row="rowClick"
+      @click:row="rowHandler"
       hover
     >
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -40,6 +40,7 @@
 
 <script setup>
 import { isSmallScreen } from "@/utils/display";
+import { navigateToItemDetails } from "@/utils/row-handler";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
@@ -57,9 +58,7 @@ try {
 const tableColumns = computed(() => store.getters["sales/getColumns"]);
 const sales = computed(() => store.getters["sales/getSales"]);
 
-const rowClick = (sale) => {
-  const rowIndex = sale.currentTarget.rowIndex - 1;
-  const saleData = sales.value[rowIndex];
-  router.push(`/sales/${saleData.id}`);
+const rowHandler = (sale) => {
+  navigateToItemDetails(router, sale, "sales");
 };
 </script>

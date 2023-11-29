@@ -3,9 +3,9 @@ import store from "@/store/store";
 import router from "@/router/index";
 
 // GET REQUESTS
-async function fetchData(endpoint) {
+async function fetchData(endpoint, options = {}) {
   try {
-    const response = await axios.get(endpoint);
+    const response = await axios.get(endpoint, options);
     if (response.status === 200) {
       return response.data;
     }
@@ -14,7 +14,7 @@ async function fetchData(endpoint) {
       store.dispatch("auth/logout");
       router.push("/login");
     }
-
+    
     throw new Error("Failed to fetch data from the server.");
   }
 }
@@ -36,6 +36,14 @@ export async function fetchQuantityByResourceId(resourceId) {
 
 export async function fetchProducts() {
   return await fetchData("/products");
+}
+
+export async function fetchPicture(productId) {
+  const options = {
+    responseType: "blob",
+  };
+
+  return await fetchData(`/products/${productId}/picture`, options);
 }
 
 export async function fetchProductsByOwner(ownerId) {

@@ -15,13 +15,41 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="tableColumns" :items="allProducts" :search="search">
+    <v-data-table
+      :headers="tableColumns"
+      :items="allProducts"
+      :search="search"
+      @click:row="rowHandler"
+      hover
+    >
+      <template v-slot:item.partOfSale="{ item }">
+        <part-of-product
+          :partOfProduct="item.partOfSale"
+          isPartOfProduct="No"
+          routerPreFix="sales"
+          @click.stop
+        />
+      </template>
+
+      <template v-slot:item.contentOf="{ item }">
+        <part-of-product
+          :partOfProduct="item.contentOf"
+          isPartOfProduct="No"
+          routerPreFix="products"
+          @click.stop
+        />
+      </template>
+
       <template v-slot:item.resourceContent="{ item }">
-        <v-icon @click="openDialog(item, 'resources')">mdi-cube</v-icon>
+        <v-icon @click="openDialog(item, 'resources')" @click.stop
+          >mdi-cube</v-icon
+        >
       </template>
 
       <template v-slot:item.productsContent="{ item }">
-        <v-icon @click="openDialog(item, 'products')">mdi-cube-outline</v-icon>
+        <v-icon @click="openDialog(item, 'products')" @click.stop
+          >mdi-cube-outline</v-icon
+        >
       </template>
 
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -47,16 +75,19 @@
 </template>
 
 <script setup>
+import { navigateToItemDetails } from "../../utils/row-handler.js";
 import { ref, computed, toRefs } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
-
+import { useRouter } from "vue-router";
+const router = useRouter();
 const props = defineProps({
   products: Array,
   additionalColumnsLeft: Array,
   additionalColumnsRight: Array,
   title: String,
 });
+const store = useStore();
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);
@@ -72,7 +103,6 @@ const tableColumns = computed(() => {
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
-const store = useStore();
 const search = ref("");
 
 await store.dispatch("products/fetchProducts");
@@ -96,6 +126,9 @@ const closeDialog = (content) => {
   } else {
     isProductsDialogOpen.value = false;
   }
+};
+const rowHandler = (product) => {
+  navigateToItemDetails(router, product, "products");
 };
 </script>
 

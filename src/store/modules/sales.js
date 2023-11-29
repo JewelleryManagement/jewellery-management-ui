@@ -5,6 +5,7 @@ export default {
   state: {
     sales: [],
     tableColumns: [
+      { key: "id", title: "Id", align: ' d-none'  },
       { key: "seller", title: "Seller" },
       { key: "buyer", title: "Buyer" },
       { key: "products", title: "Products", align: "center" },

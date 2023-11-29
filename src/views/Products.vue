@@ -19,12 +19,23 @@
           </div>
         </template>
 
+        <template v-slot:item.authors="{ item }">
+          <user-tool-tip
+            :user="author"
+            v-for="(author, index) in item.authors"
+            :key="item.id"
+            @click.stop
+          >
+            <template v-if="index < item.authors.length - 1">&comma;&nbsp;</template>
+          </user-tool-tip>
+        </template>
+
         <template v-slot:item.owner="{ item }">
-          <user-tool-tip :user="item.owner" />
+          <user-tool-tip :user="item.owner" @click.stop />
         </template>
 
         <template v-slot:item.disassembly="{ item }">
-          <disassembly-button :item="item"></disassembly-button>
+          <disassembly-button :item="item" @click.stop />
         </template>
 
         <template v-slot:item.transfer="{ item }">
