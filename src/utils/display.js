@@ -7,5 +7,10 @@ export function isSmallScreen() {
 
 export function isMediumScreen() {
   const display = useDisplay();
+  return display.md.value;
+}
+
+export function isMediumAndDownScreen() {
+  const display = useDisplay();
   return display.mdAndDown.value;
 }
