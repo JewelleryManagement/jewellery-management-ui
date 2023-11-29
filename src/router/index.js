@@ -4,7 +4,7 @@ import store from "@/store/store";
 const Home = () => import("../views/Home.vue");
 const Resources = () => import("../views/Resources.vue");
 const Products = () => import("../views/Products.vue");
-const ProductsDetails = () => import("../views/ProductsDetails.vue");
+const ProductDetailsCreate = () => import("../views/ProductDetailsCreate.vue");
 const ProductsDetailsById = () => import("../views/ProductsDetailsById.vue");
 const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
@@ -96,7 +96,7 @@ const routes = [
     path: "/products/add",
     name: "Add Product",
     props: true,
-    component: ProductsDetails,
+    component: ProductDetailsCreate,
     meta: { title: "Add product", requiresAuth: true },
   },
   {
