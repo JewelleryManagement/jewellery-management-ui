@@ -23,9 +23,19 @@
       hover
     >
       <template v-slot:item.partOfSale="{ item }">
-        <PartOfSale
-          :partOfSale="item.partOfSale"
-          description="No"
+        <part-of-product
+          :partOfProduct="item.partOfSale"
+          isPartOfProduct="No"
+          routerPreFix="sales"
+          @click.stop
+        />
+      </template>
+
+      <template v-slot:item.contentOf="{ item }">
+        <part-of-product
+          :partOfProduct="item.contentOf"
+          isPartOfProduct="No"
+          routerPreFix="products"
           @click.stop
         />
       </template>
@@ -78,7 +88,6 @@ const props = defineProps({
   title: String,
 });
 const store = useStore();
-import PartOfSale from "../Tooltip/PartOfSale.vue";
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);

@@ -128,7 +128,7 @@ try {
 }
 const ownedNonContentAndNonSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
-    (product) => product.contentOf === "No" && product.partOfSale === null
+    (product) => !product.contentOf && product.partOfSale === null
   )
 );
 

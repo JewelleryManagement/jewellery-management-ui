@@ -40,11 +40,12 @@
           </user-tool-tip>
         </div>
         <div>
-          <strong>Content of:</strong> {{ currentProductInfo.contentOf }}
+          <strong>Content of:</strong> 
+          <part-of-product :partOfProduct="currentProductInfo.contentOf" isPartOfProduct="No" routerPreFix="products" />
         </div>
 
         <strong>Part of Sale: </strong>
-        <PartOfSale :partOfSale="currentProductInfo.partOfSale" description="N/A" />
+        <part-of-product :partOfProduct="currentProductInfo.partOfSale" isPartOfProduct="N/A" routerPreFix="sales" />
         <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
         <picture-button @picture-selected="handlePictureSelected" />
@@ -82,7 +83,6 @@ import { isMediumScreen } from "@/utils/display";
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import PartOfSale from "@/components/Tooltip/PartOfSale.vue";
 const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
 const isProductsDialogOpen = ref(false);
@@ -97,7 +97,6 @@ const currentProductInfo = computed(
 ).value.find((product) => product.id === currentProductId);
 const picture =
   (await store.dispatch("products/getPicutre", currentProductId)) || null;
-
 const openDialog = (content) => {
   if (content == "resources") {
     isResourceDialogOpen.value = true;
