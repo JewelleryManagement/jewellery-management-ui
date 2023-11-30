@@ -9,6 +9,11 @@ export default {
   state: {
     users: [],
     usersResources: {},
+    tableColumns: [
+      { key: "id", title: "Id", align: " d-none" },
+      { key: "name", title: "Name" },
+      { key: "email", title: "Email" },
+    ],
   },
   mutations: {
     setUsers(state, users) {
@@ -41,6 +46,9 @@ export default {
       rootState.resources.tableColumnQuantity,
       ...rootState.resources.tableColumns,
     ],
+    getTableColumns: (state) => {
+      return state.tableColumns;
+    },
     allUsers(state) {
       return state.users;
     },
