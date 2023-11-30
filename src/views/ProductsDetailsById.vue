@@ -10,7 +10,7 @@
         :lazy-src="defaultPicture"
         :src="picture ?? defaultPicture"
         cover
-        :max-width="isMediumScreen() ? '100%': '60%'" 
+        :max-width="isMediumAndDownScreen() ? '100%' : '60%'"
       >
       </v-img>
 
@@ -40,21 +40,35 @@
           </user-tool-tip>
         </div>
         <div>
-          <strong>Content of:</strong> 
-          <part-of-product :partOfProduct="currentProductInfo.contentOf" isPartOfProduct="No" routerPreFix="products" />
+          <strong>Content of:</strong>
+          <part-of-product
+            :partOfProduct="currentProductInfo.contentOf"
+            routerPreFix="products"
+          />
         </div>
 
         <strong>Part of Sale: </strong>
-        <part-of-product :partOfProduct="currentProductInfo.partOfSale" isPartOfProduct="N/A" routerPreFix="sales" />
+        <part-of-product
+          :partOfProduct="currentProductInfo.partOfSale"
+          routerPreFix="sales"
+        />
         <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
         <picture-button @picture-selected="handlePictureSelected" />
 
         <div class="d-flex justify-center mt-10">
-          <v-btn color="red" @click="openDialog('resources')" @click.stop
+          <v-btn
+            color="red"
+            @click="openDialog('resources')"
+            :size="isMediumScreen() ? 'x-small' : 'default'"
+            @click.stop
             >Resources</v-btn
           >
-          <v-btn color="green" @click="openDialog('products')" @click.stop
+          <v-btn
+            color="green"
+            @click="openDialog('products')"
+            :size="isMediumScreen() ? 'x-small' : 'default'"
+            @click.stop
             >Products</v-btn
           >
         </div>
@@ -79,7 +93,7 @@
 </template>
 
 <script setup>
-import { isMediumScreen } from "@/utils/display";
+import { isMediumAndDownScreen, isMediumScreen } from "@/utils/display";
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";

@@ -19,13 +19,12 @@
       :headers="tableColumns"
       :items="allProducts"
       :search="search"
-      @click:row="rowHandler"
+      @click:row="rowClickHandler"
       hover
     >
       <template v-slot:item.partOfSale="{ item }">
         <part-of-product
           :partOfProduct="item.partOfSale"
-          isPartOfProduct="No"
           routerPreFix="sales"
           @click.stop
         />
@@ -34,7 +33,6 @@
       <template v-slot:item.contentOf="{ item }">
         <part-of-product
           :partOfProduct="item.contentOf"
-          isPartOfProduct="No"
           routerPreFix="products"
           @click.stop
         />
@@ -75,7 +73,7 @@
 </template>
 
 <script setup>
-import { navigateToItemDetails } from "../../utils/row-handler.js";
+import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, toRefs } from "vue";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
@@ -127,7 +125,7 @@ const closeDialog = (content) => {
     isProductsDialogOpen.value = false;
   }
 };
-const rowHandler = (product) => {
+const rowClickHandler = (product) => {
   navigateToItemDetails(router, product, "products");
 };
 </script>
