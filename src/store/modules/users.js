@@ -14,11 +14,12 @@ export default {
       { key: "firstName", title: "First Name" },
       { key: "lastName", title: "Last Name" },
       { key: "email", title: "Email" },
-      { key: "address", title: "Address" },
-      { key: "phone", title: "Phone" },
-      { key: "phone2", title: "Phone2" },
-      { key: "birthDate", title: "Birth Date" },
+      { key: "address", title: "Address", align: " d-none"  },
+      { key: "phone", title: "Phone", align: " d-none"  },
+      { key: "phone2", title: "Phone2", align: " d-none"  },
+      { key: "birthDate", title: "Birth Date", align: " d-none"  },
       { key: "note", title: "Note" },
+      { key: "role", title: "Role" },
     ],
   },
   mutations: {
@@ -35,6 +36,7 @@ export default {
   actions: {
     async fetchUsers({ commit }) {
       const res = await fetchUsers();
+      console.log(res);
       commit("setUsers", res);
     },
     async fetchResourcesForUser({ commit }, userId) {
