@@ -37,7 +37,7 @@ const selectedUser = ref("");
 const quantity = ref("");
 
 const userOptions = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.name)
+  store.getters["users/allUsers"].map((user) => user.firstName)
 );
 
 if (route.path.includes("/remove")) {
@@ -48,7 +48,7 @@ if (route.path.includes("/remove")) {
     store.getters["users/getUserById"](affectedUserId)
   ).value;
 
-  selectedUser.value = affectedUser.name;
+  selectedUser.value = affectedUser.firstName;
 
   const resourceAvailability = await fetchResourceAvailability(resourceId);
   

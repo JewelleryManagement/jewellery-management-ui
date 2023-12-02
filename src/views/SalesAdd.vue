@@ -99,11 +99,11 @@ const calendarDialog = ref(false);
 const formattedDate = ref("");
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
-const allUsersNames = allUsers.value.map((user) => user.name);
+const allUsersNames = allUsers.value.map((user) => user.firstName);
 
 watch(sellerName, (newValue) => {
   selectedUser.value = allUsers.value.find(
-    (user) => user.name == sellerName.value
+    (user) => user.firstName == sellerName.value
   );
   productsForSale.value = [];
 });
@@ -193,7 +193,7 @@ const mapSelectedProducts = () => {
 
 const buildSaleRequestData = () => {
   const getUserById = (username) =>
-    allUsers.value.find((user) => user.name === username).id;
+    allUsers.value.find((user) => user.firstName === username).id;
 
   const selectedSeller = getUserById(sellerName.value);
   const selectedBuyer = getUserById(buyerName.value);

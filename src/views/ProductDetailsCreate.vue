@@ -127,7 +127,7 @@ const snackbarProvider = inject("snackbarProvider");
 const user = computed(() => store.getters["auth/getUser"]).value;
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const allUsersNames = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.name)
+  store.getters["users/allUsers"].map((user) => user.firstName)
 );
 
 try {
@@ -188,7 +188,7 @@ const isFormValid = async () => {
 
 const fillAuthorsWithExistingUsers = () => {
   authors.value.forEach((authorName, index) => {
-    const existingAuthor = allUsers.value.find((x) => x.name === authorName);
+    const existingAuthor = allUsers.value.find((x) => x.firstName === authorName);
     if (existingAuthor) {
       authors.value[index] = existingAuthor.id;
     }

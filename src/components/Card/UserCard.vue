@@ -22,7 +22,6 @@ const { name, email, resourcesAndQuantities } = defineProps({
   email: String,
   resourcesAndQuantities: Object,
 });
-console.log(resourcesAndQuantities);
 </script>
 
 <style scoped></style>

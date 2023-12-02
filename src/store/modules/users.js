@@ -36,7 +36,6 @@ export default {
   actions: {
     async fetchUsers({ commit }) {
       const res = await fetchUsers();
-      console.log(res);
       commit("setUsers", res);
     },
     async fetchResourcesForUser({ commit }, userId) {

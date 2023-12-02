@@ -42,7 +42,7 @@ const store = useStore();
 const emits = defineEmits(["close-dialog"]);
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
-const userOptions = allUsers.value.map((user) => user.name);
+const userOptions = allUsers.value.map((user) => user.firstName);
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
@@ -52,7 +52,7 @@ const handleSubmit = async () => {
 
   const data = {
     productId: product.id,
-    recipientId: allUsers.value.find((user) => user.name == selectedUser).id,
+    recipientId: allUsers.value.find((user) => user.firstName == selectedUser).id,
   };
   try {
     await store.dispatch("products/transferProduct", data);

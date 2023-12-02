@@ -13,7 +13,6 @@
 const props = defineProps({
   user: Object,
 });
-console.log(props)
 </script>
 
 <style scoped>

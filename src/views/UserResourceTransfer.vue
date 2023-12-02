@@ -30,7 +30,7 @@ resourceAvailability.value = await store.dispatch(
 const handleSubmit = async (inputsData) => {
   const { selectedUser, quantity } = inputsData;
   const selectedNewOwner = allUsers.value.find(
-    (user) => user.name == selectedUser
+    (user) => user.firstName == selectedUser
   );
 
   const data = {
