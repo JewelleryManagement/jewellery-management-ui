@@ -5,7 +5,7 @@
         <v-container>
           <suspense>
             <user-card
-              :name="user.name"
+              :name="user.firstName"
               :email="user.email"
               :resourcesAndQuantities="resourceItemResources"
             ></user-card>
@@ -132,7 +132,6 @@ const resourceItemResources = computed(
   () => store.getters["users/getUserResources"]
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
-
 const disassemblyColumns = computed(() => [
   store.state.products.tableColumnDisassembly,
   store.state.products.tableColumnTransfer,

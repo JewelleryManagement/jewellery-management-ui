@@ -11,8 +11,14 @@ export default {
     usersResources: {},
     tableColumns: [
       { key: "id", title: "Id", align: " d-none" },
-      { key: "name", title: "Name" },
+      { key: "firstName", title: "First Name" },
+      { key: "lastName", title: "Last Name" },
       { key: "email", title: "Email" },
+      { key: "address", title: "Address" },
+      { key: "phone", title: "Phone" },
+      { key: "phone2", title: "Phone2" },
+      { key: "birthDate", title: "Birth Date" },
+      { key: "note", title: "Note" },
     ],
   },
   mutations: {
