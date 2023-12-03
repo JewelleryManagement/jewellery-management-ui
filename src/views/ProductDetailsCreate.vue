@@ -133,7 +133,7 @@ const allUsersNames = computed(() =>
 try {
   await store.dispatch("users/fetchResourcesForUser", user.id);
 } catch (error) {
-  snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
+  snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
 }
 const pageTitle = ref(route.meta.title);
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
@@ -211,7 +211,7 @@ const submitProduct = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not create the product");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
   return false;
 };
@@ -231,9 +231,7 @@ const postPicture = async (id, image) => {
       "Successfully added product and picture!"
     );
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(
-      "Couldn't add the picture to the product!"
-    );
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error)
   }
 };
 

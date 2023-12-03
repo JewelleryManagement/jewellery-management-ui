@@ -169,7 +169,7 @@ const isFormValid = async () => {
 
 const isProductsValidated = () => {
   if (productsForSale.value.length <= 0) {
-    snackbarProvider.showErrorSnackbar("Please select a product!");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
     return false;
   }
   return true;
@@ -177,7 +177,7 @@ const isProductsValidated = () => {
 
 const isDateValidated = () => {
   if (formattedDate.value.length <= 0) {
-    snackbarProvider.showErrorSnackbar("Please select a date!");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
     return false;
   }
   return true;
@@ -212,7 +212,7 @@ const postSale = async (data) => {
     snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
     router.push("/sales");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't sell the product");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 

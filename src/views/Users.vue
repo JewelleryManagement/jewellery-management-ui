@@ -17,7 +17,7 @@ onMounted(async () => {
   try {
     await store.dispatch("users/fetchUsers");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch users.");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 });
 </script>

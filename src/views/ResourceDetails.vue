@@ -101,7 +101,7 @@ const editResource = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
     router.push("/resources");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't edit resouce");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 
@@ -111,7 +111,7 @@ const createResource = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
     router.push("/resources");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't create resource");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 </script>

@@ -53,7 +53,7 @@ const router = useRouter();
 try {
   await store.dispatch("sales/fetchSales");
 } catch (error) {
-  snackbarProvider.showErrorSnackbar("Couldn't fetch the sales!");
+  snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
 }
 const tableColumns = computed(() => store.getters["sales/getColumns"]);
 const sales = computed(() => store.getters["sales/getSales"]);

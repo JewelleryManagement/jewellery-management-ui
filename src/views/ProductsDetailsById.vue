@@ -141,9 +141,7 @@ const postPicture = async (id, image) => {
       "Successfully added picture to the product!"
     );
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(
-      "Couldn't add the picture to the product!"
-    );
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error)
   }
 };
 </script>

@@ -40,7 +40,7 @@ const handleSubmit = async (inputsData) => {
     snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
     router.push("/resources");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't add quantity");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 </script>

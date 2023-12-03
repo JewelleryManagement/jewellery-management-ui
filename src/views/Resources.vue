@@ -75,7 +75,7 @@ onMounted(async () => {
   try {
     await store.dispatch("resources/fetchResources");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 });
 </script>

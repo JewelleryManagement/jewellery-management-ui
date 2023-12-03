@@ -23,7 +23,7 @@ async function fetchProductsForUser() {
   try {
     await store.dispatch("products/fetchProductsByOwner", userId);
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch user products.");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 }
 
@@ -31,7 +31,7 @@ async function fetchProducts() {
   try {
     store.dispatch("products/fetchProducts");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch products.");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 }
 
@@ -53,9 +53,7 @@ async function sendDisassembleRequest(productId) {
       : await fetchProducts()
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(
-      "Failed to disassemble product! Could be a part of another product."
-    );
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error)
   }
 }
 </script>

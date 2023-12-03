@@ -59,7 +59,7 @@ const handleSubmit = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully transferred product!");
     closeDialog("submitted");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't transfer the product!");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 
