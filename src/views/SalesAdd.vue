@@ -222,8 +222,7 @@ const handleSubmit = async () => {
   if (!isDateValidated()) return;
 
   const data = buildSaleRequestData();
-  console.log(data);
-
+  
   await postSale(data);
 };
 </script>
