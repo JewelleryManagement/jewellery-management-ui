@@ -88,6 +88,9 @@ export async function postUserLogin(user) {
 export async function postSale(data) {
   return await postData("/sales", data);
 }
+export async function postUser(userData) {
+  return await postData("/users", userData);
+}
 
 export async function postPicture(productId, image) {
   const formData = new FormData();

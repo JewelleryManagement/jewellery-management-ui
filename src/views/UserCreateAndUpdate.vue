@@ -29,8 +29,14 @@ const isFormValid = async () => {
   return valid;
 };
 
-const handleSubmit = () => {
-  console.log(userData.value);
+const handleSubmit = async () => {
+  if (!(await isFormValid())) return;
+
+  try {
+    await store.dispatch("users/createUser", userData.value);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const resetForm = () => {

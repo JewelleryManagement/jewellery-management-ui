@@ -2,6 +2,7 @@ import {
   fetchUsers,
   fetchResourcePerUser,
   postResourceAvailability,
+  postUser
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -37,6 +38,9 @@ export default {
     async fetchUsers({ commit }) {
       const res = await fetchUsers();
       commit("setUsers", res);
+    },
+    async createUser({ commit }, userData) {
+      await postUser(userData)
     },
     async fetchResourcesForUser({ commit }, userId) {
       const res = await fetchResourcePerUser(userId);
