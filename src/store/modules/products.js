@@ -91,7 +91,7 @@ export default {
         const res = await fetchPicture(productId);
         return URL.createObjectURL(new Blob([res], { type: "image/png" }));
       } catch (error) {
-        return null
+        return null;
       }
     },
   },

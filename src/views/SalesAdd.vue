@@ -212,7 +212,7 @@ const postSale = async (data) => {
     snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
     router.push("/sales");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't sell the product");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 
@@ -222,7 +222,7 @@ const handleSubmit = async () => {
   if (!isDateValidated()) return;
 
   const data = buildSaleRequestData();
-  
+
   await postSale(data);
 };
 </script>

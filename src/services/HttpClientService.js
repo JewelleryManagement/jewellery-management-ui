@@ -14,7 +14,7 @@ async function fetchData(endpoint, options = {}) {
       store.dispatch("auth/logout");
       router.push("/login");
     }
-    
+
     throw new Error("Failed to fetch data from the server.");
   }
 }
@@ -63,9 +63,7 @@ async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {
     headers: customHeaders,
   });
-  if (response.status === 201) {
-    return response.data;
-  }
+  if (response.status === 201) return response.data;
 }
 
 export async function postResources(data) {
@@ -106,9 +104,7 @@ export async function postPicture(productId, image) {
 
 async function removeData(endpoint) {
   const response = await axios.delete(endpoint);
-  if (response.status === 200) {
-    return response.data;
-  }
+  if (response.status === 200) return response.data;
 }
 
 export async function removeResource(id) {
@@ -128,14 +124,8 @@ export async function disassmebleProduct(productId) {
 // PUT REQUEST
 
 async function updateData(endpoint, data) {
-  try {
-    const response = await axios.put(endpoint, data);
-    if (response.status === 200) {
-      return response.data;
-    }
-  } catch (error) {
-    throw new Error("Failed to update data on the server.");
-  }
+  const response = await axios.put(endpoint, data);
+  if (response.status === 200) return response.data;
 }
 
 export async function updateResource(id, data) {

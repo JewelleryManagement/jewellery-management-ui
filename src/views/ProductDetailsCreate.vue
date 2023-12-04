@@ -188,7 +188,9 @@ const isFormValid = async () => {
 
 const fillAuthorsWithExistingUsers = () => {
   authors.value.forEach((authorName, index) => {
-    const existingAuthor = allUsers.value.find((x) => x.firstName === authorName);
+    const existingAuthor = allUsers.value.find(
+      (x) => x.firstName === authorName
+    );
     if (existingAuthor) {
       authors.value[index] = existingAuthor.id;
     }
@@ -211,7 +213,7 @@ const submitProduct = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not create the product");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
   return false;
 };

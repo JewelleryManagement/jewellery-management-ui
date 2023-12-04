@@ -52,14 +52,15 @@ const handleSubmit = async () => {
 
   const data = {
     productId: product.id,
-    recipientId: allUsers.value.find((user) => user.firstName == selectedUser).id,
+    recipientId: allUsers.value.find((user) => user.firstName == selectedUser)
+      .id,
   };
   try {
     await store.dispatch("products/transferProduct", data);
     snackbarProvider.showSuccessSnackbar("Successfully transferred product!");
     closeDialog("submitted");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't transfer the product!");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 
