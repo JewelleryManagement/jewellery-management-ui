@@ -57,3 +57,11 @@ export function validateAuthors(authors) {
 export function validateUser(value) {
   return !!value || "Please select a user";
 }
+
+export function useEmailValidationRule() {
+  return [
+    (v) => !!v || "Email field is required",
+    (v) => /.+@.+\..+/.test(v) || "Email must be valid",
+    (v) => (v && v.length <= 50) || "Email must be less than 50 characters",
+  ];
+}

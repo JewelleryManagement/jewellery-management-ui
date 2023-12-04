@@ -24,8 +24,13 @@ const store = useStore();
 const pageTitle = ref(route.meta.title);
 const userData = ref({});
 
+const isFormValid = async () => {
+  const { valid } = await form.value.validate();
+  return valid;
+};
+
 const handleSubmit = () => {
-    console.log(userData.value);
+  console.log(userData.value);
 };
 
 const resetForm = () => {
