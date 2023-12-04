@@ -12,6 +12,7 @@ const UserDetails = () => import("../views/UserDetails.vue");
 const UserResourceAdd = () => import("../views/UserResourceAdd.vue");
 const UserResourceRemove = () => import("../views/UserResourceRemove.vue");
 const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
+const UserCreateAndUpdate = () => import("../views/UserCreateAndUpdate.vue");
 const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
 const Sales = () => import("../views/Sales.vue");
@@ -45,6 +46,13 @@ const routes = [
     name: "Users Details",
     component: UserDetails,
     meta: { title: "Users Details", requiresAuth: true },
+  },
+  {
+    path: "/users/create",
+    props: true,
+    name: "Users Create",
+    component: UserCreateAndUpdate,
+    meta: { title: "Users Create", requiresAuth: true },
   },
   {
     path: "/resources/availability/add/:resourceId",

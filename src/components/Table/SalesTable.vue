@@ -5,14 +5,7 @@
     </div>
 
     <div class="d-flex justify-end">
-      <v-btn
-        class="mx-4"
-        rounded="xs"
-        :size="isSmallScreen() ? 'small' : 'x-large'"
-        color="red"
-        to="/sales/add"
-        >New Sale</v-btn
-      >
+      <table-button path="/sales/add">New Sale</table-button>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -39,7 +32,6 @@
 </template>
 
 <script setup>
-import { isSmallScreen } from "@/utils/display";
 import { navigateToItemDetails } from "@/utils/row-click-handler";
 import { VDataTable } from "vuetify/labs/VDataTable";
 import { ref, computed, inject } from "vue";

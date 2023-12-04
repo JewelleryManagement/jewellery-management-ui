@@ -10,16 +10,7 @@
     <div class="d-flex justify-space-between">
       <v-menu>
         <template v-slot:activator="{ props }">
-          <v-btn
-            variant="outlined"
-            class="mx-4"
-            rounded="xs"
-            :size="isSmallScreen() ? 'small' : 'x-large'"
-            color="red"
-            v-bind="props"
-          >
-            Resource Type
-          </v-btn>
+          <table-button :props="props" :variant="'outlined'">Resource Type</table-button>
         </template>
         <v-list>
           <v-list-item
@@ -33,14 +24,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn
-        class="mx-4"
-        rounded="xs"
-        :size="isSmallScreen() ? 'small' : 'x-large'"
-        color="red"
-        to="/resources/add"
-        >Add resource</v-btn
-      >
+      <table-button path="/resources/add">Add resource</table-button>
     </div>
 
     <resource-table
@@ -53,7 +37,6 @@
 import { onMounted, inject, ref } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
-import { isSmallScreen } from "@/utils/display";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const selectedResourceType = ref("All");
