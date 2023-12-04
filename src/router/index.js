@@ -55,6 +55,13 @@ const routes = [
     meta: { title: "Users Create", requiresAuth: true },
   },
   {
+    path: "/users/edit/:id",
+    props: true,
+    name: "Edit-User",
+    component: UserCreateAndUpdate,
+    meta: { title: "Edit user", requiresAuth: true },
+  },
+  {
     path: "/resources/availability/add/:resourceId",
     props: true,
     name: "Add-Quantity",

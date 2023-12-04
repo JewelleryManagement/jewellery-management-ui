@@ -135,6 +135,10 @@ export async function updateResource(id, data) {
   return await updateData(`/resources/${id}`, data);
 }
 
+export async function updateUser(id, userData) {
+  return await updateData(`/users/${id}`, userData);
+}
+
 export async function transferProduct(productId, recipientId) {
   return await updateData(`/products/${productId}/transfer/${recipientId}`);
 }

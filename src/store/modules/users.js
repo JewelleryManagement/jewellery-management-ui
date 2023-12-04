@@ -2,7 +2,8 @@ import {
   fetchUsers,
   fetchResourcePerUser,
   postResourceAvailability,
-  postUser
+  postUser,
+  updateUser
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -22,6 +23,7 @@ export default {
       { key: "note", title: "Note" },
       { key: "role", title: "Role" },
     ],
+    tableColumnEdit: { key: "edit", title: "Edit", slot: "edit" },
   },
   mutations: {
     setUsers(state, users) {
@@ -42,6 +44,9 @@ export default {
     async createUser({ commit }, userData) {
       await postUser(userData)
     },
+    async updateUser({ commit }, {userId, data}) {
+      await updateUser(userId, data)
+    },
     async fetchResourcesForUser({ commit }, userId) {
       const res = await fetchResourcePerUser(userId);
       commit("setUsersResources", res);
@@ -58,7 +63,7 @@ export default {
       ...rootState.resources.tableColumns,
     ],
     getTableColumns: (state) => {
-      return state.tableColumns;
+      return [...state.tableColumns, state.tableColumnEdit];
     },
     allUsers(state) {
       return state.users;

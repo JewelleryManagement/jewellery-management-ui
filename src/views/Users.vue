@@ -1,7 +1,13 @@
 <template>
   <v-container class="my-12" fluid>
     <base-card>
-      <users-table title="Users table"></users-table>
+      <users-table title="Users table">
+        <template v-slot:item.edit="{ item }">
+          <router-link :to="`/users/edit/${item.id}`" @click.stop>
+            <v-icon color="green">mdi-pencil</v-icon>
+          </router-link>
+        </template>
+      </users-table>
     </base-card>
   </v-container>
 </template>

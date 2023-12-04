@@ -23,19 +23,49 @@ const route = useRoute();
 const store = useStore();
 const pageTitle = ref(route.meta.title);
 const userData = ref({});
+const isEditPage = route.path.includes("/edit");
+
+if (isEditPage) {
+  const userId = route.params.id;
+  const userDetails = computed(() =>
+    store.getters["users/getUserById"](userId)
+  );
+  userData.value = userDetails.value;
+}
 
 const isFormValid = async () => {
   const { valid } = await form.value.validate();
   return valid;
 };
 
-const handleSubmit = async () => {
-  if (!(await isFormValid())) return;
+const submitEditUser = async () => {
+  const data = {
+    userId: route.params.id,
+    data: userData.value,
+  };
 
+  try {
+    await store.dispatch("users/updateUser", data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const submitPostUser = async () => {
   try {
     await store.dispatch("users/createUser", userData.value);
   } catch (error) {
     console.log(error);
+  }
+};
+
+const handleSubmit = async () => {
+  if (!(await isFormValid())) return;
+
+  if (isEditPage) {
+    submitEditUser();
+  } else {
+    submitPostUser();
   }
 };
 
