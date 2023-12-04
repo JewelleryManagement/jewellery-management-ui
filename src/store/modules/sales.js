@@ -28,7 +28,6 @@ export default {
   actions: {
     async fetchSales({ commit }) {
       const res = await fetchSales();
-      console.log(res);
       commit("setSales", res);
     },
     async postSale({ commit }, data) {
