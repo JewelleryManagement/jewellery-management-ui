@@ -53,9 +53,8 @@ async function sendDisassembleRequest(productId) {
       : await fetchProducts()
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(
-      "Failed to disassemble product! Could be a part of another product."
-    );
+    console.log(error);
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 }
 </script>

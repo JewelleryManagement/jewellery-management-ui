@@ -105,10 +105,9 @@ export async function postPicture(productId, image) {
 // DELETE REQUESTS
 
 async function removeData(endpoint) {
-  try {
-    await axios.delete(endpoint);
-  } catch (error) {
-    throw new Error("Failed to delete this resource.");
+  const response = await axios.delete(endpoint);
+  if (response.status === 200) {
+    return response.data;
   }
 }
 
