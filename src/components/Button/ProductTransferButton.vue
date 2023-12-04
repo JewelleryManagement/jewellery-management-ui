@@ -43,12 +43,13 @@ const closeDialog = async (response) => {
 
 const fetchData = async () => {
   const actionType = userId ? "products/fetchProductsByOwner" : "products/fetchProducts";
+  const errorMessage = userId ? "Failed to fetch user products." : "Failed to fetch products.";
 
   try {
     await store.dispatch(actionType, userId);
     isResourceDialogOpen.value = false;
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error)
+    snackbarProvider.showErrorSnackbar(errorMessage);
   }
 };
 

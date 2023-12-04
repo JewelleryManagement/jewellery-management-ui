@@ -40,7 +40,7 @@ const handleSubmit = async (inputsData) => {
     snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
     router.push(`/users/${userId}`);
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+    snackbarProvider.showErrorSnackbar("Couldn't update quantity");
   }
 };
 </script>

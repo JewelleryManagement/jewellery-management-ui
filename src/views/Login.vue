@@ -92,7 +92,7 @@ const userLogin = async (data) => {
     snackbarProvider.showSuccessSnackbar("Successfully logged in!");
     user ? router.push("/home") : "";
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error)
+    snackbarProvider.showErrorSnackbar(error.message);
   }
 };
 </script>

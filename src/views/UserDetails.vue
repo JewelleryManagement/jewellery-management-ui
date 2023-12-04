@@ -112,7 +112,7 @@ async function fetchResourcesForUser() {
   try {
     await store.dispatch("users/fetchResourcesForUser", userId);
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+    snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
   }
 }
 
@@ -120,7 +120,7 @@ async function fetchProductsForUser() {
   try {
     await store.dispatch("products/fetchProductsByOwner", userId);
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+    snackbarProvider.showErrorSnackbar("Failed to fetch products.");
   }
 }
 
