@@ -42,7 +42,7 @@ export default {
       commit("setUsers", res);
     },
     async createUser({ commit }, userData) {
-      await postUser(userData)
+      return await postUser(userData)
     },
     async updateUser({ commit }, {userId, data}) {
       await updateUser(userId, data)
