@@ -18,6 +18,7 @@ import UserForm from "@/components/Form/UserForm.vue";
 import { useStore } from "vuex";
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { dateFormatter } from "@/utils/data-formatter";
 const snackbarProvider = inject("snackbarProvider");
 
 const form = ref(null);
@@ -41,9 +42,13 @@ const isFormValid = async () => {
   return valid;
 };
 
+const formatDateInUserData = () => {
+  const date = dateFormatter(userData.value.birthDate);
+  userData.value.birthDate = date;
+};
+
 const submitEditUser = async () => {
-  const date = dateFormatter(userData.value.birthDate)
-  userData.value.birthDate = date
+  formatDateInUserData();
 
   const data = {
     userId: route.params.id,
@@ -57,28 +62,16 @@ const submitEditUser = async () => {
   }
 };
 
-const dateFormatter = (data) => {
-  const date = new Date(data);
-
-  const day = String(date.getDate()).padStart(2, "0");
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
-  const year = date.getFullYear();
-
-  const formattedDate = `${day}/${month}/${year}`;
-
-  return formattedDate
-}
-
 const submitPostUser = async () => {
-
-  const date = dateFormatter(userData.value.birthDate)
-  userData.value.birthDate = date
+  formatDateInUserData();
 
   try {
     const res = await store.dispatch("users/createUser", userData.value);
     console.log(res);
-    snackbarProvider.showSuccessSnackbar(`Successfully created user ${res.firstName}`);
-    router.push('/users')
+    snackbarProvider.showSuccessSnackbar(
+      `Successfully created user ${res.firstName}`
+    );
+    router.push("/users");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

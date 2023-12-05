@@ -1,7 +1,7 @@
 <template>
   <div>
     <strong>{{title}}</strong>
-    <div>Name: {{ participant.name }}</div>
+    <div>Name: {{ participant.firstName }} {{ participant.lastName }}</div>
     <div>Email: {{ participant.email }}</div>
   </div>
 </template>
