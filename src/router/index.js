@@ -4,7 +4,8 @@ import store from "@/store/store";
 const Home = () => import("../views/Home.vue");
 const Resources = () => import("../views/Resources.vue");
 const Products = () => import("../views/Products.vue");
-const ProductsDetails = () => import("../views/ProductsDetails.vue");
+const ProductDetailsCreate = () => import("../views/ProductDetailsCreate.vue");
+const ProductsDetailsById = () => import("../views/ProductsDetailsById.vue");
 const Users = () => import("../views/Users.vue");
 const ResourceDetails = () => import("../views/ResourceDetails.vue");
 const UserDetails = () => import("../views/UserDetails.vue");
@@ -15,6 +16,7 @@ const Login = () => import("../views/Login.vue");
 const Profile = () => import("../views/Profile.vue");
 const Sales = () => import("../views/Sales.vue");
 const SalesAdd = () => import("../views/SalesAdd.vue");
+const SaleDetails = () => import("../views/SaleDetails.vue");
 const NotFound = () => import("../views/NotFound.vue");
 
 const routes = [
@@ -94,8 +96,15 @@ const routes = [
     path: "/products/add",
     name: "Add Product",
     props: true,
-    component: ProductsDetails,
+    component: ProductDetailsCreate,
     meta: { title: "Add product", requiresAuth: true },
+  },
+  {
+    path: "/products/:productId",
+    name: "Product Details",
+    props: true,
+    component: ProductsDetailsById,
+    meta: { title: "Product details", requiresAuth: true },
   },
   {
     path: "/profile",
@@ -114,6 +123,12 @@ const routes = [
     name: "New Sale",
     component: SalesAdd,
     meta: { title: "New Sale", requiresAuth: true },
+  },
+  {
+    path: "/sales/:saleId",
+    name: "Sale-Details",
+    component: SaleDetails,
+    meta: { title: "Sale Details", requiresAuth: true },
   },
   { path: "/logout", redirect: "/login" },
   {

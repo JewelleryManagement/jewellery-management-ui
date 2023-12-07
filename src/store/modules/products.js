@@ -5,8 +5,10 @@ import {
   fetchProductsByOwner,
   disassmebleProduct,
   transferProduct,
-  postPicture
+  postPicture,
+  fetchPicture,
 } from "@/services/HttpClientService.js";
+import { formatProducts } from "../../utils/data-formatter.js";
 
 export default {
   namespaced: true,
@@ -14,11 +16,12 @@ export default {
     products: [],
     currentUserProducts: [],
     tableColumns: [
+      { key: "id", title: "Id", align: " d-none" },
       { key: "catalogNumber", title: "Catalog Number" },
       { key: "productionNumber", title: "Production Number" },
       { key: "description", title: "Description" },
-      { key: "authors", title: "Authors" },
-      { key: "partOfSale", title: "Sold" },
+      { key: "authors", title: "Authors", slot: "authors" },
+      { key: "partOfSale", title: "Sold", slot: "partOfSale" },
       { key: "salePrice", title: "Sale price" },
       { key: "contentOf", title: "Part of product" },
     ],
@@ -67,7 +70,7 @@ export default {
     },
     async createProduct({ commit }, product) {
       const res = await postProduct(product);
-      return res
+      return res;
     },
     async fetchProductsByOwner({ commit }, ownerId) {
       const res = await fetchProductsByOwner(ownerId);
@@ -78,15 +81,23 @@ export default {
     },
     async transferProduct({ commit }, data) {
       const { productId, recipientId } = data;
-      await transferProduct(productId, recipientId)
+      await transferProduct(productId, recipientId);
     },
-    async postPicture({commit}, {productId, image}) {
-      await postPicture(productId, image)
-    }
+    async postPicture({ commit }, { productId, image }) {
+      await postPicture(productId, image);
+    },
+    async getPicture({ commit }, productId) {
+      try {
+        const res = await fetchPicture(productId);
+        return URL.createObjectURL(new Blob([res], { type: "image/png" }));
+      } catch (error) {
+        return null;
+      }
+    },
   },
   getters: {
     allProducts: (state) => {
-      return state.products.map(formatAuthors);
+      return state.products.map(formatProducts);
     },
     getColumns: (state) => [
       ...state.tableColumns,
@@ -94,7 +105,7 @@ export default {
       state.tableColumnProductsContent,
     ],
     getCurrentUserProducts: (state) =>
-      state.currentUserProducts.map(formatAuthors),
+      state.currentUserProducts.map(formatProducts),
     getAddColumn: (state) => state.tableColumnAdd,
     getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
@@ -105,12 +116,3 @@ export default {
     ],
   },
 };
-
-function formatAuthors(product) {
-  return {
-    ...product,
-    authors: product.authors.map((author) => author.name).join(", "),
-    contentOf: product.contentOf ? "Yes" : "No",
-    partOfSale: product.partOfSale ? "Yes" : "No",
-  };
-}

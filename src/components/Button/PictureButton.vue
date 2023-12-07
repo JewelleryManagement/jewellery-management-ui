@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-file-input
-      label="File input"
+      label="Select picture"
       variant="solo-filled"
       prepend-icon="mdi-camera"
       v-model="chosenFile"

@@ -2,72 +2,78 @@
   <v-container>
     <suspense>
       <template #default>
-        <v-container class="my-12" fluid>
-          <v-row justify="center">
-            <v-col cols="10" max-width="1600">
-              <suspense>
-                <user-card
-                  :name="user.name"
-                  :email="user.email"
-                  :resourcesAndQuantities="resourceItemResources"
-                ></user-card>
-              </suspense>
+        <v-container>
+          <suspense>
+            <user-card
+              :name="user.name"
+              :email="user.email"
+              :resourcesAndQuantities="resourceItemResources"
+            ></user-card>
+          </suspense>
 
-              <div class="d-flex justify-center mt-10">
-                <v-btn
-                  color="red"
-                  @click="
-                    () => (isResourceTableVisible = !isResourceTableVisible)
-                  "
-                  >{{
-                    isResourceTableVisible ? "Hide Resources" : "Show Resources"
-                  }}</v-btn
-                >
-                <v-btn
-                  color="green"
-                  @click="
-                    () => (isProductsTableVisible = !isProductsTableVisible)
-                  "
-                  >{{
-                    isProductsTableVisible ? "Hide Products" : "Show Products"
-                  }}</v-btn
-                >
-              </div>
+          <div class="d-flex justify-center mt-10">
+            <v-btn
+              color="red"
+              :size="isSmallScreen() ? 'small' : 'large'"
+              @click="() => (isResourceTableVisible = !isResourceTableVisible)"
+              >{{
+                isResourceTableVisible ? "Hide Resources" : "Show Resources"
+              }}</v-btn
+            >
+            <v-btn
+              color="green"
+              :size="isSmallScreen() ? 'small' : 'large'"
+              @click="() => (isProductsTableVisible = !isProductsTableVisible)"
+              >{{
+                isProductsTableVisible ? "Hide Products" : "Show Products"
+              }}</v-btn
+            >
+          </div>
 
-              <transition>
-                <resource-availability-table
-                  v-if="isResourceTableVisible"
-                  :tableColumns="tableColumnsResources"
-                  :resourceItem="resourceItemResources"
-                  :user="user"
-                ></resource-availability-table>
-              </transition>
+          <transition>
+            <base-card v-if="isResourceTableVisible">
+              <resource-availability-table
+                :tableColumns="tableColumnsResources"
+                :resourceItem="resourceItemResources"
+                :user="user"
+              ></resource-availability-table>
+            </base-card>
+          </transition>
 
-              <transition>
-                <v-card class="elevation-12 mt-4" v-if="isProductsTableVisible">
-                  <div class="text-center">
-                    <h1>{{ user.name }}'s products table</h1>
-                  </div>
-
-                  <products-table
-                    :products="userProducts"
-                    :additionalColumnsRight="disassemblyColumns"
+          <transition>
+            <base-card v-if="isProductsTableVisible">
+              <products-table
+                :products="userProducts"
+                :additionalColumnsRight="disassemblyColumns"
+                :title="`${user.name}'s products table`"
+              >
+                <template v-slot:item.authors="{ item }">
+                  <user-tool-tip
+                    :user="author"
+                    v-for="(author, index) in item.authors"
+                    :key="item.id"
+                    @click.stop
                   >
-                    <template v-slot:item.disassembly="{ item }">
-                      <disassembly-button
-                        :item="item"
-                        :userId="userId"
-                      ></disassembly-button>
-                    </template>
+                    <template v-if="index < item.authors.length - 1"
+                      >&comma;&nbsp;</template
+                    >
+                  </user-tool-tip>
+                </template>
 
-                    <template v-slot:item.transfer="{ item }">
-                      <product-transfer-button :product="item" :userId="userId" />
-                    </template>
-                  </products-table>
-                </v-card>
-              </transition>
-            </v-col>
-          </v-row>
+                <template v-slot:item.disassembly="{ item }">
+                  <disassembly-button
+                    :item="item"
+                    :userId="userId"
+                    @click.stop
+                  ></disassembly-button>
+                </template>
+
+                <template v-slot:item.transfer="{ item }">
+                  <product-transfer-button :product="item" :userId="userId" />
+                </template>
+              </products-table>
+            </base-card>
+          </transition>
         </v-container>
       </template>
       <template #fallback>
@@ -78,13 +84,21 @@
 </template>
 
 <script setup>
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
+import { isSmallScreen } from "@/utils/display";
+import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
 const isResourceTableVisible = ref(false);
 const isProductsTableVisible = ref(false);
+const route = useRoute();
+const router = useRouter();
+watch(
+  () => route.fullPath,
+  () => router.go(route.fullPath)
+);
 
 const { id } = defineProps(["id"]);
 const userId = id;

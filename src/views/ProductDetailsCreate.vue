@@ -44,14 +44,17 @@
             :rules="useNumberFieldRules()"
           ></v-text-field>
 
-          <v-text-field label="Barcode..." v-model="productionNumber">
+          <v-text-field
+            label="Barcode..."
+            v-model="productionNumber"
+            :rules="useTextAreaFieldRules()"
+          >
           </v-text-field>
 
           <div>
-            <vue-barcode
+            <bar-code
               v-if="productionNumber"
-              :value="productionNumber"
-              :options="{ displayValue: true, lineColor: '#2B2B2C' }"
+              :productionNumber="productionNumber"
             />
           </div>
 
@@ -114,7 +117,6 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
-import VueBarcode from "@chenfengyuan/vue-barcode";
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
@@ -177,7 +179,11 @@ const productsTableValues = (productsContentValue) => {
 
 const isFormValid = async () => {
   const { valid } = await form.value.validate();
-  return resourcesContent.value.length > 0 && valid;
+  return (
+    resourcesContent.value.length > 0 &&
+    productionNumber.value.length > 0 &&
+    valid
+  );
 };
 
 const fillAuthorsWithExistingUsers = () => {

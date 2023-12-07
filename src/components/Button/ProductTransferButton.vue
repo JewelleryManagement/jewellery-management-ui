@@ -3,6 +3,7 @@
     :disabled="product.sold || product.contentOf === 'Yes'"
     variant="plain"
     @click="openDialog"
+    @click.stop
   >
     <v-icon color="#607D8B" size="25">mdi-swap-horizontal</v-icon>
   </v-btn>
