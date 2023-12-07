@@ -86,12 +86,12 @@ export default {
     async postPicture({ commit }, { productId, image }) {
       await postPicture(productId, image);
     },
-    async getPicutre({ commit }, productId) {
+    async getPicture({ commit }, productId) {
       try {
         const res = await fetchPicture(productId);
         return URL.createObjectURL(new Blob([res], { type: "image/png" }));
       } catch (error) {
-        throw new Error('Could not upload the picture!')
+        return null;
       }
     },
   },

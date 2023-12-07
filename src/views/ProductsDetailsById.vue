@@ -8,11 +8,10 @@
     >
       <v-img
         :lazy-src="defaultPicture"
-        :src="picture ?? defaultPicture"
+        :src="picture"
         cover
         :max-width="isMediumAndDownScreen() ? '100%' : '60%'"
-      >
-      </v-img>
+      ></v-img>
 
       <div class="d-flex flex-column align-center my-4 w-auto">
         <div>
@@ -94,8 +93,9 @@
 
 <script setup>
 import { isMediumAndDownScreen, isMediumScreen } from "@/utils/display";
+import { onMounted } from "vue";
 import { ref, computed, inject } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
@@ -103,14 +103,16 @@ const isProductsDialogOpen = ref(false);
 const defaultPicture = require("../assets/no-pic.png");
 const store = useStore();
 const route = useRoute();
-const router = useRouter();
-
+const picture = ref(null);
 const currentProductId = route.params.productId;
 const currentProductInfo = computed(
   () => store.getters["products/allProducts"]
 ).value.find((product) => product.id === currentProductId);
-const picture =
-  (await store.dispatch("products/getPicutre", currentProductId)) || null;
+
+onMounted(() => {
+  fetchAndUpdatePictureUrl();
+});
+
 const openDialog = (content) => {
   if (content == "resources") {
     isResourceDialogOpen.value = true;
@@ -127,11 +129,23 @@ const closeDialog = (content) => {
   }
 };
 
-const handlePictureSelected = async (picture) => {
-  if (!picture) return;
+const fetchAndUpdatePictureUrl = async () => {
+  try {
+    const newPictureUrl = await store.dispatch(
+      "products/getPicture",
+      currentProductId
+    );
+    picture.value = newPictureUrl || defaultPicture;
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+  }
+};
 
-  await postPicture(currentProductId, picture);
-  router.go();
+const handlePictureSelected = async (newPicture) => {
+  if (!newPicture) return;
+
+  await postPicture(currentProductId, newPicture);
+  await fetchAndUpdatePictureUrl();
 };
 
 const postPicture = async (id, image) => {
@@ -141,9 +155,7 @@ const postPicture = async (id, image) => {
       "Successfully added picture to the product!"
     );
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(
-      "Couldn't add the picture to the product!"
-    );
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 </script>
