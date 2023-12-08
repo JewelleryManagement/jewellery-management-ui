@@ -32,7 +32,7 @@
             closable-chips
             label="Authors"
             :items="allUsers"
-            :item-props="userProps"
+            :item-props="userPropsFormatter"
             multiple
             :rules="[validateAuthors(authors)]"
           >
@@ -118,6 +118,8 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
+import { userPropsFormatter } from "@/utils/data-formatter";
+
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
@@ -127,16 +129,7 @@ const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
-const allUsersNames = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.firstName)
-);
 
-const userProps = (user) => {
-  return {
-    title: user.firstName,
-    subtitle: user.email,
-  };
-};
 
 try {
   await store.dispatch("users/fetchResourcesForUser", user.id);

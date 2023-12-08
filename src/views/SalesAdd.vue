@@ -9,7 +9,7 @@
           label="Seller"
           v-model="sellerName"
           :items="allUsers"
-          :item-props="userProps"
+          :item-props="userPropsFormatter"
           :rules="[validateAuthors(sellerName)]"
         >
         </v-select>
@@ -18,7 +18,7 @@
           v-model="buyerName"
           label="Buyer"
           :items="allUsers"
-          :item-props="userProps"
+          :item-props="userPropsFormatter"
           :rules="[validateAuthors(buyerName)]"
         >
         </v-select>
@@ -82,6 +82,7 @@
 </template>
 
 <script setup>
+import {userPropsFormatter} from './../utils/data-formatter.js'
 import CalendarDialog from "../components/Dialog/CalendarDialog.vue";
 import ProductPriceDiscountRow from "../components/ProductPriceDiscountRow.vue";
 import { validateAuthors } from "../utils/validation-rules";
@@ -106,13 +107,6 @@ watch(sellerName, (newValue) => {
   selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
   productsForSale.value = [];
 });
-
-const userProps = (user) => {
-  return {
-    title: user.firstName,
-    subtitle: user.email,
-  };
-};
 
 const totalAmount = computed(() =>
   productsForSale.value.reduce(

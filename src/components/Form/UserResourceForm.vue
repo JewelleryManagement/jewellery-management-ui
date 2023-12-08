@@ -7,7 +7,8 @@
     <v-form @submit.prevent="handleSubmit" ref="form" class="mt-4">
       <v-select
         label="Select user"
-        :items="userOptions"
+        :items="allUsers"
+        :item-props="userPropsFormatter"
         v-model="selectedUser"
         :disabled="route.path.includes('/remove')"
       >
@@ -26,6 +27,7 @@
 </template>
 
 <script setup>
+import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
 import { ref, computed } from "vue";
 import { useNumberFieldRules } from "../../utils/validation-rules";
@@ -36,14 +38,12 @@ const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
 const quantity = ref("");
 
-const userOptions = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.email)
-);
+const allUsers = computed(() => store.getters["users/allUsers"]);
 
 if (route.path.includes("/remove")) {
   const resourceId = route.params.resourceId;
   const affectedUserId = route.params.userId;
-  
+
   const affectedUser = computed(() =>
     store.getters["users/getUserById"](affectedUserId)
   ).value;
@@ -51,8 +51,11 @@ if (route.path.includes("/remove")) {
   selectedUser.value = affectedUser.firstName;
 
   const resourceAvailability = await fetchResourceAvailability(resourceId);
-  
-  const quantityByUser = findQuantityByUser(resourceAvailability, affectedUser.id);
+
+  const quantityByUser = findQuantityByUser(
+    resourceAvailability,
+    affectedUser.id
+  );
   quantity.value = quantityByUser;
 }
 
@@ -78,12 +81,12 @@ const emits = defineEmits(["handle-submit"]);
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
+  if (!valid) return;
   const data = {
-    selectedUser: selectedUser.value,
+    userId: selectedUser.value.id,
     quantity: quantity.value,
   };
 
-  if (!valid) return;
   emits("handle-submit", data);
 };
 
