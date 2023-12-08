@@ -49,5 +49,4 @@ const { user, resourcesAndQuantities } = defineProps({
   user: Object,
   resourcesAndQuantities: Object,
 });
-console.log(user);
 </script>
