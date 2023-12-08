@@ -9,7 +9,7 @@
           label="Seller"
           v-model="sellerName"
           :items="allUsers"
-          :item-props="itemsProps"
+          :item-props="userProps"
           :rules="[validateAuthors(sellerName)]"
         >
         </v-select>
@@ -18,7 +18,7 @@
           v-model="buyerName"
           label="Buyer"
           :items="allUsers"
-          :item-props="itemsProps"
+          :item-props="userProps"
           :rules="[validateAuthors(buyerName)]"
         >
         </v-select>
@@ -107,10 +107,10 @@ watch(sellerName, (newValue) => {
   productsForSale.value = [];
 });
 
-const itemsProps = (item) => {
+const userProps = (user) => {
   return {
-    title: item.firstName,
-    subtitle: item.email,
+    title: user.firstName,
+    subtitle: user.email,
   };
 };
 
