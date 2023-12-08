@@ -8,7 +8,8 @@
         <v-select
           label="Seller"
           v-model="sellerName"
-          :items="allUsersNames"
+          :items="allUsers"
+          :item-props="itemsProps"
           :rules="[validateAuthors(sellerName)]"
         >
         </v-select>
@@ -16,7 +17,8 @@
         <v-select
           v-model="buyerName"
           label="Buyer"
-          :items="allUsersNames"
+          :items="allUsers"
+          :item-props="itemsProps"
           :rules="[validateAuthors(buyerName)]"
         >
         </v-select>
@@ -98,15 +100,19 @@ const [productsDialog, productsForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const formattedDate = ref("");
 
-const allUsers = computed(() => store.getters["users/allUsers"]);
-const allUsersNames = allUsers.value.map((user) => user.firstName);
+const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 watch(sellerName, (newValue) => {
-  selectedUser.value = allUsers.value.find(
-    (user) => user.firstName == sellerName.value
-  );
+  selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
   productsForSale.value = [];
 });
+
+const itemsProps = (item) => {
+  return {
+    title: item.firstName,
+    subtitle: item.email,
+  };
+};
 
 const totalAmount = computed(() =>
   productsForSale.value.reduce(
@@ -192,15 +198,9 @@ const mapSelectedProducts = () => {
 };
 
 const buildSaleRequestData = () => {
-  const getUserById = (username) =>
-    allUsers.value.find((user) => user.firstName === username).id;
-
-  const selectedSeller = getUserById(sellerName.value);
-  const selectedBuyer = getUserById(buyerName.value);
-
   return {
-    sellerId: selectedSeller,
-    buyerId: selectedBuyer,
+    sellerId: sellerName.value.id,
+    buyerId: buyerName.value.id,
     products: mapSelectedProducts(),
     date: formattedDate.value,
   };
@@ -222,7 +222,6 @@ const handleSubmit = async () => {
   if (!isDateValidated()) return;
 
   const data = buildSaleRequestData();
-
   await postSale(data);
 };
 </script>
