@@ -28,9 +28,9 @@ resourceAvailability.value = await store.dispatch(
 );
 
 const handleSubmit = async (inputsData) => {
-  const { selectedUser, quantity } = inputsData;
+  const { selectedUserEmail, quantity } = inputsData;
   const selectedNewOwner = allUsers.value.find(
-    (user) => user.firstName == selectedUser
+    (user) => user.email == selectedUserEmail
   );
 
   const data = {

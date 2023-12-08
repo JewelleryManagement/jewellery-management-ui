@@ -37,7 +37,7 @@ const selectedUser = ref("");
 const quantity = ref("");
 
 const userOptions = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.firstName)
+  store.getters["users/allUsers"].map((user) => user.email)
 );
 
 if (route.path.includes("/remove")) {

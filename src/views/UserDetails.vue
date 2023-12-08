@@ -5,8 +5,7 @@
         <v-container>
           <suspense>
             <user-card
-              :name="user.firstName"
-              :email="user.email"
+              :user="user"
               :resourcesAndQuantities="resourceItemResources"
             ></user-card>
           </suspense>

@@ -141,7 +141,6 @@ const postPicture = async (id, image) => {
       "Successfully added picture to the product!"
     );
   } catch (error) {
-    console.log(error);
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
