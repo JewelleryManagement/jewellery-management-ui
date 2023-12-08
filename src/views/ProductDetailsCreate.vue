@@ -31,7 +31,8 @@
             chips
             closable-chips
             label="Authors"
-            :items="allUsersNames"
+            :items="allUsers"
+            :item-props="userProps"
             multiple
             :rules="[validateAuthors(authors)]"
           >
@@ -125,10 +126,17 @@ const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
-const allUsers = computed(() => store.getters["users/allUsers"]);
+const allUsers = computed(() => store.getters["users/allUsers"]).value;
 const allUsersNames = computed(() =>
   store.getters["users/allUsers"].map((user) => user.firstName)
 );
+
+const userProps = (user) => {
+  return {
+    title: user.firstName,
+    subtitle: user.email,
+  };
+};
 
 try {
   await store.dispatch("users/fetchResourcesForUser", user.id);
@@ -188,8 +196,8 @@ const isFormValid = async () => {
 
 const fillAuthorsWithExistingUsers = () => {
   authors.value.forEach((authorName, index) => {
-    const existingAuthor = allUsers.value.find(
-      (x) => x.firstName === authorName
+    const existingAuthor = allUsers.find(
+      (user) => user.id === authorName.id
     );
     if (existingAuthor) {
       authors.value[index] = existingAuthor.id;
