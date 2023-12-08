@@ -86,7 +86,7 @@ export default {
     async postPicture({ commit }, { productId, image }) {
       await postPicture(productId, image);
     },
-    async getPicutre({ commit }, productId) {
+    async getPicture({ commit }, productId) {
       try {
         const res = await fetchPicture(productId);
         return URL.createObjectURL(new Blob([res], { type: "image/png" }));
