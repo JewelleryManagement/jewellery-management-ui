@@ -11,7 +11,8 @@
           Catalog Number: {{ product.catalogNumber }}
         </v-card-title>
         <v-select
-          :items="userOptions"
+          :items="allUsers"
+          :item-props="userPropsFormatter"
           v-model="user"
           label="Select User"
           required
@@ -27,6 +28,7 @@
 </template>
 
 <script setup>
+import { userPropsFormatter } from "@/utils/data-formatter";
 import { validateUser } from "@/utils/validation-rules";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
@@ -42,19 +44,8 @@ const store = useStore();
 const emits = defineEmits(["close-dialog"]);
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
-const userOptions = allUsers.value.map((user) => user.email);
 
-const handleSubmit = async () => {
-  const { valid } = await form.value.validate();
-  const selectedUser = user.value;
-
-  if (!valid) return;
-
-  const data = {
-    productId: product.id,
-    recipientId: allUsers.value.find((user) => user.email == selectedUser)
-      .id,
-  };
+const postProducTransfer = async (data) => {
   try {
     await store.dispatch("products/transferProduct", data);
     snackbarProvider.showSuccessSnackbar("Successfully transferred product!");
@@ -62,6 +53,20 @@ const handleSubmit = async () => {
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
+};
+
+const handleSubmit = async () => {
+  const { valid } = await form.value.validate();
+  const selectedUser = user.value.id;
+
+  if (!valid) return;
+
+  const data = {
+    productId: product.id,
+    recipientId: selectedUser,
+  };
+
+  postProducTransfer(data);
 };
 
 const closeDialog = async (response) => {
