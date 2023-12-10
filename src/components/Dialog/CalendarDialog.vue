@@ -9,6 +9,7 @@
       <v-date-picker
         v-model="datePicker"
         color="green lighten-1"
+        :max="maxDate"
         @update:model-value="closeDialog"
         @click:cancel="closeDialog"
       ></v-date-picker>
@@ -24,6 +25,7 @@ const props = defineProps({
 });
 import { dateFormatter } from "@/utils/data-formatter";
 
+const maxDate = new Date();
 const datePicker = ref(new Date().toISOString().substr(0, 10));
 const emits = defineEmits(["close-dialog"]);
 

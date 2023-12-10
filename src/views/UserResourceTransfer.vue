@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue";
+import { ref, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
@@ -18,8 +18,7 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const resourceId = route.params.resourceId;
-const userId = route.params.userId;
-const allUsers = computed(() => store.getters["users/allUsers"]);
+const ownerId = route.params.userId;
 
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
@@ -27,26 +26,28 @@ resourceAvailability.value = await store.dispatch(
   resourceId
 );
 
-const handleSubmit = async (inputsData) => {
-  const { selectedUser, quantity } = inputsData;
-  const selectedNewOwner = allUsers.value.find(
-    (user) => user.firstName == selectedUser
-  );
+const postQuantityTransfer = async (data) => {
+  try {
+    await store.dispatch("resources/resourceAvailabilityTransfer", data);
+    snackbarProvider.showSuccessSnackbar("Successfully transfered!");
+    router.push(`/users/${ownerId}`);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+  }
+}
 
+const handleSubmit = async (inputsData) => {
+  const { userId, quantity } = inputsData;
+ 
   const data = {
-    previousOwnerId: userId,
-    newOwnerId: selectedNewOwner.id,
+    previousOwnerId: ownerId,
+    newOwnerId: userId,
     transferredResourceId: resourceId,
     quantity: Number(quantity),
   };
 
-  try {
-    await store.dispatch("resources/resourceAvailabilityTransfer", data);
-    snackbarProvider.showSuccessSnackbar("Successfully transfered!");
-    router.push(`/users/${userId}`);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-  }
+  postQuantityTransfer(data)
+
 };
 </script>
 

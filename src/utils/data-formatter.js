@@ -13,5 +13,12 @@ export function dateFormatter(date) {
   const day = String(selectedDate.getDate()).padStart(2, "0");
 
   return `${day}/${month}/${year}`;
+}
 
+export function userPropsFormatter(user) {
+  const name = (user.firstName || "") + " " + (user.lastName || "");
+  return {
+    title: name,
+    subtitle: user.email,
+  };
 }
