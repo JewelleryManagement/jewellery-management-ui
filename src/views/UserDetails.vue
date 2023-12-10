@@ -44,7 +44,7 @@
               <products-table
                 :products="userProducts"
                 :additionalColumnsRight="disassemblyColumns"
-                :title="`${user.firstName}'s products table`"
+                :title="`${user.firstName + ' ' + user.lastName}'s products table`"
               >
                 <template v-slot:item.authors="{ item }">
                   <user-tool-tip

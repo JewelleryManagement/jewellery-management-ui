@@ -48,7 +48,7 @@ if (route.path.includes("/remove")) {
     store.getters["users/getUserById"](affectedUserId)
   ).value;
 
-  selectedUser.value = affectedUser.firstName;
+  selectedUser.value = affectedUser;
 
   const resourceAvailability = await fetchResourceAvailability(resourceId);
 

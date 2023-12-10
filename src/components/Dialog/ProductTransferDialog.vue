@@ -57,13 +57,13 @@ const postProducTransfer = async (data) => {
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
-  const selectedUser = user.value.id;
+  const selectedUserId = user.value.id;
 
   if (!valid) return;
 
   const data = {
     productId: product.id,
-    recipientId: selectedUser,
+    recipientId: selectedUserId,
   };
 
   postProducTransfer(data);

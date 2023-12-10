@@ -24,7 +24,7 @@ const props = defineProps({
   modelValue: Boolean,
 });
 
-const maxDate = new Date().toISOString().substr(0, 10)
+const maxDate = new Date();
 const datePicker = ref(new Date().toISOString().substr(0, 10));
 const emits = defineEmits(["close-dialog"]);
 
