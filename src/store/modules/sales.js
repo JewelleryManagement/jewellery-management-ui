@@ -22,7 +22,6 @@ export default {
         totalPrice: `€${product.totalPrice}`,
         totalDiscountedPrice: `${(+product.totalDiscount).toFixed(2)}%`,
         totalDiscount: `€${(+product.totalDiscountedPrice).toFixed(2)}`,
-        date: new Date(product.date).toISOString().split("T")[0],
       }));
     },
   },

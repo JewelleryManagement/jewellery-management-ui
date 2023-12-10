@@ -9,6 +9,7 @@
       <v-date-picker
         v-model="datePicker"
         color="green lighten-1"
+        :max="maxDate"
         @update:model-value="closeDialog"
         @click:cancel="closeDialog"
       ></v-date-picker>
@@ -23,6 +24,7 @@ const props = defineProps({
   modelValue: Boolean,
 });
 
+const maxDate = new Date();
 const datePicker = ref(new Date().toISOString().substr(0, 10));
 const emits = defineEmits(["close-dialog"]);
 
@@ -34,7 +36,7 @@ const formattedDate = computed(() => {
   const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
   const day = String(selectedDate.getDate()).padStart(2, "0");
 
-  return `${year}-${month}-${day}`;
+  return `${day}/${month}/${year}`;
 });
 
 function closeDialog() {

@@ -124,7 +124,7 @@ watch(
 try {
   await store.dispatch("products/fetchProductsByOwner", props.userId);
 } catch (error) {
-  snackbarProvider.showErrorSnackbar("Failed to fetch products.");
+  snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
 }
 const ownedNonContentAndNonSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(

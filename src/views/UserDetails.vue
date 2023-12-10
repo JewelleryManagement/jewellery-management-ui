@@ -5,8 +5,7 @@
         <v-container>
           <suspense>
             <user-card
-              :name="user.name"
-              :email="user.email"
+              :user="user"
               :resourcesAndQuantities="resourceItemResources"
             ></user-card>
           </suspense>
@@ -45,7 +44,7 @@
               <products-table
                 :products="userProducts"
                 :additionalColumnsRight="disassemblyColumns"
-                :title="`${user.name}'s products table`"
+                :title="`${user.firstName + ' ' + user.lastName}'s products table`"
               >
                 <template v-slot:item.authors="{ item }">
                   <user-tool-tip
@@ -132,7 +131,6 @@ const resourceItemResources = computed(
   () => store.getters["users/getUserResources"]
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
-
 const disassemblyColumns = computed(() => [
   store.state.products.tableColumnDisassembly,
   store.state.products.tableColumnTransfer,

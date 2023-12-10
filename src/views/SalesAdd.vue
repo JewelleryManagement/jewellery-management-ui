@@ -8,7 +8,8 @@
         <v-select
           label="Seller"
           v-model="sellerName"
-          :items="allUsersNames"
+          :items="allUsers"
+          :item-props="userPropsFormatter"
           :rules="[validateAuthors(sellerName)]"
         >
         </v-select>
@@ -16,7 +17,8 @@
         <v-select
           v-model="buyerName"
           label="Buyer"
-          :items="allUsersNames"
+          :items="allUsers"
+          :item-props="userPropsFormatter"
           :rules="[validateAuthors(buyerName)]"
         >
         </v-select>
@@ -80,6 +82,7 @@
 </template>
 
 <script setup>
+import {userPropsFormatter} from './../utils/data-formatter.js'
 import CalendarDialog from "../components/Dialog/CalendarDialog.vue";
 import ProductPriceDiscountRow from "../components/ProductPriceDiscountRow.vue";
 import { validateAuthors } from "../utils/validation-rules";
@@ -98,13 +101,10 @@ const [productsDialog, productsForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const formattedDate = ref("");
 
-const allUsers = computed(() => store.getters["users/allUsers"]);
-const allUsersNames = allUsers.value.map((user) => user.name);
+const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 watch(sellerName, (newValue) => {
-  selectedUser.value = allUsers.value.find(
-    (user) => user.name == sellerName.value
-  );
+  selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
   productsForSale.value = [];
 });
 
@@ -192,15 +192,9 @@ const mapSelectedProducts = () => {
 };
 
 const buildSaleRequestData = () => {
-  const getUserById = (username) =>
-    allUsers.value.find((user) => user.name === username).id;
-
-  const selectedSeller = getUserById(sellerName.value);
-  const selectedBuyer = getUserById(buyerName.value);
-
   return {
-    sellerId: selectedSeller,
-    buyerId: selectedBuyer,
+    sellerId: sellerName.value.id,
+    buyerId: buyerName.value.id,
     products: mapSelectedProducts(),
     date: formattedDate.value,
   };
@@ -212,7 +206,7 @@ const postSale = async (data) => {
     snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
     router.push("/sales");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't sell the product");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 
@@ -222,7 +216,6 @@ const handleSubmit = async () => {
   if (!isDateValidated()) return;
 
   const data = buildSaleRequestData();
-
   await postSale(data);
 };
 </script>
