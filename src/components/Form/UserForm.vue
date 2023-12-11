@@ -62,6 +62,7 @@
     label="Birth date"
     v-model="userData.birthDate"
     type="date"
+    :rules="inputRules"
   ></v-text-field>
 
   <v-textarea
@@ -73,6 +74,7 @@
   ></v-textarea>
 
   <v-select
+    prepend-inner-icon="mdi-account-settings"
     label="Role"
     v-model="userData.role"
     :items="['ADMIN', 'USER']"
