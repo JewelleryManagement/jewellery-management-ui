@@ -62,7 +62,7 @@ const submitEditUser = async () => {
     );
     router.push("/users");
   } catch (error) {
-    const errors = Object.values(error?.response?.data?.error).join(', ')
+    const errors = Object.values(error?.response?.data?.error).join(", ");
     snackbarProvider.showErrorSnackbar(errors);
   }
 };
@@ -77,7 +77,8 @@ const submitPostUser = async () => {
     );
     router.push("/users");
   } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+    const errors = Object.values(error?.response?.data?.error).join(", ");
+    snackbarProvider.showErrorSnackbar(errors);
   }
 };
 
