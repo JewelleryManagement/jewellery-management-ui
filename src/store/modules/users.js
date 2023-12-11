@@ -45,7 +45,7 @@ export default {
       return await postUser(userData)
     },
     async updateUser({ commit }, {userId, data}) {
-      await updateUser(userId, data)
+      return await updateUser(userId, data)
     },
     async fetchResourcesForUser({ commit }, userId) {
       const res = await fetchResourcePerUser(userId);

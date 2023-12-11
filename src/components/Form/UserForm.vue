@@ -41,32 +41,25 @@
   <v-text-field
     prepend-inner-icon="mdi-map-marker"
     label="Address"
-    required
     v-model="userData.address"
-    :rules="largeFieldRules"
     :counter="50"
   ></v-text-field>
 
   <v-text-field
     prepend-inner-icon="mdi-cellphone"
     label="Phone"
-    required
     v-model="userData.phone"
-    :rules="numberRules"
   ></v-text-field>
 
   <v-text-field
     prepend-inner-icon="mdi-cellphone"
     label="Phone2"
-    required
     v-model="userData.phone2"
-    :rules="numberRules"
   ></v-text-field>
 
   <v-text-field
     prepend-inner-icon="mdi-calendar"
     label="Birth date"
-    required
     v-model="userData.birthDate"
     type="date"
   ></v-text-field>
@@ -75,29 +68,32 @@
     prepend-inner-icon="mdi-sign-text"
     rows="2"
     label="Note"
-    required
     v-model="userData.note"
-    :rules="textAreaRules"
     :counter="100"
   ></v-textarea>
+
+  <v-select
+    label="Role"
+    v-model="userData.role"
+    :items="['ADMIN', 'USER']"
+    :rules="inputRules"
+    required
+  >
+  </v-select>
 </template>
 
 <script setup>
 import {
   useTextFieldRules,
   useEmailValidationRule,
-  useTextFieldLargeRules,
-  useNumberFieldRules,
-  useTextAreaFieldRules,
   usePasswordFieldRules,
+  useInputValidate,
 } from "@/utils/validation-rules";
 import { ref } from "vue";
 const smallFieldRules = useTextFieldRules();
-const largeFieldRules = useTextFieldLargeRules();
-const textAreaRules = useTextAreaFieldRules();
 const emailRules = useEmailValidationRule();
-const numberRules = useNumberFieldRules();
 const passwordRules = usePasswordFieldRules();
+const inputRules = useInputValidate();
 
 const isPasswordVisible = ref(false);
 const { userData, isEditPage } = defineProps({

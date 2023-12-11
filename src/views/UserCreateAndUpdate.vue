@@ -56,9 +56,14 @@ const submitEditUser = async () => {
   };
 
   try {
-    await store.dispatch("users/updateUser", data);
+    const res = await store.dispatch("users/updateUser", data);
+    snackbarProvider.showSuccessSnackbar(
+      `Successfully created user ${res.firstName}`
+    );
+    router.push("/users");
   } catch (error) {
-    console.log(error);
+    const errors = Object.values(error?.response?.data?.error).join(', ')
+    snackbarProvider.showErrorSnackbar(errors);
   }
 };
 
@@ -67,7 +72,6 @@ const submitPostUser = async () => {
 
   try {
     const res = await store.dispatch("users/createUser", userData.value);
-    console.log(res);
     snackbarProvider.showSuccessSnackbar(
       `Successfully created user ${res.firstName}`
     );

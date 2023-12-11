@@ -1,3 +1,9 @@
+export function useInputValidate() {
+  return [
+    (v) => !!v || `Input field is required`,
+  ];
+}
+
 export function useTextFieldRules() {
   return [
     (v) => !!v || `Input field is required`,
