@@ -30,9 +30,9 @@ const router = useRouter();
 const store = useStore();
 const pageTitle = ref(route.meta.title);
 const userData = ref({});
-const isEditPage = route.path.includes("/edit");
+const isEditPage = computed(() => route.path.includes("/edit"));
 
-if (isEditPage) {
+if (isEditPage.value) {
   const userId = route.params.id;
   const userDetails = computed(() =>
     store.getters["users/getUserById"](userId)
@@ -65,7 +65,6 @@ const submitEditUser = async () => {
     snackbarProvider.showSuccessSnackbar(
       `Successfully created user ${res.firstName}`
     );
-    router.push("/users");
   } catch (error) {
     const errors = Object.values(error?.response?.data?.error).join(", ");
     snackbarProvider.showErrorSnackbar(errors);
@@ -80,7 +79,6 @@ const submitPostUser = async () => {
     snackbarProvider.showSuccessSnackbar(
       `Successfully created user ${res.firstName}`
     );
-    router.push("/users");
   } catch (error) {
     const errors = Object.values(error?.response?.data?.error).join(", ");
     snackbarProvider.showErrorSnackbar(errors);
@@ -90,11 +88,8 @@ const submitPostUser = async () => {
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
 
-  if (isEditPage) {
-    submitEditUser();
-  } else {
-    submitPostUser();
-  }
+  isEditPage.value ? submitEditUser() : submitPostUser()
+  router.push("/users");
 };
 
 const resetForm = () => {
