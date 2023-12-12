@@ -77,7 +77,7 @@
     prepend-inner-icon="mdi-account-settings"
     label="Role"
     v-model="userData.role"
-    :items="['ADMIN', 'USER']"
+    :items="['USER', 'ADMIN']"
     :rules="inputRules"
     required
   >
@@ -91,7 +91,7 @@ import {
   usePasswordFieldRules,
   useInputValidate,
 } from "@/utils/validation-rules";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 const smallFieldRules = useTextFieldRules();
 const emailRules = useEmailValidationRule();
 const passwordRules = usePasswordFieldRules();
@@ -101,5 +101,9 @@ const isPasswordVisible = ref(false);
 const { userData, isEditPage } = defineProps({
   userData: Object,
   isEditPage: Boolean,
+});
+
+onMounted(() => {
+  if (!isEditPage) userData.role = "USER";
 });
 </script>

@@ -18,7 +18,10 @@ import UserForm from "@/components/Form/UserForm.vue";
 import { useStore } from "vuex";
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { dateFormatter } from "@/utils/data-formatter";
+import {
+  mapUserDataToNewData,
+  formatDateForInput,
+} from "@/utils/data-formatter";
 const snackbarProvider = inject("snackbarProvider");
 
 const form = ref(null);
@@ -34,7 +37,14 @@ if (isEditPage) {
   const userDetails = computed(() =>
     store.getters["users/getUserById"](userId)
   );
-  userData.value = userDetails.value;
+
+  const { birthDate, ...otherUserDetails } = userDetails.value;
+  const formattedDate = formatDateForInput(birthDate);
+
+  userData.value = {
+    ...otherUserDetails,
+    birthDate: formattedDate,
+  };
 }
 
 const isFormValid = async () => {
@@ -42,17 +52,12 @@ const isFormValid = async () => {
   return valid;
 };
 
-const formatDateInUserData = () => {
-  const date = dateFormatter(userData.value.birthDate);
-  userData.value.birthDate = date;
-};
-
 const submitEditUser = async () => {
-  formatDateInUserData();
+  const newData = mapUserDataToNewData(userData);
 
   const data = {
     userId: route.params.id,
-    data: userData.value,
+    data: newData,
   };
 
   try {
@@ -68,10 +73,10 @@ const submitEditUser = async () => {
 };
 
 const submitPostUser = async () => {
-  formatDateInUserData();
+  const newData = mapUserDataToNewData(userData);
 
   try {
-    const res = await store.dispatch("users/createUser", userData.value);
+    const res = await store.dispatch("users/createUser", newData);
     snackbarProvider.showSuccessSnackbar(
       `Successfully created user ${res.firstName}`
     );
