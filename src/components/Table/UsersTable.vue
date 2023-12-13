@@ -42,7 +42,7 @@ const search = ref("");
 const router = useRouter();
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
-const tableColumns = computed(() => store.getters["users/getTableColumns"]);
+const tableColumns = computed(() => store.getters["users/getTableColumnsWithEdit"]);
 
 const rowClickHandler = (user) => {
   navigateToItemDetails(router, user, "users");

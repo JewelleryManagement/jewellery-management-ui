@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import UserDetails from "./UserDetails.vue";
+import UserDetails from "./Users/UserDetails.vue";
 import { computed } from "vue";
 import { useStore } from "vuex";
 

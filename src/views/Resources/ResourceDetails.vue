@@ -33,11 +33,11 @@
 
 <script setup>
 import { ref, computed, watch, inject } from "vue";
-import Pearl from "../components/Form/Pearl.vue";
-import Metal from "../components/Form/Metal.vue";
-import PreciousStone from "../components/Form/PreciousStone.vue";
-import Element from "../components/Form/Element.vue";
-import SemiPreciousStone from "../components/Form/SemiPreciousStone.vue";
+import Pearl from "@/components/Form/Pearl.vue";
+import Metal from "@/components/Form/Metal.vue";
+import PreciousStone from "@/components/Form/PreciousStone.vue";
+import Element from "@/components/Form/Element.vue";
+import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 

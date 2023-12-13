@@ -62,7 +62,7 @@ export default {
       rootState.resources.tableColumnQuantity,
       ...rootState.resources.tableColumns,
     ],
-    getTableColumns: (state) => {
+    getTableColumnsWithEdit: (state) => {
       return [...state.tableColumns, state.tableColumnEdit];
     },
     allUsers(state) {
