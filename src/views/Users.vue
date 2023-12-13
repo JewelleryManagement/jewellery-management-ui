@@ -1,32 +1,24 @@
 <template>
   <v-container class="my-12" fluid>
-    <user-list />
+    <base-card>
+      <users-table title="Users table"></users-table>
+    </base-card>
   </v-container>
 </template>
-<script>
+<script setup>
 import { inject, onMounted } from "vue";
-import UserList from "@/components/List/UserList.vue";
-
+import UsersTable from "@/components/Table/UsersTable.vue";
 import { useStore } from "vuex";
 
-export default {
-  components: {
-    UserList,
-  },
-  setup() {
-    const store = useStore();
-    const snackbarProvider = inject("snackbarProvider");
+const store = useStore();
+const snackbarProvider = inject("snackbarProvider");
 
-    onMounted(async () => {
-      try {
-        await store.dispatch("users/fetchUsers");
-      } catch (error) {
-        snackbarProvider.showErrorSnackbar("Failed to fetch users.");
-      }
-    });
-
-    return {};
-  },
-};
+onMounted(async () => {
+  try {
+    await store.dispatch("users/fetchUsers");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch users.");
+  }
+});
 </script>
 <style></style>

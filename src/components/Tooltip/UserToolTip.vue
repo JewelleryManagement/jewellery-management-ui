@@ -1,8 +1,9 @@
 <template>
   <router-link :to="`/users/${props.user.id}`">
-    {{ props.user.name }}<slot></slot>
+    {{ props.user.firstName }}<slot></slot>
     <v-tooltip activator="parent" location="top">
-      <div>Name: {{ props.user.name }}</div>
+      <div>First Name: {{ props.user.firstName }}</div>
+      <div>Last Name: {{ props.user.lastName }}</div>
       <div>Email: {{ props.user.email }}</div>
     </v-tooltip>
   </router-link>
