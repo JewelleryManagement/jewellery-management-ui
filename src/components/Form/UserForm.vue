@@ -5,7 +5,7 @@
     required
     v-model="userData.firstName"
     :rules="smallFieldRules"
-    :counter="10"
+    :counter="35"
   ></v-text-field>
 
   <v-text-field
@@ -14,7 +14,7 @@
     required
     v-model="userData.lastName"
     :rules="smallFieldRules"
-    :counter="10"
+    :counter="35"
   ></v-text-field>
 
   <v-text-field
@@ -38,12 +38,12 @@
     :rules="passwordRules"
   ></v-text-field>
 
-  <v-text-field
+  <v-textarea
     prepend-inner-icon="mdi-map-marker"
     label="Address"
     v-model="userData.address"
-    :counter="50"
-  ></v-text-field>
+    :counter="254"
+  ></v-textarea>
 
   <v-text-field
     prepend-inner-icon="mdi-cellphone"

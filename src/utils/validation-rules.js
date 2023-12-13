@@ -7,7 +7,7 @@ export function useInputValidate() {
 export function useTextFieldRules() {
   return [
     (v) => !!v || `Input field is required`,
-    (v) => (v && v.length <= 10) || "Input must be less than 10 characters",
+    (v) => (v && v.length <= 35) || "Input must be less than 35 characters",
   ];
 }
 export function useTextFieldLargeRules() {
