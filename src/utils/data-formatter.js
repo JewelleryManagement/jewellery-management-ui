@@ -36,7 +36,7 @@ export function mapUserDataToNewData(userData) {
 }
 
 export function formatDateForInput(dateString) {
-  if (!dateString) return;
+  if (!dateString) return
   const parts = dateString.split("/");
   return `${parts[2]}-${parts[1]}-${parts[0]}`;
 }
