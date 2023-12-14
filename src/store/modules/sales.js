@@ -14,6 +14,7 @@ export default {
       { key: "totalDiscount", title: "Discount" },
       { key: "date", title: "Date" },
     ],
+    tableColumnReturn: { key: "return", title: "Return" },
   },
   mutations: {
     setSales(state, sales) {

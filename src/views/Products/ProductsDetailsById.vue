@@ -73,9 +73,8 @@
           <v-btn
             v-if="currentProductInfo.partOfSale"
             color="#673AB7"
-            @click="openDialog('products')"
+            @click.stop="submitReturn"
             :size="isMediumScreen() ? 'x-small' : 'default'"
-            @click.stop
             >Sale Return</v-btn
           >
         </div>
@@ -103,7 +102,7 @@
 import { isMediumAndDownScreen, isMediumScreen } from "@/utils/display";
 import { onMounted } from "vue";
 import { ref, computed, inject } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
@@ -111,6 +110,7 @@ const isProductsDialogOpen = ref(false);
 const defaultPicture = require("@/assets/no-pic.png");
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
 const picture = ref(null);
 const currentProductId = route.params.productId;
 const currentProductInfo = computed(
@@ -162,6 +162,26 @@ const postPicture = async (id, image) => {
     snackbarProvider.showSuccessSnackbar(
       "Successfully added picture to the product!"
     );
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+  }
+};
+
+const submitReturn = () => {
+  const confirm = window.confirm(
+    "Are you sure that you would like to return this sale?"
+  );
+
+  if (!confirm) return;
+
+  submitSaleReturn();
+};
+
+const submitSaleReturn = () => {
+  try {
+    store.dispatch("sales/returnSale", currentProductId);
+    snackbarProvider.showSuccessSnackbar("Product has been returned from sale");
+    router.push('/products');
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

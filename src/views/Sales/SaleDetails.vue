@@ -24,6 +24,12 @@
         <template v-slot:item.owner="{ item }">
           <user-tool-tip :user="item.owner" @click.stop />
         </template>
+
+        <template v-slot:item.return="{ item }">
+          <v-btn variant="plain" @click.stop="submitReturn(item)">
+            <v-icon size="25">mdi-backup-restore</v-icon>
+          </v-btn>
+        </template>
       </products-table>
     </base-card>
   </v-container>
@@ -33,9 +39,11 @@
 import { formatProducts } from "@/utils/data-formatter.js";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import SaleCard from "@/components/Sale/SaleCard.vue";
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import router from "@/router";
+const snackbarProvider = inject("snackbarProvider");
 
 const store = useStore();
 const route = useRoute();
@@ -45,7 +53,31 @@ const currentSale = computed(() => store.getters["sales/getSaleById"](saleId));
 const saleProducts = currentSale.value.products.map((product) =>
   formatProducts(product)
 );
-const ownerColumn = computed(() => [store.state.products.tableColumnOwner]);
+const ownerColumn = computed(() => [
+  store.state.products.tableColumnOwner,
+  store.state.sales.tableColumnReturn,
+]);
+
+const submitReturn = (item) => {
+  const productId = item.id;
+  const confirm = window.confirm(
+    "Are you sure that you would like to return this sale?"
+  );
+
+  if (!confirm) return;
+
+  submitSaleReturn(productId);
+};
+
+const submitSaleReturn = (productId) => {
+  try {
+    store.dispatch("sales/returnSale", productId);
+    snackbarProvider.showSuccessSnackbar("Product has been returned from sale");
+    router.go(-1);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+  }
+};
 </script>
 
 <style lang="scss" scoped></style>
