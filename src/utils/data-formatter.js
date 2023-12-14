@@ -6,6 +6,7 @@ export function formatProducts(product) {
 }
 
 export function dateFormatter(date) {
+  if (!date) return;
   const selectedDate = new Date(date);
   const year = selectedDate.getFullYear();
   const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
@@ -35,6 +36,7 @@ export function mapUserDataToNewData(userData) {
 }
 
 export function formatDateForInput(dateString) {
+  if (!dateString) return
   const parts = dateString.split("/");
   return `${parts[2]}-${parts[1]}-${parts[0]}`;
 }

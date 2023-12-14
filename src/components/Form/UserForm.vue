@@ -62,7 +62,6 @@
     label="Birth date"
     v-model="userData.birthDate"
     type="date"
-    :rules="inputRules"
   ></v-text-field>
 
   <v-textarea
