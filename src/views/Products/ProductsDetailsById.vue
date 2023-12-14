@@ -70,6 +70,14 @@
             @click.stop
             >Products</v-btn
           >
+          <v-btn
+            v-if="currentProductInfo.partOfSale"
+            color="#673AB7"
+            @click="openDialog('products')"
+            :size="isMediumScreen() ? 'x-small' : 'default'"
+            @click.stop
+            >Sale Return</v-btn
+          >
         </div>
       </div>
     </v-card>

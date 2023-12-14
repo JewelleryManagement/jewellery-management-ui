@@ -142,3 +142,7 @@ export async function updateUser(id, userData) {
 export async function transferProduct(productId, recipientId) {
   return await updateData(`/products/${productId}/transfer/${recipientId}`);
 }
+
+export async function saleReturn(productId) {
+  return await updateData(`/sales/return-product/${productId}`);
+}
