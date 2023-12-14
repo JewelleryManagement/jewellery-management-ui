@@ -100,7 +100,7 @@ import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
 const isProductsDialogOpen = ref(false);
-const defaultPicture = require("../assets/no-pic.png");
+const defaultPicture = require("@/assets/no-pic.png");
 const store = useStore();
 const route = useRoute();
 const picture = ref(null);

@@ -3,6 +3,9 @@
     <div class="text-center">
       <h1>{{ title }}</h1>
     </div>
+    <div class="d-flex justify-end">
+      <table-button path="/users/create">Create user</table-button>
+    </div>
     <v-card-title>
       <v-spacer></v-spacer>
       <v-text-field
@@ -39,7 +42,7 @@ const search = ref("");
 const router = useRouter();
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
-const tableColumns = computed(() => store.getters["users/getTableColumns"]);
+const tableColumns = computed(() => store.getters["users/getTableColumnsWithEdit"]);
 
 const rowClickHandler = (user) => {
   navigateToItemDetails(router, user, "users");

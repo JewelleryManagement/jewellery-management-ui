@@ -14,10 +14,12 @@ import BaseCard from './components/Card/BaseCard.vue'
 import PictureButton from "@/components/Button/PictureButton.vue"
 import BarCode from "@/components/Barcode/BarCode.vue";
 import PartOfProduct from "@/components/Tooltip/PartOfProduct.vue"
+import TableButton from "@/components/Button/TableButton.vue"
 
 app.component('bar-code', BarCode)
 app.component('base-card', BaseCard)
 app.component('form-buttons', FormButtons)
+app.component('table-button', TableButton)
 app.component('user-tool-tip', UserToolTip)
 app.component('picture-button', PictureButton)
 app.component('part-of-product', PartOfProduct)

@@ -23,6 +23,7 @@ import { VDatePicker } from "vuetify/lib/labs/components.mjs";
 const props = defineProps({
   modelValue: Boolean,
 });
+import { dateFormatter } from "@/utils/data-formatter";
 
 const maxDate = new Date();
 const datePicker = ref(new Date().toISOString().substr(0, 10));
@@ -30,13 +31,7 @@ const emits = defineEmits(["close-dialog"]);
 
 const formattedDate = computed(() => {
   if (!datePicker.value) return "";
-
-  const selectedDate = new Date(datePicker.value);
-  const year = selectedDate.getFullYear();
-  const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
-  const day = String(selectedDate.getDate()).padStart(2, "0");
-
-  return `${day}/${month}/${year}`;
+  return dateFormatter(datePicker.value);
 });
 
 function closeDialog() {

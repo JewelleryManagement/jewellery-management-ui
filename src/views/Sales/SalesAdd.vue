@@ -82,10 +82,10 @@
 </template>
 
 <script setup>
-import {userPropsFormatter} from './../utils/data-formatter.js'
-import CalendarDialog from "../components/Dialog/CalendarDialog.vue";
-import ProductPriceDiscountRow from "../components/ProductPriceDiscountRow.vue";
-import { validateAuthors } from "../utils/validation-rules";
+import {userPropsFormatter} from '@/utils/data-formatter.js'
+import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
+import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
+import { validateAuthors } from "@/utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
