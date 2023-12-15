@@ -4,7 +4,7 @@
       color="#673AB7"
       @click.stop="submitReturn"
       :size="isMediumScreen() ? 'x-small' : 'default'"
-      >Sale Return</v-btn
+      >Product Return</v-btn
     >
   <v-btn variant="plain" @click.stop="submitReturn" v-else-if="isSalesPage">
     <v-icon size="25">mdi-cart-remove</v-icon>

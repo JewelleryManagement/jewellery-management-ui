@@ -37,11 +37,9 @@
 import { formatProducts } from "@/utils/data-formatter.js";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import SaleCard from "@/components/Sale/SaleCard.vue";
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-import router from "@/router";
-const snackbarProvider = inject("snackbarProvider");
 
 const store = useStore();
 const route = useRoute();
@@ -56,26 +54,6 @@ const ownerColumn = computed(() => [
   store.state.sales.tableColumnReturn,
 ]);
 
-const submitReturn = (item) => {
-  const productId = item.id;
-  const confirm = window.confirm(
-    "Are you sure that you would like to return this product??"
-  );
-
-  if (!confirm) return;
-
-  submitSaleReturn(productId);
-};
-
-const submitSaleReturn = (productId) => {
-  try {
-    store.dispatch("sales/returnProduct", productId);
-    snackbarProvider.showSuccessSnackbar("Product has been returned from sale");
-    router.go(-1);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-  }
-};
 </script>
 
 <style lang="scss" scoped></style>
