@@ -26,9 +26,7 @@
         </template>
 
         <template v-slot:item.return="{ item }">
-          <v-btn variant="plain" @click.stop="submitReturn(item)">
-            <v-icon size="25">mdi-backup-restore</v-icon>
-          </v-btn>
+          <return-product-button :currentProductInfo="item" />
         </template>
       </products-table>
     </base-card>
@@ -61,7 +59,7 @@ const ownerColumn = computed(() => [
 const submitReturn = (item) => {
   const productId = item.id;
   const confirm = window.confirm(
-    "Are you sure that you would like to return this sale?"
+    "Are you sure that you would like to return this product??"
   );
 
   if (!confirm) return;
@@ -71,7 +69,7 @@ const submitReturn = (item) => {
 
 const submitSaleReturn = (productId) => {
   try {
-    store.dispatch("sales/returnSale", productId);
+    store.dispatch("sales/returnProduct", productId);
     snackbarProvider.showSuccessSnackbar("Product has been returned from sale");
     router.go(-1);
   } catch (error) {

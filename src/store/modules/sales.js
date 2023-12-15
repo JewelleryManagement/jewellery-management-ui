@@ -1,4 +1,4 @@
-import { fetchSales, postSale, saleReturn } from "@/services/HttpClientService";
+import { fetchSales, postSale, productReturn } from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
@@ -34,8 +34,8 @@ export default {
     async postSale({ commit }, data) {
       await postSale(data);
     },
-    async returnSale({ commit }, productId) {
-      await saleReturn(productId);
+    async returnProduct({ commit }, productId) {
+      await productReturn(productId);
     },
   },
   getters: {
