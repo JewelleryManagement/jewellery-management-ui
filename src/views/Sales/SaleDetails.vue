@@ -5,7 +5,7 @@
     <base-card>
       <products-table
         :products="saleProducts"
-        :additionalColumnsRight="ownerColumn"
+        :additionalColumnsRight="additionalColumns"
         title="Products in the current sale"
       >
         <template v-slot:item.authors="{ item }">
@@ -49,7 +49,7 @@ const currentSale = computed(() => store.getters["sales/getSaleById"](saleId));
 const saleProducts = currentSale.value.products.map((product) =>
   formatProducts(product)
 );
-const ownerColumn = computed(() => [
+const additionalColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.sales.tableColumnReturn,
 ]);
