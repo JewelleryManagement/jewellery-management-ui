@@ -143,6 +143,6 @@ export async function transferProduct(productId, recipientId) {
   return await updateData(`/products/${productId}/transfer/${recipientId}`);
 }
 
-export async function saleReturn(productId) {
+export async function productReturn(productId) {
   return await updateData(`/sales/return-product/${productId}`);
 }
