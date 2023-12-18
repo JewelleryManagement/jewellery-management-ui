@@ -70,6 +70,8 @@
             @click.stop
             >Products</v-btn
           >
+
+          <return-product-button :currentProductInfo="currentProductInfo" />
         </div>
       </div>
     </v-card>
@@ -97,6 +99,7 @@ import { onMounted } from "vue";
 import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+
 const snackbarProvider = inject("snackbarProvider");
 const isResourceDialogOpen = ref(false);
 const isProductsDialogOpen = ref(false);

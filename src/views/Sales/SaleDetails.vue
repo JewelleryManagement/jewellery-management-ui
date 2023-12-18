@@ -5,7 +5,7 @@
     <base-card>
       <products-table
         :products="saleProducts"
-        :additionalColumnsRight="ownerColumn"
+        :additionalColumnsRight="additionalColumns"
         title="Products in the current sale"
       >
         <template v-slot:item.authors="{ item }">
@@ -23,6 +23,10 @@
 
         <template v-slot:item.owner="{ item }">
           <user-tool-tip :user="item.owner" @click.stop />
+        </template>
+
+        <template v-slot:item.return="{ item }">
+          <return-product-button :currentProductInfo="item" />
         </template>
       </products-table>
     </base-card>
@@ -45,7 +49,11 @@ const currentSale = computed(() => store.getters["sales/getSaleById"](saleId));
 const saleProducts = currentSale.value.products.map((product) =>
   formatProducts(product)
 );
-const ownerColumn = computed(() => [store.state.products.tableColumnOwner]);
+const additionalColumns = computed(() => [
+  store.state.products.tableColumnOwner,
+  store.state.sales.tableColumnReturn,
+]);
+
 </script>
 
 <style lang="scss" scoped></style>

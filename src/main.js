@@ -15,6 +15,7 @@ import PictureButton from "@/components/Button/PictureButton.vue"
 import BarCode from "@/components/Barcode/BarCode.vue";
 import PartOfProduct from "@/components/Tooltip/PartOfProduct.vue"
 import TableButton from "@/components/Button/TableButton.vue"
+import ReturnProductButton from "@/components/Button/ReturnProductButton.vue";
 
 app.component('bar-code', BarCode)
 app.component('base-card', BaseCard)
@@ -25,6 +26,7 @@ app.component('picture-button', PictureButton)
 app.component('part-of-product', PartOfProduct)
 app.component('disassembly-button', DisassemblyButton)
 app.component('user-resource-form', UserResourceForm)
+app.component('return-product-button', ReturnProductButton)
 app.component('product-transfer-button', ProductTransferButton)
 app.component("resource-content-dialog", ResourceContentDialog);
 app.component("products-content-dialog", ProductsContentDialog);
