@@ -1,4 +1,3 @@
-import { reactive } from "vue";
 import {
   fetchProducts,
   postProduct,
@@ -12,7 +11,7 @@ import { formatProducts } from "../../utils/data-formatter.js";
 
 export default {
   namespaced: true,
-  state: reactive({
+  state: {
     products: [],
     currentUserProducts: [],
     tableColumns: [
@@ -54,7 +53,7 @@ export default {
       title: "Transfer",
       align: "center",
     },
-  }),
+  },
   mutations: {
     setProducts(state, products) {
       state.products = products;
@@ -65,7 +64,7 @@ export default {
   },
   actions: {
     async fetchProducts({ commit }) {
-      const res = await fetchProducts();
+      const res = await fetchProducts();;
       commit("setProducts", res);
     },
     async createProduct({ commit }, product) {
