@@ -37,7 +37,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { VDataTable } from "vuetify/labs/VDataTable";
+import { VDataTable } from "vuetify/components/VDataTable";
 import { useStore } from "vuex";
 const { modelValue, data } = defineProps({
   modelValue: Boolean,

@@ -75,7 +75,7 @@
 <script setup>
 import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, toRefs } from "vue";
-import { VDataTable } from "vuetify/labs/VDataTable";
+import { VDataTable } from "vuetify/components/VDataTable";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 const router = useRouter();
