@@ -69,7 +69,7 @@
     rows="2"
     label="Note"
     v-model="userData.note"
-    :counter="100"
+    :counter="500"
   ></v-textarea>
 
   <v-select

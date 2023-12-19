@@ -40,7 +40,7 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { onBeforeMount, inject, computed } from "vue";
+import { onMounted, inject, computed } from "vue";
 import { useStore } from "vuex";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
@@ -50,10 +50,11 @@ const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnTransfer,
 ]);
 
-onBeforeMount(async () => {
+onMounted(async () => {
   try {
     await store.dispatch("products/fetchProducts");
   } catch (error) {
+    console.log(error);
     snackbarProvider.showErrorSnackbar("Failed to fetch products");
   }
 });
