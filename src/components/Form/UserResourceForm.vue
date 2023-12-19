@@ -11,12 +11,22 @@
         :item-props="userPropsFormatter"
         v-model="selectedUser"
         :disabled="route.path.includes('/remove')"
+        required
+        :rules="[validateUser]"
       >
       </v-select>
 
       <v-text-field
         v-model="quantity"
         label="Quantity"
+        :rules="numberFieldRules"
+        required
+      ></v-text-field>
+
+      <v-text-field
+        prefix="€"
+        label="Delivery Cost"
+        v-model="dealPrice"
         :rules="numberFieldRules"
         required
       ></v-text-field>
@@ -30,13 +40,14 @@
 import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
 import { ref, computed } from "vue";
-import { useNumberFieldRules } from "../../utils/validation-rules";
+import { useNumberFieldRules, validateUser } from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
 const store = useStore();
 const route = useRoute();
 const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
 const quantity = ref("");
+const dealPrice = ref("");
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
 
@@ -85,6 +96,7 @@ const handleSubmit = async () => {
   const data = {
     userId: selectedUser.value.id,
     quantity: quantity.value,
+    dealPrice: Number(dealPrice.value).toFixed(2)
   };
 
   emits("handle-submit", data);
