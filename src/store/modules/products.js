@@ -64,7 +64,7 @@ export default {
   },
   actions: {
     async fetchProducts({ commit }) {
-      const res = await fetchProducts();;
+      const res = await fetchProducts();
       commit("setProducts", res);
     },
     async createProduct({ commit }, product) {
