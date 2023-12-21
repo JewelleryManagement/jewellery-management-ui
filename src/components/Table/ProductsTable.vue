@@ -103,7 +103,6 @@ const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
 const search = ref("");
 
-await store.dispatch("products/fetchProducts");
 const allProducts = computed(
   () => products.value ?? store.getters["products/allProducts"]
 );
