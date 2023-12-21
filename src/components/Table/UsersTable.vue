@@ -34,7 +34,6 @@
 import { navigateToItemDetails } from "@/utils/row-click-handler";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { VDataTable } from "vuetify/components/VDataTable";
 import { useStore } from "vuex";
 const { title } = defineProps({ title: String });
 const store = useStore();
