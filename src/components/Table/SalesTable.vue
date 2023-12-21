@@ -33,7 +33,7 @@
 
 <script setup>
 import { navigateToItemDetails } from "@/utils/row-click-handler";
-import { VDataTable } from "vuetify/labs/VDataTable";
+import { VDataTable } from "vuetify/components/VDataTable";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
