@@ -54,7 +54,6 @@
 <script setup>
 import { usePositiveNumberRules } from "../../utils/validation-rules";
 import { ref, computed } from "vue";
-import { VDataTable } from "vuetify/components/VDataTable";
 import { useStore } from "vuex";
 const store = useStore();
 

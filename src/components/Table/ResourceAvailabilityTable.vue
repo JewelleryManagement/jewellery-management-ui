@@ -39,7 +39,6 @@
 </template>
 
 <script setup>
-import { VDataTable } from "vuetify/components/VDataTable";
 import { ref, toRefs } from "vue";
 
 const props = defineProps({
