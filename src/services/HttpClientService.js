@@ -88,6 +88,9 @@ export async function postUserLogin(user) {
 export async function postSale(data) {
   return await postData("/sales", data);
 }
+export async function postUser(userData) {
+  return await postData("/users", userData);
+}
 
 export async function postPicture(productId, image) {
   const formData = new FormData();
@@ -132,6 +135,14 @@ export async function updateResource(id, data) {
   return await updateData(`/resources/${id}`, data);
 }
 
+export async function updateUser(id, userData) {
+  return await updateData(`/users/${id}`, userData);
+}
+
 export async function transferProduct(productId, recipientId) {
   return await updateData(`/products/${productId}/transfer/${recipientId}`);
+}
+
+export async function productReturn(productId) {
+  return await updateData(`/sales/return-product/${productId}`);
 }

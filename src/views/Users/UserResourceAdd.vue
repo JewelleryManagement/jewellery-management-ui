@@ -37,11 +37,12 @@ const postAddQuantity = async (data) => {
 };
 
 const handleSubmit = async (inputsData) => {
-  const { userId, quantity } = inputsData;
+  const { userId, quantity, dealPrice } = inputsData;
   const data = {
     userId: userId,
     resourceId: resourceId,
     quantity: Number(quantity),
+    dealPrice: dealPrice
   };
 
   postAddQuantity(data);

@@ -1,7 +1,7 @@
 <template>
   <v-text-field
     v-model="formData.type"
-    :counter="10"
+    :counter="35"
     label="Type"
     :rules="smallFieldRules"
     required
@@ -9,7 +9,7 @@
 
   <v-text-field
     v-model="formData.quantityType"
-    :counter="10"
+    :counter="35"
     label="Quantity Type"
     :rules="smallFieldRules"
     required
@@ -24,7 +24,7 @@
 
   <v-text-field
     v-model="formData.color"
-    :counter="10"
+    :counter="35"
     label="Color"
     :rules="smallFieldRules"
     required
@@ -32,7 +32,7 @@
 
   <v-text-field
     v-model="formData.plating"
-    :counter="10"
+    :counter="35"
     label="Plating"
     :rules="smallFieldRules"
     required

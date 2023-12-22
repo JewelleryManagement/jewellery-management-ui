@@ -1,4 +1,4 @@
-import { fetchSales, postSale } from "@/services/HttpClientService";
+import { fetchSales, postSale, productReturn } from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
@@ -14,6 +14,7 @@ export default {
       { key: "totalDiscount", title: "Discount" },
       { key: "date", title: "Date" },
     ],
+    tableColumnReturn: { key: "return", title: "Return" },
   },
   mutations: {
     setSales(state, sales) {
@@ -32,6 +33,9 @@ export default {
     },
     async postSale({ commit }, data) {
       await postSale(data);
+    },
+    async returnProduct({ commit }, productId) {
+      await productReturn(productId);
     },
   },
   getters: {

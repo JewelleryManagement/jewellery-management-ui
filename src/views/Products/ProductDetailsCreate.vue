@@ -116,7 +116,7 @@ import {
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
+import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import { userPropsFormatter } from "@/utils/data-formatter";
 

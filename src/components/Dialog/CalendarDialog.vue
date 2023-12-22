@@ -4,6 +4,7 @@
     @update:model-value="props.modelValue"
     transition="dialog-top-transition"
     width="auto"
+    @click:outside="emits('close-dialog')"
   >
     <v-card>
       <v-date-picker
@@ -19,25 +20,19 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { VDatePicker } from "vuetify/lib/labs/components.mjs";
 const props = defineProps({
   modelValue: Boolean,
 });
+import { dateFormatter } from "@/utils/data-formatter";
 
 const maxDate = new Date();
-const datePicker = ref(new Date().toISOString().substr(0, 10));
+const datePicker = ref(new Date());
 const emits = defineEmits(["close-dialog"]);
 
 const formattedDate = computed(() => {
   if (!datePicker.value) return "";
-
-  const selectedDate = new Date(datePicker.value);
-  const year = selectedDate.getFullYear();
-  const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
-  const day = String(selectedDate.getDate()).padStart(2, "0");
-
-  return `${day}/${month}/${year}`;
-});
+  return dateFormatter(datePicker.value);
+}); 
 
 function closeDialog() {
   emits("close-dialog", formattedDate.value);

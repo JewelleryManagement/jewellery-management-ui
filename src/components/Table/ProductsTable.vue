@@ -75,7 +75,6 @@
 <script setup>
 import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, toRefs } from "vue";
-import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -103,7 +102,6 @@ const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
 const search = ref("");
 
-await store.dispatch("products/fetchProducts");
 const allProducts = computed(
   () => products.value ?? store.getters["products/allProducts"]
 );

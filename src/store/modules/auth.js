@@ -8,23 +8,24 @@ export default {
   },
   mutations: {
     setUser(state, payload) {
-      state.user = payload.user
-      state.token = payload.token
+      state.user = payload.user;
+      state.token = payload.token;
     },
     clearUser(state) {
-      state.user = null
-      state.token = null
+      state.user = null;
+      state.token = null;
     },
   },
   actions: {
-    async login({commit}, payload) {
-      const user = await postUserLogin(payload)
-      commit('setUser', user)
-      return user.user
+    async login({ commit }, payload) {
+      const user = await postUserLogin(payload);
+      commit("setUser", user);
+      return user.user;
     },
-    logout({commit}) {
-      commit('clearUser');
-    }
+    logout({ commit }) {
+      commit("clearUser");
+      localStorage.removeItem("vuex");
+    },
   },
   getters: {
     isAuthenticated: (state) => !!state.user,

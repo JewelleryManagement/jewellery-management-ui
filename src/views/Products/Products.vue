@@ -7,15 +7,7 @@
       >
         <template v-slot:button>
           <div class="d-flex justify-end">
-            <v-btn
-              class="mx-4"
-              rounded="xs"
-              :size="isSmallScreen() ? 'small' : 'x-large'"
-              color="red"
-              to="/products/add"
-            >
-              Add Product
-            </v-btn>
+            <table-button path="/products/add">Add Product</table-button>
           </div>
         </template>
 
@@ -48,9 +40,8 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { onBeforeMount, inject, computed } from "vue";
+import { onMounted, inject, computed } from "vue";
 import { useStore } from "vuex";
-import { isSmallScreen } from "@/utils/display";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const disassembleAndUserColumns = computed(() => [
@@ -59,7 +50,7 @@ const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnTransfer,
 ]);
 
-onBeforeMount(async () => {
+onMounted(async () => {
   try {
     await store.dispatch("products/fetchProducts");
   } catch (error) {

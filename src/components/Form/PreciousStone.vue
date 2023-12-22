@@ -1,7 +1,7 @@
 <template>
   <v-text-field
     v-model="formData.color"
-    :counter="10"
+    :counter="35"
     :rules="smallFieldRules"
     label="Color"
     required
@@ -9,7 +9,7 @@
 
   <v-text-field
     v-model="formData.carat"
-    :counter="10"
+    :counter="35"
     :rules="numberFieldRules"
     label="Carat"
     required
@@ -17,7 +17,7 @@
 
   <v-text-field
     v-model="formData.cut"
-    :counter="10"
+    :counter="35"
     :rules="smallFieldRules"
     label="Cut"
     required
@@ -25,7 +25,7 @@
 
   <v-text-field
     v-model="formData.clarity"
-    :counter="10"
+    :counter="35"
     :rules="smallFieldRules"
     label="Clarity"
     required
@@ -57,7 +57,7 @@
 
   <v-text-field
     v-model="formData.quantityType"
-    :counter="10"
+    :counter="35"
     :rules="smallFieldRules"
     label="Quantity Type"
     required
@@ -65,7 +65,7 @@
 
   <v-text-field
     v-model="formData.shape"
-    :counter="10"
+    :counter="35"
     :rules="smallFieldRules"
     label="Shape"
     required
