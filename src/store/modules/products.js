@@ -53,6 +53,11 @@ export default {
       title: "Transfer",
       align: "center",
     },
+    tableColumnEdit: {
+      key: "edit",
+      title: "Edit",
+      align: "center",
+    },
   },
   mutations: {
     setProducts(state, products) {

@@ -137,6 +137,10 @@ try {
   snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
 }
 const pageTitle = ref(route.meta.title);
+
+if (pageTitle.value.includes('Edit')) {
+  console.log(route.params.productId);
+}
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const form = ref(null);
 const [catalogNumber, description, salePrice, productionNumber] = [

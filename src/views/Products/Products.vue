@@ -48,6 +48,7 @@ const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.products.tableColumnDisassembly,
   store.state.products.tableColumnTransfer,
+  store.state.products.tableColumnEdit
 ]);
 
 onMounted(async () => {

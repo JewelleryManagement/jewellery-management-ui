@@ -96,6 +96,13 @@ const routes = [
     meta: { title: "Add product", requiresAuth: true },
   },
   {
+    path: "/product/:productId",
+    name: "Edit Product",
+    props: true,
+    component: () => import("../views/Products/ProductDetailsCreate.vue"),
+    meta: { title: "Edit product", requiresAuth: true },
+  },
+  {
     path: "/products/:productId",
     name: "Product Details",
     props: true,

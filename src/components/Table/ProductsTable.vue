@@ -50,6 +50,12 @@
         >
       </template>
 
+      <template v-slot:item.edit="{ item }">
+        <router-link :to="`/product/${item.id}`" @click.stop>
+          <v-icon color="green">mdi-pencil</v-icon>
+        </router-link>
+      </template>
+
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
         <slot :name="slot" v-bind="scope || {}" />
       </template>
