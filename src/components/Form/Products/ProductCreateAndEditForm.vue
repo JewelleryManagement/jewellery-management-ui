@@ -57,6 +57,7 @@
     @close-dialog="closeDialog"
     @save-product-dialog="productsTableValues"
     :userId="user.id"
+    :inputPRoducts="productsInfo.productsContent"
   >
   </products-dialog>
 
@@ -93,15 +94,7 @@ import { userPropsFormatter } from "@/utils/data-formatter";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 const { productsInfo } = defineProps({ productsInfo: Object });
-const newObj = ref([])
-for (const product of productsInfo.resourcesContent) {
-    const newItem = {
-    id: product.resource.id,
-    quantity: product.quantity
-  };
-  newObj.value.push(newItem)
-}
-
+console.log(productsInfo);
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
@@ -136,7 +129,8 @@ const resourcesTableValues = (resourceContentValue) => {
 };
 
 const productsTableValues = (productsContentValue) => {
-  //   productsContent.value = productsContentValue.map((product) => product.id);
+  productsContent.value = productsContentValue.map((product) => product.id);
+  console.log(productsContent.value);
   closeDialog("products");
 };
 </script>

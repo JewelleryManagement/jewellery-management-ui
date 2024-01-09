@@ -31,7 +31,7 @@
                   background: 'transparent',
                   border: 'none',
                   boxShadow: 'none',
-                  width: '40px'
+                  width: '40px',
                 }"
               ></v-text-field>
             </template>
@@ -69,6 +69,8 @@ const tableColumns = [
   computed(() => store.state.resources.tableColumnQuantity).value,
   ...computed(() => store.state.resources.tableColumns).value,
 ];
+
+// in edit page
 if (quantityByProduct.value.length > 0) {
   resourcesContent.value = [];
   for (const product of quantityByProduct.value) {
@@ -82,7 +84,6 @@ if (quantityByProduct.value.length > 0) {
   resourcesContent.value.forEach(
     ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
   );
-
 }
 
 const resources = computed(() => store.getters["users/getUserResources"]);
@@ -119,7 +120,6 @@ const areQuantitiesValid = () => {
     }).length == 0
   );
 };
-console.log(resourcesContent.value);
 
 const closeDialog = () => {
   quantityByProduct.value = [];

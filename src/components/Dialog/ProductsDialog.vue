@@ -101,6 +101,7 @@ const store = useStore();
 const props = defineProps({
   modelValue: Boolean,
   userId: String,
+  inputPRoducts: Object,
 });
 
 const ICON_ADD = ref("mdi-plus");
@@ -109,7 +110,6 @@ const dialogTypes = {
   RESOURCE: "resources",
   PRODUCT: "products",
 };
-
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
@@ -140,6 +140,14 @@ const temporarySelectedProducts = ref([]);
 const btnIcon = ref({});
 
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);
+
+// Edit
+if (props.inputPRoducts) {
+  props.inputPRoducts.forEach(product => {
+    temporarySelectedProducts.value.push(product);
+    btnIcon.value[product.id] = ICON_REMOVE;
+  })
+}
 
 const openInnerDialog = (item, type) => {
   if (type == dialogTypes.RESOURCE) {
