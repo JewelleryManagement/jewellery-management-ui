@@ -31,6 +31,7 @@
                   background: 'transparent',
                   border: 'none',
                   boxShadow: 'none',
+                  width: '40px'
                 }"
               ></v-text-field>
             </template>
@@ -68,6 +69,21 @@ const tableColumns = [
   computed(() => store.state.resources.tableColumnQuantity).value,
   ...computed(() => store.state.resources.tableColumns).value,
 ];
+if (quantityByProduct.value.length > 0) {
+  resourcesContent.value = [];
+  for (const product of quantityByProduct.value) {
+    resourcesContent.value.push({
+      id: product.resource.id,
+      quantity: product.quantity,
+    });
+  }
+
+  quantityByProduct.value = [];
+  resourcesContent.value.forEach(
+    ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
+  );
+
+}
 
 const resources = computed(() => store.getters["users/getUserResources"]);
 
@@ -82,7 +98,6 @@ const saveTableValues = () => {
     currentInputFields.forEach(([resourceId, quantity]) => {
       resourcesContent.value.push({ id: resourceId, quantity: quantity });
     });
-
     emits("save-resources-dialog", resourcesContent.value);
   }
 };
@@ -104,9 +119,10 @@ const areQuantitiesValid = () => {
     }).length == 0
   );
 };
+console.log(resourcesContent.value);
+
 const closeDialog = () => {
   quantityByProduct.value = [];
-  
   resourcesContent.value.forEach(
     ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
   );

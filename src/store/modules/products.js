@@ -103,6 +103,9 @@ export default {
     allProducts: (state) => {
       return state.products.map(formatProducts);
     },
+    getProductById: (state ) => (productId) => {
+      return state.products.find(product => product.id === productId)
+    },
     getColumns: (state) => [
       ...state.tableColumns,
       state.tableColumnResourcesContent,
