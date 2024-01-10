@@ -54,16 +54,20 @@
 
 <script setup>
 import { usePositiveNumberRules } from "../../utils/validation-rules";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useStore } from "vuex";
 const store = useStore();
 
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
-const { inputResources } = defineProps({
+const props = defineProps({
   inputResources: Array,
+  clearTable: Boolean,
 });
 const search = ref("");
-const [quantityByProduct, resourcesContent] = [ref(inputResources), ref([])];
+const [quantityByProduct, resourcesContent] = [
+  ref(props.inputResources),
+  ref([]),
+];
 const tableColumns = [
   computed(() => store.state.resources.tableColumnAddQuantity).value,
   computed(() => store.state.resources.tableColumnQuantity).value,
@@ -92,12 +96,23 @@ const clearTableValues = () => {
   quantityByProduct.value = {};
 };
 
+watch(
+  () => props.clearTable,
+  async (newId, oldId) => {
+    clearTableValues();
+    saveTableValues();
+  }
+);
+
 const saveTableValues = () => {
   if (areQuantitiesValid()) {
     resourcesContent.value = [];
     const currentInputFields = Object.entries(quantityByProduct.value);
     currentInputFields.forEach(([resourceId, quantity]) => {
-      resourcesContent.value.push({ id: resourceId, quantity: Number(quantity) });
+      resourcesContent.value.push({
+        id: resourceId,
+        quantity: Number(quantity),
+      });
     });
     emits("save-resources-dialog", resourcesContent.value);
   }

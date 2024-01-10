@@ -50,6 +50,7 @@
     :inputResources="productInfo.resourcesContent"
     @save-resources-dialog="resourcesTableValues"
     @close-dialog="closeDialog"
+    :clearTable="clearTable"
   ></resources-dialog>
 
   <products-dialog
@@ -58,6 +59,7 @@
     @save-product-dialog="productsTableValues"
     :userId="user.id"
     :inputPRoducts="productInfo.productsContent"
+    :clearTable="clearTable"
   >
   </products-dialog>
 
@@ -92,7 +94,10 @@ import {
 } from "@/utils/validation-rules";
 import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
-const { productInfo } = defineProps({ productInfo: Object });
+const { productInfo, clearTableValues } = defineProps({
+  productInfo: Object,
+  clearTable: Boolean,
+});
 const store = useStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 

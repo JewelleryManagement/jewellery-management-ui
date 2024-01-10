@@ -13,44 +13,10 @@
           @submit.prevent="handleSubmit"
           @keydown.enter.prevent
         >
-          <ProductCreateAndEditForm :productInfo="productInfo" />
-
-          <!-- <resources-dialog
-            v-model="resourceDialog"
-            :inputResources="resourcesContent"
-            @save-resources-dialog="resourcesTableValues"
-            @close-dialog="closeDialog"
-          ></resources-dialog>
-
-          <products-dialog
-            v-model="productsDialog"
-            @close-dialog="closeDialog"
-            @save-product-dialog="productsTableValues"
-            :userId="user.id"
-          >
-          </products-dialog> -->
-
-          <!-- <div class="d-flex flex-column">
-            <div class="d-flex justify-space-between">
-              <v-btn color="primary" @click="resourceDialog = true">
-                Resources
-              </v-btn>
-
-              <v-btn color="primary" @click="productsDialog = true">
-                Products
-              </v-btn>
-            </div>
-
-            <div class="d-flex flex-column mt-4">
-              <p v-if="resourcesContent.length > 0">
-                Resources selected: {{ resourcesContent.length || 0 }}
-              </p>
-
-              <p v-if="productsContent.length > 0">
-                Products selected: {{ productsContent.length || 0 }}
-              </p>
-            </div>
-          </div> -->
+          <ProductCreateAndEditForm
+            :productInfo="productInfo"
+            :clearTable="clearTable"
+          />
 
           <form-buttons @reset-form="resetForm" />
         </v-form>
@@ -60,7 +26,7 @@
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue";
+import { ref, computed, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
@@ -71,31 +37,42 @@ const route = useRoute();
 const router = useRouter();
 const productId = route.params.productId;
 const snackbarProvider = inject("snackbarProvider");
+const clearTable = ref(false);
 
 const user = computed(() => store.getters["auth/getUser"]).value;
-
-try {
-  await store.dispatch("users/fetchResourcesForUser", user.id);
-} catch (error) {
-  snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
-}
+const productInfo = ref({});
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 
-const productInfo = ref({});
+onMounted(async () => {
+  await fetchResourcesForUser();
+});
 
 if (pageTitle.value.includes("Edit")) {
   productInfo.value = store.getters["products/getProductById"](productId);
 }
 
+const fetchResourcesForUser = async () => {
+  try {
+    await store.dispatch("users/fetchResourcesForUser", user.id);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
+  }
+};
+
 const resetForm = () => {
-  // if (form.value) {
-  //   form.value.reset();
-  //   form.value.resetValidation();
-  //   resourcesContent.value = [];
-  //   productsContent.value = [];
-  //   authors.value = [];
-  // }
+  if (form.value) {
+    form.value.reset();
+    form.value.resetValidation();
+    productInfo.value.resourcesContent = [];
+    productInfo.value.productsContent = [];
+    productInfo.value.authors = [];
+    clearTable.value = true;
+
+    setTimeout(() => {
+      clearTable.value = false;
+    }, 5000);
+  }
 };
 
 const isFormValid = async () => {
@@ -106,17 +83,6 @@ const isFormValid = async () => {
     valid
   );
 };
-
-// const fillAuthorsWithExistingUsers = () => {
-//   authors.value.forEach((authorName, index) => {
-//     const existingAuthor = allUsers.find(
-//       (user) => user.id === authorName.id
-//     );
-//     if (existingAuthor) {
-//       authors.value[index] = existingAuthor.id;
-//     }
-//   });
-// };
 
 const prepareResourcesContent = (resourcesContent) => {
   return resourcesContent.map((resource) => ({
@@ -161,11 +127,9 @@ const handleSubmit = async () => {
     return;
   }
 
-  // fillAuthorsWithExistingUsers();
-
   await submitProduct();
 
-  // resetForm();
+  resetForm();
   router.push("/products");
 };
 </script>

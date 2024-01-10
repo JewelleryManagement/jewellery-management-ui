@@ -102,6 +102,7 @@ const props = defineProps({
   modelValue: Boolean,
   userId: String,
   inputPRoducts: Object,
+  clearTable: Boolean,
 });
 
 const ICON_ADD = ref("mdi-plus");
@@ -121,6 +122,13 @@ watch(
   }
 );
 
+watch(
+  () => props.clearTable,
+  async (newId, oldId) => {
+    clearTableValues();
+  }
+);
+
 try {
   await store.dispatch("products/fetchProductsByOwner", props.userId);
 } catch (error) {
@@ -132,15 +140,14 @@ const ownedNonContentAndNonSoldProducts = computed(() =>
   )
 );
 
-
 onMounted(async () => {
-  if (!props.inputPRoducts) return
-  
-  props.inputPRoducts.forEach(product => {
+  if (!props.inputPRoducts) return;
+
+  props.inputPRoducts.forEach((product) => {
     temporarySelectedProducts.value.push(product);
     btnIcon.value[product.id] = ICON_REMOVE;
-    ownedNonContentAndNonSoldProducts.value.push(product)
-  })
+    ownedNonContentAndNonSoldProducts.value.push(product);
+  });
 });
 
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
@@ -150,7 +157,11 @@ const savedProducts = ref([]);
 const temporarySelectedProducts = ref([]);
 const btnIcon = ref({});
 
-const emits = defineEmits(["save-product-dialog", "close-dialog"]);
+const emits = defineEmits([
+  "save-product-dialog",
+  "close-dialog",
+  "clear-table-values",
+]);
 
 const openInnerDialog = (item, type) => {
   if (type == dialogTypes.RESOURCE) {
