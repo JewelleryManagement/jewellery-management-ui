@@ -93,7 +93,7 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { ref, computed, inject, watch } from "vue";
+import { ref, computed, inject, watch, onMounted } from "vue";
 const snackbarProvider = inject("snackbarProvider");
 
 import { useStore } from "vuex";
@@ -132,6 +132,17 @@ const ownedNonContentAndNonSoldProducts = computed(() =>
   )
 );
 
+
+onMounted(async () => {
+  if (!props.inputPRoducts) return
+  
+  props.inputPRoducts.forEach(product => {
+    temporarySelectedProducts.value.push(product);
+    btnIcon.value[product.id] = ICON_REMOVE;
+    ownedNonContentAndNonSoldProducts.value.push(product)
+  })
+});
+
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 const userColumn = computed(() => [store.getters["products/getUserColumn"]]);
 
@@ -140,14 +151,6 @@ const temporarySelectedProducts = ref([]);
 const btnIcon = ref({});
 
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);
-
-// Edit
-if (props.inputPRoducts) {
-  props.inputPRoducts.forEach(product => {
-    temporarySelectedProducts.value.push(product);
-    btnIcon.value[product.id] = ICON_REMOVE;
-  })
-}
 
 const openInnerDialog = (item, type) => {
   if (type == dialogTypes.RESOURCE) {

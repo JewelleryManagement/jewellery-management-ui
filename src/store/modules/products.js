@@ -6,6 +6,7 @@ import {
   transferProduct,
   postPicture,
   fetchPicture,
+  updateProduct
 } from "@/services/HttpClientService.js";
 import { formatProducts } from "../../utils/data-formatter.js";
 
@@ -89,6 +90,9 @@ export default {
     },
     async postPicture({ commit }, { productId, image }) {
       await postPicture(productId, image);
+    },
+    async updateProduct({commit}, {productId, updatedProduct}){
+      await updateProduct(productId, updatedProduct)
     },
     async getPicture({ commit }, productId) {
       try {

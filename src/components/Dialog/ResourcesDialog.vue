@@ -97,7 +97,7 @@ const saveTableValues = () => {
     resourcesContent.value = [];
     const currentInputFields = Object.entries(quantityByProduct.value);
     currentInputFields.forEach(([resourceId, quantity]) => {
-      resourcesContent.value.push({ id: resourceId, quantity: quantity });
+      resourcesContent.value.push({ id: resourceId, quantity: Number(quantity) });
     });
     emits("save-resources-dialog", resourcesContent.value);
   }

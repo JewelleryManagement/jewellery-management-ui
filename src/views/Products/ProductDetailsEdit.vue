@@ -13,7 +13,7 @@
           @submit.prevent="handleSubmit"
           @keydown.enter.prevent
         >
-          <ProductCreateAndEditForm :productsInfo="productsInfo" />
+          <ProductCreateAndEditForm :productInfo="productInfo" />
 
           <!-- <resources-dialog
             v-model="resourceDialog"
@@ -52,9 +52,7 @@
             </div>
           </div> -->
 
-          <!-- <picture-button @picture-selected="handlePictureSelected" /> -->
-
-          <!-- <form-buttons @reset-form="resetForm" /> -->
+          <form-buttons @reset-form="resetForm" />
         </v-form>
       </v-sheet>
     </v-card>
@@ -65,20 +63,16 @@
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
-import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
-import ProductCreateAndEditForm from '@/components/Form/Products/ProductCreateAndEditForm.vue'
-
+import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
+const productId = route.params.productId;
 const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
-const allUsers = computed(() => store.getters["users/allUsers"]).value;
-
 
 try {
   await store.dispatch("users/fetchResourcesForUser", user.id);
@@ -86,54 +80,32 @@ try {
   snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
 }
 const pageTitle = ref(route.meta.title);
-
-const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const form = ref(null);
 
-const productsInfo = ref({})
+const productInfo = ref({});
 
 if (pageTitle.value.includes("Edit")) {
-  const currentProductInfo = ref(
-    store.getters["products/getProductById"](route.params.productId)
-  );
-  productsInfo.value = currentProductInfo.value
-  // resourcesContent.value = currentProductInfo.value.resourcesContent
+  productInfo.value = store.getters["products/getProductById"](productId);
 }
 
-// const resetForm = () => {
-//   if (form.value) {
-//     form.value.reset();
-//     form.value.resetValidation();
-//     resourcesContent.value = [];
-//     productsContent.value = [];
-//     authors.value = [];
-//   }
-// };
+const resetForm = () => {
+  // if (form.value) {
+  //   form.value.reset();
+  //   form.value.resetValidation();
+  //   resourcesContent.value = [];
+  //   productsContent.value = [];
+  //   authors.value = [];
+  // }
+};
 
-// const closeDialog = (payload) => {
-//   payload === "resources"
-//     ? (resourceDialog.value = false)
-//     : (productsDialog.value = false);
-// };
-
-// const resourcesTableValues = (resourceContentValue) => {
-//   resourcesContent.value = resourceContentValue;
-//   closeDialog("resources");
-// };
-
-// const productsTableValues = (productsContentValue) => {
-//   productsContent.value = productsContentValue.map((product) => product.id);
-//   closeDialog("products");
-// };
-
-// const isFormValid = async () => {
-//   const { valid } = await form.value.validate();
-//   return (
-//     resourcesContent.value.length > 0 &&
-//     productionNumber.value.length > 0 &&
-//     valid
-//   );
-// };
+const isFormValid = async () => {
+  const { valid } = await form.value.validate();
+  return (
+    productInfo.value.resourcesContent.length > 0 &&
+    productInfo.value.productionNumber.length > 0 &&
+    valid
+  );
+};
 
 // const fillAuthorsWithExistingUsers = () => {
 //   authors.value.forEach((authorName, index) => {
@@ -146,66 +118,54 @@ if (pageTitle.value.includes("Edit")) {
 //   });
 // };
 
-// const submitProduct = async () => {
-//   const product = {
-//     catalogNumber: catalogNumber.value,
-//     productionNumber: productionNumber.value,
-//     description: description.value,
-//     ownerId: user.id,
-//     authors: authors.value,
-//     salePrice: salePrice.value,
-//     resourcesContent: resourcesContent.value,
-//     productsContent: productsContent.value,
-//   };
-//   try {
-//     const res = await store.dispatch("products/createProduct", product);
-//     snackbarProvider.showSuccessSnackbar("Successfully added product!");
-//     return res;
-//   } catch (error) {
-//     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-//   }
-//   return false;
-// };
+const prepareResourcesContent = (resourcesContent) => {
+  return resourcesContent.map((resource) => ({
+    id: resource.resource ? resource.resource.id : resource.id,
+    quantity: resource.quantity,
+  }));
+};
 
-// const handlePictureSelected = (chosenFile) => {
-//   selectedPicture.value = chosenFile;
-// };
+const prepareProductsContent = (productsContent) => {
+  return productsContent.map((product) => product.id);
+};
 
-// const isPictureValidated = () => {
-//   return !!selectedPicture.value;
-// };
+const submitProduct = async () => {
+  const productId = route.params.productId;
+  const updatedProduct = {
+    ...productInfo.value,
+    ownerId: productInfo.value.owner.id,
+    authors: productInfo.value.authors.map((author) => author.id),
+    productsContent: prepareProductsContent(productInfo.value.productsContent),
+    resourcesContent: prepareResourcesContent(
+      productInfo.value.resourcesContent
+    ),
+  };
+  delete updatedProduct.id;
+  console.log(updatedProduct);
 
-// const postPicture = async (id, image) => {
-//   try {
-//     await store.dispatch("products/postPicture", { productId: id, image });
-//     snackbarProvider.showSuccessSnackbar(
-//       "Successfully added product and picture!"
-//     );
-//   } catch (error) {
-//     snackbarProvider.showErrorSnackbar(
-//       "Couldn't add the picture to the product!"
-//     );
-//   }
-// };
-
-// async function submitPicture(productResponse) {
-//   if (productResponse && isPictureValidated()) {
-//     const { id } = productResponse;
-//     await postPicture(id, selectedPicture.value);
-//   }
-// }
+  try {
+    const res = await store.dispatch("products/updateProduct", {
+      productId,
+      updatedProduct,
+    });
+    snackbarProvider.showSuccessSnackbar("Successfully updated product!");
+    return res;
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+  }
+  return false;
+};
 
 const handleSubmit = async () => {
-  // if (!(await isFormValid())) {
-  //   return;
-  // }
+  if (!(await isFormValid())) {
+    return;
+  }
 
   // fillAuthorsWithExistingUsers();
 
-  // let productResponse = await submitProduct();
-  // await submitPicture(productResponse);
+  await submitProduct();
 
   // resetForm();
-  // router.push("/products");
+  router.push("/products");
 };
 </script>

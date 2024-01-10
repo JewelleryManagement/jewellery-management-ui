@@ -1,18 +1,18 @@
 <template>
   <v-text-field
-    v-model="productsInfo.catalogNumber"
+    v-model="productInfo.catalogNumber"
     label="Catalog name"
     :rules="useTextFieldLargeRules()"
   ></v-text-field>
 
   <v-text-field
-    v-model="productsInfo.description"
+    v-model="productInfo.description"
     label="Description of the product"
     :rules="useTextAreaFieldRules()"
   ></v-text-field>
 
   <v-autocomplete
-    v-model="productsInfo.authors"
+    v-model="productInfo.authors"
     clearable
     chips
     closable-chips
@@ -20,34 +20,34 @@
     :items="allUsers"
     :item-props="userPropsFormatter"
     multiple
-    :rules="[validateAuthors(authors)]"
+    :rules="[validateAuthors(productInfo.authors)]"
   >
   </v-autocomplete>
 
   <v-text-field
     class="mt-4"
-    v-model="productsInfo.salePrice"
+    v-model="productInfo.salePrice"
     label="Sale price"
     :rules="useNumberFieldRules()"
   ></v-text-field>
 
   <v-text-field
     label="Barcode..."
-    v-model="productsInfo.productionNumber"
+    v-model="productInfo.productionNumber"
     :rules="useTextAreaFieldRules()"
   >
   </v-text-field>
 
   <div>
     <bar-code
-      v-if="productsInfo.productionNumber"
-      :productionNumber="productsInfo.productionNumber"
+      v-if="productInfo.productionNumber"
+      :productionNumber="productInfo.productionNumber"
     />
   </div>
 
   <resources-dialog
     v-model="resourceDialog"
-    :inputResources="productsInfo.resourcesContent"
+    :inputResources="productInfo.resourcesContent"
     @save-resources-dialog="resourcesTableValues"
     @close-dialog="closeDialog"
   ></resources-dialog>
@@ -57,7 +57,7 @@
     @close-dialog="closeDialog"
     @save-product-dialog="productsTableValues"
     :userId="user.id"
-    :inputPRoducts="productsInfo.productsContent"
+    :inputPRoducts="productInfo.productsContent"
   >
   </products-dialog>
 
@@ -69,19 +69,19 @@
     </div>
 
     <div class="d-flex flex-column mt-4">
-      <p v-if="productsInfo.resourcesContent.length > 0">
-        Resources selected: {{ productsInfo.resourcesContent.length || 0 }}
+      <p v-if="productInfo.resourcesContent.length > 0">
+        Resources selected: {{ productInfo.resourcesContent.length || 0 }}
       </p>
 
-      <p v-if="productsInfo.productsContent.length > 0">
-        Products selected: {{ productsInfo.productsContent.length || 0 }}
+      <p v-if="productInfo.productsContent.length > 0">
+        Products selected: {{ productInfo.productsContent.length || 0 }}
       </p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue";
+import { ref, computed } from "vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import {
@@ -91,29 +91,11 @@ import {
   validateAuthors,
 } from "@/utils/validation-rules";
 import { userPropsFormatter } from "@/utils/data-formatter";
-import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-const { productsInfo } = defineProps({ productsInfo: Object });
-console.log(productsInfo);
+const { productInfo } = defineProps({ productInfo: Object });
 const store = useStore();
-const route = useRoute();
-const router = useRouter();
-const snackbarProvider = inject("snackbarProvider");
-
-const [catalogNumber, description, salePrice, productionNumber] = [
-  ref(""),
-  ref(""),
-  ref(""),
-  ref(""),
-];
-const [authors, resourcesContent, productsContent] = [
-  ref([]),
-  ref([]),
-  ref([]),
-];
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 
-const pageTitle = ref(route.meta.title);
 const user = computed(() => store.getters["auth/getUser"]).value;
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
@@ -124,13 +106,12 @@ const closeDialog = (payload) => {
 };
 
 const resourcesTableValues = (resourceContentValue) => {
-  resourcesContent.value = resourceContentValue;
+  productInfo.resourcesContent = resourceContentValue;
   closeDialog("resources");
 };
 
 const productsTableValues = (productsContentValue) => {
-  productsContent.value = productsContentValue.map((product) => product.id);
-  console.log(productsContent.value);
+  productInfo.productsContent = productsContentValue;
   closeDialog("products");
 };
 </script>
