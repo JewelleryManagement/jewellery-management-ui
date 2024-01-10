@@ -1,124 +1,135 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store/store";
 
-const Home = () => import("../views/Home.vue");
-const Resources = () => import("../views/Resources.vue");
-const Products = () => import("../views/Products.vue");
-const ProductsDetails = () => import("../views/ProductsDetails.vue");
-const Users = () => import("../views/Users.vue");
-const ResourceDetails = () => import("../views/ResourceDetails.vue");
-const UserDetails = () => import("../views/UserDetails.vue");
-const UserResourceAdd = () => import("../views/UserResourceAdd.vue");
-const UserResourceRemove = () => import("../views/UserResourceRemove.vue");
-const UserResourceTransfer = () => import("../views/UserResourceTransfer.vue");
-const Login = () => import("../views/Login.vue");
-const Profile = () => import("../views/Profile.vue");
-const Sales = () => import("../views/Sales.vue");
-const SalesAdd = () => import("../views/SalesAdd.vue");
-const NotFound = () => import("../views/NotFound.vue");
-
 const routes = [
   { path: "/", redirect: "/login" },
   {
     path: "/login",
     name: "Login",
-    component: Login,
+    component: () => import("../views/Login.vue"),
     meta: { title: "Login page", requiresunAuth: true },
   },
   {
     path: "/home",
     name: "Home",
-    component: Home,
+    component: () => import("../views/Home.vue"),
     meta: { title: "Home page", requiresAuth: true },
   },
   {
     path: "/users",
     name: "Users",
-    component: Users,
+    component: () => import("../views/Users/Users.vue"),
     meta: { title: "Users page", requiresAuth: true },
   },
   {
     path: "/users/:id",
     props: true,
     name: "Users Details",
-    component: UserDetails,
+    component: () => import("../views/Users/UserDetails.vue"),
     meta: { title: "Users Details", requiresAuth: true },
+  },
+  {
+    path: "/users/create",
+    props: true,
+    name: "Users Create",
+    component: () => import("../views/Users/UserCreate.vue"),
+    meta: { title: "Users Create", requiresAuth: true },
+  },
+  {
+    path: "/users/edit/:id",
+    props: true,
+    name: "Edit-User",
+    component: () => import("../views/Users/UserUpdate.vue"),
+    meta: { title: "Edit user", requiresAuth: true },
   },
   {
     path: "/resources/availability/add/:resourceId",
     props: true,
     name: "Add-Quantity",
-    component: UserResourceAdd,
+    component: () => import("../views/Users/UserResourceAdd.vue"),
     meta: { title: "Add Quantity", requiresAuth: true },
   },
   {
     path: "/resources/availability/remove/:resourceId/:userId",
     props: true,
     name: "Remove-Quantity",
-    component: UserResourceRemove,
+    component: () => import("../views/Users/UserResourceRemove.vue"),
     meta: { title: "Remove Quantity", requiresAuth: true },
   },
   {
     path: "/resources/availability/transfer/:resourceId/:userId",
     props: true,
     name: "Transfer-Quantity",
-    component: UserResourceTransfer,
+    component: () => import("../views/Users/UserResourceTransfer.vue"),
     meta: { title: "Transfer Quantity", requiresAuth: true },
   },
   {
     path: "/resources",
     name: "Resources",
-    component: Resources,
+    component: () => import("../views/Resources/Resources.vue"),
     meta: { title: "Resources page", requiresAuth: true },
   },
   {
     path: "/resources/add",
     name: "Add Resources",
-    component: ResourceDetails,
+    component: () => import("../views/Resources/ResourceDetails.vue"),
     meta: { title: "Add resource", requiresAuth: true },
   },
   {
     path: "/resources/edit/:id",
     name: "Edit-Resource",
     props: true,
-    component: ResourceDetails,
+    component: () => import("../views/Resources/ResourceDetails.vue"),
     meta: { title: "Edit resource", requiresAuth: true },
   },
   {
     path: "/products",
     name: "Products",
-    component: Products,
+    component: () => import("../views/Products/Products.vue"),
     meta: { title: "Products page", requiresAuth: true },
   },
   {
     path: "/products/add",
     name: "Add Product",
     props: true,
-    component: ProductsDetails,
+    component: () => import("../views/Products/ProductDetailsCreate.vue"),
     meta: { title: "Add product", requiresAuth: true },
+  },
+  {
+    path: "/products/:productId",
+    name: "Product Details",
+    props: true,
+    component: () => import("../views/Products/ProductsDetailsById.vue"),
+    meta: { title: "Product details", requiresAuth: true },
   },
   {
     path: "/profile",
     name: "Profile",
-    component: Profile,
+    component: () => import("../views/Profile.vue"),
     meta: { title: "Profile page", requiresAuth: true },
   },
   {
     path: "/sales",
     name: "Sales",
-    component: Sales,
+    component: () => import("../views/Sales/Sales.vue"),
     meta: { title: "Sales page", requiresAuth: true },
   },
   {
     path: "/sales/add",
     name: "New Sale",
-    component: SalesAdd,
+    component: () => import("../views/Sales/SalesAdd.vue"),
     meta: { title: "New Sale", requiresAuth: true },
+  },
+  {
+    path: "/sales/:saleId",
+    name: "Sale-Details",
+    component: () => import("../views/Sales/SaleDetails.vue"),
+    meta: { title: "Sale Details", requiresAuth: true },
   },
   { path: "/logout", redirect: "/login" },
   {
     path: "/:notFound(.*)",
-    component: NotFound,
+    component: () => import("../views/NotFound.vue"),
     meta: { requiresunAuth: true },
   },
 ];

@@ -14,26 +14,39 @@
             :additionalColumnsLeft="addColumn"
             :additionalColumnsRight="userColumn"
           >
+            <template v-slot:item.authors="{ item }">
+              <user-tool-tip
+                :user="author"
+                v-for="(author, index) in item.authors"
+                :key="item.id"
+                @click.stop
+              >
+                <template v-if="index < item.authors.length - 1"
+                  >&comma;&nbsp;</template
+                >
+              </user-tool-tip>
+            </template>
+
             <template v-slot:item.add="{ item }">
-              <v-icon color="blue" @click="addProductById(item)">{{
+              <v-icon color="blue" @click="addProductById(item)" @click.stop>{{
                 btnIcon[item.id] || ICON_ADD
               }}</v-icon>
             </template>
 
             <template v-slot:item.resourceContent="{ item }">
-              <v-icon @click="openInnerDialog(item, 'resources')"
+              <v-icon @click="openInnerDialog(item, 'resources')" @click.stop
                 >mdi-cube</v-icon
               >
             </template>
 
             <template v-slot:item.productsContent="{ item }">
-              <v-icon @click="openInnerDialog(item, 'products')"
+              <v-icon @click="openInnerDialog(item, 'products')" @click.stop
                 >mdi-cube-outline</v-icon
               >
             </template>
 
             <template v-slot:item.owner="{ item }">
-              <user-tool-tip :user="item.owner" />
+              <user-tool-tip :user="item.owner" @click.stop />
             </template>
           </products-table>
         </v-card-text>
@@ -111,11 +124,11 @@ watch(
 try {
   await store.dispatch("products/fetchProductsByOwner", props.userId);
 } catch (error) {
-  snackbarProvider.showErrorSnackbar("Failed to fetch products.");
+  snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
 }
 const ownedNonContentAndNonSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
-    (product) => product.contentOf === "No" && product.partOfSale === "No"
+    (product) => !product.contentOf && product.partOfSale === null
   )
 );
 

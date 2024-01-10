@@ -3,14 +3,13 @@
     <resource-availability-card
       :resourceAvailability="resourceAvailability"
     ></resource-availability-card>
-
     <user-resource-form @handle-submit="handleSubmit"></user-resource-form>
   </v-container>
 </template>
 
 <script setup>
-import { ref, computed, inject } from "vue";
-import { useRouter } from "vue-router";
+import { ref, inject } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
 const { resourceId, userId } = defineProps({
@@ -19,8 +18,8 @@ const { resourceId, userId } = defineProps({
 });
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
+const route = useRoute();
 const router = useRouter();
-const allUsers = computed(() => store.getters["users/allUsers"]);
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
   "resources/fetchAvailabilityResourceById",
@@ -29,18 +28,19 @@ resourceAvailability.value = await store.dispatch(
 
 const handleSubmit = async (inputsData) => {
   const { selectedUser, quantity } = inputsData;
-  const userId = allUsers.value.find((user) => user.name == selectedUser);
+  const userId = route.params.userId;
+
   const data = {
-    userId: userId.id,
+    userId: userId,
     resourceId: resourceId,
     quantity: Number(quantity),
   };
   try {
-    await store.dispatch("users/postResourcesToUser", data);
-    snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
-    router.push("/resources");
+    await store.dispatch("resources/removeQuantityFromResource", data);
+    snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
+    router.push(`/users/${userId}`);
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Couldn't add quantity");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 </script>

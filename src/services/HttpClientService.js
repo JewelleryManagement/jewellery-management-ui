@@ -3,9 +3,9 @@ import store from "@/store/store";
 import router from "@/router/index";
 
 // GET REQUESTS
-async function fetchData(endpoint) {
+async function fetchData(endpoint, options = {}) {
   try {
-    const response = await axios.get(endpoint);
+    const response = await axios.get(endpoint, options);
     if (response.status === 200) {
       return response.data;
     }
@@ -38,6 +38,14 @@ export async function fetchProducts() {
   return await fetchData("/products");
 }
 
+export async function fetchPicture(productId) {
+  const options = {
+    responseType: "blob",
+  };
+
+  return await fetchData(`/products/${productId}/picture`, options);
+}
+
 export async function fetchProductsByOwner(ownerId) {
   return await fetchData(`/products/by-owner/${ownerId}`);
 }
@@ -55,9 +63,7 @@ async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {
     headers: customHeaders,
   });
-  if (response.status === 201) {
-    return response.data;
-  }
+  if (response.status === 201) return response.data;
 }
 
 export async function postResources(data) {
@@ -82,6 +88,9 @@ export async function postUserLogin(user) {
 export async function postSale(data) {
   return await postData("/sales", data);
 }
+export async function postUser(userData) {
+  return await postData("/users", userData);
+}
 
 export async function postPicture(productId, image) {
   const formData = new FormData();
@@ -97,11 +106,8 @@ export async function postPicture(productId, image) {
 // DELETE REQUESTS
 
 async function removeData(endpoint) {
-  try {
-    await axios.delete(endpoint);
-  } catch (error) {
-    throw new Error("Failed to delete this resource.");
-  }
+  const response = await axios.delete(endpoint);
+  if (response.status === 200) return response.data;
 }
 
 export async function removeResource(id) {
@@ -121,20 +127,22 @@ export async function disassmebleProduct(productId) {
 // PUT REQUEST
 
 async function updateData(endpoint, data) {
-  try {
-    const response = await axios.put(endpoint, data);
-    if (response.status === 200) {
-      return response.data;
-    }
-  } catch (error) {
-    throw new Error("Failed to update data on the server.");
-  }
+  const response = await axios.put(endpoint, data);
+  if (response.status === 200) return response.data;
 }
 
 export async function updateResource(id, data) {
   return await updateData(`/resources/${id}`, data);
 }
 
+export async function updateUser(id, userData) {
+  return await updateData(`/users/${id}`, userData);
+}
+
 export async function transferProduct(productId, recipientId) {
   return await updateData(`/products/${productId}/transfer/${recipientId}`);
+}
+
+export async function productReturn(productId) {
+  return await updateData(`/sales/return-product/${productId}`);
 }

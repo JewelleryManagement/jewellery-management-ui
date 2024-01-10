@@ -2,6 +2,8 @@ import {
   fetchUsers,
   fetchResourcePerUser,
   postResourceAvailability,
+  postUser,
+  updateUser
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -9,6 +11,19 @@ export default {
   state: {
     users: [],
     usersResources: {},
+    tableColumns: [
+      { key: "id", title: "Id", align: " d-none" },
+      { key: "firstName", title: "First Name" },
+      { key: "lastName", title: "Last Name" },
+      { key: "email", title: "Email" },
+      { key: "address", title: "Address", align: " d-none"  },
+      { key: "phone", title: "Phone", align: " d-none"  },
+      { key: "phone2", title: "Phone2", align: " d-none"  },
+      { key: "birthDate", title: "Birth Date", align: " d-none"  },
+      { key: "note", title: "Note" },
+      { key: "role", title: "Role" },
+    ],
+    tableColumnEdit: { key: "edit", title: "Edit", slot: "edit" },
   },
   mutations: {
     setUsers(state, users) {
@@ -26,6 +41,12 @@ export default {
       const res = await fetchUsers();
       commit("setUsers", res);
     },
+    async createUser({ commit }, userData) {
+      return await postUser(userData)
+    },
+    async updateUser({ commit }, {userId, data}) {
+      return await updateUser(userId, data)
+    },
     async fetchResourcesForUser({ commit }, userId) {
       const res = await fetchResourcePerUser(userId);
       commit("setUsersResources", res);
@@ -41,6 +62,9 @@ export default {
       rootState.resources.tableColumnQuantity,
       ...rootState.resources.tableColumns,
     ],
+    getTableColumnsWithEdit: (state) => {
+      return [...state.tableColumns, state.tableColumnEdit];
+    },
     allUsers(state) {
       return state.users;
     },

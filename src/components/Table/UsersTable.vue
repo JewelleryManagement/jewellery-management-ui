@@ -1,11 +1,10 @@
 <template>
-  <v-card class="elevation-12">
+  <div>
     <div class="text-center">
-      <h1>Sales table</h1>
+      <h1>{{ title }}</h1>
     </div>
-
     <div class="d-flex justify-end">
-      <table-button path="/sales/add">New Sale</table-button>
+      <table-button path="/users/create">Create user</table-button>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -19,7 +18,7 @@
     </v-card-title>
     <v-data-table
       :headers="tableColumns"
-      :items="sales"
+      :items="allUsers"
       :search="search"
       @click:row="rowClickHandler"
       hover
@@ -28,28 +27,23 @@
         <slot :name="slot" v-bind="scope || {}" />
       </template>
     </v-data-table>
-  </v-card>
+  </div>
 </template>
 
 <script setup>
 import { navigateToItemDetails } from "@/utils/row-click-handler";
-import { ref, computed, inject } from "vue";
-import { useStore } from "vuex";
+import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-const snackbarProvider = inject("snackbarProvider");
-const search = ref("");
+import { useStore } from "vuex";
+const { title } = defineProps({ title: String });
 const store = useStore();
+const search = ref("");
 const router = useRouter();
 
-try {
-  await store.dispatch("sales/fetchSales");
-} catch (error) {
-  snackbarProvider.showErrorSnackbar("Couldn't fetch the sales!");
-}
-const tableColumns = computed(() => store.getters["sales/getColumns"]);
-const sales = computed(() => store.getters["sales/getSales"]);
+const allUsers = computed(() => store.getters["users/allUsers"]);
+const tableColumns = computed(() => store.getters["users/getTableColumnsWithEdit"]);
 
-const rowClickHandler = (sale) => {
-  navigateToItemDetails(router, sale, "sales");
+const rowClickHandler = (user) => {
+  navigateToItemDetails(router, user, "users");
 };
 </script>

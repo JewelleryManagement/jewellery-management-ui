@@ -7,9 +7,12 @@
     <v-form @submit.prevent="handleSubmit" ref="form" class="mt-4">
       <v-select
         label="Select user"
-        :items="userOptions"
+        :items="allUsers"
+        :item-props="userPropsFormatter"
         v-model="selectedUser"
         :disabled="route.path.includes('/remove')"
+        required
+        :rules="[validateUser]"
       >
       </v-select>
 
@@ -20,39 +23,50 @@
         required
       ></v-text-field>
 
+      <v-text-field
+        prefix="€"
+        label="Delivery Cost"
+        v-model="dealPrice"
+        :rules="numberFieldRules"
+        required
+      ></v-text-field>
+
       <form-buttons @reset-form="resetForm" />
     </v-form>
   </v-sheet>
 </template>
 
 <script setup>
+import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
 import { ref, computed } from "vue";
-import { useNumberFieldRules } from "../../utils/validation-rules";
+import { useNumberFieldRules, validateUser } from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
 const store = useStore();
 const route = useRoute();
 const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
 const quantity = ref("");
+const dealPrice = ref("");
 
-const userOptions = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.name)
-);
+const allUsers = computed(() => store.getters["users/allUsers"]);
 
 if (route.path.includes("/remove")) {
   const resourceId = route.params.resourceId;
   const affectedUserId = route.params.userId;
-  
+
   const affectedUser = computed(() =>
     store.getters["users/getUserById"](affectedUserId)
   ).value;
 
-  selectedUser.value = affectedUser.name;
+  selectedUser.value = affectedUser;
 
   const resourceAvailability = await fetchResourceAvailability(resourceId);
-  
-  const quantityByUser = findQuantityByUser(resourceAvailability, affectedUser.id);
+
+  const quantityByUser = findQuantityByUser(
+    resourceAvailability,
+    affectedUser.id
+  );
   quantity.value = quantityByUser;
 }
 
@@ -78,12 +92,13 @@ const emits = defineEmits(["handle-submit"]);
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
+  if (!valid) return;
   const data = {
-    selectedUser: selectedUser.value,
+    userId: selectedUser.value.id,
     quantity: quantity.value,
+    dealPrice: Number(dealPrice.value).toFixed(2)
   };
 
-  if (!valid) return;
   emits("handle-submit", data);
 };
 

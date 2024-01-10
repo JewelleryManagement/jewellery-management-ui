@@ -8,7 +8,7 @@
       </v-card-title>
 
       <v-card-subtitle v-for="item in usersAndQuantities" :key="item.id">
-        User: {{ item.owner.name }} - Quantity: {{ item.quantity }}
+        User: {{ item.owner.firstName }} {{ item.owner.lastName }} - Quantity: {{ item.quantity }}
       </v-card-subtitle>
 
       <v-card-text>

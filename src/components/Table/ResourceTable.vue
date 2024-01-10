@@ -38,7 +38,6 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { VDataTable } from "vuetify/labs/VDataTable";
 import { useStore } from "vuex";
 
 const props = defineProps({

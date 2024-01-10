@@ -31,7 +31,8 @@
             chips
             closable-chips
             label="Authors"
-            :items="allUsersNames"
+            :items="allUsers"
+            :item-props="userPropsFormatter"
             multiple
             :rules="[validateAuthors(authors)]"
           >
@@ -44,14 +45,17 @@
             :rules="useNumberFieldRules()"
           ></v-text-field>
 
-          <v-text-field label="Barcode..." v-model="productionNumber">
+          <v-text-field
+            label="Barcode..."
+            v-model="productionNumber"
+            :rules="useTextAreaFieldRules()"
+          >
           </v-text-field>
 
           <div>
-            <vue-barcode
+            <bar-code
               v-if="productionNumber"
-              :value="productionNumber"
-              :options="{ displayValue: true, lineColor: '#2B2B2C' }"
+              :productionNumber="productionNumber"
             />
           </div>
 
@@ -112,9 +116,10 @@ import {
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ResourcesDialog from "../components/Dialog/ResourcesDialog.vue";
+import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
-import VueBarcode from "@chenfengyuan/vue-barcode";
+import { userPropsFormatter } from "@/utils/data-formatter";
+
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
@@ -123,10 +128,8 @@ const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 
 const user = computed(() => store.getters["auth/getUser"]).value;
-const allUsers = computed(() => store.getters["users/allUsers"]);
-const allUsersNames = computed(() =>
-  store.getters["users/allUsers"].map((user) => user.name)
-);
+const allUsers = computed(() => store.getters["users/allUsers"]).value;
+
 
 try {
   await store.dispatch("users/fetchResourcesForUser", user.id);
@@ -177,12 +180,18 @@ const productsTableValues = (productsContentValue) => {
 
 const isFormValid = async () => {
   const { valid } = await form.value.validate();
-  return resourcesContent.value.length > 0 && valid;
+  return (
+    resourcesContent.value.length > 0 &&
+    productionNumber.value.length > 0 &&
+    valid
+  );
 };
 
 const fillAuthorsWithExistingUsers = () => {
   authors.value.forEach((authorName, index) => {
-    const existingAuthor = allUsers.value.find((x) => x.name === authorName);
+    const existingAuthor = allUsers.find(
+      (user) => user.id === authorName.id
+    );
     if (existingAuthor) {
       authors.value[index] = existingAuthor.id;
     }
@@ -205,7 +214,7 @@ const submitProduct = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not create the product");
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
   return false;
 };
