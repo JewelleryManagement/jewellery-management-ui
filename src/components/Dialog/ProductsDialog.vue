@@ -103,6 +103,7 @@ const props = defineProps({
   userId: String,
   inputPRoducts: Object,
   clearTable: Boolean,
+  currentProductId: String,
 });
 
 const ICON_ADD = ref("mdi-plus");
@@ -136,7 +137,10 @@ try {
 }
 const ownedNonContentAndNonSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
-    (product) => !product.contentOf && product.partOfSale === null
+    (product) =>
+      !product.contentOf &&
+      product.partOfSale === null &&
+      product.id !== props.currentProductId
   )
 );
 
@@ -149,7 +153,6 @@ onMounted(async () => {
     ownedNonContentAndNonSoldProducts.value.push(product);
   });
 });
-
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 const userColumn = computed(() => [store.getters["products/getUserColumn"]]);
 

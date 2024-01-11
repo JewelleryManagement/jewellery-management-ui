@@ -69,6 +69,7 @@
     @save-product-dialog="productsTableValues"
     :userId="user.id"
     :inputPRoducts="props.productInfo.productsContent"
+    :currentProductId="props.productInfo.id"
     :clearTable="props.clearTable"
   >
   </products-dialog>
@@ -114,7 +115,6 @@ const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 
 const user = computed(() => store.getters["auth/getUser"]).value;
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
-
 const closeDialog = (payload) => {
   payload === "resources"
     ? (resourceDialog.value = false)
