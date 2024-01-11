@@ -35,6 +35,21 @@
         <template v-slot:item.transfer="{ item }">
           <product-transfer-button :product="item" />
         </template>
+
+        <template v-slot:item.edit="{ item }">
+          <router-link
+            v-if="!item.partOfSale"
+            :to="`/product/${item.id}`"
+            @click.stop
+          >
+            <v-btn variant="plain">
+              <v-icon color="green">mdi-pencil</v-icon>
+            </v-btn>
+          </router-link>
+          <v-btn v-else variant="plain" disabled>
+            <v-icon color="green">mdi-pencil</v-icon>
+          </v-btn>
+        </template>
       </products-table>
     </base-card>
   </v-container>

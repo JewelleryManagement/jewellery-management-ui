@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    :disabled="product.sold || product.contentOf === 'Yes'"
+    :disabled="!!props.product.partOfSale || !!props.product.contentOf"
     variant="plain"
     @click="openDialog"
     @click.stop
@@ -28,6 +28,7 @@ const props = defineProps({
   product: Object,
   userId: { type: String, default: null },
 });
+
 const [product, userId] = [props.product, props.userId];
 const isResourceDialogOpen = ref(false);
 
@@ -42,8 +43,12 @@ const closeDialog = async (response) => {
 };
 
 const fetchData = async () => {
-  const actionType = userId ? "products/fetchProductsByOwner" : "products/fetchProducts";
-  const errorMessage = userId ? "Failed to fetch user products." : "Failed to fetch products.";
+  const actionType = userId
+    ? "products/fetchProductsByOwner"
+    : "products/fetchProducts";
+  const errorMessage = userId
+    ? "Failed to fetch user products."
+    : "Failed to fetch products.";
 
   try {
     await store.dispatch(actionType, userId);
@@ -52,5 +57,4 @@ const fetchData = async () => {
     snackbarProvider.showErrorSnackbar(errorMessage);
   }
 };
-
 </script>

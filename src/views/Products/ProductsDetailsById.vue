@@ -74,6 +74,7 @@
             color="#03A9F4"
             :size="isMediumScreen() ? 'x-small' : 'default'"
             :to="`/product/${currentProductId}`"
+            v-if="!currentProductInfo.partOfSale"
             @click.stop
             >Edit product</v-btn
           >

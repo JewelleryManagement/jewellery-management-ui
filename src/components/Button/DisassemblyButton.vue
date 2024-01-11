@@ -1,7 +1,7 @@
 <template>
   <v-btn
     variant="plain"
-    :disabled="item.contentOf === 'Yes'"
+    :disabled="!!props.item.contentOf || !!props.item.partOfSale"
     @click="disassmebleProduct"
   >
     <v-icon size="25">mdi-cart-off</v-icon>
@@ -10,12 +10,13 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, inject, ref } from "vue";
+import { inject } from "vue";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   item: Object,
   userId: { type: String, default: null },
 });
+
 const store = useStore();
 const userId = props.userId;
 
@@ -39,7 +40,7 @@ const disassmebleProduct = async () => {
   const catalogNumber = props.item.catalogNumber;
   const productId = props.item.id;
   const confirmation = window.confirm(
-    `Are you sure that you would like to disassemble ${props.item.catalogNumber}?`
+    `Are you sure that you would like to disassemble ${catalogNumber}?`
   );
 
   if (confirmation) await sendDisassembleRequest(productId);
