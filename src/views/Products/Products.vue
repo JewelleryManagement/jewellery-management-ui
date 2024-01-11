@@ -7,7 +7,7 @@
       >
         <template v-slot:button>
           <div class="d-flex justify-end">
-            <table-button path="/products/add">Add Product</table-button>
+            <table-button path="/products/add">Create Product</table-button>
           </div>
         </template>
 

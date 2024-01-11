@@ -1,18 +1,20 @@
 <template>
   <v-text-field
-    v-model="productInfo.catalogNumber"
+    v-model="props.productInfo.catalogNumber"
     label="Catalog name"
     :rules="useTextFieldLargeRules()"
+    required
   ></v-text-field>
 
   <v-text-field
-    v-model="productInfo.description"
+    v-model="props.productInfo.description"
     label="Description of the product"
     :rules="useTextAreaFieldRules()"
+    required
   ></v-text-field>
 
   <v-autocomplete
-    v-model="productInfo.authors"
+    v-model="props.productInfo.authors"
     clearable
     chips
     closable-chips
@@ -20,37 +22,45 @@
     :items="allUsers"
     :item-props="userPropsFormatter"
     multiple
-    :rules="[validateAuthors(productInfo.authors)]"
+    :rules="
+      props.productInfo.authors
+        ? [validateAuthors(props.productInfo.authors)]
+        : ['Please select at least 1 author']
+    "
+    required
   >
   </v-autocomplete>
 
   <v-text-field
     class="mt-4"
-    v-model="productInfo.salePrice"
+    v-model="props.productInfo.salePrice"
     label="Sale price"
     :rules="useNumberFieldRules()"
+    required
   ></v-text-field>
 
   <v-text-field
     label="Barcode..."
-    v-model="productInfo.productionNumber"
+    v-model="props.productInfo.productionNumber"
     :rules="useTextAreaFieldRules()"
+    required
   >
   </v-text-field>
 
   <div>
     <bar-code
-      v-if="productInfo.productionNumber"
-      :productionNumber="productInfo.productionNumber"
+      v-if="props.productInfo.productionNumber"
+      :productionNumber="props.productInfo.productionNumber"
+      required
     />
   </div>
 
   <resources-dialog
     v-model="resourceDialog"
-    :inputResources="productInfo.resourcesContent"
+    :inputResources="props.productInfo.resourcesContent"
     @save-resources-dialog="resourcesTableValues"
     @close-dialog="closeDialog"
-    :clearTable="clearTable"
+    :clearTable="props.clearTable"
   ></resources-dialog>
 
   <products-dialog
@@ -58,8 +68,8 @@
     @close-dialog="closeDialog"
     @save-product-dialog="productsTableValues"
     :userId="user.id"
-    :inputPRoducts="productInfo.productsContent"
-    :clearTable="clearTable"
+    :inputPRoducts="props.productInfo.productsContent"
+    :clearTable="props.clearTable"
   >
   </products-dialog>
 
@@ -71,12 +81,13 @@
     </div>
 
     <div class="d-flex flex-column mt-4">
-      <p v-if="productInfo.resourcesContent.length > 0">
-        Resources selected: {{ productInfo.resourcesContent.length || 0 }}
+      <p v-if="props.productInfo.resourcesContent?.length > 0">
+        Resources selected:
+        {{ props.productInfo.resourcesContent?.length || 0 }}
       </p>
 
-      <p v-if="productInfo.productsContent.length > 0">
-        Products selected: {{ productInfo.productsContent.length || 0 }}
+      <p v-if="props.productInfo.productsContent?.length > 0">
+        Products selected: {{ props.productInfo.productsContent?.length || 0 }}
       </p>
     </div>
   </div>
@@ -94,7 +105,7 @@ import {
 } from "@/utils/validation-rules";
 import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
-const { productInfo, clearTableValues } = defineProps({
+const props = defineProps({
   productInfo: Object,
   clearTable: Boolean,
 });
@@ -111,12 +122,12 @@ const closeDialog = (payload) => {
 };
 
 const resourcesTableValues = (resourceContentValue) => {
-  productInfo.resourcesContent = resourceContentValue;
+  props.productInfo.resourcesContent = resourceContentValue;
   closeDialog("resources");
 };
 
 const productsTableValues = (productsContentValue) => {
-  productInfo.productsContent = productsContentValue;
+  props.productInfo.productsContent = productsContentValue;
   closeDialog("products");
 };
 </script>

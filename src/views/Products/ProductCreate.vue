@@ -18,6 +18,7 @@
             :clearTable="clearTable"
           />
 
+          <picture-button @picture-selected="handlePictureSelected" />
           <form-buttons @reset-form="resetForm" />
         </v-form>
       </v-sheet>
@@ -26,31 +27,29 @@
 </template>
 
 <script setup>
+import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
+import {
+  prepareProductsContent,
+  prepareResourcesContent,
+} from "@/utils/data-formatter";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
+const snackbarProvider = inject("snackbarProvider");
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
 const router = useRouter();
-const productId = route.params.productId;
-const snackbarProvider = inject("snackbarProvider");
-const clearTable = ref(false);
 
 const user = computed(() => store.getters["auth/getUser"]).value;
+
+const clearTable = ref(false);
 const productInfo = ref({});
-const pageTitle = ref(route.meta.title);
-const form = ref(null);
 
 onMounted(async () => {
   await fetchResourcesForUser();
 });
-
-if (pageTitle.value.includes("Edit")) {
-  productInfo.value = store.getters["products/getProductById"](productId);
-}
 
 const fetchResourcesForUser = async () => {
   try {
@@ -60,6 +59,11 @@ const fetchResourcesForUser = async () => {
   }
 };
 
+const pageTitle = ref(route.meta.title);
+
+const form = ref(null);
+const selectedPicture = ref(null);
+
 const resetForm = () => {
   if (form.value) {
     form.value.reset();
@@ -67,6 +71,7 @@ const resetForm = () => {
     productInfo.value.resourcesContent = [];
     productInfo.value.productsContent = [];
     productInfo.value.authors = [];
+
     clearTable.value = true;
 
     setTimeout(() => {
@@ -78,43 +83,26 @@ const resetForm = () => {
 const isFormValid = async () => {
   const { valid } = await form.value.validate();
   return (
-    productInfo.value.resourcesContent.length > 0 &&
-    productInfo.value.productionNumber.length > 0 &&
+    productInfo.value.resourcesContent?.length > 0 &&
+    productInfo.value.productionNumber?.length > 0 &&
     valid
   );
 };
 
-const prepareResourcesContent = (resourcesContent) => {
-  return resourcesContent.map((resource) => ({
-    id: resource.resource ? resource.resource.id : resource.id,
-    quantity: resource.quantity,
-  }));
-};
-
-const prepareProductsContent = (productsContent) => {
-  return productsContent.map((product) => product.id);
-};
-
 const submitProduct = async () => {
-  const productId = route.params.productId;
   const updatedProduct = {
     ...productInfo.value,
-    ownerId: productInfo.value.owner.id,
+    ownerId: user.id,
     authors: productInfo.value.authors.map((author) => author.id),
     productsContent: prepareProductsContent(productInfo.value.productsContent),
     resourcesContent: prepareResourcesContent(
       productInfo.value.resourcesContent
     ),
   };
-  delete updatedProduct.id;
-  console.log(updatedProduct);
 
   try {
-    const res = await store.dispatch("products/updateProduct", {
-      productId,
-      updatedProduct,
-    });
-    snackbarProvider.showSuccessSnackbar("Successfully updated product!");
+    const res = await store.dispatch("products/createProduct", updatedProduct);
+    snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
@@ -122,12 +110,39 @@ const submitProduct = async () => {
   return false;
 };
 
-const handleSubmit = async () => {
-  if (!(await isFormValid())) {
-    return;
-  }
+const handlePictureSelected = (chosenFile) => {
+  selectedPicture.value = chosenFile;
+};
 
-  await submitProduct();
+const isPictureValidated = () => {
+  return !!selectedPicture.value;
+};
+
+const postPicture = async (id, image) => {
+  try {
+    await store.dispatch("products/postPicture", { productId: id, image });
+    snackbarProvider.showSuccessSnackbar(
+      "Successfully added product and picture!"
+    );
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Couldn't add the picture to the product!"
+    );
+  }
+};
+
+async function submitPicture(productResponse) {
+  if (productResponse && isPictureValidated()) {
+    const { id } = productResponse;
+    await postPicture(id, selectedPicture.value);
+  }
+}
+
+const handleSubmit = async () => {
+  if (!(await isFormValid())) return;
+
+  let productResponse = await submitProduct();
+  await submitPicture(productResponse);
 
   resetForm();
   router.push("/products");

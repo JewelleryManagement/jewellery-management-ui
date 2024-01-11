@@ -55,9 +55,11 @@
 <script setup>
 import { usePositiveNumberRules } from "../../utils/validation-rules";
 import { ref, computed, watch } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute()
 import { useStore } from "vuex";
 const store = useStore();
-
+const isEditPage = route.name.includes('Edit Product')
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const props = defineProps({
   inputResources: Array,
@@ -65,7 +67,7 @@ const props = defineProps({
 });
 const search = ref("");
 const [quantityByProduct, resourcesContent] = [
-  ref(props.inputResources),
+  ref(props.inputResources || []),
   ref([]),
 ];
 const tableColumns = [
@@ -75,7 +77,7 @@ const tableColumns = [
 ];
 
 // in edit page
-if (quantityByProduct.value.length > 0) {
+if (isEditPage && quantityByProduct.value.length > 0) {
   resourcesContent.value = [];
   for (const product of quantityByProduct.value) {
     resourcesContent.value.push({

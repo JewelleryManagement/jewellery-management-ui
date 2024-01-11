@@ -90,16 +90,16 @@ const routes = [
   },
   {
     path: "/products/add",
-    name: "Add Product",
+    name: "Create Product",
     props: true,
-    component: () => import("../views/Products/ProductDetailsCreate.vue"),
-    meta: { title: "Add product", requiresAuth: true },
+    component: () => import("../views/Products/ProductCreate.vue"),
+    meta: { title: "Create product", requiresAuth: true },
   },
   {
     path: "/product/:productId",
     name: "Edit Product",
     props: true,
-    component: () => import("../views/Products/ProductDetailsEdit.vue"),
+    component: () => import("../views/Products/ProductEdit.vue"),
     meta: { title: "Edit product", requiresAuth: true },
   },
   {
