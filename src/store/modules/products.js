@@ -8,7 +8,6 @@ import {
   fetchPicture,
   updateProduct
 } from "@/services/HttpClientService.js";
-import { formatProducts } from "../../utils/data-formatter.js";
 
 export default {
   namespaced: true,
@@ -22,7 +21,7 @@ export default {
       { key: "description", title: "Description" },
       { key: "authors", title: "Authors", slot: "authors" },
       { key: "partOfSale", title: "Sold", slot: "partOfSale" },
-      { key: "salePrice", title: "Sale price" },
+      { key: "salePrice", title: "Sale price", slot: "salePrice" },
       { key: "contentOf", title: "Part of product" },
     ],
 
@@ -105,7 +104,7 @@ export default {
   },
   getters: {
     allProducts: (state) => {
-      return state.products.map(formatProducts);
+      return state.products;
     },
     getProductById: (state ) => (productId) => {
       return state.products.find(product => product.id === productId)
@@ -116,7 +115,7 @@ export default {
       state.tableColumnProductsContent,
     ],
     getCurrentUserProducts: (state) =>
-      state.currentUserProducts.map(formatProducts),
+      state.currentUserProducts,
     getAddColumn: (state) => state.tableColumnAdd,
     getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],

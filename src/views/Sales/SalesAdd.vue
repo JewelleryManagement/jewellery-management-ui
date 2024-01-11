@@ -149,12 +149,7 @@ function handleCloseCalendar(selectedDate) {
 }
 
 const setProductsForSale = (selectedProductsForSale) => {
-  productsForSale.value = selectedProductsForSale.map((product) => {
-    return {
-      ...product,
-      salePrice: product.salePrice.substring(1),
-    };
-  });
+  productsForSale.value = selectedProductsForSale
   toggleProductsDialog(false);
 };
 

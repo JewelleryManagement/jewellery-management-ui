@@ -18,7 +18,9 @@
             :key="item.id"
             @click.stop
           >
-            <template v-if="index < item.authors.length - 1">&comma;&nbsp;</template>
+            <template v-if="index < item.authors.length - 1"
+              >&comma;&nbsp;</template
+            >
           </user-tool-tip>
         </template>
 
@@ -48,7 +50,7 @@ const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.products.tableColumnDisassembly,
   store.state.products.tableColumnTransfer,
-  store.state.products.tableColumnEdit
+  store.state.products.tableColumnEdit,
 ]);
 
 onMounted(async () => {
