@@ -59,7 +59,7 @@ import { useRoute } from "vue-router";
 const route = useRoute()
 import { useStore } from "vuex";
 const store = useStore();
-const isEditPage = route.name.includes('Edit Product')
+const isEditPage = route.path.includes('edit')
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const props = defineProps({
   inputResources: Array,
@@ -76,13 +76,12 @@ const tableColumns = [
   ...computed(() => store.state.resources.tableColumns).value,
 ];
 
-// in edit page
 if (isEditPage && quantityByProduct.value.length > 0) {
   resourcesContent.value = [];
-  for (const product of quantityByProduct.value) {
+  for (const resourceQuantity  of quantityByProduct.value) {
     resourcesContent.value.push({
-      id: product.resource.id,
-      quantity: product.quantity,
+      id: resourceQuantity .resource.id,
+      quantity: resourceQuantity .quantity,
     });
   }
 

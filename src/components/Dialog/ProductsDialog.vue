@@ -101,7 +101,7 @@ const store = useStore();
 const props = defineProps({
   modelValue: Boolean,
   userId: String,
-  inputPRoducts: Object,
+  inputProducts: Array,
   clearTable: Boolean,
   currentProductId: String,
 });
@@ -139,17 +139,16 @@ const ownedNonContentAndNonSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
     (product) =>
       !product.contentOf &&
-      product.partOfSale === null &&
+      !product.partOfSale &&
       product.id !== props.currentProductId
   )
 );
 
 onMounted(async () => {
-  if (!props.inputPRoducts) return;
+  if (!props.inputProducts) return;
 
-  props.inputPRoducts.forEach((product) => {
-    temporarySelectedProducts.value.push(product);
-    btnIcon.value[product.id] = ICON_REMOVE;
+  props.inputProducts.forEach((product) => {
+    addProductById(product);
     ownedNonContentAndNonSoldProducts.value.push(product);
   });
 });
@@ -159,12 +158,7 @@ const userColumn = computed(() => [store.getters["products/getUserColumn"]]);
 const savedProducts = ref([]);
 const temporarySelectedProducts = ref([]);
 const btnIcon = ref({});
-
-const emits = defineEmits([
-  "save-product-dialog",
-  "close-dialog",
-  "clear-table-values",
-]);
+const emits = defineEmits(["save-product-dialog", "close-dialog"]);
 
 const openInnerDialog = (item, type) => {
   if (type == dialogTypes.RESOURCE) {

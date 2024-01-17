@@ -68,7 +68,7 @@
     @close-dialog="closeDialog"
     @save-product-dialog="productsTableValues"
     :userId="user.id"
-    :inputPRoducts="props.productInfo.productsContent"
+    :inputProducts="props.productInfo.productsContent"
     :currentProductId="props.productInfo.id"
     :clearTable="props.clearTable"
   >
