@@ -52,7 +52,7 @@ onMounted(async () => {
   await fetchResourcesForUser();
 });
 
-if (pageTitle.value.includes("Edit")) {
+if (route.name.includes("Edit")) {
   productInfo.value = store.getters["products/getProductById"](productId);
 }
 

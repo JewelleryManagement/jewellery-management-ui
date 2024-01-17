@@ -39,7 +39,7 @@
         <template v-slot:item.edit="{ item }">
           <router-link
             v-if="!item.partOfSale"
-            :to="`/product/${item.id}`"
+            :to="`/products/edit/${item.id}`"
             @click.stop
           >
             <v-btn variant="plain">
