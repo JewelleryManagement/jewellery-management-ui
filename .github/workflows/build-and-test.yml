@@ -1,4 +1,4 @@
-name: Build and copy to S3
+name: Build and test
 
 on:
   push:
