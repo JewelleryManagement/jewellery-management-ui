@@ -5,7 +5,8 @@ on:
     branches: 
       - '*'
   pull_request:
-    branches: [ "*" ]
+    branches: 
+      - '*'
 
 permissions:
   id-token: write
