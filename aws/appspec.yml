@@ -1,0 +1,15 @@
+
+version: 0.0
+os: linux
+files:
+  - source: /docker/
+    destination: /tmp/fe
+hooks:
+  BeforeInstall:
+    - location: scripts/install_docker.sh
+      timeout: 180
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_docker.sh
+      timeout: 300
+      runas: root
