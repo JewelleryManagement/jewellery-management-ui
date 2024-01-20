@@ -2,17 +2,29 @@
 
 ## Context
 
-With the files in this folder we can start all the services within JMS environment - Frontend, Backend and DB. Startup happens with:
-```
-docker compose -f docker_tests/docker-compose.yml up -d
-```
-The services start up like we'd normally expect: 
-Frontend on: localhost:3000
-Backend on: localhost:8080
-PostgreSQL on: localhost:5432
+### Folder content explanation
+1. `app` folder
+    - has the content of the `dist` folder (`dist` is generated when we run `npm run build`)
+    - is automatically generated from the `build-and-test.yml` github workflow when github action is executed
+    - when we want to test new changes on the frontend locally be sure to do:
+        - `npm run build`
+        - `cp -r dist docker_tests/app`
+2. `jewellery-inventory-0.0.1-SNAPSHOT.jar` file
+    - holds the jms-be jar for startup
+    - be sure to update it if a new backend is required to test against
+        - running `mvn clean install` within jeweller-manamement-service project would generate this jar file in the `target` folder
+3. `docker-compose.yml` file
+    - holds the manifest of the services we want to run in docker containers: jewellery-management-service, postgreSQL db, jewellery-management-ui
 
-Tests files are located in `test` folder within the root folder
-To start them up, you'd need to have started the services with the command mentioned above and then run:
-```
-npx playwright test
-```
+### Local Tests run
+
+1. Be sure to have a recent enough version of `jewellery-inventory-0.0.1-SNAPSHOT.jar`
+    - `mvn clean install` in jewellery-management-service folder
+    - copy `target/jewellery-inventory-0.0.1-SNAPSHOT.jar` in `docker_tests/`
+2. Make sure you've run `npm run build` and `cp -r dist docker_tests/app`. This ensures the current version of the frontend app will run in the docker container
+3. After 1 and 2 you should be able to run `docker compose -f docker_tests/docker-compose.yml up -d` with success. This ensures all services needed for the tests are started up. The services start up like we'd normally expect: Frontend - `localhost:3000`, Backend - `localhost:8080`, PostgreSQL - `localhost:5432`
+4. `npx playwright test` - runs the tests that reside in root folder -> test
+
+### Github actions run
+
+On a push to any branch the github workflow `build-and-deploy.yml` will do the steps described above and run the tests in github actions automatically. The only thing you need to ensure is that `jewellery-inventory-0.0.1-SNAPSHOT.jar` is recent enough and works with the current version of the frontend. 
