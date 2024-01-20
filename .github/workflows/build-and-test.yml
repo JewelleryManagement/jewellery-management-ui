@@ -35,9 +35,10 @@ jobs:
         cp -r dist aws/docker/app
     - name: Start docker containers with BE and FE
       run:
-        docker compose -f up aws/docker/docker-compose.yml
+        docker compose -f aws/docker/docker-compose.yml up 
 
   test:
+    needs: build
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
