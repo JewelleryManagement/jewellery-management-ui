@@ -5,7 +5,7 @@ services:
     image: jms-be
     build:
       context: .
-      dockerfile: Dockerfile_app
+      dockerfile: Dockerfile_BE
     container_name: jms-be
     depends_on:
       - db
@@ -39,7 +39,7 @@ services:
     container_name: jms-fe
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_FE
     volumes:
       - ./app:/app
     ports:
