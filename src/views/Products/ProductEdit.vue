@@ -20,23 +20,21 @@ import {
   prepareResourcesContent,
 } from "@/utils/data-formatter";
 import { ref, computed, inject, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
-const router = useRouter();
 const productId = route.params.productId;
 const snackbarProvider = inject("snackbarProvider");
 const clearTable = ref(false);
 
-const productInfo = ref({});
+const productInfo = ref(store.getters["products/getProductById"](productId));
 const pageTitle = ref(route.meta.title);
 
 const updateProduct = async () => {
-  const productId = route.params.productId;
   const updatedProduct = {
     ...productInfo.value,
     ownerId: productInfo.value.owner.id,

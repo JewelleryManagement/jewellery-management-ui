@@ -106,7 +106,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, inject } from "vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import {
@@ -115,13 +115,16 @@ import {
   useTextAreaFieldRules,
   validateAuthors,
 } from "@/utils/validation-rules";
+import { useRoute, useRouter } from "vue-router";
 import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
 const props = defineProps({
   productInfo: Object,
-  submitReqFunction: Function
+  submitReqFunction: Function,
 });
 const snackbarProvider = inject("snackbarProvider");
+const router = useRouter();
+const route = useRoute();
 const store = useStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 
@@ -186,6 +189,7 @@ const handleSubmit = async () => {
   if (!(await isFormValid())) return;
 
   let productResponse = await props.submitReqFunction();
+  console.log(productResponse);
   await submitPicture(productResponse);
 
   resetForm();
@@ -200,7 +204,9 @@ const postPicture = async (id, image) => {
   try {
     await store.dispatch("products/postPicture", { productId: id, image });
     snackbarProvider.showSuccessSnackbar(
-      "Successfully added product and picture!"
+      `Successfully ${
+        route.path.includes("edit") ? "edited" : "added"
+      } picture and product`
     );
   } catch (error) {
     snackbarProvider.showErrorSnackbar(

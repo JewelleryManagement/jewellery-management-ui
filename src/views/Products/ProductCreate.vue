@@ -1,7 +1,6 @@
 <template>
   <v-container class="my-12" fluid>
     <v-card class="mx-auto pa-10" width="800" height="auto">
-      
       <ProductCreateAndEditForm
         :productInfo="productInfo"
         :submitReqFunction="createProduct"
@@ -17,14 +16,13 @@ import {
   prepareResourcesContent,
 } from "@/utils/data-formatter";
 import { ref, computed, inject, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
-const router = useRouter();
 
 const user = computed(() => store.getters["auth/getUser"]).value;
 
@@ -32,7 +30,7 @@ const pageTitle = ref(route.meta.title);
 const productInfo = ref({});
 
 const createProduct = async () => {
-  const updatedProduct = {
+  const productForCreation = {
     ...productInfo.value,
     ownerId: user.id,
     authors: productInfo.value.authors.map((author) => author.id),
@@ -43,7 +41,7 @@ const createProduct = async () => {
   };
 
   try {
-    const res = await store.dispatch("products/createProduct", updatedProduct);
+    const res = await store.dispatch("products/createProduct", productForCreation);
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {
