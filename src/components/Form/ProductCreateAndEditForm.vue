@@ -140,7 +140,10 @@ onMounted(async () => {
 
 const fetchResourcesForUser = async () => {
   try {
-    await store.dispatch("users/fetchResourcesForUser", user.id);
+    await store.dispatch(
+      "users/fetchResourcesForUser",
+      props.productInfo?.owner?.id ? props.productInfo?.owner?.id : user.id
+    );
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
   }

@@ -54,12 +54,12 @@
 
 <script setup>
 import { usePositiveNumberRules } from "../../utils/validation-rules";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
-const route = useRoute()
+const route = useRoute();
 import { useStore } from "vuex";
 const store = useStore();
-const isEditPage = route.path.includes('edit')
+const isEditPage = route.path.includes("edit");
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const props = defineProps({
   inputResources: Array,
@@ -76,22 +76,30 @@ const tableColumns = [
   ...computed(() => store.state.resources.tableColumns).value,
 ];
 
+const resources = ref(store.getters["users/getUserResources"]);
+
 if (isEditPage && quantityByProduct.value.length > 0) {
   resourcesContent.value = [];
-  for (const resourceQuantity  of quantityByProduct.value) {
+  for (const resourceQuantity of quantityByProduct.value) {
     resourcesContent.value.push({
-      id: resourceQuantity .resource.id,
-      quantity: resourceQuantity .quantity,
+      id: resourceQuantity.resource.id,
+      quantity: resourceQuantity.quantity,
     });
   }
-
+  resources.value = resources.value.map((resource) => {
+    let matchingResourceContent = resourcesContent.value.find(
+      (resourceContent) => resource.id === resourceContent.id
+    );
+    if (matchingResourceContent) {
+      resource.quantity += matchingResourceContent.quantity;
+    }
+    return resource;
+  });
   quantityByProduct.value = [];
   resourcesContent.value.forEach(
     ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
   );
 }
-
-const resources = computed(() => store.getters["users/getUserResources"]);
 
 const clearTableValues = () => {
   quantityByProduct.value = {};
@@ -121,7 +129,7 @@ const saveTableValues = () => {
 
 const quantityMoreThanTotalQuantity = (quantity, resourceId) => {
   return (
-    quantity >
+    Number(quantity) >
     resources.value.find((resource) => resource.id === resourceId).quantity
   );
 };
@@ -131,7 +139,8 @@ const areQuantitiesValid = () => {
   return (
     currentInputFields.filter(([resourceId, quantity]) => {
       return (
-        quantity <= 0.0 || quantityMoreThanTotalQuantity(quantity, resourceId)
+        Number(quantity) <= 0.0 ||
+        quantityMoreThanTotalQuantity(quantity, resourceId)
       );
     }).length == 0
   );
