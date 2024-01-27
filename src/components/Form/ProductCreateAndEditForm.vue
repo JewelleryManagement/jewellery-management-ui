@@ -58,21 +58,22 @@
       </div>
 
       <resources-dialog
+        v-if="isResourcesForUserFetched"
         v-model="resourceDialog"
         :inputResources="props.productInfo.resourcesContent"
-        @save-resources-dialog="resourcesTableValues"
+        @save-resources-dialog="saveResourceQuantitiesToProduct"
         @close-dialog="closeDialog"
-        :clearTable="props.clearTable"
+        :clearTable="clearTable"
       ></resources-dialog>
 
       <products-dialog
         v-model="productsDialog"
         @close-dialog="closeDialog"
         @save-product-dialog="productsTableValues"
-        :userId="user.id"
+        :userId="owner.id"
         :inputProducts="props.productInfo.productsContent"
         :currentProductId="props.productInfo.id"
-        :clearTable="props.clearTable"
+        :clearTable="clearTable"
       >
       </products-dialog>
 
@@ -131,19 +132,23 @@ const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const form = ref(null);
 const selectedPicture = ref(null);
 const clearTable = ref(false);
-const user = computed(() => store.getters["auth/getUser"]).value;
+const owner = computed(() =>
+  props.productInfo?.owner
+    ? props.productInfo?.owner
+    : store.getters["auth/getUser"]
+).value;
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
+const isResourcesForUserFetched = ref(false);
 
 onMounted(async () => {
+  isResourcesForUserFetched.value = false;
   await fetchResourcesForUser();
+  isResourcesForUserFetched.value = true;
 });
 
 const fetchResourcesForUser = async () => {
   try {
-    await store.dispatch(
-      "users/fetchResourcesForUser",
-      props.productInfo?.owner?.id ? props.productInfo?.owner?.id : user.id
-    );
+    await store.dispatch("users/fetchResourcesForUser", owner.id);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
   }
@@ -155,7 +160,7 @@ const closeDialog = (payload) => {
     : (productsDialog.value = false);
 };
 
-const resourcesTableValues = (resourceContentValue) => {
+const saveResourceQuantitiesToProduct = (resourceContentValue) => {
   props.productInfo.resourcesContent = resourceContentValue;
   closeDialog("resources");
 };
@@ -192,7 +197,6 @@ const handleSubmit = async () => {
   if (!(await isFormValid())) return;
 
   let productResponse = await props.submitReqFunction();
-  console.log(productResponse);
   await submitPicture(productResponse);
 
   resetForm();

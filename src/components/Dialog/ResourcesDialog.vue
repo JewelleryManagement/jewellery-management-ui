@@ -16,14 +16,14 @@
         <v-card-text>
           <v-data-table
             :headers="tableColumns"
-            :items="resources"
+            :items="resourcesInUser"
             class="elevation-1"
             :search="search"
           >
             <template v-slot:item.addQuantity="{ item }">
               <v-text-field
                 variant="underlined"
-                v-model="quantityByProduct[item.id]"
+                v-model="currentInputQuantities[item.id]"
                 type="number"
                 min="0"
                 :rules="usePositiveNumberRules(item.quantity)"
@@ -54,7 +54,7 @@
 
 <script setup>
 import { usePositiveNumberRules } from "../../utils/validation-rules";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 const route = useRoute();
 import { useStore } from "vuex";
@@ -66,7 +66,7 @@ const props = defineProps({
   clearTable: Boolean,
 });
 const search = ref("");
-const [quantityByProduct, resourcesContent] = [
+const [currentInputQuantities, savedQuantitiesInProduct] = [
   ref(props.inputResources || []),
   ref([]),
 ];
@@ -75,34 +75,51 @@ const tableColumns = [
   computed(() => store.state.resources.tableColumnQuantity).value,
   ...computed(() => store.state.resources.tableColumns).value,
 ];
+const resourcesInUser = ref(store.getters["users/getUserResources"]);
 
-const resources = ref(store.getters["users/getUserResources"]);
-
-if (isEditPage && quantityByProduct.value.length > 0) {
-  resourcesContent.value = [];
-  for (const resourceQuantity of quantityByProduct.value) {
-    resourcesContent.value.push({
+const copyCurrentInputQuantities = () => {
+  let quantities = [];
+  for (const resourceQuantity of currentInputQuantities.value) {
+    quantities.push({
       id: resourceQuantity.resource.id,
       quantity: resourceQuantity.quantity,
     });
   }
-  resources.value = resources.value.map((resource) => {
-    let matchingResourceContent = resourcesContent.value.find(
-      (resourceContent) => resource.id === resourceContent.id
+  return quantities;
+};
+
+const addProductQuantitiesToAvailableInUser = () => {
+  currentInputQuantities.value.forEach((currentInputQuantity) => {
+    let matchingResourceContent = resourcesInUser.value.find(
+      (resourceInUser) => resourceInUser.id === currentInputQuantity.resource.id
     );
     if (matchingResourceContent) {
-      resource.quantity += matchingResourceContent.quantity;
+      matchingResourceContent.quantity += currentInputQuantity.quantity;
+    } else {
+      resourcesInUser.value.push({
+        ...currentInputQuantity.resource,
+        quantity: currentInputQuantity.quantity,
+      });
     }
-    return resource;
   });
-  quantityByProduct.value = [];
-  resourcesContent.value.forEach(
-    ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
+};
+const populateCurrentInputQuantitiesFromSavedInProduct = () => {
+  currentInputQuantities.value = [];
+  savedQuantitiesInProduct.value.forEach(
+    ({ id, quantity }) => (currentInputQuantities.value[id] = quantity)
   );
+};
+
+if (isEditPage && currentInputQuantities.value.length > 0) {
+  savedQuantitiesInProduct.value = copyCurrentInputQuantities();
+
+  addProductQuantitiesToAvailableInUser();
+
+  populateCurrentInputQuantitiesFromSavedInProduct();
 }
 
 const clearTableValues = () => {
-  quantityByProduct.value = {};
+  currentInputQuantities.value = [];
 };
 
 watch(
@@ -115,27 +132,27 @@ watch(
 
 const saveTableValues = () => {
   if (areQuantitiesValid()) {
-    resourcesContent.value = [];
-    const currentInputFields = Object.entries(quantityByProduct.value);
+    savedQuantitiesInProduct.value = [];
+    const currentInputFields = Object.entries(currentInputQuantities.value);
     currentInputFields.forEach(([resourceId, quantity]) => {
-      resourcesContent.value.push({
+      savedQuantitiesInProduct.value.push({
         id: resourceId,
         quantity: Number(quantity),
       });
     });
-    emits("save-resources-dialog", resourcesContent.value);
+    emits("save-resources-dialog", savedQuantitiesInProduct.value);
   }
 };
 
 const quantityMoreThanTotalQuantity = (quantity, resourceId) => {
   return (
     Number(quantity) >
-    resources.value.find((resource) => resource.id === resourceId).quantity
+    resourcesInUser.value.find((resource) => resource.id === resourceId).quantity
   );
 };
 
 const areQuantitiesValid = () => {
-  const currentInputFields = Object.entries(quantityByProduct.value);
+  const currentInputFields = Object.entries(currentInputQuantities.value);
   return (
     currentInputFields.filter(([resourceId, quantity]) => {
       return (
@@ -147,9 +164,9 @@ const areQuantitiesValid = () => {
 };
 
 const closeDialog = () => {
-  quantityByProduct.value = [];
-  resourcesContent.value.forEach(
-    ({ id, quantity }) => (quantityByProduct.value[id] = quantity)
+  currentInputQuantities.value = [];
+  savedQuantitiesInProduct.value.forEach(
+    ({ id, quantity }) => (currentInputQuantities.value[id] = quantity)
   );
   emits("close-dialog", "resources");
 };

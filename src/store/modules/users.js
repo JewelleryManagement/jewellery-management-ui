@@ -10,7 +10,7 @@ export default {
   namespaced: true,
   state: {
     users: [],
-    usersResources: {},
+    usersResources: [],
     tableColumns: [
       { key: "id", title: "Id", align: " d-none" },
       { key: "firstName", title: "First Name" },
@@ -70,7 +70,7 @@ export default {
     },
     getUserById: (state) => (id) => state.users.find((user) => user.id === id),
     getUserResources(state) {
-      return state.usersResources.resourcesAndQuantities.map(
+      return state.usersResources?.resourcesAndQuantities?.map(
         (resourceQuantity) => {
           return {
             quantity: resourceQuantity.quantity,
