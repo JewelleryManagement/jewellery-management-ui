@@ -1,0 +1,44 @@
+name: Build and copy to S3
+
+on:
+  push:
+    branches: [ "dev-env" ] #not existent yet
+  pull_request:
+    branches: [ "dev-env" ]
+
+env:
+  AWS_REGION : eu-central-1
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      name: Checkout repository
+
+    - uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+        role-session-name: GithubAction
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Set up Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+    - name: Install with npm
+      run: npm install
+    - name: Build with npm
+      run: npm run build -- --mode prod
+
+    - name: Push codedeploy files to AWS S3
+      run: |
+        cp -r dist aws/docker/app
+        zip -r frontend_codedeploy.zip aws
+        aws s3 cp frontend_codedeploy.zip s3://${{ secrets.S3BUCKET }}/
