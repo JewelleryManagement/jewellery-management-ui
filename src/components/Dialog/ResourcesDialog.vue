@@ -129,7 +129,6 @@ watch(
   () => props.clearTable,
   async (newId, oldId) => {
     clearTableValues();
-    saveTableValues();
   }
 );
 
