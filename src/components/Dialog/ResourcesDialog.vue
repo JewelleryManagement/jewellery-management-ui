@@ -22,6 +22,8 @@
           >
             <template v-slot:item.addQuantity="{ item }">
               <v-text-field
+                clearable
+                @click:clear="delete currentInputQuantities[item.id]"
                 variant="underlined"
                 v-model="currentInputQuantities[item.id]"
                 type="number"
@@ -31,7 +33,7 @@
                   background: 'transparent',
                   border: 'none',
                   boxShadow: 'none',
-                  width: '40px',
+                  width: '80px',
                 }"
               ></v-text-field>
             </template>
@@ -54,8 +56,9 @@
 
 <script setup>
 import { usePositiveNumberRules } from "../../utils/validation-rules";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, inject } from "vue";
 import { useRoute } from "vue-router";
+const snackbarProvider = inject("snackbarProvider");
 const route = useRoute();
 import { useStore } from "vuex";
 const store = useStore();
@@ -141,19 +144,25 @@ const saveTableValues = () => {
       });
     });
     emits("save-resources-dialog", savedQuantitiesInProduct.value);
+  } else {
+    snackbarProvider.showErrorSnackbar(
+      "There needs to be at least one resource in the product contents"
+    );
   }
 };
 
 const quantityMoreThanTotalQuantity = (quantity, resourceId) => {
   return (
     Number(quantity) >
-    resourcesInUser.value.find((resource) => resource.id === resourceId).quantity
+    resourcesInUser.value.find((resource) => resource.id === resourceId)
+      .quantity
   );
 };
 
 const areQuantitiesValid = () => {
   const currentInputFields = Object.entries(currentInputQuantities.value);
   return (
+    currentInputFields.length > 0 &&
     currentInputFields.filter(([resourceId, quantity]) => {
       return (
         Number(quantity) <= 0.0 ||
