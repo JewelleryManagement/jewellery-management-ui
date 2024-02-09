@@ -26,4 +26,8 @@ pnpm-debug.log*
 /blob-report/
 /playwright/.cache/
 /docker_tests/app
-/docker_tests/*.jar
+# /docker_tests/*.jar
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
