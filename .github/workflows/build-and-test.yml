@@ -27,7 +27,7 @@ jobs:
     - name: Install with npm
       run: npm install
     - name: Build with npm
-      run: npm run build -- --mode prod
+      run: npm run build #-- --mode prod
     - name: Copy built app to target folder
       run: |
         cp -r dist docker_tests/app
