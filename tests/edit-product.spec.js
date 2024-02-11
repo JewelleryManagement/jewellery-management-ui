@@ -32,12 +32,13 @@ test('Edit product successfully', async ({ page }, testInfo) => {
     await testInfo.attach('screenshot', { body: screenshot, contentType: 'image/png' });
     
   })
-  await page.getByRole('row', { name: 'Metal Carat 0 0' }).getByLabel('').click();
-  await page.getByRole('row', { name: 'Metal Carat 0 0' }).getByLabel('').fill('10');
-  await page.getByRole('row', { name: 'Element Carat 0' }).getByLabel('').click();
-  await page.getByRole('row', { name: 'Element Carat 0' }).getByLabel('').fill('2');
-  await page.getByRole('row', { name: '28 PreciousStone Carat 0.00x0' }).getByLabel('').click();
-  await page.getByRole('row', { name: '28 PreciousStone Carat 0.00x0' }).getByLabel('').fill('2');
+
+  await page.getByRole('row', { name: 'Metal Carat 0 0' }).getByLabel('', { exact: true }).click();
+  await page.getByRole('row', { name: 'Metal Carat 0 0' }).getByLabel('', { exact: true }).fill('10');
+  await page.getByRole('row', { name: 'Element Carat 0' }).getByLabel('', { exact: true }).click();
+  await page.getByRole('row', { name: 'Element Carat 0' }).getByLabel('', { exact: true }).fill('2');
+  await page.getByRole('row', { name: '28 PreciousStone Carat 0.00x0' }).getByLabel('', { exact: true }).click();
+  await page.getByRole('row', { name: '28 PreciousStone Carat 0.00x0' }).getByLabel('', { exact: true }).fill('2');
   await page.getByRole('button', { name: 'Save' }).click();
   await page.getByRole('button', { name: 'Products' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Close' }).click();
