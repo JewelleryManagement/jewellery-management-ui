@@ -5,7 +5,9 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "docker compose -f docker_tests/docker-compose.yml up -d && sleep 5 && npx playwright test",
+    "test-env-down": "docker compose -f docker_tests/docker-compose.yml down"
   },
   "dependencies": {
     "@chenfengyuan/vue-barcode": "^2.0.2",
