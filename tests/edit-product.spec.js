@@ -170,4 +170,6 @@ test("Edit product fails on reset/submit", async ({ page }) => {
   expect(usersError).toBeTruthy();
   expect(salePriceError).toBeTruthy();
   expect(barCodeError).toBeTruthy();
+  await page.close();
+
 });
