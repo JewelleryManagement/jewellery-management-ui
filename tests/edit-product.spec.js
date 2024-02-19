@@ -70,14 +70,14 @@ test('Edit product successfully with reset button', async ({ page }) => {
   await wait(2)
 
   await page.getByRole('link', { name: 'Products' }).click();
-  await page.locator('tr:nth-child(4) > td:nth-child(14)').click();
+  await page.locator('tr:nth-child(3) > td:nth-child(14)').click();
   await page.getByRole('button', { name: 'Reset' }).click();
   await page.getByLabel('Catalog name').click();
   await page.getByLabel('Catalog name').fill(catalogNameString);
   await page.getByLabel('Description of the product').click();
   await page.getByLabel('Description of the product').fill(descriptionString);
   await page.locator('.v-field__append-inner').first().click();
-  await page.locator('#input-29').check();
+  await page.locator('div').filter({ hasText: /^root testroot@gmail\.com$/ }).first().click();
   await page.locator('div').filter({ hasText: /^testUser1 testtestUser1@gmail\.com$/ }).first().click();
   await page.locator('.v-field__append-inner').first().click();
   await page.getByLabel('Sale price').click();
