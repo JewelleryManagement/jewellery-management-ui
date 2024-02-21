@@ -1,12 +1,12 @@
 version: '3.8'
-name: jms-docker-be-fe
+name: jms-docker-be-fe-test
 services:
   jms-be:
     image: vladokat/jms-be:efe4508
     build:
       context: .
       dockerfile: Dockerfile_BE
-    container_name: jms-be
+    container_name: jms-be-test
     depends_on:
       - db
     environment:
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./jewellery-inventory-0.0.1-SNAPSHOT.jar:/jar/app.jar
   db:
-    container_name: postgres
+    container_name: postgres-jms-test
     image: jms-db
     build:
       context: .
@@ -34,7 +34,7 @@ services:
       - "5432:5432"
   jms-fe:
     image: jms-fe
-    container_name: jms-fe
+    container_name: jms-fe-test
     build:
       context: .
       dockerfile: Dockerfile_FE
