@@ -155,7 +155,7 @@ onMounted(async () => {
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 const userColumn = computed(() => [store.getters["products/getUserColumn"]]);
 
-const savedProducts = ref([]);
+const savedProducts = ref(props.inputProducts || []);
 const temporarySelectedProducts = ref([]);
 const btnIcon = ref({});
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);

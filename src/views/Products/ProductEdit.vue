@@ -6,21 +6,10 @@
           {{ pageTitle }}
         </div>
       </template>
-
-      <v-sheet width="300" class="mx-auto">
-        <v-form
-          ref="form"
-          @submit.prevent="handleSubmit"
-          @keydown.enter.prevent
-        >
-          <ProductCreateAndEditForm
-            :productInfo="productInfo"
-            :clearTable="clearTable"
-          />
-
-          <form-buttons @reset-form="resetForm" />
-        </v-form>
-      </v-sheet>
+      <ProductCreateAndEditForm
+        :productInfo="productInfo"
+        :submitReqFunction="updateProduct"
+      />
     </v-card>
   </v-container>
 </template>
@@ -31,65 +20,21 @@ import {
   prepareResourcesContent,
 } from "@/utils/data-formatter";
 import { ref, computed, inject, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
-const router = useRouter();
 const productId = route.params.productId;
 const snackbarProvider = inject("snackbarProvider");
 const clearTable = ref(false);
 
-const user = computed(() => store.getters["auth/getUser"]).value;
-const productInfo = ref({});
+const productInfo = ref(store.getters["products/getProductById"](productId));
 const pageTitle = ref(route.meta.title);
-const form = ref(null);
 
-onMounted(async () => {
-  await fetchResourcesForUser();
-});
-
-if (route.name.includes("Edit")) {
-  productInfo.value = store.getters["products/getProductById"](productId);
-}
-
-const fetchResourcesForUser = async () => {
-  try {
-    await store.dispatch("users/fetchResourcesForUser", user.id);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
-  }
-};
-
-const resetForm = () => {
-  if (form.value) {
-    form.value.reset();
-    form.value.resetValidation();
-    productInfo.value.resourcesContent = [];
-    productInfo.value.productsContent = [];
-    productInfo.value.authors = [];
-    clearTable.value = true;
-
-    setTimeout(() => {
-      clearTable.value = false;
-    }, 5000);
-  }
-};
-
-const isFormValid = async () => {
-  const { valid } = await form.value.validate();
-  return (
-    productInfo.value.resourcesContent?.length > 0 &&
-    productInfo.value.productionNumber?.length > 0 &&
-    valid
-  );
-};
-
-const submitProduct = async () => {
-  const productId = route.params.productId;
+const updateProduct = async () => {
   const updatedProduct = {
     ...productInfo.value,
     ownerId: productInfo.value.owner.id,
@@ -112,14 +57,5 @@ const submitProduct = async () => {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
   return false;
-};
-
-const handleSubmit = async () => {
-  if (!(await isFormValid())) return;
-
-  await submitProduct();
-
-  resetForm();
-  router.push("/products");
 };
 </script>

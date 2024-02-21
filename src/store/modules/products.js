@@ -91,7 +91,7 @@ export default {
       await postPicture(productId, image);
     },
     async updateProduct({commit}, {productId, updatedProduct}){
-      await updateProduct(productId, updatedProduct)
+      return await updateProduct(productId, updatedProduct)
     },
     async getPicture({ commit }, productId) {
       try {
