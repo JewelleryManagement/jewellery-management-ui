@@ -34,7 +34,6 @@
 </template>
 
 <script setup>
-import { formatProducts } from "@/utils/data-formatter.js";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import SaleCard from "@/components/Sale/SaleCard.vue";
 import { computed } from "vue";
@@ -46,9 +45,7 @@ const route = useRoute();
 const saleId = route.params.saleId;
 
 const currentSale = computed(() => store.getters["sales/getSaleById"](saleId));
-const saleProducts = currentSale.value.products.map((product) =>
-  formatProducts(product)
-);
+const saleProducts = currentSale.value.products
 const additionalColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.sales.tableColumnReturn,

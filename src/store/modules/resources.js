@@ -49,7 +49,6 @@ export default {
       key: "addQuantity",
       title: "",
       slot: "addQuantity",
-      width: "100px",
     },
   }),
   mutations: {

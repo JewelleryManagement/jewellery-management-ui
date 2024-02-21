@@ -1,0 +1,46 @@
+version: '3.8'
+name: jms-docker-be-fe-test
+services:
+  jms-be:
+    image: vladokat/jms-be:efe4508
+    build:
+      context: .
+      dockerfile: Dockerfile_BE
+    container_name: jms-be-test
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${JMS_DATABASE_NAME}?autoreconnect=true&createDatabaseIfNotExist=true&characterEncoding=utf8
+      JMS_DATABASE_NAME: ${JMS_DATABASE_NAME}
+      JMS_DATABASE_USER: ${JMS_DATABASE_USER}
+      JMS_DATABASE_PASSWORD: ${JMS_DATABASE_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./jewellery-inventory-0.0.1-SNAPSHOT.jar:/jar/app.jar
+  db:
+    container_name: postgres-jms-test
+    image: jms-db
+    build:
+      context: .
+      dockerfile: Dockerfile_DB
+    restart: always
+    environment:
+      POSTGRES_DB: ${JMS_DATABASE_NAME}
+      POSTGRES_USER: ${JMS_DATABASE_USER}
+      POSTGRES_PASSWORD: ${JMS_DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+  jms-fe:
+    image: jms-fe
+    container_name: jms-fe-test
+    build:
+      context: .
+      dockerfile: Dockerfile_FE
+    volumes:
+      - ./app:/app
+    ports:
+      - '3000:80'
+
+

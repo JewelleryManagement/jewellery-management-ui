@@ -1,10 +1,3 @@
-export function formatProducts(product) {
-  return {
-    ...product,
-    salePrice: `${product.salePrice.toFixed(2)}`,
-  };
-}
-
 export function dateFormatter(date) {
   if (!date) return;
   const selectedDate = new Date(date);
@@ -36,7 +29,19 @@ export function mapUserDataToNewData(userData) {
 }
 
 export function formatDateForInput(dateString) {
-  if (!dateString) return
+  if (!dateString) return;
   const parts = dateString.split("/");
   return `${parts[2]}-${parts[1]}-${parts[0]}`;
+}
+
+export function prepareResourcesContent(resourcesContent) {
+  return resourcesContent.map((resource) => ({
+    id: resource.resource ? resource.resource.id : resource.id,
+    quantity: resource.quantity,
+  }));
+}
+
+export function prepareProductsContent(productsContent) {
+  if (!productsContent) return [];
+  return productsContent.map((product) => product.id);
 }

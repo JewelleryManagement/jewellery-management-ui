@@ -30,6 +30,10 @@
         />
       </template>
 
+      <template v-slot:item.salePrice="{ item }">
+        €{{ item.salePrice?.toFixed(2) }}
+      </template>
+
       <template v-slot:item.contentOf="{ item }">
         <part-of-product
           :partOfProduct="item.contentOf"
