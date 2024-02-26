@@ -4,6 +4,12 @@ const getRandomNumber = () => {
   return Math.floor(Math.random() * (999 - 100 + 1) + 100);
 };
 
+const wait = (seconds) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
 test.describe("Create user tests", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("./");
@@ -13,8 +19,31 @@ test.describe("Create user tests", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await page.close();
+    // await page.close();
   });
+
+  test("Access Create User page and going back and forth", async ({ page }) => {
+    await page.getByRole('link', { name: 'Users' }).click();
+    await expect(page).toHaveURL('http://localhost:3000/users');
+    await expect(page.getByRole('heading', { name: 'Users table' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Create user' })).toBeVisible();
+
+    await page.getByRole('link', { name: 'Create user' }).click();
+    await expect(page).toHaveURL('http://localhost:3000/users/create');
+    
+
+    await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
+    await wait(3)
+    await page.getByRole('button', { name: 'Go Back' }).click();
+    await expect(page).toHaveURL('http://localhost:3000/users');
+
+    await page.getByRole('link', { name: 'Create user' }).click();
+    await expect(page).toHaveURL('http://localhost:3000/users/create');
+    await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
+    await wait(3)
+    await page.getByRole('button', { name: 'Go Back' }).click();
+    await expect(page).toHaveURL('http://localhost:3000/users');
+});
 
   test("Create user successfully", async ({ page }) => {
     const firstName = "firstName" + getRandomNumber();
