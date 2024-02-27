@@ -33,13 +33,6 @@ const navigateToUserPage = async (page, user) => {
 test.describe("Edit user tests", () => {
   test.beforeEach(async ({ page }) => {
     await login(page);
-
-    page.on("request", (request) =>
-      console.log(">>", request.method(), request.url())
-    );
-    page.on("response", (response) =>
-      console.log("<<", response.status(), response.url())
-    );
   });
 
   test.afterEach(async ({ page }) => {
@@ -120,7 +113,7 @@ test.describe("Edit user tests", () => {
     expect(response.status()).toBe(200);
     expect(response.ok).toBeTruthy();
     await expect(
-      page.getByText(`Successfully created user ${firstName}`)
+      page.getByText(`Successfully updated user ${firstName}`)
     ).toBeVisible();
   });
 
