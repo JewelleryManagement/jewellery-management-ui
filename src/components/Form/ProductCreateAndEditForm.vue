@@ -171,11 +171,17 @@ const productsTableValues = (productsContentValue) => {
 };
 const isFormValid = async () => {
   const { valid } = await form.value.validate();
-  return (
-    props.productInfo.resourcesContent?.length > 0 &&
-    props.productInfo.productionNumber?.length > 0 &&
-    valid
-  );
+  return valid
+
+};
+
+const isResourceSelected = () => {
+  const isResourceSelected = !!props.productInfo.resourcesContent?.length
+  if (!isResourceSelected || isResourceSelected <= 0) {
+    snackbarProvider.showErrorSnackbar("Please select at least 1 resource!");
+    return false;
+  }
+  return true;
 };
 const resetForm = () => {
   if (form.value) {
@@ -195,6 +201,7 @@ const handlePictureSelected = (chosenFile) => {
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
+  if (!isResourceSelected()) return
 
   let productResponse = await props.submitReqFunction();
   await submitPicture(productResponse);
