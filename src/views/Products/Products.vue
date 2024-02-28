@@ -7,7 +7,7 @@
       >
         <template v-slot:button>
           <div class="d-flex justify-end">
-            <table-button path="/products/add">Add Product</table-button>
+            <table-button path="/products/add">Create Product</table-button>
           </div>
         </template>
 
@@ -18,7 +18,9 @@
             :key="item.id"
             @click.stop
           >
-            <template v-if="index < item.authors.length - 1">&comma;&nbsp;</template>
+            <template v-if="index < item.authors.length - 1"
+              >&comma;&nbsp;</template
+            >
           </user-tool-tip>
         </template>
 
@@ -32,6 +34,21 @@
 
         <template v-slot:item.transfer="{ item }">
           <product-transfer-button :product="item" />
+        </template>
+
+        <template v-slot:item.edit="{ item }">
+          <router-link
+            v-if="!item.partOfSale"
+            :to="`/products/edit/${item.id}`"
+            @click.stop
+          >
+            <v-btn variant="plain">
+              <v-icon color="green">mdi-pencil</v-icon>
+            </v-btn>
+          </router-link>
+          <v-btn v-else variant="plain" disabled>
+            <v-icon color="green">mdi-pencil</v-icon>
+          </v-btn>
         </template>
       </products-table>
     </base-card>
@@ -48,6 +65,7 @@ const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnOwner,
   store.state.products.tableColumnDisassembly,
   store.state.products.tableColumnTransfer,
+  store.state.products.tableColumnEdit,
 ]);
 
 onMounted(async () => {

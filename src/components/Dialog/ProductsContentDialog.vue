@@ -31,7 +31,6 @@
 <script setup>
 import { ref } from "vue";
 import ProductsTable from "../Table/ProductsTable.vue";
-import { formatProducts } from "@/utils/data-formatter";
 const { modelValue, data } = defineProps({
   modelValue: Boolean,
   data: Object,
@@ -40,5 +39,4 @@ const { modelValue, data } = defineProps({
 const emits = defineEmits(["close-dialog"]);
 
 const productsContent = ref(data.productsContent);
-productsContent.value = productsContent.value.map((product) => formatProducts(product));
 </script>

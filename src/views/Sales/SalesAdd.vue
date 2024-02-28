@@ -5,23 +5,42 @@
         {{ pageTitle }}
       </div>
       <v-form @submit.prevent="handleSubmit" ref="form">
-        <v-select label="Seller" v-model="sellerName" :items="allUsers" :item-props="userPropsFormatter"
-          :rules="[validateAuthors(sellerName)]">
+        <v-select
+          label="Seller"
+          v-model="sellerName"
+          :items="allUsers"
+          :item-props="userPropsFormatter"
+          :rules="[validateAuthors(sellerName)]"
+        >
         </v-select>
 
-        <v-select v-model="buyerName" label="Buyer" :items="allUsers" :item-props="userPropsFormatter"
-          :rules="[validateAuthors(buyerName)]">
+        <v-select
+          v-model="buyerName"
+          label="Buyer"
+          :items="allUsers"
+          :item-props="userPropsFormatter"
+          :rules="[validateAuthors(buyerName)]"
+        >
         </v-select>
 
         <v-container class="d-flex flex-column">
-          <v-btn color="green lighten-1" @click="() => (calendarDialog = true)"
-            :disabled="!selectedUser">Calendar</v-btn>
+          <v-btn
+            color="green lighten-1"
+            @click="() => (calendarDialog = true)"
+            :disabled="!selectedUser"
+            >Calendar</v-btn
+          >
 
           <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
             Selected date: {{ formattedDate }}
           </p>
 
-          <v-btn class="mt-2" color="primary" @click="toggleProductsDialog(true)" :disabled="!selectedUser">
+          <v-btn
+            class="mt-2"
+            color="primary"
+            @click="toggleProductsDialog(true)"
+            :disabled="!selectedUser"
+          >
             Products
           </v-btn>
         </v-container>
@@ -30,8 +49,11 @@
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected products:
           </div>
-          <Product-price-discount-row v-for="(product, i) in productsForSale" :key="product"
-            :product="productsForSale[i]" />
+          <Product-price-discount-row
+            v-for="(product, i) in productsForSale"
+            :key="product"
+            :product="productsForSale[i]"
+          />
         </v-container>
 
         <v-container class="d-flex flex-column mt-4">
@@ -43,16 +65,24 @@
         <form-buttons @reset-form="resetForm" />
       </v-form>
     </v-sheet>
-    <products-dialog v-if="selectedUser" v-model="productsDialog" @close-dialog="toggleProductsDialog(false)"
-      @save-product-dialog="setProductsForSale" :userId="selectedUser.id">
+    <products-dialog
+      v-if="selectedUser"
+      v-model="productsDialog"
+      @close-dialog="toggleProductsDialog(false)"
+      @save-product-dialog="setProductsForSale"
+      :userId="selectedUser.id"
+    >
     </products-dialog>
 
-    <calendar-dialog v-model="calendarDialog" @close-dialog="handleCloseCalendar" />
+    <calendar-dialog
+      v-model="calendarDialog"
+      @close-dialog="handleCloseCalendar"
+    />
   </v-container>
 </template>
 
 <script setup>
-import { userPropsFormatter } from '@/utils/data-formatter.js'
+import { userPropsFormatter } from "@/utils/data-formatter.js";
 import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
 import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
 import { validateAuthors } from "@/utils/validation-rules";
@@ -114,12 +144,12 @@ const toggleProductsDialog = (isOpen) => {
 
 function handleCloseCalendar(selectedDate) {
   calendarDialog.value = false;
-  if (!selectedDate) return
+  if (!selectedDate) return;
   formattedDate.value = selectedDate;
 }
 
 const setProductsForSale = (selectedProductsForSale) => {
-  productsForSale.value = selectedProductsForSale;
+  productsForSale.value = selectedProductsForSale
   toggleProductsDialog(false);
 };
 

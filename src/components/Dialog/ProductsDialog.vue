@@ -93,7 +93,7 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import { ref, computed, inject, watch } from "vue";
+import { ref, computed, inject, watch, onMounted } from "vue";
 const snackbarProvider = inject("snackbarProvider");
 
 import { useStore } from "vuex";
@@ -101,6 +101,9 @@ const store = useStore();
 const props = defineProps({
   modelValue: Boolean,
   userId: String,
+  inputProducts: Array,
+  clearTable: Boolean,
+  currentProductId: String,
 });
 
 const ICON_ADD = ref("mdi-plus");
@@ -109,7 +112,6 @@ const dialogTypes = {
   RESOURCE: "resources",
   PRODUCT: "products",
 };
-
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
@@ -121,6 +123,13 @@ watch(
   }
 );
 
+watch(
+  () => props.clearTable,
+  async (newId, oldId) => {
+    clearTableValues();
+  }
+);
+
 try {
   await store.dispatch("products/fetchProductsByOwner", props.userId);
 } catch (error) {
@@ -128,17 +137,27 @@ try {
 }
 const ownedNonContentAndNonSoldProducts = computed(() =>
   store.getters["products/getCurrentUserProducts"].filter(
-    (product) => !product.contentOf && product.partOfSale === null
+    (product) =>
+      !product.contentOf &&
+      !product.partOfSale &&
+      product.id !== props.currentProductId
   )
 );
 
+onMounted(async () => {
+  if (!props.inputProducts) return;
+
+  props.inputProducts.forEach((product) => {
+    addProductById(product);
+    ownedNonContentAndNonSoldProducts.value.push(product);
+  });
+});
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
 const userColumn = computed(() => [store.getters["products/getUserColumn"]]);
 
-const savedProducts = ref([]);
+const savedProducts = ref(props.inputProducts || []);
 const temporarySelectedProducts = ref([]);
 const btnIcon = ref({});
-
 const emits = defineEmits(["save-product-dialog", "close-dialog"]);
 
 const openInnerDialog = (item, type) => {

@@ -70,6 +70,14 @@
             @click.stop
             >Products</v-btn
           >
+          <v-btn
+            color="#03A9F4"
+            :size="isMediumScreen() ? 'x-small' : 'default'"
+            :to="`/products/edit/${currentProductId}`"
+            v-if="!currentProductInfo.partOfSale"
+            @click.stop
+            >Edit product</v-btn
+          >
 
           <return-product-button :currentProductInfo="currentProductInfo" />
         </div>
