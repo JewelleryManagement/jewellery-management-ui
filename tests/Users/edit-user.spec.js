@@ -36,7 +36,7 @@ test.describe("Edit user tests", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    // await page.close();
+    await page.close();
   });
 
   test("Access edit user page", async ({ page }) => {
@@ -122,9 +122,12 @@ test.describe("Edit user tests", () => {
     const lastUser = users[users.length - 1]
     await navigateToUserPage(page, lastUser);
 
-    expect(page.locator("button").getByText('GO BACK')).toBeVisible()
+    const backButton = page.locator('button:has-text("GO BACK")');
+    expect(backButton).toBeVisible()
     await page.waitForTimeout(3000)
-    await page.getByRole("button", { name: "Go Back" }).click()
+    await backButton.click();
+
+
     await expect(page).toHaveURL('/users')
     await expect(page.getByRole('heading', { name: 'Users table' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Create user' })).toBeVisible();
