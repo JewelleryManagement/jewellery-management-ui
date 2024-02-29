@@ -36,7 +36,7 @@ test.describe("Edit user tests", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await page.close();
+    // await page.close();
   });
 
   test("Access edit user page", async ({ page }) => {
@@ -111,7 +111,7 @@ test.describe("Edit user tests", () => {
     const response = await page.waitForResponse(response => response.request());
     expect(response).toBeDefined(); 
     expect(response.status()).toBe(200);
-    expect(response.ok).toBeTruthy();
+    expect(response.ok()).toBeTruthy();
     await expect(
       page.getByText(`Successfully updated user ${firstName}`)
     ).toBeVisible();
@@ -119,9 +119,14 @@ test.describe("Edit user tests", () => {
 
   test("GO BACK button works", async ({ page }) => {
     const users = await getUsers(page);
-    await navigateToUserPage(page, users[users.length - 1]);
+    const lastUser = users[users.length - 1]
+    await navigateToUserPage(page, lastUser);
 
-    await wait(3);
-    await page.getByRole("button", { name: "Go Back" }).click();
+    expect(page.locator("button").getByText('GO BACK')).toBeVisible()
+    await page.waitForTimeout(3000)
+    await page.getByRole("button", { name: "Go Back" }).click()
+    await expect(page).toHaveURL('/users')
+    await expect(page.getByRole('heading', { name: 'Users table' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Create user' })).toBeVisible();
   });
 });

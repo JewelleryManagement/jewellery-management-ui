@@ -91,8 +91,8 @@ test("Edit product successfully with reset button", async ({ page }) => {
   const descriptionString = "description" + getRandomNumber();
   const productionNumberString = "pnNumber" + getRandomNumber();
 
-  await page.goto("http://localhost:3000/");
-  await page.goto("http://localhost:3000/login");
+  await page.goto("/");
+  await page.goto("/login");
   await page.getByPlaceholder("Email address").click();
   await page.getByPlaceholder("Email address").fill("root@gmail.com");
   await page.getByPlaceholder("Enter your password").click();
@@ -146,7 +146,7 @@ test("Edit product successfully with reset button", async ({ page }) => {
 });
 
 test("Edit product fails on reset/submit", async ({ page }) => {
-  await page.goto("http://localhost:3000/login");
+  await page.goto("/login");
   await page.getByPlaceholder("Email address").click();
   await page.getByPlaceholder("Email address").fill("root@gmail.com");
   await page.getByPlaceholder("Enter your password").click();

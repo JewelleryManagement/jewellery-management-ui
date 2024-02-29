@@ -10,39 +10,43 @@ const wait = (seconds) => {
   });
 };
 
+const login = async (page) => {
+  await page.goto("./");
+  await page.getByPlaceholder("Email Address").fill("root@gmail.com");
+  await page.getByPlaceholder("Password").fill("p@s5W07d");
+  await page.getByRole("button", { name: "Log in" }).click();
+};
+
 test.describe("Create user tests", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("./");
-    await page.getByPlaceholder("Email Address").fill("root@gmail.com");
-    await page.getByPlaceholder("Password").fill("p@s5W07d");
-    await page.getByRole("button", { name: "Log in" }).click();
+    await login(page)
   });
 
   test.afterEach(async ({ page }) => {
-    // await page.close();
+    await page.close();
   });
 
   test("Access Create User page and going back and forth", async ({ page }) => {
     await page.getByRole('link', { name: 'Users' }).click();
-    await expect(page).toHaveURL('http://localhost:3000/users');
+    await expect(page).toHaveURL('/users');
     await expect(page.getByRole('heading', { name: 'Users table' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Create user' })).toBeVisible();
 
     await page.getByRole('link', { name: 'Create user' }).click();
-    await expect(page).toHaveURL('http://localhost:3000/users/create');
+    await expect(page).toHaveURL('/users/create');
     
 
     await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
     await wait(3)
     await page.getByRole('button', { name: 'Go Back' }).click();
-    await expect(page).toHaveURL('http://localhost:3000/users');
+    await expect(page).toHaveURL('/users');
 
     await page.getByRole('link', { name: 'Create user' }).click();
-    await expect(page).toHaveURL('http://localhost:3000/users/create');
+    await expect(page).toHaveURL('/users/create');
     await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
     await wait(3)
     await page.getByRole('button', { name: 'Go Back' }).click();
-    await expect(page).toHaveURL('http://localhost:3000/users');
+    await expect(page).toHaveURL('/users');
 });
 
   test("Create user successfully", async ({ page }) => {
