@@ -19,7 +19,7 @@ test.describe("Create user tests", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    // await page.close();
+    await page.close();
   });
 
   test("Access Create User page and going back and forth", async ({ page }) => {
