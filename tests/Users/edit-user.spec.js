@@ -111,7 +111,7 @@ test.describe("Edit user tests", () => {
     const response = await page.waitForResponse(response => response.request());
     expect(response).toBeDefined(); 
     expect(response.status()).toBe(200);
-    expect(response.ok).toBeTruthy();
+    expect(response.ok()).toBeTruthy();
     await expect(
       page.getByText(`Successfully updated user ${firstName}`)
     ).toBeVisible();
