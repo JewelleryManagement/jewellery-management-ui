@@ -108,7 +108,7 @@ test("Create a resource type 'Metal'", async ({ page }) => {
   await navigateToResourcePage(page);
   await page.getByRole("link", { name: "Add resource" }).click();
   await page.getByRole("combobox").click();
-  await page.getByRole("option", { name: "Metal" }).click();
+  await page.getByRole("option", { name: "Metal", exact: true }).click();
 
   for (const field of metalFormFields) {
     await page
