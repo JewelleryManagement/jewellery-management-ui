@@ -202,7 +202,6 @@ test("Create a product is successful", async ({ page }) => {
   ).toBeVisible();
 });
 
-
 test("Create a product with a product is successful", async ({ page }) => {
   const { submitButton } = myContext;
   const productName = "Product" + getRandomNumber();
@@ -232,10 +231,12 @@ test("Create a product with a product is successful", async ({ page }) => {
   await fillResourceTableInformation(page, "Metal", "1");
 
   await page.getByRole("button", { name: "Save" }).click();
-  await page.getByRole('button', { name: 'Products' }).click();
+  await page.getByRole("button", { name: "Products" }).click();
 
-  const productionNumberCellText = await page.locator('tr:nth-child(1) td:nth-child(3)').innerText();
-  await page.locator('tr:nth-child(1) > td').first().click();
+  const productionNumberCellText = await page
+    .locator("tr:nth-child(1) td:nth-child(3)")
+    .innerText();
+  await page.locator("tr:nth-child(1) > td").first().click();
   await page.getByRole("button", { name: "Save" }).click();
 
   await submitButton.click();
@@ -246,13 +247,17 @@ test("Create a product with a product is successful", async ({ page }) => {
     page.getByRole("cell", { name: productDescription })
   ).toBeVisible();
 
-  await page.getByRole('button', { name: '󰆦' }).click();
-  await page.getByRole('button', { name: 'Close' }).click();
-  await page.getByRole('button', { name: '󰆧' }).click();
-  await expect(page.getByRole('dialog')).toContainText(productionNumberCellText);
+  await page.getByRole("button", { name: "󰆦" }).click();
+  await page.getByRole("button", { name: "Close" }).click();
+  await page.getByRole("button", { name: "󰆧" }).click();
+  await expect(page.getByRole("dialog")).toContainText(
+    productionNumberCellText
+  );
 });
 
-test("Barcode throws an error if cyrilic symbols are entered", async ({ page }) => {
+test("Barcode throws an error if cyrilic symbols are entered", async ({
+  page,
+}) => {
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = [
@@ -273,5 +278,26 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({ page }) 
     barcode
   );
 
-  await expect(page.getByText('Only English letters and signs are allowed')).toBeVisible()
+  await expect(
+    page.getByText("Only English letters and signs are allowed")
+  ).toBeVisible();
+});
+
+test("Sold and partOfProduct products should not have disassemble and transfer buttons enabled ", async ({
+  page,
+}) => {
+  const classAttribute =
+    "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-plain";
+    
+  await page.getByRole("cell", { name: "Part of product" }).dblclick();
+  await expect(page.locator("td:nth-child(8)").first()).toBeVisible();
+  const disassemblyButtonLocator = page
+    .locator("td:nth-child(12) button.v-btn")
+    .first();
+  const transferButtonLocator = page
+    .locator("td:nth-child(13) button.v-btn")
+    .first();
+
+  await expect(disassemblyButtonLocator).toHaveClass(classAttribute);
+  await expect(transferButtonLocator).toHaveClass(classAttribute);
 });
