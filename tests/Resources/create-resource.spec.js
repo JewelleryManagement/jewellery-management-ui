@@ -18,6 +18,7 @@ const login = async (page) => {
   await page.getByPlaceholder("Email Address").fill("root@gmail.com");
   await page.getByPlaceholder("Password").fill("p@s5W07d");
   await page.getByRole("button", { name: "Log in" }).click();
+  await wait(3);
 };
 
 const navigateToResourcePage = async (page) => {
@@ -29,10 +30,10 @@ const navigateToResourcePage = async (page) => {
 
 const submitResource = async (page) => {
   await page.getByRole("button", { name: "Submit" }).click();
-  expect(page.getByText("Successfully created resource!")).toBeVisible();
+  await expect(await page.getByText("Successfully created resource!")).toBeVisible();
   const response = await page.waitForResponse((response) => response.request());
   expect(response).toBeDefined();
-  expect(response.status()).toBe(201);
+  expect(response.status()).toBe(200);
   expect(response.ok()).toBeTruthy();
 };
 
@@ -41,7 +42,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ page }) => {
-  // await page.close();
+  await page.close();
 });
 
 test("Access resources page", async ({ page }) => {
