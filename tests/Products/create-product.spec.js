@@ -27,6 +27,43 @@ const navigateToProductsPage = async (page) => {
   ).toBeVisible();
 };
 
+const fillProductForm = async (
+  page,
+  catalogName,
+  description,
+  authors,
+  salePrice,
+  barcode
+) => {
+  const {
+    catalogNameButton,
+    descriptionButton,
+    authorsComboBox,
+    salePriceButton,
+    barcodeButton,
+  } = myContext;
+
+  await catalogNameButton.fill(catalogName);
+  await descriptionButton.fill(description);
+  await authorsComboBox.click();
+  for (const author of authors) {
+    await page
+      .locator("div")
+      .filter({ hasText: new RegExp(`^${author}$`) })
+      .first()
+      .click();
+  }
+  await salePriceButton.fill(salePrice);
+  await barcodeButton.fill(barcode);
+};
+
+const fillResourceTableInformation = async (page, resourceName, carat) => {
+  await page
+    .getByRole("row", { name: `${resourceName} Carat 0` })
+    .getByLabel("", { exact: true })
+    .fill(carat);
+};
+
 const myContext = {};
 
 test.beforeEach(async ({ page }) => {
@@ -90,14 +127,7 @@ test("Acces a product creation page", async ({ page }) => {
 });
 
 test("Create a product with empty fields is unsuccessful", async ({ page }) => {
-  const {
-    catalogNameButton,
-    descriptionButton,
-    authorsComboBox,
-    salePriceButton,
-    barcodeButton,
-    submitButton,
-  } = myContext;
+  const { submitButton } = myContext;
 
   await page.getByRole("link", { name: "Create Product" }).click();
   await expect(submitButton).toBeVisible();
@@ -119,25 +149,129 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
     )
   ).toBeVisible();
 
-  await catalogNameButton.fill("Product" + getRandomNumber());
-  await descriptionButton.fill("Description" + getRandomNumber());
-  await authorsComboBox.click();
-
-  await page
-    .locator("div")
-    .filter({ hasText: /^testUser1 testtestUser1@gmail\.com$/ })
-    .first()
-    .click();
-  await page
-    .locator("div")
-    .filter({ hasText: /^testUser2 testtestUser2@gmail\.com$/ })
-    .first()
-    .click();
-  await salePriceButton.fill(getRandomNumberAsString());
-  await barcodeButton.fill(`asd${getRandomNumber()}asdf`);
+  await fillProductForm(
+    page,
+    "Product" + getRandomNumber(),
+    "Description" + getRandomNumber(),
+    ["testUser1 testtestUser1@gmail.com", "testUser2 testtestUser2@gmail.com"],
+    getRandomNumberAsString(),
+    `asd${getRandomNumber()}asdf`
+  );
 
   await submitButton.click();
   await expect(
     page.getByText("Please select at least 1 resource!")
   ).toBeVisible();
+});
+
+test("Create a product is successful", async ({ page }) => {
+  const { submitButton } = myContext;
+  const productName = "Product" + getRandomNumber();
+  const productDescription = "Description" + getRandomNumber();
+  const authors = [
+    "testUser1 testtestUser1@gmail.com",
+    "testUser2 testtestUser2@gmail.com",
+  ];
+  const salePrice = getRandomNumberAsString();
+  const barcode = `asd${getRandomNumber()}asdf`;
+
+  await page.getByRole("link", { name: "Create Product" }).click();
+
+  await fillProductForm(
+    page,
+    productName,
+    productDescription,
+    authors,
+    salePrice,
+    barcode
+  );
+
+  await page.getByRole("button", { name: "Resources" }).click();
+
+  await fillResourceTableInformation(page, "Element", "1");
+  await fillResourceTableInformation(page, "SemiPreciousStone", "1");
+  await fillResourceTableInformation(page, "Metal", "1");
+
+  await page.getByRole("button", { name: "Save" }).click();
+  await submitButton.click();
+  await expect(page.getByText("Successfully added product!")).toBeVisible();
+  await page.getByLabel("Search").fill(productName);
+  await expect(page.getByRole("cell", { name: productName })).toBeVisible();
+  await expect(
+    page.getByRole("cell", { name: productDescription })
+  ).toBeVisible();
+});
+
+
+test("Create a product with a product is successful", async ({ page }) => {
+  const { submitButton } = myContext;
+  const productName = "Product" + getRandomNumber();
+  const productDescription = "Description" + getRandomNumber();
+  const authors = [
+    "testUser1 testtestUser1@gmail.com",
+    "testUser2 testtestUser2@gmail.com",
+  ];
+  const salePrice = getRandomNumberAsString();
+  const barcode = `asd${getRandomNumber()}asdf`;
+
+  await page.getByRole("link", { name: "Create Product" }).click();
+
+  await fillProductForm(
+    page,
+    productName,
+    productDescription,
+    authors,
+    salePrice,
+    barcode
+  );
+
+  await page.getByRole("button", { name: "Resources" }).click();
+
+  await fillResourceTableInformation(page, "Element", "1");
+  await fillResourceTableInformation(page, "SemiPreciousStone", "1");
+  await fillResourceTableInformation(page, "Metal", "1");
+
+  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole('button', { name: 'Products' }).click();
+
+  const productionNumberCellText = await page.locator('tr:nth-child(1) td:nth-child(3)').innerText();
+  await page.locator('tr:nth-child(1) > td').first().click();
+  await page.getByRole("button", { name: "Save" }).click();
+
+  await submitButton.click();
+  await expect(page.getByText("Successfully added product!")).toBeVisible();
+  await page.getByLabel("Search").fill(productName);
+  await expect(page.getByRole("cell", { name: productName })).toBeVisible();
+  await expect(
+    page.getByRole("cell", { name: productDescription })
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: '󰆦' }).click();
+  await page.getByRole('button', { name: 'Close' }).click();
+  await page.getByRole('button', { name: '󰆧' }).click();
+  await expect(page.getByRole('dialog')).toContainText(productionNumberCellText);
+});
+
+test("Barcode throws an error if cyrilic symbols are entered", async ({ page }) => {
+  const productName = "Product" + getRandomNumber();
+  const productDescription = "Description" + getRandomNumber();
+  const authors = [
+    "testUser1 testtestUser1@gmail.com",
+    "testUser2 testtestUser2@gmail.com",
+  ];
+  const salePrice = getRandomNumberAsString();
+  const barcode = `асд${getRandomNumber()}asdf`;
+
+  await page.getByRole("link", { name: "Create Product" }).click();
+
+  await fillProductForm(
+    page,
+    productName,
+    productDescription,
+    authors,
+    salePrice,
+    barcode
+  );
+
+  await expect(page.getByText('Only English letters and signs are allowed')).toBeVisible()
 });
