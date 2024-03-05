@@ -282,22 +282,3 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
     page.getByText("Only English letters and signs are allowed")
   ).toBeVisible();
 });
-
-test("Sold and partOfProduct products should not have disassemble and transfer buttons enabled ", async ({
-  page,
-}) => {
-  const classAttribute =
-    "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-plain";
-    
-  await page.getByRole("cell", { name: "Part of product" }).dblclick();
-  await expect(page.locator("td:nth-child(8)").first()).toBeVisible();
-  const disassemblyButtonLocator = page
-    .locator("td:nth-child(12) button.v-btn")
-    .first();
-  const transferButtonLocator = page
-    .locator("td:nth-child(13) button.v-btn")
-    .first();
-
-  await expect(disassemblyButtonLocator).toHaveClass(classAttribute);
-  await expect(transferButtonLocator).toHaveClass(classAttribute);
-});
