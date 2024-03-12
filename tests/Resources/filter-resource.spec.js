@@ -22,13 +22,28 @@ const navigateToResourcePage = async (page) => {
 };
 
 const resourceTypes = [
-  "All",
-  "Pearl",
-  "Metal",
-  "Element",
-  "PreciousStone",
-  "SemiPreciousStone",
+  { label: "All", tableText: "All resources table" },
+  { label: "Pearl", tableText: "Pearl's resources table" },
+  { label: "Metal", tableText: "Metal's resources table" },
+  { label: "Element", tableText: "Element's resources table" },
+  { label: "PreciousStone", tableText: "PreciousStone's resources table" },
+  {
+    label: "SemiPreciousStone",
+    tableText: "SemiPreciousStone's resources table",
+  },
 ];
+
+const filterResourceTable = async (page, resourceTypeBtn) => {
+  for (const { label, tableText } of resourceTypes) {
+    await resourceTypeBtn.click();
+    await page
+      .locator("div")
+      .filter({ hasText: new RegExp(`^${label}$`) })
+      .first()
+      .click();
+    await expect(page.getByText(tableText)).toBeVisible();
+  }
+};
 
 test.beforeEach(async ({ page }) => {
   await login(page);
@@ -36,7 +51,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ page }) => {
-  // await page.close();
+  await page.close();
 });
 
 test("FIlter button and its menu is visible ", async ({ page }) => {
@@ -50,31 +65,17 @@ test("FIlter button and its menu is visible ", async ({ page }) => {
     await expect(
       page
         .locator("div")
-        .filter({ hasText: new RegExp(`^${resourceType}$`) })
+        .filter({ hasText: new RegExp(`^${resourceType.label}$`) })
         .first()
     ).toBeVisible();
   }
 });
 
 test("Clicking fast on filter button works ", async ({ page }) => {
-  await expect(
-    page.getByRole("button", { name: "Resource Type" })
-  ).toBeVisible();
+  const resourceTypeBtn = page.getByRole("button", { name: "Resource Type" });
+  await expect(resourceTypeBtn).toBeVisible();
 
-  await page.getByRole("button", { name: "Resource Type" }).click();
-  await page.locator('div').filter({ hasText: /^Pearl$/ }).first().click();
-  await page.getByText('Pearl\'s resources table').click();
-  await page.getByRole('button', { name: 'Resource Type' }).click();
-  await page.getByText('Element').click();
-  await page.getByText('Element\'s resources table').click();
-  await page.getByRole('button', { name: 'Resource Type' }).click();
-  await page.getByText('All').click();
-  await page.getByText('All resources table').click();
-  await page.getByRole('button', { name: 'Resource Type' }).click();
-  await page.getByRole('listbox').getByText('SemiPreciousStone').click();
-  await page.getByText('SemiPreciousStone\'s resources').click();
-  await page.getByRole('button', { name: 'Resource Type' }).click();
-  await page.getByText('PreciousStone', { exact: true }).click();
-  await page.getByText('PreciousStone\'s resources').click();
-
+  await filterResourceTable(page, resourceTypeBtn);
+  await filterResourceTable(page, resourceTypeBtn);
+  await filterResourceTable(page, resourceTypeBtn);
 });
