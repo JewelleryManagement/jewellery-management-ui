@@ -22,5 +22,3 @@
 ### Github actions run
 
 On a push to any branch the github workflow `build-and-deploy.yml` will do the steps described above and run the tests in github actions automatically. The only thing you need to ensure is that `jewellery-inventory-0.0.1-SNAPSHOT.jar` is recent enough and works with the current version of the frontend. 
-
-test
