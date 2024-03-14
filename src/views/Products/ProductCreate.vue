@@ -1,6 +1,11 @@
 <template>
   <v-container class="my-12" fluid>
     <v-card class="mx-auto pa-10" width="800" height="auto">
+      <template v-slot:title>
+        <div class="mx-auto text-center" style="font-size: 24px">
+          {{ pageTitle }}
+        </div>
+      </template>
       <ProductCreateAndEditForm
         :productInfo="productInfo"
         :submitReqFunction="createProduct"
