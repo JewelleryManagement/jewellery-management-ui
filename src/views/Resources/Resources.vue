@@ -10,17 +10,17 @@
     <div class="d-flex justify-space-between">
       <v-menu>
         <template v-slot:activator="{ props }">
-          <table-button :props="props" :variant="'outlined'">Resource Type</table-button>
+          <table-button :props="props" :variant="'outlined'"
+            >Resource Type</table-button
+          >
         </template>
         <v-list>
           <v-list-item
             v-for="resourceType in resourceTypes"
             :key="resourceType"
             :value="resourceType"
-          >
-            <v-list-item-title @click="filterResourcesByType(resourceType)">{{
-              resourceType
-            }}</v-list-item-title>
+            @click="filterResourcesByType(resourceType)"
+            >{{ resourceType }}
           </v-list-item>
         </v-list>
       </v-menu>
