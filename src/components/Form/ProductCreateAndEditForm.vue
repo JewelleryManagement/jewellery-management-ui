@@ -182,13 +182,13 @@ const isFormValid = async () => {
 };
 
 const isResourceSelected = () => {
-  const isResourceSelected = !!props.productInfo.resourcesContent?.length;
-  if (!isResourceSelected || isResourceSelected <= 0) {
+  if (!props.productInfo.resourcesContent?.length) {
     snackbarProvider.showErrorSnackbar("Please select at least 1 resource!");
     return false;
   }
   return true;
 };
+
 const resetForm = () => {
   if (form.value) {
     form.value.reset();
