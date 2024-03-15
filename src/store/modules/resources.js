@@ -11,7 +11,21 @@ import {
 } from "@/services/HttpClientService.js";
 
 const filterColumnsByKey = (state, keys) => {
-  return state.tableColumns.filter((column) => keys.includes(column.key));
+
+  const additionalColumnsLeft = [
+    state.tableColumnQuantity
+  ]
+
+  const additionalColumnsRight = [
+    state.tableColumnDelete,
+    state.tableColumnEdit,
+    state.tableColumnAdd,
+  ];
+
+  const filteredColumns = state.tableColumns.filter((column) => keys.includes(column.key));
+  const result = [...additionalColumnsLeft, ...filteredColumns,...additionalColumnsRight];
+  
+  return result;
 };
 
 export default {

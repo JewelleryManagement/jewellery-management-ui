@@ -41,8 +41,9 @@ const submitPostUser = async () => {
     snackbarProvider.showSuccessSnackbar(
       `Successfully created user ${res.firstName}`
     );
+    router.push("/users");
   } catch (error) {
-    const errors = Object.values(error?.response?.data?.error).join(", ");
+    const errors = Object.values(error?.response?.data?.error).join(', ');
     snackbarProvider.showErrorSnackbar(errors);
   }
 };
@@ -50,8 +51,7 @@ const submitPostUser = async () => {
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
 
-  submitPostUser();
-  router.push("/users");
+ await submitPostUser();
 };
 
 const resetForm = () => {

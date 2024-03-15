@@ -24,6 +24,7 @@
       ></v-text-field>
 
       <v-text-field
+        v-if="!isRouteTransfer"
         prefix="€"
         label="Delivery Cost"
         v-model="dealPrice"
@@ -50,6 +51,7 @@ const quantity = ref("");
 const dealPrice = ref("");
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
+const isRouteTransfer = route.path.includes("/transfer")
 
 if (route.path.includes("/remove")) {
   const resourceId = route.params.resourceId;
