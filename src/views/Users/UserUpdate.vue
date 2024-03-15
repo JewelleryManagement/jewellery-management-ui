@@ -57,7 +57,7 @@ const submitEditUser = async () => {
   try {
     const res = await store.dispatch("users/updateUser", data);
     snackbarProvider.showSuccessSnackbar(
-      `Successfully created user ${res.firstName}`
+      `Successfully updated user ${res.firstName}`
     );
   } catch (error) {
     const errors = Object.values(error?.response?.data?.error).join(", ");
