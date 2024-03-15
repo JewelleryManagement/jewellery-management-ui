@@ -31,26 +31,22 @@ export function useTextAreaFieldRules() {
 
 export function useBarCodeValidationRules(value) {
   const regex = /^[0-9a-zA-Z!@#$%^&*()_'"+-={}[\]:;<>,.?~\\s]+$/;
+  let messages = [];
+  let isValid = true;
 
-  const rules = [
-    { message: "Input field is required", isValid: !!value },
-    {
-      message: "Only English letters and signs are allowed",
-      isValid: regex.test(value),
-    },
-    {
-      message: "Input must be less than 100 characters",
-      isValid: value && value.length <= 100,
-    },
-  ];
+  const addRule = (message, isValidCondition) => {
+    if (!isValidCondition) {
+      messages.push(message);
+      isValid = false;
+    }
+  };
 
-  const isValid = rules.every((rule) => rule.isValid);
+  addRule("Input field is required", !!value);
+  addRule("Only English letters and signs are allowed", regex.test(value));
+  addRule("Input must be less than 100 characters", value && value.length <= 100);
 
   return {
-    messages: rules
-      .map((rule) => (!rule.isValid ? rule.message : null))
-      .filter((msg) => msg)
-      .join(", "),
+    messages: messages.join(", "),
     isValid,
   };
 }
