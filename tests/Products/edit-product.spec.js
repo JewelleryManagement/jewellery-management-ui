@@ -6,20 +6,33 @@ const wait = (seconds) => {
   });
 };
 
-test("Edit product successfully", async ({ page }, testInfo) => {
+const login = async (page) => {
   await page.goto("./");
-
   await page.getByPlaceholder("Email Address").fill("root@gmail.com");
   await page.getByPlaceholder("Password").fill("p@s5W07d");
-
-  // Login
   await page.getByRole("button", { name: "Log in" }).click();
+  await wait(3);
+};
 
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole("heading", { name: "Home Page" })).toBeVisible();
-
-  //Go to products tab and edit product
+const navigateToProductsPage = async (page) => {
   await page.getByRole("link", { name: "Products" }).click();
+  await expect(page).toHaveURL("/products");
+  await expect(page.getByText("Products Table")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Create Product" })
+  ).toBeVisible();
+};
+
+test.beforeEach(async ({ page }) => {
+  await login(page);
+  await navigateToProductsPage(page);
+});
+
+test.afterEach(async ({ page }) => {
+  await page.close();
+});
+
+test("Edit product successfully", async ({ page }, testInfo) => {
   await wait(0.5).then(async () => {
     const screenshot = await page.screenshot();
     await testInfo.attach("screenshot", {
@@ -91,17 +104,12 @@ test("Edit product successfully with reset button", async ({ page }) => {
   const descriptionString = "description" + getRandomNumber();
   const productionNumberString = "pnNumber" + getRandomNumber();
 
-  await page.goto("/");
-  await page.goto("/login");
-  await page.getByPlaceholder("Email address").click();
-  await page.getByPlaceholder("Email address").fill("root@gmail.com");
-  await page.getByPlaceholder("Enter your password").click();
-  await page.getByPlaceholder("Enter your password").fill("p@s5W07d");
-  await page.getByRole("button", { name: "Log In" }).click();
-  await wait(2);
+  await page
+    .getByRole("row", { name: "4 4444 This is my best test" })
+    .getByRole("button")
+    .nth(4)
+    .click();
 
-  await page.getByRole("link", { name: "Products" }).click();
-  await page.locator("tr:nth-child(3) > td:nth-child(14)").click();
   await page.getByRole("button", { name: "Reset" }).click();
   await page.getByLabel("Catalog name").click();
   await page.getByLabel("Catalog name").fill(catalogNameString);
@@ -124,38 +132,25 @@ test("Edit product successfully with reset button", async ({ page }) => {
   await page.getByLabel("Barcode...").click();
   await page.getByLabel("Barcode...").fill(productionNumberString);
   await page.getByRole("button", { name: "Resources" }).click();
-  await page.locator("td").first().click();
-  await page
-    .getByRole("row", { name: "Metal Carat 0 0" })
-    .getByLabel("", { exact: true })
-    .fill("1");
-  await page.locator("tr:nth-child(2) > td").first().click();
-  await page.locator("tr:nth-child(2) > td").first().click();
-  await page
-    .getByRole("row", { name: "Element Carat 0" })
-    .getByLabel("", { exact: true })
-    .fill("1");
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.locator('td').first().click();
+  await page.getByRole('row', { name: '28 PreciousStone Carat 0.00x0' }).getByLabel('', { exact: true }).fill('1');
+  await page.locator('tr:nth-child(2) > td').first().click();
+  await page.getByRole('row', { name: 'Metal Carat 0 0' }).getByLabel('', { exact: true }).fill('1');
+  await page.locator('tr:nth-child(3) > td').first().click();
+  await page.getByRole('row', { name: 'Element Carat 0' }).getByLabel('', { exact: true }).fill('1');
+  await page.getByRole('button', { name: 'Save' }).click();
+
   await page.getByRole("button", { name: "Submit" }).click();
 
   await expect(page.getByText("Successfully updated product!")).toBeVisible();
+  await page.getByLabel('Search').fill(catalogNameString);
   await expect(page.locator("tbody")).toContainText(catalogNameString);
   await expect(page.locator("tbody")).toContainText(descriptionString);
   await expect(page.locator("tbody")).toContainText(productionNumberString);
-  await page.close();
 });
 
 test("Edit product fails on reset/submit", async ({ page }) => {
-  await page.goto("/login");
-  await page.getByPlaceholder("Email address").click();
-  await page.getByPlaceholder("Email address").fill("root@gmail.com");
-  await page.getByPlaceholder("Enter your password").click();
-  await page.getByPlaceholder("Enter your password").fill("p@s5W07d");
-  await page.getByRole("button", { name: "Log In" }).click();
-  await wait(2);
-
-  await page.getByRole("link", { name: "Products" }).click();
-  await page.locator("tr:nth-child(3) > td:nth-child(14)").click();
+  await page.locator("tr:nth-child(1) > td:nth-child(14)").click();
   await page.getByRole("button", { name: "Reset" }).click();
   await page.getByRole("button", { name: "Submit" }).click();
 
@@ -165,11 +160,9 @@ test("Edit product fails on reset/submit", async ({ page }) => {
   const salePriceError = page.getByText("Input field is required");
   const barCodeError = page.getByText("Input field is required");
 
-  expect(catalogError).toBeTruthy()
+  expect(catalogError).toBeTruthy();
   expect(descError).toBeTruthy();
   expect(usersError).toBeTruthy();
   expect(salePriceError).toBeTruthy();
   expect(barCodeError).toBeTruthy();
-  await page.close();
-
 });

@@ -1,8 +1,5 @@
 import { test, expect } from "@playwright/test";
-
-const getRandomNumber = () => {
-  return Math.floor(Math.random() * (999 - 100 + 1) + 100);
-};
+import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
 
 const wait = (seconds) => {
   return new Promise((resolve) => {
