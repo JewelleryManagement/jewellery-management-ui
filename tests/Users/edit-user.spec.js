@@ -116,9 +116,17 @@ test.describe("Edit user tests", () => {
 
   test("GO BACK button works", async ({ page }) => {
     const users = await getUsers(page);
-    await navigateToUserPage(page, users[users.length - 1]);
+    const lastUser = users[users.length - 1]
+    await navigateToUserPage(page, lastUser);
 
-    await wait(3);
-    await page.getByRole("button", { name: "Go Back" }).click();
+    const backButton = page.locator('button:has-text("GO BACK")');
+    expect(backButton).toBeVisible()
+    await page.waitForTimeout(3000)
+    await backButton.click();
+
+
+    await expect(page).toHaveURL('/users')
+    await expect(page.getByRole('heading', { name: 'Users table' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'Create user' })).toBeVisible();
   });
 });
