@@ -17,8 +17,6 @@ services:
       SECRET_KEY: ${SECRET_KEY}
     ports:
       - "8080:8080"
-    volumes:
-      - ./jewellery-inventory-0.0.1-SNAPSHOT.jar:/jar/app.jar
   db:
     container_name: postgres-jms-test
     image: jms-db
@@ -39,7 +37,8 @@ services:
       context: .
       dockerfile: Dockerfile_FE
     volumes:
-      - ./app:/app
+      - ./app:/usr/share/nginx/html
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - '3000:80'
 

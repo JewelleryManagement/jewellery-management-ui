@@ -44,14 +44,20 @@
       <v-text-field
         label="Barcode..."
         v-model="props.productInfo.productionNumber"
-        :rules="useTextAreaFieldRules()"
+        :rules="[
+          (v) =>
+            useBarCodeValidationRules(v).isValid ||
+            useBarCodeValidationRules(v).messages,
+        ]"
         required
-      >
-      </v-text-field>
+      ></v-text-field>
 
       <div>
         <bar-code
-          v-if="props.productInfo.productionNumber"
+          v-if="
+            useBarCodeValidationRules(props.productInfo.productionNumber)
+              .isValid
+          "
           :productionNumber="props.productInfo.productionNumber"
           required
         />
@@ -115,6 +121,7 @@ import {
   useNumberFieldRules,
   useTextAreaFieldRules,
   validateAuthors,
+  useBarCodeValidationRules,
 } from "@/utils/validation-rules";
 import { useRoute, useRouter } from "vue-router";
 import { userPropsFormatter } from "@/utils/data-formatter";
@@ -171,12 +178,17 @@ const productsTableValues = (productsContentValue) => {
 };
 const isFormValid = async () => {
   const { valid } = await form.value.validate();
-  return (
-    props.productInfo.resourcesContent?.length > 0 &&
-    props.productInfo.productionNumber?.length > 0 &&
-    valid
-  );
+  return valid;
 };
+
+const isResourceSelected = () => {
+  if (!props.productInfo.resourcesContent?.length) {
+    snackbarProvider.showErrorSnackbar("Please select at least 1 resource!");
+    return false;
+  }
+  return true;
+};
+
 const resetForm = () => {
   if (form.value) {
     form.value.reset();
@@ -195,6 +207,7 @@ const handlePictureSelected = (chosenFile) => {
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
+  if (!isResourceSelected()) return;
 
   let productResponse = await props.submitReqFunction();
   await submitPicture(productResponse);

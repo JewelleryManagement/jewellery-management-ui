@@ -1,7 +1,5 @@
 export function useInputValidate() {
-  return [
-    (v) => !!v || `Input field is required`,
-  ];
+  return [(v) => !!v || `Input field is required`];
 }
 
 export function useTextFieldRules() {
@@ -31,6 +29,28 @@ export function useTextAreaFieldRules() {
   ];
 }
 
+export function useBarCodeValidationRules(value) {
+  const regex = /^[0-9a-zA-Z!@#$%^&*()_'"+-={}[\]:;<>,.?~\\s]+$/;
+  let messages = [];
+  let isValid = true;
+
+  const addRule = (message, isValidCondition) => {
+    if (!isValidCondition) {
+      messages.push(message);
+      isValid = false;
+    }
+  };
+
+  addRule("Input field is required", !!value);
+  addRule("Only English letters and signs are allowed", regex.test(value));
+  addRule("Input must be less than 100 characters", value && value.length <= 100);
+
+  return {
+    messages: messages.join(", "),
+    isValid,
+  };
+}
+
 export function useEmailFieldRules() {
   return [
     (v) => !!v || "Email field is required",
@@ -41,8 +61,8 @@ export function useEmailFieldRules() {
 
 export function usePasswordFieldRules() {
   return [
-    (v) => !!v || "Password field is required",
-    (v) => v.length <= 100 || "Password must be less than 100 characters",
+    (v) => (v && v.length > 0) || "Password field is required",
+    (v) => !v || v.length <= 100 || "Password must be less than 100 characters",
   ];
 }
 
