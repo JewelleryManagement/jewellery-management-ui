@@ -105,7 +105,8 @@
             {{ props.productInfo.productsContent?.length || 0 }}
           </p>
 
-          <p>Current price: ${{ currentPrice.toFixed(2) }}</p>
+          <p>Current Resources price: ${{ currentPrice.toFixed(2) }}</p>
+          <p>Current Products price: ${{ currentProductPrice.toFixed(2) }}</p>
         </div>
       </div>
       <picture-button @picture-selected="handlePictureSelected" />
@@ -137,7 +138,8 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
-let currentPrice = 0
+let currentPrice = 0;
+let currentProductPrice = 0;
 
 const form = ref(null);
 const selectedPicture = ref(null);
@@ -171,16 +173,20 @@ const closeDialog = (payload) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
-  currentPrice = 0
-  resourceContentValue.forEach(x => {
-    currentPrice += x.currentResourcePrice
+  currentPrice = 0;
+  resourceContentValue.forEach((x) => {
+    currentPrice += x.currentResourcePrice;
   });
-  console.log(currentPrice);
+
   props.productInfo.resourcesContent = resourceContentValue;
   closeDialog("resources");
 };
 
 const productsTableValues = (productsContentValue) => {
+    currentProductPrice = 0
+  productsContentValue.forEach(product => {
+    currentProductPrice += Number(product.salePrice)
+  })
   props.productInfo.productsContent = productsContentValue;
   closeDialog("products");
 };
