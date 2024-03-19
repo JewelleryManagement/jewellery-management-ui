@@ -81,47 +81,46 @@ const tableColumns = [
 ];
 const resourcesInUser = ref(store.getters["users/getUserResources"]);
 
-// const copyCurrentInputQuantities = () => {
-//   let quantities = [];
-//   for (const resourceQuantity of currentInputQuantities.value) {
-//     quantities.push({
-//       id: resourceQuantity.resource.id,
-//       quantity: resourceQuantity.quantity,
-//     });
-//   }
-//   console.log('tuk3', quantities);
-//   return quantities;
-// };
+const copyCurrentInputQuantities = () => {
+  let quantities = [];
+  for (const resourceQuantity of currentInputQuantities.value) {
+    quantities.push({
+      id: resourceQuantity.resource.id,
+      quantity: resourceQuantity.quantity,
+    });
+  }
+  return quantities;
+};
 
-// const addProductQuantitiesToAvailableInUser = () => {
-//   currentInputQuantities.value.forEach((currentInputQuantity) => {
-//     let matchingResourceContent = resourcesInUser.value.find(
-//       (resourceInUser) => resourceInUser.id === currentInputQuantity.resource.id
-//     );
-//     if (matchingResourceContent) {
-//       matchingResourceContent.quantity += currentInputQuantity.quantity;
-//     } else {
-//       resourcesInUser.value.push({
-//         ...currentInputQuantity.resource,
-//         quantity: currentInputQuantity.quantity,
-//       });
-//     }
-//   });
-// };
-// const populateCurrentInputQuantitiesFromSavedInProduct = () => {
-//   currentInputQuantities.value = [];
-//   savedQuantitiesInProduct.value.forEach(
-//     ({ id, quantity }) => (currentInputQuantities.value[id] = quantity)
-//   );
-// };
+const addProductQuantitiesToAvailableInUser = () => {
+  currentInputQuantities.value.forEach((currentInputQuantity) => {
+    let matchingResourceContent = resourcesInUser.value.find(
+      (resourceInUser) => resourceInUser.id === currentInputQuantity.resource.id
+    );
+    if (matchingResourceContent) {
+      matchingResourceContent.quantity += currentInputQuantity.quantity;
+    } else {
+      resourcesInUser.value.push({
+        ...currentInputQuantity.resource,
+        quantity: currentInputQuantity.quantity,
+      });
+    }
+  });
+};
+const populateCurrentInputQuantitiesFromSavedInProduct = () => {
+  currentInputQuantities.value = [];
+  savedQuantitiesInProduct.value.forEach(
+    ({ id, quantity }) => (currentInputQuantities.value[id] = quantity)
+  );
+};
 
-// if (isEditPage && currentInputQuantities.value.length > 0) {
-//   savedQuantitiesInProduct.value = copyCurrentInputQuantities();
+if (isEditPage && currentInputQuantities.value.length > 0) {
+  savedQuantitiesInProduct.value = copyCurrentInputQuantities();
 
-//   addProductQuantitiesToAvailableInUser();
+  addProductQuantitiesToAvailableInUser();
 
-//   populateCurrentInputQuantitiesFromSavedInProduct();
-// }
+  populateCurrentInputQuantitiesFromSavedInProduct();
+}
 
 const clearTableValues = () => {
   currentInputQuantities.value = [];
@@ -170,7 +169,6 @@ const quantityMoreThanTotalQuantity = (quantity, resourceId) => {
 
 const areQuantitiesValid = () => {
   const currentInputFields = Object.entries(currentInputQuantities.value);
-  console.log("asd", currentInputFields);
   return (
     currentInputFields.length > 0 &&
     currentInputFields.filter(([resourceId, quantity]) => {
