@@ -34,14 +34,6 @@
       </v-autocomplete>
 
       <v-text-field
-        class="mt-4"
-        v-model="props.productInfo.salePrice"
-        label="Sale price"
-        :rules="useNumberFieldRules()"
-        required
-      ></v-text-field>
-
-      <v-text-field
         label="Barcode..."
         v-model="props.productInfo.productionNumber"
         :rules="[
@@ -94,19 +86,43 @@
           </v-btn>
         </div>
 
-        <div class="d-flex flex-column mt-4">
-          <p v-if="props.productInfo.resourcesContent?.length > 0">
+        <v-text-field
+          v-if="props.productInfo.resourcesContent?.length > 0"
+          class="mt-4"
+          v-model="props.productInfo.additionalPrice"
+          label="Additional price"
+          :rules="useNumberFieldRules()"
+          required
+        ></v-text-field>
+
+        <div
+          class="d-flex justify-space-between mt-4"
+          v-if="props.productInfo.resourcesContent?.length > 0"
+        >
+          <p>
             Resources selected:
             {{ props.productInfo.resourcesContent?.length || 0 }}
           </p>
+          <p>Price: ${{ currentPrice.toFixed(2) }}</p>
+        </div>
 
-          <p v-if="props.productInfo.productsContent?.length > 0">
+        <div
+          class="d-flex justify-space-between"
+          v-if="props.productInfo.productsContent?.length > 0"
+        >
+          <p>
             Products selected:
             {{ props.productInfo.productsContent?.length || 0 }}
           </p>
 
-          <p>Current Resources price: ${{ currentPrice.toFixed(2) }}</p>
-          <p>Current Products price: ${{ currentProductPrice.toFixed(2) }}</p>
+          <p>Price: ${{ currentProductPrice.toFixed(2) }}</p>
+        </div>
+
+        <div
+          class="d-flex justify-end mt-2"
+          v-if="props.productInfo.resourcesContent?.length > 0"
+        >
+          <p>Total Price: ${{ totalPrice.toFixed(2) }}</p>
         </div>
       </div>
       <picture-button @picture-selected="handlePictureSelected" />
@@ -138,8 +154,16 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
-let currentPrice = 0;
-let currentProductPrice = 0;
+const [currentPrice, currentProductPrice, totalPrice] = [
+  ref(0),
+  ref(0),
+  computed(
+    () =>
+      Number(currentPrice.value) +
+      Number(currentProductPrice.value) +
+      (Number(props.productInfo.additionalPrice) || 0)
+  ),
+];
 
 const form = ref(null);
 const selectedPicture = ref(null);
@@ -173,9 +197,9 @@ const closeDialog = (payload) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
-  currentPrice = 0;
+  currentPrice.value = 0;
   resourceContentValue.forEach((x) => {
-    currentPrice += x.currentResourcePrice;
+    currentPrice.value += x.currentResourcePrice;
   });
 
   props.productInfo.resourcesContent = resourceContentValue;
@@ -183,10 +207,10 @@ const saveResourceQuantitiesToProduct = (resourceContentValue) => {
 };
 
 const productsTableValues = (productsContentValue) => {
-    currentProductPrice = 0
-  productsContentValue.forEach(product => {
-    currentProductPrice += Number(product.salePrice)
-  })
+  currentProductPrice.value = 0;
+  productsContentValue.forEach((product) => {
+    currentProductPrice.value += Number(product.salePrice);
+  });
   props.productInfo.productsContent = productsContentValue;
   closeDialog("products");
 };
@@ -223,6 +247,8 @@ const handleSubmit = async () => {
   if (!(await isFormValid())) return;
   if (!isResourceSelected()) return;
 
+  console.log(props.productInfo);
+  // props.productInfo.finalPrice = totalPrice
   let productResponse = await props.submitReqFunction();
   await submitPicture(productResponse);
 
