@@ -37,7 +37,6 @@ const productInfo = ref({});
 const createProduct = async () => {
   const productForCreation = {
     ...productInfo.value,
-    // additionalPrice: productInfo.value.finalPrice,
     ownerId: user.id,
     authors: productInfo.value.authors.map((author) => author.id),
     productsContent: prepareProductsContent(productInfo.value.productsContent),
@@ -46,14 +45,14 @@ const createProduct = async () => {
     ),
   };
 
-  console.log(productForCreation);
-  // try {
-  //   const res = await store.dispatch("products/createProduct", productForCreation);
-  //   snackbarProvider.showSuccessSnackbar("Successfully added product!");
-  //   return res;
-  // } catch (error) {
-  //   snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-  // }
-  // return false;
+  try {
+    const res = await store.dispatch("products/createProduct", productForCreation);
+    snackbarProvider.showSuccessSnackbar("Successfully added product!");
+    return res;
+  } catch (error) {
+    console.log(error);
+    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
+  }
+  return false;
 };
 </script>

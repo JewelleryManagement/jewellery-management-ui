@@ -91,6 +91,7 @@
           class="mt-4"
           v-model="props.productInfo.additionalPrice"
           label="Additional price"
+          prefix="€"
           :rules="useNumberFieldRules()"
           required
         ></v-text-field>
@@ -247,8 +248,7 @@ const handleSubmit = async () => {
   if (!(await isFormValid())) return;
   if (!isResourceSelected()) return;
 
-  console.log(props.productInfo);
-  // props.productInfo.finalPrice = totalPrice
+  props.productInfo.additionalPrice = totalPrice.value
   let productResponse = await props.submitReqFunction();
   await submitPicture(productResponse);
 
