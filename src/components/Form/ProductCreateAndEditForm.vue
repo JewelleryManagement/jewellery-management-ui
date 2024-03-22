@@ -104,7 +104,7 @@
             Resources selected:
             {{ props.productInfo.resourcesContent?.length || 0 }}
           </p>
-          <p>Price: ${{ currentPrice.toFixed(2) }}</p>
+          <p>Price: ${{ currentResourcePrice.toFixed(2) }}</p>
         </div>
 
         <div
@@ -155,12 +155,12 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
-const [currentPrice, currentProductPrice, totalPrice] = [
+const [currentResourcePrice, currentProductPrice, totalPrice] = [
   ref(0),
   ref(0),
   computed(
     () =>
-      Number(currentPrice.value) +
+      Number(currentResourcePrice.value) +
       Number(currentProductPrice.value) +
       (Number(props.productInfo.additionalPrice) || 0)
   ),
@@ -181,7 +181,32 @@ onMounted(async () => {
   isResourcesForUserFetched.value = false;
   await fetchResourcesForUser();
   isResourcesForUserFetched.value = true;
+  calculatePricesInEditView()
 });
+
+const calculatePricesInEditView = async () => {
+  if (route.path.includes("edit")) {
+    const resourceContentTotal = props.productInfo.resourcesContent.reduce(
+      (total, resource) => {
+        return (
+          total +
+          Number(resource.quantity) * Number(resource.resource.pricePerQuantity)
+        );
+      },
+      0
+    );
+
+    const productsContentTotal = props.productInfo.productsContent.reduce(
+      (total, product) => {
+        return total + Number(product.salePrice);
+      },
+      0
+    );
+
+    currentResourcePrice.value = resourceContentTotal;
+    currentProductPrice.value = productsContentTotal;
+  }
+};
 
 const fetchResourcesForUser = async () => {
   try {
@@ -198,9 +223,9 @@ const closeDialog = (payload) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
-  currentPrice.value = 0;
+  currentResourcePrice.value = 0;
   resourceContentValue.forEach((x) => {
-    currentPrice.value += x.currentResourcePrice;
+    currentResourcePrice.value += x.currentResourcePrice;
   });
 
   props.productInfo.resourcesContent = resourceContentValue;
@@ -248,7 +273,7 @@ const handleSubmit = async () => {
   if (!(await isFormValid())) return;
   if (!isResourceSelected()) return;
 
-  props.productInfo.additionalPrice = totalPrice.value
+  props.productInfo.additionalPrice = totalPrice.value;
   let productResponse = await props.submitReqFunction();
   await submitPicture(productResponse);
 
