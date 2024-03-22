@@ -32,14 +32,12 @@ const fillProductForm = async (
   catalogName,
   description,
   authors,
-  salePrice,
   barcode
 ) => {
   const {
     catalogNameButton,
     descriptionButton,
     authorsComboBox,
-    salePriceButton,
     barcodeButton,
   } = myContext;
 
@@ -53,13 +51,12 @@ const fillProductForm = async (
       .first()
       .click();
   }
-  await salePriceButton.fill(salePrice);
   await barcodeButton.fill(barcode);
 };
 
 const fillResourceTableInformation = async (page, resourceName, carat) => {
   await page
-    .getByRole("row", { name: `${resourceName} Carat 0` })
+    .getByRole("row", { name: `${resourceName} Carat 20` })
     .getByLabel("", { exact: true })
     .fill(carat);
 };
@@ -77,7 +74,7 @@ test.beforeEach(async ({ page }) => {
     .locator("div")
     .filter({ hasText: "AuthorsAuthors" })
     .locator("div");
-  myContext.salePriceButton = page.getByLabel("Sale price");
+  myContext.additionalPrice = page.getByLabel("Additional price");
   myContext.barcodeButton = page.getByLabel("Barcode...");
   myContext.resourcesButton = page.getByRole("button", { name: "Resources" });
   myContext.productsButton = page.getByRole("button", { name: "Products" });
@@ -102,7 +99,7 @@ test("Acces a product creation page", async ({ page }) => {
     catalogNameButton,
     descriptionButton,
     authorsComboBox,
-    salePriceButton,
+    additionalPrice,
     barcodeButton,
     resourcesButton,
     productsButton,
@@ -116,7 +113,7 @@ test("Acces a product creation page", async ({ page }) => {
   await expect(catalogNameButton).toBeVisible();
   await expect(descriptionButton).toBeVisible();
   await expect(authorsComboBox).toBeVisible();
-  await expect(salePriceButton).toBeVisible();
+  await expect(additionalPrice).not.toBeVisible();
   await expect(barcodeButton).toBeVisible();
   await expect(resourcesButton).toBeVisible();
   await expect(productsButton).toBeVisible();
@@ -165,7 +162,7 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
 });
 
 test("Create a product is successful", async ({ page }) => {
-  const { submitButton } = myContext;
+  const { submitButton, additionalPrice } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = [
@@ -190,9 +187,10 @@ test("Create a product is successful", async ({ page }) => {
 
   await fillResourceTableInformation(page, "Element", "1");
   await fillResourceTableInformation(page, "SemiPreciousStone", "1");
-  await fillResourceTableInformation(page, "Metal", "1");
-
   await page.getByRole("button", { name: "Save" }).click();
+
+  await additionalPrice.fill('2')
+
   await submitButton.click();
   await expect(page.getByText("Successfully added product!")).toBeVisible();
   await page.getByLabel("Search").fill(productName);
@@ -202,8 +200,8 @@ test("Create a product is successful", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("Create a product with a product is successful", async ({ page }) => {
-  const { submitButton } = myContext;
+test("Create a product with a product is successful and negative additional price", async ({ page }) => {
+  const { additionalPrice, submitButton } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = [
@@ -228,7 +226,6 @@ test("Create a product with a product is successful", async ({ page }) => {
 
   await fillResourceTableInformation(page, "Element", "1");
   await fillResourceTableInformation(page, "SemiPreciousStone", "1");
-  await fillResourceTableInformation(page, "Metal", "1");
 
   await page.getByRole("button", { name: "Save" }).click();
   await page.getByRole("button", { name: "Products" }).click();
@@ -238,6 +235,8 @@ test("Create a product with a product is successful", async ({ page }) => {
     .innerText();
   await page.locator("tr:nth-child(1) > td").first().click();
   await page.getByRole("button", { name: "Save" }).click();
+  await additionalPrice.fill('-2')
+
 
   await submitButton.click();
   await expect(page.getByText("Successfully added product!")).toBeVisible();
@@ -264,7 +263,6 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
     "testUser1 testtestUser1@gmail.com",
     "testUser2 testtestUser2@gmail.com",
   ];
-  const salePrice = getRandomNumberAsString();
   const barcode = `асд${getRandomNumber()}asdf`;
 
   await page.getByRole("link", { name: "Create Product" }).click();
@@ -274,7 +272,6 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
     productName,
     productDescription,
     authors,
-    salePrice,
     barcode
   );
 
