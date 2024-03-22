@@ -92,7 +92,7 @@
           v-model="props.productInfo.additionalPrice"
           label="Additional price"
           prefix="€"
-          :rules="useNumberFieldRules()"
+          :rules="useAllNumberFieldRules()"
           required
         ></v-text-field>
 
@@ -138,7 +138,7 @@ import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import {
   useTextFieldLargeRules,
-  useNumberFieldRules,
+  useAllNumberFieldRules,
   useTextAreaFieldRules,
   validateAuthors,
   useBarCodeValidationRules,
