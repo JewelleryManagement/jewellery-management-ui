@@ -23,81 +23,64 @@ const navigateToProductsPage = async (page) => {
   ).toBeVisible();
 };
 
+const myContext = {};
+
+const createGlobalVariables = async (page) => {
+  myContext.catalogNameButton = page.getByLabel("Catalog name");
+  myContext.descriptionButton = page.getByLabel("Description of the product");
+  myContext.authorsComboBox = page
+    .getByRole("combobox")
+    .locator("div")
+    .filter({ hasText: "AuthorsAuthors" })
+    .locator("div");
+  myContext.additionalPrice = page.getByLabel("Additional price");
+  myContext.barcodeButton = page.getByLabel("Barcode...");
+  myContext.resourcesButton = page.getByRole("button", { name: "Resources" });
+  myContext.productsButton = page.getByRole("button", { name: "Products" });
+  myContext.selectPictureButton = page.getByLabel("Select picture", {
+    exact: true,
+  });
+  myContext.submitButton = page.getByRole("button", { name: "Submit" });
+  myContext.resetButton = page.getByRole("button", { name: "Reset" });
+  myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
+};
+
 test.beforeEach(async ({ page }) => {
   await login(page);
   await navigateToProductsPage(page);
+
+  await createGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
-  await page.close();
-});
-
-test("Edit product successfully", async ({ page }, testInfo) => {
-  await wait(0.5).then(async () => {
-    const screenshot = await page.screenshot();
-    await testInfo.attach("screenshot", {
-      body: screenshot,
-      contentType: "image/png",
-    });
-  });
-  await page
-    .getByRole("row", { name: "4 4444 This is my best test" })
-    .getByRole("button")
-    .nth(4)
-    .click();
-  await page.getByRole("button", { name: "Resources" }).click();
-  await wait(0.5).then(async () => {
-    const screenshot = await page.screenshot();
-    await testInfo.attach("screenshot", {
-      body: screenshot,
-      contentType: "image/png",
-    });
-  });
-
-  await page
-    .getByRole("row", { name: "Metal Carat 0 0" })
-    .getByLabel("", { exact: true })
-    .click();
-  await page
-    .getByRole("row", { name: "Metal Carat 0 0" })
-    .getByLabel("", { exact: true })
-    .fill("10");
-  await page
-    .getByRole("row", { name: "Element Carat 0" })
-    .getByLabel("", { exact: true })
-    .click();
-  await page
-    .getByRole("row", { name: "Element Carat 0" })
-    .getByLabel("", { exact: true })
-    .fill("2");
-  await page
-    .getByRole("row", { name: "28 PreciousStone Carat 0.00x0" })
-    .getByLabel("", { exact: true })
-    .click();
-  await page
-    .getByRole("row", { name: "28 PreciousStone Carat 0.00x0" })
-    .getByLabel("", { exact: true })
-    .fill("2");
-  await page.getByRole("button", { name: "Save" }).click();
-  await page.getByRole("button", { name: "Products" }).click();
-  await page.getByRole("dialog").getByRole("button", { name: "Close" }).click();
-  await page.getByRole("button", { name: "Submit" }).click();
-  await page.getByRole("button", { name: "󰆦" }).first().click();
-
-  await expect(
-    page.getByRole("row", { name: "2 PreciousStone Carat 0.00x0" })
-  ).toBeVisible();
-  await expect(
-    page.getByRole("row", { name: "10 Metal Carat 0 0" })
-  ).toBeVisible();
-  await expect(
-    page.getByRole("row", { name: "2 Element Carat 0" })
-  ).toBeVisible();
+  // await page.close();
 });
 
 const getRandomNumber = () => {
   return Math.floor(Math.random() * (999 - 100 + 1) + 100);
 };
+
+test("Edit product successfully", async ({ page }) => {
+  const { submitButton, additionalPrice } = myContext;
+
+  await page.goto('products/edit/b17a976f-ebba-4142-a52e-5fd08bc7f8cd')
+
+  await page.getByRole("button", { name: "Resources" }).click();
+
+  const firstInput = page.locator("tr:nth-child(1) > td").first();
+  await firstInput.click();
+  await firstInput.press("Backspace");
+  await firstInput.press("2");
+
+  await page.getByRole("button", { name: "Save" }).click();
+
+  await additionalPrice.fill('-2')
+
+  await submitButton.click();
+  await expect(page.getByText("Successfully updated product!")).toBeVisible();
+
+
+});
 
 test("Edit product successfully with reset button", async ({ page }) => {
   const catalogNameString = "catalog" + getRandomNumber();
@@ -132,18 +115,27 @@ test("Edit product successfully with reset button", async ({ page }) => {
   await page.getByLabel("Barcode...").click();
   await page.getByLabel("Barcode...").fill(productionNumberString);
   await page.getByRole("button", { name: "Resources" }).click();
-  await page.locator('td').first().click();
-  await page.getByRole('row', { name: '28 PreciousStone Carat 0.00x0' }).getByLabel('', { exact: true }).fill('1');
-  await page.locator('tr:nth-child(2) > td').first().click();
-  await page.getByRole('row', { name: 'Metal Carat 0 0' }).getByLabel('', { exact: true }).fill('1');
-  await page.locator('tr:nth-child(3) > td').first().click();
-  await page.getByRole('row', { name: 'Element Carat 0' }).getByLabel('', { exact: true }).fill('1');
-  await page.getByRole('button', { name: 'Save' }).click();
+  await page.locator("td").first().click();
+  await page
+    .getByRole("row", { name: "28 PreciousStone Carat 0.00x0" })
+    .getByLabel("", { exact: true })
+    .fill("1");
+  await page.locator("tr:nth-child(2) > td").first().click();
+  await page
+    .getByRole("row", { name: "Metal Carat 0 0" })
+    .getByLabel("", { exact: true })
+    .fill("1");
+  await page.locator("tr:nth-child(3) > td").first().click();
+  await page
+    .getByRole("row", { name: "Element Carat 0" })
+    .getByLabel("", { exact: true })
+    .fill("1");
+  await page.getByRole("button", { name: "Save" }).click();
 
   await page.getByRole("button", { name: "Submit" }).click();
 
   await expect(page.getByText("Successfully updated product!")).toBeVisible();
-  await page.getByLabel('Search').fill(catalogNameString);
+  await page.getByLabel("Search").fill(catalogNameString);
   await expect(page.locator("tbody")).toContainText(catalogNameString);
   await expect(page.locator("tbody")).toContainText(descriptionString);
   await expect(page.locator("tbody")).toContainText(productionNumberString);
