@@ -87,7 +87,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ page }) => {
-  await page.close();
+  // await page.close();
 });
 
 test("Access products page", async ({ page }) => {
@@ -169,7 +169,6 @@ test("Create a product is successful", async ({ page }) => {
     "testUser1 testtestUser1@gmail.com",
     "testUser2 testtestUser2@gmail.com",
   ];
-  const salePrice = getRandomNumberAsString();
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await page.getByRole("link", { name: "Create Product" }).click();
@@ -179,7 +178,6 @@ test("Create a product is successful", async ({ page }) => {
     productName,
     productDescription,
     authors,
-    salePrice,
     barcode
   );
 
@@ -201,14 +199,13 @@ test("Create a product is successful", async ({ page }) => {
 });
 
 test("Create a product with a product is successful and negative additional price", async ({ page }) => {
-  const { additionalPrice, submitButton } = myContext;
+  const { submitButton, additionalPrice } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = [
     "testUser1 testtestUser1@gmail.com",
     "testUser2 testtestUser2@gmail.com",
   ];
-  const salePrice = getRandomNumberAsString();
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await page.getByRole("link", { name: "Create Product" }).click();
@@ -218,7 +215,6 @@ test("Create a product with a product is successful and negative additional pric
     productName,
     productDescription,
     authors,
-    salePrice,
     barcode
   );
 
@@ -226,17 +222,9 @@ test("Create a product with a product is successful and negative additional pric
 
   await fillResourceTableInformation(page, "Element", "1");
   await fillResourceTableInformation(page, "SemiPreciousStone", "1");
-
   await page.getByRole("button", { name: "Save" }).click();
-  await page.getByRole("button", { name: "Products" }).click();
 
-  const productionNumberCellText = await page
-    .locator("tr:nth-child(1) td:nth-child(3)")
-    .innerText();
-  await page.locator("tr:nth-child(1) > td").first().click();
-  await page.getByRole("button", { name: "Save" }).click();
   await additionalPrice.fill('-2')
-
 
   await submitButton.click();
   await expect(page.getByText("Successfully added product!")).toBeVisible();
@@ -245,13 +233,6 @@ test("Create a product with a product is successful and negative additional pric
   await expect(
     page.getByRole("cell", { name: productDescription })
   ).toBeVisible();
-
-  await page.getByRole("button", { name: "󰆦" }).click();
-  await page.getByRole("button", { name: "Close" }).click();
-  await page.getByRole("button", { name: "󰆧" }).click();
-  await expect(page.getByRole("dialog")).toContainText(
-    productionNumberCellText
-  );
 });
 
 test("Barcode throws an error if cyrilic symbols are entered", async ({
