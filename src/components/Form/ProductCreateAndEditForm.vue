@@ -273,7 +273,6 @@ const handleSubmit = async () => {
   if (!(await isFormValid())) return;
   if (!isResourceSelected()) return;
 
-  props.productInfo.additionalPrice = totalPrice.value;
   let productResponse = await props.submitReqFunction();
   await submitPicture(productResponse);
 
