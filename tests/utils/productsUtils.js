@@ -42,3 +42,13 @@ export const fillProductForm = async (
   }
   await barcodeButton.fill(barcode);
 };
+
+
+export const fillTableCellAndPress = async (page, numRows, cellIndex, key) => {
+  for (let i = 1; i <= numRows; i++) {
+    const cell = page.locator(`tr:nth-child(${i}) > td:nth-child(${cellIndex})`).first();
+    await cell.click();
+    await cell.press("Backspace");
+    await cell.press(key);
+  }
+};

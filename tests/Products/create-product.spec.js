@@ -3,87 +3,13 @@ import {
   getRandomNumber,
   getRandomNumberAsString,
 } from "tests/utils/getRandomNumberOrString";
-
-const wait = (seconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
-
-const login = async (page) => {
-  await page.goto("./");
-  await page.getByPlaceholder("Email Address").fill("root@gmail.com");
-  await page.getByPlaceholder("Password").fill("p@s5W07d");
-  await page.getByRole("button", { name: "Log in" }).click();
-  await wait(3);
-};
-
-const navigateToProductsPage = async (page) => {
-  await page.getByRole("link", { name: "Products" }).click();
-  await expect(page).toHaveURL("/products");
-  await expect(page.getByText("Products Table")).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Create Product" })
-  ).toBeVisible();
-};
-
-const fillProductForm = async (
-  page,
-  catalogName,
-  description,
-  authors,
-  barcode
-) => {
-  const {
-    catalogNameButton,
-    descriptionButton,
-    authorsComboBox,
-    barcodeButton,
-  } = myContext;
-
-  await catalogNameButton.fill(catalogName);
-  await descriptionButton.fill(description);
-  await authorsComboBox.click();
-  for (const author of authors) {
-    await page
-      .locator("div")
-      .filter({ hasText: new RegExp(`^${author}$`) })
-      .first()
-      .click();
-  }
-  await barcodeButton.fill(barcode);
-};
-
-const fillResourceTableInformation = async (page, resourceName, carat) => {
-  await page
-    .getByRole("row", { name: `${resourceName} Carat 20` })
-    .getByLabel("", { exact: true })
-    .fill(carat);
-};
-
-const myContext = {};
+import { appLogin, navigateToPage } from "tests/utils/functions";
+import { createGlobalVariables, myContext, fillProductForm, fillTableCellAndPress } from "tests/utils/productsUtils";
 
 test.beforeEach(async ({ page }) => {
-  await login(page);
-  await navigateToProductsPage(page);
-
-  myContext.catalogNameButton = page.getByLabel("Catalog name");
-  myContext.descriptionButton = page.getByLabel("Description of the product");
-  myContext.authorsComboBox = page
-    .getByRole("combobox")
-    .locator("div")
-    .filter({ hasText: "AuthorsAuthors" })
-    .locator("div");
-  myContext.additionalPrice = page.getByLabel("Additional price");
-  myContext.barcodeButton = page.getByLabel("Barcode...");
-  myContext.resourcesButton = page.getByRole("button", { name: "Resources" });
-  myContext.productsButton = page.getByRole("button", { name: "Products" });
-  myContext.selectPictureButton = page.getByLabel("Select picture", {
-    exact: true,
-  });
-  myContext.submitButton = page.getByRole("button", { name: "Submit" });
-  myContext.resetButton = page.getByRole("button", { name: "Reset" });
-  myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
+  await appLogin(page);
+  await navigateToPage(page, expect, 'products');
+  await createGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -91,7 +17,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test("Access products page", async ({ page }) => {
-  await navigateToProductsPage(page);
+  await navigateToPage(page, expect, 'products');
 });
 
 test("Acces a product creation page", async ({ page }) => {
@@ -183,8 +109,8 @@ test("Create a product is successful", async ({ page }) => {
 
   await page.getByRole("button", { name: "Resources" }).click();
 
-  await fillResourceTableInformation(page, "Element", "1");
-  await fillResourceTableInformation(page, "SemiPreciousStone", "1");
+  await fillTableCellAndPress(page, 2, 1, "2");
+
   await page.getByRole("button", { name: "Save" }).click();
 
   await additionalPrice.fill('2')
@@ -219,9 +145,8 @@ test("Create a product with a product is successful and negative additional pric
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
+  await fillTableCellAndPress(page, 2, 1, "2");
 
-  await fillResourceTableInformation(page, "Element", "1");
-  await fillResourceTableInformation(page, "SemiPreciousStone", "1");
   await page.getByRole("button", { name: "Save" }).click();
 
   await additionalPrice.fill('-2')

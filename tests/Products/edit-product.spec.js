@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { appLogin, navigateToPage } from "tests/utils/functions";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
-import { createGlobalVariables, myContext, fillProductForm } from "tests/utils/productsUtils";
+import { createGlobalVariables, myContext, fillProductForm, fillTableCellAndPress } from "tests/utils/productsUtils";
 
 const PRODUCT_ID = "b17a976f-ebba-4142-a52e-5fd08bc7f8cd";
 
@@ -23,10 +23,7 @@ test("Edit product and update additional price successfully", async ({ page }) =
 
   await page.getByRole("button", { name: "Resources" }).click();
 
-  const firstInput = page.locator("tr:nth-child(1) > td").first();
-  await firstInput.click();
-  await firstInput.press("Backspace");
-  await firstInput.press("2");
+  await fillTableCellAndPress(page, 1, 1, "2");
 
   await page.getByRole("button", { name: "Save" }).click();
 
@@ -58,11 +55,7 @@ test("Edit product and update additional price successfully with reset button", 
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
-
-  const firstInput = page.locator("tr:nth-child(1) > td").first();
-  await firstInput.click();
-  await firstInput.press("Backspace");
-  await firstInput.press("2");
+  await fillTableCellAndPress(page, 1, 1, "2");
 
   await page.getByRole("button", { name: "Save" }).click();
   await additionalPrice.fill('-2');
