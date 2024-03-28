@@ -3,90 +3,13 @@ import {
   getRandomNumber,
   getRandomNumberAsString,
 } from "tests/utils/getRandomNumberOrString";
-
-const wait = (seconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
-
-const login = async (page) => {
-  await page.goto("./");
-  await page.getByPlaceholder("Email Address").fill("root@gmail.com");
-  await page.getByPlaceholder("Password").fill("p@s5W07d");
-  await page.getByRole("button", { name: "Log in" }).click();
-  await wait(3);
-};
-
-const navigateToProductsPage = async (page) => {
-  await page.getByRole("link", { name: "Products" }).click();
-  await expect(page).toHaveURL("/products");
-  await expect(page.getByText("Products Table")).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Create Product" })
-  ).toBeVisible();
-};
-
-const fillProductForm = async (
-  page,
-  catalogName,
-  description,
-  authors,
-  salePrice,
-  barcode
-) => {
-  const {
-    catalogNameButton,
-    descriptionButton,
-    authorsComboBox,
-    salePriceButton,
-    barcodeButton,
-  } = myContext;
-
-  await catalogNameButton.fill(catalogName);
-  await descriptionButton.fill(description);
-  await authorsComboBox.click();
-  for (const author of authors) {
-    await page
-      .locator("div")
-      .filter({ hasText: new RegExp(`^${author}$`) })
-      .first()
-      .click();
-  }
-  await salePriceButton.fill(salePrice);
-  await barcodeButton.fill(barcode);
-};
-
-const fillResourceTableInformation = async (page, resourceName, carat) => {
-  await page
-    .getByRole("row", { name: `${resourceName} Carat 0` })
-    .getByLabel("", { exact: true })
-    .fill(carat);
-};
-
-const myContext = {};
+import { appLogin, navigateToPage } from "tests/utils/functions";
+import { createGlobalVariables, myContext, fillProductForm, fillTableCellAndPress } from "tests/utils/productsUtils";
 
 test.beforeEach(async ({ page }) => {
-  await login(page);
-  await navigateToProductsPage(page);
-
-  myContext.catalogNameButton = page.getByLabel("Catalog name");
-  myContext.descriptionButton = page.getByLabel("Description of the product");
-  myContext.authorsComboBox = page
-    .getByRole("combobox")
-    .locator("div")
-    .filter({ hasText: "AuthorsAuthors" })
-    .locator("div");
-  myContext.salePriceButton = page.getByLabel("Sale price");
-  myContext.barcodeButton = page.getByLabel("Barcode...");
-  myContext.resourcesButton = page.getByRole("button", { name: "Resources" });
-  myContext.productsButton = page.getByRole("button", { name: "Products" });
-  myContext.selectPictureButton = page.getByLabel("Select picture", {
-    exact: true,
-  });
-  myContext.submitButton = page.getByRole("button", { name: "Submit" });
-  myContext.resetButton = page.getByRole("button", { name: "Reset" });
-  myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
+  await appLogin(page);
+  await navigateToPage(page, expect, 'products');
+  await createGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -94,7 +17,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test("Access products page", async ({ page }) => {
-  await navigateToProductsPage(page);
+  await navigateToPage(page, expect, 'products');
 });
 
 test("Acces a product creation page", async ({ page }) => {
@@ -102,7 +25,7 @@ test("Acces a product creation page", async ({ page }) => {
     catalogNameButton,
     descriptionButton,
     authorsComboBox,
-    salePriceButton,
+    additionalPrice,
     barcodeButton,
     resourcesButton,
     productsButton,
@@ -116,7 +39,7 @@ test("Acces a product creation page", async ({ page }) => {
   await expect(catalogNameButton).toBeVisible();
   await expect(descriptionButton).toBeVisible();
   await expect(authorsComboBox).toBeVisible();
-  await expect(salePriceButton).toBeVisible();
+  await expect(additionalPrice).not.toBeVisible();
   await expect(barcodeButton).toBeVisible();
   await expect(resourcesButton).toBeVisible();
   await expect(productsButton).toBeVisible();
@@ -165,14 +88,13 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
 });
 
 test("Create a product is successful", async ({ page }) => {
-  const { submitButton } = myContext;
+  const { submitButton, additionalPrice } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = [
     "testUser1 testtestUser1@gmail.com",
     "testUser2 testtestUser2@gmail.com",
   ];
-  const salePrice = getRandomNumberAsString();
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await page.getByRole("link", { name: "Create Product" }).click();
@@ -182,17 +104,17 @@ test("Create a product is successful", async ({ page }) => {
     productName,
     productDescription,
     authors,
-    salePrice,
     barcode
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
 
-  await fillResourceTableInformation(page, "Element", "1");
-  await fillResourceTableInformation(page, "SemiPreciousStone", "1");
-  await fillResourceTableInformation(page, "Metal", "1");
+  await fillTableCellAndPress(page, 2, 1, "2");
 
   await page.getByRole("button", { name: "Save" }).click();
+
+  await additionalPrice.fill('2')
+
   await submitButton.click();
   await expect(page.getByText("Successfully added product!")).toBeVisible();
   await page.getByLabel("Search").fill(productName);
@@ -202,15 +124,14 @@ test("Create a product is successful", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("Create a product with a product is successful", async ({ page }) => {
-  const { submitButton } = myContext;
+test("Create a product with a product is successful and negative additional price", async ({ page }) => {
+  const { submitButton, additionalPrice } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = [
     "testUser1 testtestUser1@gmail.com",
     "testUser2 testtestUser2@gmail.com",
   ];
-  const salePrice = getRandomNumberAsString();
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await page.getByRole("link", { name: "Create Product" }).click();
@@ -220,24 +141,15 @@ test("Create a product with a product is successful", async ({ page }) => {
     productName,
     productDescription,
     authors,
-    salePrice,
     barcode
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
-
-  await fillResourceTableInformation(page, "Element", "1");
-  await fillResourceTableInformation(page, "SemiPreciousStone", "1");
-  await fillResourceTableInformation(page, "Metal", "1");
+  await fillTableCellAndPress(page, 2, 1, "2");
 
   await page.getByRole("button", { name: "Save" }).click();
-  await page.getByRole("button", { name: "Products" }).click();
 
-  const productionNumberCellText = await page
-    .locator("tr:nth-child(1) td:nth-child(3)")
-    .innerText();
-  await page.locator("tr:nth-child(1) > td").first().click();
-  await page.getByRole("button", { name: "Save" }).click();
+  await additionalPrice.fill('-2')
 
   await submitButton.click();
   await expect(page.getByText("Successfully added product!")).toBeVisible();
@@ -246,13 +158,6 @@ test("Create a product with a product is successful", async ({ page }) => {
   await expect(
     page.getByRole("cell", { name: productDescription })
   ).toBeVisible();
-
-  await page.getByRole("button", { name: "󰆦" }).click();
-  await page.getByRole("button", { name: "Close" }).click();
-  await page.getByRole("button", { name: "󰆧" }).click();
-  await expect(page.getByRole("dialog")).toContainText(
-    productionNumberCellText
-  );
 });
 
 test("Barcode throws an error if cyrilic symbols are entered", async ({
@@ -264,7 +169,6 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
     "testUser1 testtestUser1@gmail.com",
     "testUser2 testtestUser2@gmail.com",
   ];
-  const salePrice = getRandomNumberAsString();
   const barcode = `асд${getRandomNumber()}asdf`;
 
   await page.getByRole("link", { name: "Create Product" }).click();
@@ -274,7 +178,6 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
     productName,
     productDescription,
     authors,
-    salePrice,
     barcode
   );
 

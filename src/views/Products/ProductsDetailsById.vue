@@ -46,11 +46,25 @@
           />
         </div>
 
-        <strong>Part of Sale: </strong>
-        <part-of-product
-          :partOfProduct="currentProductInfo.partOfSale"
-          routerPreFix="sales"
-        />
+        <div>
+          <strong>Part of Sale: </strong>
+          <part-of-product
+            :partOfProduct="currentProductInfo.partOfSale"
+            routerPreFix="sales"
+          />
+        </div>
+
+        <div>
+          <strong>Additional Price: </strong>
+          <span>€{{ (currentProductInfo.additionalPrice).toFixed(2) }}</span>
+        </div>
+
+        <div>
+          <strong>Sale Price: </strong>
+          <span>€{{ (currentProductInfo.salePrice).toFixed(2) }}</span>
+        </div>
+
+
         <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
         <picture-button @picture-selected="handlePictureSelected" />

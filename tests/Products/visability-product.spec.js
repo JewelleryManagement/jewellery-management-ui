@@ -1,31 +1,9 @@
 import { test, expect } from "@playwright/test";
-
-const wait = (seconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
-
-const login = async (page) => {
-  await page.goto("./");
-  await page.getByPlaceholder("Email Address").fill("root@gmail.com");
-  await page.getByPlaceholder("Password").fill("p@s5W07d");
-  await page.getByRole("button", { name: "Log in" }).click();
-  await wait(3);
-};
-
-const navigateToProductsPage = async (page) => {
-  await page.getByRole("link", { name: "Products" }).click();
-  await expect(page).toHaveURL("/products");
-  await expect(page.getByText("Products Table")).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Create Product" })
-  ).toBeVisible();
-};
+import { appLogin, navigateToPage } from "tests/utils/functions";
 
 test.beforeEach(async ({ page }) => {
-  await login(page);
-  await navigateToProductsPage(page);
+  await appLogin(page);
+  await navigateToPage(page, expect, 'products');
 });
 
 test.afterEach(async ({ page }) => {

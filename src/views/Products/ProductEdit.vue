@@ -19,7 +19,7 @@ import {
   prepareProductsContent,
   prepareResourcesContent,
 } from "@/utils/data-formatter";
-import { ref, computed, inject, onMounted } from "vue";
+import { ref, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
@@ -29,7 +29,6 @@ const store = useStore();
 const route = useRoute();
 const productId = route.params.productId;
 const snackbarProvider = inject("snackbarProvider");
-const clearTable = ref(false);
 
 const productInfo = ref(store.getters["products/getProductById"](productId));
 const pageTitle = ref(route.meta.title);

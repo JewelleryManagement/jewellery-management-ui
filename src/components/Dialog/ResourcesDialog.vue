@@ -73,6 +73,7 @@ const [currentInputQuantities, savedQuantitiesInProduct] = [
   ref(props.inputResources || []),
   ref([]),
 ];
+
 const tableColumns = [
   computed(() => store.state.resources.tableColumnAddQuantity).value,
   computed(() => store.state.resources.tableColumnQuantity).value,
@@ -135,11 +136,19 @@ watch(
 const saveTableValues = () => {
   if (areQuantitiesValid()) {
     savedQuantitiesInProduct.value = [];
+
     const currentInputFields = Object.entries(currentInputQuantities.value);
     currentInputFields.forEach(([resourceId, quantity]) => {
+      let currentResourcePrice =
+        Number(
+          resourcesInUser.value.find((resource) => resource.id === resourceId)
+            .pricePerQuantity
+        ) * Number(quantity);
+
       savedQuantitiesInProduct.value.push({
         id: resourceId,
         quantity: Number(quantity),
+        currentResourcePrice
       });
     });
     emits("save-resources-dialog", savedQuantitiesInProduct.value);

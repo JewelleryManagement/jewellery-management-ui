@@ -20,12 +20,11 @@ import {
   prepareProductsContent,
   prepareResourcesContent,
 } from "@/utils/data-formatter";
-import { ref, computed, inject, onMounted } from "vue";
+import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 
-const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
 

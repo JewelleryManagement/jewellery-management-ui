@@ -36,7 +36,7 @@ export function formatDateForInput(dateString) {
 
 export function prepareResourcesContent(resourcesContent = []) {
   return resourcesContent.map((resource) => ({
-    id: resource.resource ? resource.resource.id : resource.id,
+    resourceId: resource.resource ? resource.resource.id : resource.id,
     quantity: resource.quantity,
   }));
 }

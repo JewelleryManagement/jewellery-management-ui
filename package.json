@@ -6,8 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "docker compose -f docker_tests/docker-compose.yml up -d && sleep 5 && npx playwright test",
-    "test-env-down": "docker compose -f docker_tests/docker-compose.yml down"
+    "test-remove-build": "rm -r docker_tests/app",
+    "test-create-build": "cp -r dist docker_tests/app",
+    "test-env-up": "docker compose -f docker_tests/docker-compose.yml up -d",
+    "test-env-down": "docker compose -f docker_tests/docker-compose.yml down",
+    "ptest": "npm run test-remove-build && npm run build && npm run test-create-build && npm run test-env-up",
+    "test": "npx playwright test"
   },
   "dependencies": {
     "@chenfengyuan/vue-barcode": "^2.0.2",
