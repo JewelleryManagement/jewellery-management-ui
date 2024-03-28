@@ -133,7 +133,6 @@ const currentProductId = route.params.productId;
 const currentProductInfo = computed(
   () => store.getters["products/allProducts"]
 ).value.find((product) => product.id === currentProductId);
-console.log(currentProductInfo);
 
 onMounted(() => {
   fetchAndUpdatePictureUrl();

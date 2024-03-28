@@ -15,7 +15,7 @@ test.afterEach(async ({ page }) => {
   await page.close();
 });
 
-test("Catalog fields are visible", async ({ page }) => {
+test("Product fields are visible", async ({ page }) => {
   await expect(page.getByText("Catalog Number")).toBeVisible();
   await expect(page.getByText("Description")).toBeVisible();
   await expect(page.getByText("Owner")).toBeVisible();

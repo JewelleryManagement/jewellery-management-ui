@@ -96,35 +96,12 @@
           required
         ></v-text-field>
 
-        <div
-          class="d-flex justify-space-between mt-4"
-          v-if="props.productInfo.resourcesContent?.length > 0"
-        >
-          <p>
-            Resources selected:
-            {{ props.productInfo.resourcesContent?.length || 0 }}
-          </p>
-          <p>Price: ${{ currentResourcePrice.toFixed(2) }}</p>
-        </div>
-
-        <div
-          class="d-flex justify-space-between"
-          v-if="props.productInfo.productsContent?.length > 0"
-        >
-          <p>
-            Products selected:
-            {{ props.productInfo.productsContent?.length || 0 }}
-          </p>
-
-          <p>Price: ${{ currentProductPrice.toFixed(2) }}</p>
-        </div>
-
-        <div
-          class="d-flex justify-end mt-2"
-          v-if="props.productInfo.resourcesContent?.length > 0"
-        >
-          <p>Total Price: ${{ totalPrice.toFixed(2) }}</p>
-        </div>
+        <SectionInfoPanel
+          :productInfo="props.productInfo"
+          :currentResourcePrice="currentResourcePrice"
+          :currentProductPrice="currentProductPrice"
+          :totalPrice="totalPrice"
+        />
       </div>
       <picture-button @picture-selected="handlePictureSelected" />
       <form-buttons @reset-form="resetForm" />
@@ -136,6 +113,8 @@
 import { ref, computed, onMounted, inject } from "vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
+import SectionInfoPanel from "@/components/SectionInfoPanel.vue";
+
 import {
   useTextFieldLargeRules,
   useAllNumberFieldRules,
@@ -181,7 +160,7 @@ onMounted(async () => {
   isResourcesForUserFetched.value = false;
   await fetchResourcesForUser();
   isResourcesForUserFetched.value = true;
-  calculatePricesInEditView()
+  calculatePricesInEditView();
 });
 
 const calculatePricesInEditView = async () => {

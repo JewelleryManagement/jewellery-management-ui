@@ -25,7 +25,6 @@ import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
 
-const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
 
@@ -50,7 +49,6 @@ const createProduct = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {
-    console.log(error);
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
   return false;
