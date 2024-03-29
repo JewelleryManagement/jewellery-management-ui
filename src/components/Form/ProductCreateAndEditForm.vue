@@ -96,7 +96,7 @@
           required
         ></v-text-field>
 
-        <SectionInfoPanel
+        <ProductContentsInfoPanel
           :productInfo="props.productInfo"
           :currentResourcePrice="currentResourcePrice"
           :currentProductPrice="currentProductPrice"
@@ -113,7 +113,7 @@
 import { ref, computed, onMounted, inject } from "vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
-import SectionInfoPanel from "@/components/SectionInfoPanel.vue";
+import ProductContentsInfoPanel from "@/components/ProductContentsInfoPanel.vue";
 
 import {
   useTextFieldLargeRules,
