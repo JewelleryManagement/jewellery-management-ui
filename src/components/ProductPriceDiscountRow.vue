@@ -4,7 +4,9 @@
       <v-text-field
         prefix="€"
         :label="`Price for ${product.catalogNumber}`"
-        v-model="product.salePrice"
+        v-model="formattedSalePrice"
+        readonly
+        step="0.01"
       ></v-text-field>
     </v-col>
     <v-divider vertical style="height: 3.5rem"></v-divider>
@@ -27,5 +29,9 @@ const formattedDiscount = computed({
   set: (value) => {
     props.product.discount = value;
   },
+});
+
+const formattedSalePrice = computed({
+  get: () => (props.product.salePrice).toFixed(2),
 });
 </script>

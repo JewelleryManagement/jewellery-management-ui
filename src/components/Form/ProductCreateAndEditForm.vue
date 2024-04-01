@@ -34,14 +34,6 @@
       </v-autocomplete>
 
       <v-text-field
-        class="mt-4"
-        v-model="props.productInfo.salePrice"
-        label="Sale price"
-        :rules="useNumberFieldRules()"
-        required
-      ></v-text-field>
-
-      <v-text-field
         label="Barcode..."
         v-model="props.productInfo.productionNumber"
         :rules="[
@@ -94,17 +86,22 @@
           </v-btn>
         </div>
 
-        <div class="d-flex flex-column mt-4">
-          <p v-if="props.productInfo.resourcesContent?.length > 0">
-            Resources selected:
-            {{ props.productInfo.resourcesContent?.length || 0 }}
-          </p>
+        <v-text-field
+          v-if="props.productInfo.resourcesContent?.length > 0"
+          class="mt-4"
+          v-model="props.productInfo.additionalPrice"
+          label="Additional price"
+          prefix="€"
+          :rules="useAllNumberFieldRules()"
+          required
+        ></v-text-field>
 
-          <p v-if="props.productInfo.productsContent?.length > 0">
-            Products selected:
-            {{ props.productInfo.productsContent?.length || 0 }}
-          </p>
-        </div>
+        <ProductContentsInfoPanel
+          :productInfo="props.productInfo"
+          :currentResourcePrice="currentResourcePrice"
+          :currentProductPrice="currentProductPrice"
+          :totalPrice="totalPrice"
+        />
       </div>
       <picture-button @picture-selected="handlePictureSelected" />
       <form-buttons @reset-form="resetForm" />
@@ -116,9 +113,11 @@
 import { ref, computed, onMounted, inject } from "vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
+import ProductContentsInfoPanel from "@/components/ProductContentsInfoPanel.vue";
+
 import {
   useTextFieldLargeRules,
-  useNumberFieldRules,
+  useAllNumberFieldRules,
   useTextAreaFieldRules,
   validateAuthors,
   useBarCodeValidationRules,
@@ -135,6 +134,16 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
+const [currentResourcePrice, currentProductPrice, totalPrice] = [
+  ref(0),
+  ref(0),
+  computed(
+    () =>
+      Number(currentResourcePrice.value) +
+      Number(currentProductPrice.value) +
+      (Number(props.productInfo.additionalPrice) || 0)
+  ),
+];
 
 const form = ref(null);
 const selectedPicture = ref(null);
@@ -151,7 +160,32 @@ onMounted(async () => {
   isResourcesForUserFetched.value = false;
   await fetchResourcesForUser();
   isResourcesForUserFetched.value = true;
+  calculatePricesInEditView();
 });
+
+const calculatePricesInEditView = async () => {
+  if (route.path.includes("edit")) {
+    const resourceContentTotal = props.productInfo.resourcesContent.reduce(
+      (total, resource) => {
+        return (
+          total +
+          Number(resource.quantity) * Number(resource.resource.pricePerQuantity)
+        );
+      },
+      0
+    );
+
+    const productsContentTotal = props.productInfo.productsContent.reduce(
+      (total, product) => {
+        return total + Number(product.salePrice);
+      },
+      0
+    );
+
+    currentResourcePrice.value = resourceContentTotal;
+    currentProductPrice.value = productsContentTotal;
+  }
+};
 
 const fetchResourcesForUser = async () => {
   try {
@@ -168,11 +202,20 @@ const closeDialog = (payload) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
+  currentResourcePrice.value = 0;
+  resourceContentValue.forEach((x) => {
+    currentResourcePrice.value += x.currentResourcePrice;
+  });
+
   props.productInfo.resourcesContent = resourceContentValue;
   closeDialog("resources");
 };
 
 const productsTableValues = (productsContentValue) => {
+  currentProductPrice.value = 0;
+  productsContentValue.forEach((product) => {
+    currentProductPrice.value += Number(product.salePrice);
+  });
   props.productInfo.productsContent = productsContentValue;
   closeDialog("products");
 };
