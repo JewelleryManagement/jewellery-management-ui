@@ -79,7 +79,7 @@ const tableColumns = [
   computed(() => store.state.resources.tableColumnQuantity).value,
   ...computed(() => store.state.resources.tableColumns).value,
 ];
-const resourcesInUser = ref(store.getters["users/getUserResources"]);
+const resourcesInUser = computed(() => store.getters["users/getUserResources"]);
 
 const copyCurrentInputQuantities = () => {
   let quantities = [];

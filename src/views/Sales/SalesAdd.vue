@@ -43,6 +43,15 @@
           >
             Products
           </v-btn>
+
+          <v-btn
+            class="mt-2"
+            color="#009688"
+            @click="toggleResourcesDialog(true)"
+            :disabled="!selectedUser"
+          >
+            Resources
+          </v-btn>
         </v-container>
 
         <v-container v-if="productsForSale.length > 0">
@@ -55,6 +64,8 @@
             :product="productsForSale[i]"
           />
         </v-container>
+
+        <p>Resouces price: € {{ currentResourcePrice.toFixed(2) }}</p>
 
         <v-container class="d-flex flex-column mt-4">
           <p>Total amount: € {{ totalAmount.toFixed(2) || 0 }}</p>
@@ -74,6 +85,15 @@
     >
     </products-dialog>
 
+    <resources-dialog
+      v-if="selectedUser"
+      v-model="resourcesDialog"
+      :inputResources="resourcesForSale"
+      @close-dialog="closeDialog"
+      @save-resources-dialog="saveResourceQuantitiesToProduct"
+      :clearTable="clearTable"
+    ></resources-dialog>
+
     <calendar-dialog
       v-model="calendarDialog"
       @close-dialog="handleCloseCalendar"
@@ -87,6 +107,8 @@ import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
 import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
 import { validateAuthors } from "@/utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
+import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
+
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref, computed, watch, inject } from "vue";
@@ -98,15 +120,20 @@ const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
 const selectedUser = ref("");
 const [productsDialog, productsForSale] = [ref(false), ref([])];
+const [resourcesDialog, resourcesForSale, currentResourcePrice] = [ref(false), ref([]), ref(0)];
 const calendarDialog = ref(false);
 const formattedDate = ref("");
+const clearTable = ref(false);
 
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
-watch(sellerName, (newValue) => {
+watch(sellerName, async (newValue) => {
   selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
+  const res = await store.dispatch("users/fetchResourcesForUser", selectedUser.value.id)
+  resourcesForSale.value = res.resourcesAndQuantities
   productsForSale.value = [];
 });
+
 
 const totalAmount = computed(() =>
   productsForSale.value.reduce(
@@ -142,15 +169,34 @@ const toggleProductsDialog = (isOpen) => {
   productsDialog.value = isOpen;
 };
 
+const toggleResourcesDialog = (isOpen) => {
+  resourcesDialog.value = isOpen;
+};
+
 function handleCloseCalendar(selectedDate) {
   calendarDialog.value = false;
   if (!selectedDate) return;
   formattedDate.value = selectedDate;
 }
 
+const closeDialog = (payload) => {
+  payload === "resources"
+    ? (resourcesDialog.value = false)
+    : (productsDialog.value = false);
+};
+
 const setProductsForSale = (selectedProductsForSale) => {
-  productsForSale.value = selectedProductsForSale
+  productsForSale.value = selectedProductsForSale;
   toggleProductsDialog(false);
+};
+
+const saveResourceQuantitiesToProduct = (resourceContentValue) => {
+  currentResourcePrice.value = 0;
+  resourceContentValue.forEach((x) => {
+    currentResourcePrice.value += x.currentResourcePrice;
+  });
+
+  closeDialog("resources");
 };
 
 const resetForm = () => {
