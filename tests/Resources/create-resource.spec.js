@@ -6,50 +6,41 @@ import {
   preciousStoneFormFields,
   semiPreciousStoneFormFields,
 } from "tests/utils/resourceTypes";
-
-const wait = (seconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
-
-const login = async (page) => {
-  await page.goto("./");
-  await page.getByPlaceholder("Email Address").fill("root@gmail.com");
-  await page.getByPlaceholder("Password").fill("p@s5W07d");
-  await page.getByRole("button", { name: "Log in" }).click();
-  await wait(3);
-};
-
-const navigateToResourcePage = async (page) => {
-  await page.getByRole("link", { name: "Resources" }).click();
-  await expect(page).toHaveURL("/resources");
-  await expect(page.getByText("All resources table")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Add resource" })).toBeVisible();
-};
+import { appLogin, navigateToPage } from "tests/utils/functions";
 
 const submitResource = async (page) => {
   await page.getByRole("button", { name: "Submit" }).click();
-  await expect(await page.getByText("Successfully created resource!")).toBeVisible();
+  await expect(
+    await page.getByText("Successfully created resource!")
+  ).toBeVisible();
   const response = await page.waitForResponse((response) => response.request());
   expect(response).toBeDefined();
   expect(response.status()).toBe(200);
   expect(response.ok()).toBeTruthy();
 };
 
+const resourceTypesData = [
+  { type: "Pearl", fields: pearlFormFields },
+  { type: "Metal", fields: metalFormFields },
+  { type: "Element", fields: elementFormFields },
+  { type: "PreciousStone", fields: preciousStoneFormFields },
+  { type: "SemiPreciousStone", fields: semiPreciousStoneFormFields },
+];
+
 test.beforeEach(async ({ page }) => {
-  await login(page);
+  await appLogin(page);
+  await navigateToPage(page, expect, 'resources')
+  await page.getByRole("link", { name: "Add resource" }).click();
 });
 
 test.afterEach(async ({ page }) => {
   await page.close();
 });
 
-test("Access resources page", async ({ page }) => {
-  await navigateToResourcePage(page);
-});
-
 test("Access resources 'Add button' and its content ", async ({ page }) => {
+  await expect(page).toHaveURL("/resources/add");
+  await expect(page.getByText("Add resource")).toBeVisible();
+
   const resourceTypes = [
     "Pearl",
     "Metal",
@@ -58,27 +49,9 @@ test("Access resources 'Add button' and its content ", async ({ page }) => {
     "SemiPreciousStone",
   ];
 
-  await navigateToResourcePage(page);
-
-  await page.getByRole("link", { name: "Add resource" }).click();
-  await expect(page).toHaveURL("/resources/add");
-  await expect(page.getByText("Add resource")).toBeVisible();
-
-  await expect(
-    page
-      .getByRole("combobox")
-      .locator("div")
-      .filter({ hasText: "Select resource type" })
-      .locator("div")
-      .first()
-  ).toBeVisible();
-  await page
-    .getByRole("combobox")
-    .locator("div")
-    .filter({ hasText: "Select resource type" })
-    .locator("div")
-    .first()
-    .click();
+  await expect(page.getByRole("combobox")).toBeVisible();
+  const combobox = page.getByRole("combobox");
+  await combobox.click();
 
   for (const resource of resourceTypes) {
     await expect(
@@ -90,81 +63,22 @@ test("Access resources 'Add button' and its content ", async ({ page }) => {
   }
 });
 
-test("Create a resource type 'Pearl'", async ({ page }) => {
-  await navigateToResourcePage(page);
-  await page.getByRole("link", { name: "Add resource" }).click();
-  await page.getByRole("combobox").click();
-  await page.getByRole("option", { name: "Pearl" }).click();
+for (const { type, fields } of resourceTypesData) {
+  test(`Create a resource type '${type}'`, async ({ page }) => {
+    await expect(page.getByRole("combobox")).toBeVisible();
+    await page.getByRole("combobox").click();
 
-  for (const field of pearlFormFields) {
-    await page
-      .getByLabel(field.label, { exact: field.exact })
-      .fill(field.value);
-  }
+    await expect(
+      page.getByRole("option", { name: `${type}`, exact: true })
+    ).toBeVisible();
+    await page.getByRole("option", { name: type, exact: true }).click();
 
-  await submitResource(page);
-});
+    for (const field of fields) {
+      await page
+        .getByLabel(field.label, { exact: field.exact })
+        .fill(field.value);
+    }
 
-test("Create a resource type 'Metal'", async ({ page }) => {
-  await navigateToResourcePage(page);
-  await page.getByRole("link", { name: "Add resource" }).click();
-  await page.getByRole("combobox").click();
-  await page.getByRole("option", { name: "Metal", exact: true }).click();
-
-  for (const field of metalFormFields) {
-    await page
-      .getByLabel(field.label, { exact: field.exact })
-      .fill(field.value);
-  }
-
-  await submitResource(page);
-});
-
-test("Create a resource type 'Element'", async ({ page }) => {
-  await navigateToResourcePage(page);
-  await page.getByRole("link", { name: "Add resource" }).click();
-  await page.getByRole("combobox").click();
-  await page.getByRole("option", { name: "Element" }).click();
-
-  for (const field of elementFormFields) {
-    await page
-      .getByLabel(field.label, { exact: field.exact })
-      .fill(field.value);
-  }
-
-  await submitResource(page);
-});
-
-test("Create a resource type 'Precious Stone'", async ({ page }) => {
-  await navigateToResourcePage(page);
-  await page.getByRole("link", { name: "Add resource" }).click();
-  await page.getByRole("combobox").click();
-  await page
-    .getByRole("option", { name: "PreciousStone", exact: true })
-    .click();
-
-  for (const field of preciousStoneFormFields) {
-    await page
-      .getByLabel(field.label, { exact: field.exact })
-      .fill(field.value);
-  }
-
-  await submitResource(page);
-});
-
-test("Create a resource type 'Semi Precious Stone'", async ({ page }) => {
-  await navigateToResourcePage(page);
-  await page.getByRole("link", { name: "Add resource" }).click();
-  await page.getByRole("combobox").click();
-  await page
-    .getByRole("option", { name: "SemiPreciousStone", exact: true })
-    .click();
-
-  for (const field of semiPreciousStoneFormFields) {
-    await page
-      .getByLabel(field.label, { exact: field.exact })
-      .fill(field.value);
-  }
-
-  await submitResource(page);
-});
+    await submitResource(page, fields);
+  });
+}

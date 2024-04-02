@@ -22,6 +22,13 @@ export function useNumberFieldRules() {
   ];
 }
 
+export function useAllNumberFieldRules() {
+  return [
+    (v) => !!v || `Input field is required`,
+    (v) => !isNaN(parseFloat(v)) || "Input must be a valid number",
+  ];
+}
+
 export function useTextAreaFieldRules() {
   return [
     (v) => !!v || `Input field is required`,
