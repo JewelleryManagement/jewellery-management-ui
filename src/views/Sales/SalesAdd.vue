@@ -23,20 +23,17 @@
         >
         </v-select>
 
-        <v-container class="d-flex flex-column">
+        <v-container class="d-flex flex-row justify-center align-center ga-1">
           <v-btn
+            size="small"
             color="green lighten-1"
             @click="() => (calendarDialog = true)"
             :disabled="!selectedUser"
             >Calendar</v-btn
           >
 
-          <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
-            Selected date: {{ formattedDate }}
-          </p>
-
           <v-btn
-            class="mt-2"
+            size="small"
             color="primary"
             @click="toggleProductsDialog(true)"
             :disabled="!selectedUser"
@@ -45,7 +42,7 @@
           </v-btn>
 
           <v-btn
-            class="mt-2"
+            size="small"
             color="#009688"
             @click="toggleResourcesDialog(true)"
             :disabled="!selectedUser"
@@ -53,6 +50,10 @@
             Resources
           </v-btn>
         </v-container>
+
+        <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
+          Selected date: {{ formattedDate }}
+        </p>
 
         <v-container v-if="productsForSale.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
@@ -65,11 +66,10 @@
           />
         </v-container>
 
-        <p>Resouces price: € {{ currentResourcePrice.toFixed(2) }}</p>
-
         <v-container class="d-flex flex-column mt-4">
-          <p>Total amount: € {{ totalAmount.toFixed(2) || 0 }}</p>
-          <p>Discounted amount: € {{ discountedAmount.toFixed(2) || 0 }}</p>
+          <p>Resouces price: € {{ currentResourcePrice.toFixed(2) }}</p>
+          <p class="mt-4">Total amount: € {{ totalAmount.toFixed(2) || 0 }}</p>
+          <p>Discounted amount: € {{ (discountedAmount + currentResourcePrice).toFixed(2) || 0 }}</p>
           <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </v-container>
 
@@ -120,7 +120,11 @@ const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
 const selectedUser = ref("");
 const [productsDialog, productsForSale] = [ref(false), ref([])];
-const [resourcesDialog, resourcesForSale, currentResourcePrice] = [ref(false), ref([]), ref(0)];
+const [resourcesDialog, resourcesForSale, currentResourcePrice] = [
+  ref(false),
+  ref([]),
+  ref(0),
+];
 const calendarDialog = ref(false);
 const formattedDate = ref("");
 const clearTable = ref(false);
@@ -129,11 +133,13 @@ const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 watch(sellerName, async (newValue) => {
   selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
-  const res = await store.dispatch("users/fetchResourcesForUser", selectedUser.value.id)
-  resourcesForSale.value = res.resourcesAndQuantities
+  const res = await store.dispatch(
+    "users/fetchResourcesForUser",
+    selectedUser.value.id
+  );
+  resourcesForSale.value = res.resourcesAndQuantities;
   productsForSale.value = [];
 });
-
 
 const totalAmount = computed(() =>
   productsForSale.value.reduce(
@@ -191,6 +197,7 @@ const setProductsForSale = (selectedProductsForSale) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
+  console.log(resourceContentValue);
   currentResourcePrice.value = 0;
   resourceContentValue.forEach((x) => {
     currentResourcePrice.value += x.currentResourcePrice;
