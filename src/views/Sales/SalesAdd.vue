@@ -55,6 +55,17 @@
           Selected date: {{ formattedDate }}
         </p>
 
+        <v-container v-if="currentResourcePrice > 0">
+          <div class="mx-auto text-center" style="font-size: 16px">
+            Currently selected resources:
+          </div>
+          <ResourcePriceDiscountRow
+            v-for="(resource, i) in resourceContent"
+            :key="resource"
+            :resource="resource"
+          />
+        </v-container>
+
         <v-container v-if="productsForSale.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected products:
@@ -69,7 +80,10 @@
         <v-container class="d-flex flex-column mt-4">
           <p>Resouces price: € {{ currentResourcePrice.toFixed(2) }}</p>
           <p class="mt-4">Total amount: € {{ totalAmount.toFixed(2) || 0 }}</p>
-          <p>Discounted amount: € {{ (discountedAmount + currentResourcePrice).toFixed(2) || 0 }}</p>
+          <p>
+            Discounted amount: €
+            {{ (discountedAmount + currentResourcePrice).toFixed(2) || 0 }}
+          </p>
           <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </v-container>
 
@@ -105,6 +119,8 @@
 import { userPropsFormatter } from "@/utils/data-formatter.js";
 import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
 import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
+import ResourcePriceDiscountRow from "@/components/ResourcePriceDiscountRow.vue";
+
 import { validateAuthors } from "@/utils/validation-rules";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
@@ -120,11 +136,12 @@ const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
 const selectedUser = ref("");
 const [productsDialog, productsForSale] = [ref(false), ref([])];
-const [resourcesDialog, resourcesForSale, currentResourcePrice] = [
-  ref(false),
-  ref([]),
-  ref(0),
-];
+const [
+  resourcesDialog,
+  resourcesForSale,
+  currentResourcePrice,
+  resourceContent,
+] = [ref(false), ref([]), ref(0), ref([])];
 const calendarDialog = ref(false);
 const formattedDate = ref("");
 const clearTable = ref(false);
@@ -197,7 +214,7 @@ const setProductsForSale = (selectedProductsForSale) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
-  console.log(resourceContentValue);
+  resourceContent.value = resourceContentValue;
   currentResourcePrice.value = 0;
   resourceContentValue.forEach((x) => {
     currentResourcePrice.value += x.currentResourcePrice;
