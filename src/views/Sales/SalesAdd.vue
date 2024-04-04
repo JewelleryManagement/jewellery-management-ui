@@ -55,15 +55,25 @@
           Selected date: {{ formattedDate }}
         </p>
 
-        <v-container v-if="currentResourcePrice > 0">
+        <v-container v-if="resourceContent.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected resources:
           </div>
           <ResourcePriceDiscountRow
             v-for="(resource, i) in resourceContent"
             :key="resource"
-            :resource="resource"
+            :resource="resourceContent[i]"
           />
+        </v-container>
+
+        <v-container
+          class="d-flex flex-column mt-4"
+          v-if="resourceContent.length > 0"
+        >
+          <h5>Resources:</h5>
+          <p>Price: € {{ currentResourcePrice.toFixed(2) }}</p>
+          <p>Discount: {{ computedResourcePrice.toFixed(2) }} %</p>
+          <p>Final price: € {{ finalResourcePrice.toFixed(2) }}</p>
         </v-container>
 
         <v-container v-if="productsForSale.length > 0">
@@ -77,14 +87,17 @@
           />
         </v-container>
 
-        <v-container class="d-flex flex-column mt-4">
-          <p>Resouces price: € {{ currentResourcePrice.toFixed(2) }}</p>
-          <p class="mt-4">Total amount: € {{ totalAmount.toFixed(2) || 0 }}</p>
+        <v-container
+          class="d-flex flex-column mt-4"
+          v-if="productsForSale.length > 0"
+        >
+          <h5>Products:</h5>
+          <p>Price: € {{ totalAmount.toFixed(2) || 0 }}</p>
+          <p>Discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
           <p>
-            Discounted amount: €
-            {{ (discountedAmount + currentResourcePrice).toFixed(2) || 0 }}
+            Final amount: €
+            {{ (discountedAmount + finalResourcePrice).toFixed(2) || 0 }}
           </p>
-          <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
         </v-container>
 
         <form-buttons @reset-form="resetForm" />
@@ -150,12 +163,25 @@ const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 watch(sellerName, async (newValue) => {
   selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
-  const res = await store.dispatch(
-    "users/fetchResourcesForUser",
-    selectedUser.value.id
-  );
-  resourcesForSale.value = res.resourcesAndQuantities;
+
+  if (selectedUser.value) {
+    const res = await store.dispatch(
+      "users/fetchResourcesForUser",
+      selectedUser.value.id
+    );
+    resourcesForSale.value = res.resourcesAndQuantities;
+  }
+
   productsForSale.value = [];
+});
+
+const computedResourcePrice = computed(() => {
+  return resourceContent.value.reduce(
+    (amount, resource) =>
+      amount +
+      (Number(resource.currentResourcePrice) * (resource.discount ?? 0)) / 100,
+    0
+  );
 });
 
 const totalAmount = computed(() =>
@@ -171,6 +197,10 @@ const discountedSmallAmount = computed(() =>
       amount + (product.salePrice * (product.discount ?? 0)) / 100,
     0
   )
+);
+
+const finalResourcePrice = computed(
+  () => Number(currentResourcePrice.value) - Number(computedResourcePrice.value)
 );
 
 const discountedAmount = computed(
@@ -214,9 +244,15 @@ const setProductsForSale = (selectedProductsForSale) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
-  resourceContent.value = resourceContentValue;
+  resourceContent.value = resourceContentValue.map((resource) => {
+    if (resource.discount === undefined) {
+      resource.discount = null;
+    }
+    return resource;
+  });
+
   currentResourcePrice.value = 0;
-  resourceContentValue.forEach((x) => {
+  resourceContent.value.forEach((x) => {
     currentResourcePrice.value += x.currentResourcePrice;
   });
 
@@ -230,6 +266,7 @@ const resetForm = () => {
     sellerName.value = [];
     buyerName.value = [];
     productsForSale.value = [];
+    resourceContent.value = [];
   }
 };
 

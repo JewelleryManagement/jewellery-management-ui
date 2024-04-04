@@ -26,25 +26,26 @@ import { useStore } from "vuex";
 
 const store = useStore();
 const props = defineProps({ resource: Object });
-const name = ref("");
 
 const resourceName = computed(() => {
   const allResources = store.state.resources.resources;
-  const matchedResource = allResources.find(resource => resource.id === props.resource.id);
-  return matchedResource ? matchedResource.clazz : '';
+  const matchedResource = allResources.find(
+    (resource) => resource.id === props.resource.id
+  );
+  return matchedResource ? matchedResource.clazz : "";
 });
 
-const formattedDiscount = ref(props.resource?.discount !== undefined ? props.resource.discount : 0);
-
+const formattedDiscount = computed({
+  get: () =>
+    props.resource?.discount !== null ? props.resource.discount : 0,
+  set: (value) => (props.resource.discount = value),
+});
 const formattedResourcePrice = computed(() => {
   return props.resource.currentResourcePrice.toFixed(2);
 });
 
-onMounted(() => {
-  name.value = resourceName.value;
-});
-
-watch(formattedDiscount, (newValue, oldValue) => {
-  props.resource.discount = newValue;
-});
+// watch(formattedDiscount, (newValue, oldValue) => {
+//   props.resource.discount = newValue;
+//   console.log(props.resource.discount);
+// });
 </script>
