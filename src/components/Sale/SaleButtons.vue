@@ -4,7 +4,7 @@
       size="small"
       color="green lighten-1"
       @click="$emit('open-dialog', 'calendar')"
-      :disabled="!selectedUser"
+      :disabled="!props.selectedUser.id"
       >Calendar</v-btn
     >
 
@@ -12,7 +12,7 @@
       size="small"
       color="primary"
       @click="$emit('open-dialog', 'products')"
-      :disabled="!selectedUser"
+      :disabled="!props.selectedUser.id"
     >
       Products
     </v-btn>
@@ -21,7 +21,7 @@
       size="small"
       color="#009688"
       @click="$emit('open-dialog', 'resources')"
-      :disabled="!selectedUser"
+      :disabled="!props.selectedUser.id"
     >
       Resources
     </v-btn>

@@ -19,23 +19,23 @@
         <form-buttons @reset-form="resetForm" />
       </v-form>
     </v-sheet>
-    <products-dialog
-      v-if="selectedUser"
+    <ProductsDialog
+      v-if="selectedUser.id"
       v-model="productsDialog"
       @close-dialog="toggleProductsDialog(false)"
       @save-product-dialog="setProductsForSale"
       :userId="selectedUser.id"
     >
-    </products-dialog>
+    </ProductsDialog>
 
-    <resources-dialog
-      v-if="selectedUser"
+    <ResourcesDialog
+      v-if="selectedUser.id"
       v-model="resourcesDialog"
       :inputResources="resourcesForSale"
       @close-dialog="closeDialog"
       @save-resources-dialog="saveResourceQuantitiesToProduct"
       :clearTable="clearTable"
-    ></resources-dialog>
+    ></ResourcesDialog>
   </v-container>
 </template>
 
@@ -49,10 +49,9 @@ import {
   SelectedResource,
   SelectedProducts,
   SaleCalendar,
-} from "@/components/Sale";
-
-import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
-import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
+  ProductsDialog,
+  ResourcesDialog
+} from "@/components";
 
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
@@ -60,7 +59,7 @@ const store = useStore();
 const pageTitle = ref(route.meta.title);
 const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
-const selectedUser = ref("");
+const selectedUser = ref({});
 const [productsDialog, productsForSale] = [ref(false), ref([])];
 const [
   resourcesDialog,
@@ -87,7 +86,7 @@ watch(
       (user) => user.id == sellObject.sellerName.id
     );
 
-    if (selectedUser.value) {
+    if (selectedUser.value.id) {
       const res = await store.dispatch(
         "users/fetchResourcesForUser",
         selectedUser.value.id
@@ -116,7 +115,6 @@ const toggleProductsDialog = (isOpen) => {
 };
 
 function handleCloseCalendar(selectedDate) {
-  console.log(selectedDate);
   calendarDialog.value = false;
   sellObject.date = selectedDate;
 }
@@ -208,11 +206,11 @@ const postSale = async (data) => {
 };
 
 const handleSubmit = async () => {
-  if (!(await isFormValid())) return;
-  if (!isProductsValidated()) return;
-  if (!isDateValidated()) return;
-
-  const data = buildSaleRequestData();
-  await postSale(data);
+  // if (!(await isFormValid())) return;
+  // if (!isProductsValidated()) return;
+  // if (!isDateValidated()) return;
+  console.log(sellObject);
+  // const data = buildSaleRequestData();
+  // await postSale(data);
 };
 </script>
