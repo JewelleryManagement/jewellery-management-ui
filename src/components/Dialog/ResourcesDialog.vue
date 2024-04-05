@@ -1,5 +1,9 @@
 <template>
-  <v-dialog transition="dialog-top-transition" width="auto">
+  <v-dialog
+    transition="dialog-top-transition"
+    width="auto"
+    @click:outside="closeDialog"
+  >
     <template v-slot:default>
       <v-card>
         <v-toolbar color="red" title="Reasources..."></v-toolbar>
@@ -148,7 +152,7 @@ const saveTableValues = () => {
       savedQuantitiesInProduct.value.push({
         id: resourceId,
         quantity: Number(quantity),
-        currentResourcePrice
+        currentResourcePrice,
       });
     });
     emits("save-resources-dialog", savedQuantitiesInProduct.value);

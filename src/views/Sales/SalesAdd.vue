@@ -17,7 +17,7 @@
           @close-dialog="handleCloseCalendar"
         />
 
-        <SelectedResource :resources="resourceContent" />
+        <SelectedResource :resources="sellObject.resources" />
         <SelectedProducts :products="sellObject.products" />
         <form-buttons @reset-form="resetForm" />
       </v-form>
@@ -60,16 +60,13 @@ const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const pageTitle = ref(route.meta.title);
-const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
-const [resourcesDialog, resourcesForSale, resourceContent] = [
+const [resourcesDialog, resourcesForSale] = [
   ref(false),
-  ref([]),
   ref([]),
 ];
 const calendarDialog = ref(false);
-const formattedDate = ref("");
 const clearTable = ref(false);
 
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
@@ -78,7 +75,7 @@ const sellObject = reactive({
   sellerName: "",
   buyerName: "",
   products: ref([]),
-  resources: [],
+  resources: ref([]),
   date: "",
 });
 
@@ -124,7 +121,7 @@ const setProductsForSale = (selectedProductsForSale) => {
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
-  resourceContent.value = resourceContentValue.map((resource) => {
+  sellObject.resources.value = resourceContentValue.map((resource) => {
     if (resource.discount === undefined) {
       resource.discount = null;
     }
@@ -136,7 +133,7 @@ const saveResourceQuantitiesToProduct = (resourceContentValue) => {
 
 const resetForm = () => {
   if (form.value) {
-    form.value.reset();
+    // form.value.reset();
     form.value.resetValidation();
     // sellObject.sellerName = ''
     // sellerName.value = [];
@@ -152,7 +149,7 @@ const isFormValid = async () => {
 };
 
 const isProductsValidated = () => {
-  if (productsForSale.value.length <= 0) {
+  if (!sellObject.products.value) {
     snackbarProvider.showErrorSnackbar("Please select a product!");
     return false;
   }
@@ -168,7 +165,7 @@ const isDateValidated = () => {
 };
 
 const mapSelectedProducts = () => {
-  return productsForSale.value.map((product) => ({
+  return sellObject.products.value.map((product) => ({
     productId: product.id,
     salePrice: Number(product.salePrice),
     discount: Number(product.discount) || 0,
@@ -177,10 +174,10 @@ const mapSelectedProducts = () => {
 
 const buildSaleRequestData = () => {
   return {
-    sellerId: sellerName.value.id,
-    buyerId: buyerName.value.id,
+    sellerId: sellObject.sellerName.id,
+    buyerId: sellObject.buyerName.id,
     products: mapSelectedProducts(),
-    date: formattedDate.value,
+    date: sellObject.date,
   };
 };
 
@@ -195,11 +192,12 @@ const postSale = async (data) => {
 };
 
 const handleSubmit = async () => {
-  // if (!(await isFormValid())) return;
-  // if (!isProductsValidated()) return;
+  if (!(await isFormValid())) return;
+  if (!isProductsValidated()) return;
   if (!isDateValidated()) return;
   console.log(sellObject);
-  // const data = buildSaleRequestData();
+  const data = buildSaleRequestData();
+  console.log(data);
   // await postSale(data);
 };
 </script>
