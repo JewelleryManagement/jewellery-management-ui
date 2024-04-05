@@ -1,60 +1,20 @@
-<template>
+``<template>
   <v-container>
     <v-sheet width="300" class="mx-auto">
       <div class="mx-auto text-center" style="font-size: 24px">
         {{ pageTitle }}
       </div>
       <v-form @submit.prevent="handleSubmit" ref="form">
-        <v-select
-          label="Seller"
-          v-model="sellerName"
-          :items="allUsers"
-          :item-props="userPropsFormatter"
-          :rules="[validateAuthors(sellerName)]"
-        >
-        </v-select>
-
-        <v-select
-          v-model="buyerName"
-          label="Buyer"
-          :items="allUsers"
-          :item-props="userPropsFormatter"
-          :rules="[validateAuthors(buyerName)]"
-        >
-        </v-select>
-
-        <v-container class="d-flex flex-row justify-center align-center ga-1">
-          <v-btn
-            size="small"
-            color="green lighten-1"
-            @click="() => (calendarDialog = true)"
-            :disabled="!selectedUser"
-            >Calendar</v-btn
-          >
-
-          <v-btn
-            size="small"
-            color="primary"
-            @click="toggleProductsDialog(true)"
-            :disabled="!selectedUser"
-          >
-            Products
-          </v-btn>
-
-          <v-btn
-            size="small"
-            color="#009688"
-            @click="toggleResourcesDialog(true)"
-            :disabled="!selectedUser"
-          >
-            Resources
-          </v-btn>
-        </v-container>
+        <SaleInputs :sellObject="sellObject" :all-users="allUsers" />
+        <SaleButtons :selected-user="selectedUser" @open-dialog="handleOpenDialog" />         
 
         <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
           Selected date: {{ formattedDate }}
         </p>
 
+        <SelectedResource :resources="resourceContent" />
+
+<!-- 
         <v-container v-if="resourceContent.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
             Currently selected resources:
@@ -75,6 +35,7 @@
           <p>Discount: {{ computedResourcePrice.toFixed(2) }} %</p>
           <p>Final price: € {{ finalResourcePrice.toFixed(2) }}</p>
         </v-container>
+
 
         <v-container v-if="productsForSale.length > 0">
           <div class="mx-auto text-center" style="font-size: 16px">
@@ -100,7 +61,7 @@
           </p>
         </v-container>
 
-        <form-buttons @reset-form="resetForm" />
+        <form-buttons @reset-form="resetForm" /> -->
       </v-form>
     </v-sheet>
     <products-dialog
@@ -129,18 +90,21 @@
 </template>
 
 <script setup>
-import { userPropsFormatter } from "@/utils/data-formatter.js";
 import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
 import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
 import ResourcePriceDiscountRow from "@/components/ResourcePriceDiscountRow.vue";
 
-import { validateAuthors } from "@/utils/validation-rules";
+import SaleInputs from "@/components/Sale/SaleInputs.vue";
+import SaleButtons from '@/components/Sale/SaleButtons.vue';
+import SelectedResource from '@/components/Sale/SelectedResource.vue';
+
+
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref, computed, watch, inject } from "vue";
+import { ref, computed, watch, inject, reactive } from "vue";
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
@@ -161,9 +125,14 @@ const clearTable = ref(false);
 
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
-watch(sellerName, async (newValue) => {
-  selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
+const sellObject = reactive({
+  sellerName: '',
+  buyerName: ''
+})
 
+watch(() => sellObject.sellerName, async (newValue) => {
+  selectedUser.value = allUsers.find((user) => user.id == sellObject.sellerName.id);
+  
   if (selectedUser.value) {
     const res = await store.dispatch(
       "users/fetchResourcesForUser",
@@ -174,6 +143,7 @@ watch(sellerName, async (newValue) => {
 
   productsForSale.value = [];
 });
+
 
 const computedResourcePrice = computed(() => {
   return resourceContent.value.reduce(
@@ -217,6 +187,19 @@ const totalDiscount = computed(() => {
 
   return 100 - (discountedAmountValue / totalAmountValue) * 100;
 });
+
+const dialogFunctions = {
+  calendar: () => calendarDialog.value = true,
+  resources: () => resourcesDialog.value = true,
+  products: () => productsDialog.value = true
+};
+
+const handleOpenDialog = (type) => {
+  const openDialog = dialogFunctions[type];
+  if (openDialog) openDialog();
+  else console.error(`Unsupported dialog type: ${type}`);
+};
+
 
 const toggleProductsDialog = (isOpen) => {
   productsDialog.value = isOpen;
