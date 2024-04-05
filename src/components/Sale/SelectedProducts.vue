@@ -1,16 +1,16 @@
 <template>
-  <v-container v-if="props.products.length > 0">
+  <v-container v-if="props.products.value?.length > 0">
     <div class="mx-auto text-center" style="font-size: 16px">
       Currently selected products:
     </div>
     <Product-price-discount-row
-      v-for="(product, i) in props.products"
+      v-for="(product, i) in props.products.value"
       :key="product"
-      :product="props.products[i]"
+      :product="props.products.value[i]"
     />
   </v-container>
 
-  <v-container class="d-flex flex-column mt-4" v-if="props.products.length > 0">
+  <v-container class="d-flex flex-column mt-4" v-if="props.products.value?.length > 0">
     <h5>Products:</h5>
     <p>Price: € {{ totalAmount.toFixed(2) || 0 }}</p>
     <p>Discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
@@ -34,14 +34,14 @@ const props = defineProps({
 });
 
 const totalAmount = computed(() =>
-  props.products.reduce(
+  props.products.value.reduce(
     (amount, product) => amount + Number(product.salePrice),
     0
   )
 );
 
 const discountedSmallAmount = computed(() =>
-  props.products.reduce(
+  props.products.value.reduce(
     (amount, product) =>
       amount + (product.salePrice * (product.discount ?? 0)) / 100,
     0

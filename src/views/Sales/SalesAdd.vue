@@ -7,32 +7,35 @@
       <v-form @submit.prevent="handleSubmit" ref="form">
         <SaleInputs :sellObject="sellObject" :all-users="allUsers" />
         <SaleButtons
-          :selected-user="selectedUser"
-          @open-dialog="handleOpenDialog"
+          v-if="isSellerSelected"
+          :selected-user="sellObject.sellerName"
+          @open-dialog="handleDialogs"
         />
+
         <SaleCalendar
           :calendarDialog="calendarDialog"
           @close-dialog="handleCloseCalendar"
         />
+
         <SelectedResource :resources="resourceContent" />
-        <SelectedProducts :products="productsForSale" />
+        <SelectedProducts :products="sellObject.products" />
         <form-buttons @reset-form="resetForm" />
       </v-form>
     </v-sheet>
     <ProductsDialog
-      v-if="selectedUser.id"
+      v-if="isSellerSelected"
       v-model="productsDialog"
-      @close-dialog="toggleProductsDialog(false)"
+      @close-dialog="handleDialogs('products', false)"
       @save-product-dialog="setProductsForSale"
-      :userId="selectedUser.id"
+      :userId="sellObject.sellerName.id"
     >
     </ProductsDialog>
 
     <ResourcesDialog
-      v-if="selectedUser.id"
+      v-if="isSellerSelected"
       v-model="resourcesDialog"
       :inputResources="resourcesForSale"
-      @close-dialog="closeDialog"
+      @close-dialog="handleDialogs('resources', false)"
       @save-resources-dialog="saveResourceQuantitiesToProduct"
       :clearTable="clearTable"
     ></ResourcesDialog>
@@ -50,7 +53,7 @@ import {
   SelectedProducts,
   SaleCalendar,
   ProductsDialog,
-  ResourcesDialog
+  ResourcesDialog,
 } from "@/components";
 
 const snackbarProvider = inject("snackbarProvider");
@@ -59,14 +62,12 @@ const store = useStore();
 const pageTitle = ref(route.meta.title);
 const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
-const selectedUser = ref({});
 const [productsDialog, productsForSale] = [ref(false), ref([])];
-const [
-  resourcesDialog,
-  resourcesForSale,
-  currentResourcePrice,
-  resourceContent,
-] = [ref(false), ref([]), ref(0), ref([])];
+const [resourcesDialog, resourcesForSale, resourceContent] = [
+  ref(false),
+  ref([]),
+  ref([]),
+];
 const calendarDialog = ref(false);
 const formattedDate = ref("");
 const clearTable = ref(false);
@@ -76,20 +77,18 @@ const allUsers = computed(() => store.getters["users/allUsers"]).value;
 const sellObject = reactive({
   sellerName: "",
   buyerName: "",
+  products: ref([]),
+  resources: [],
   date: "",
 });
 
 watch(
   () => sellObject.sellerName,
-  async (newValue) => {
-    selectedUser.value = allUsers.find(
-      (user) => user.id == sellObject.sellerName.id
-    );
-
-    if (selectedUser.value.id) {
+  async (newSeller) => {
+    if (newSeller) {
       const res = await store.dispatch(
         "users/fetchResourcesForUser",
-        selectedUser.value.id
+        newSeller.id
       );
       resourcesForSale.value = res.resourcesAndQuantities;
     }
@@ -98,36 +97,30 @@ watch(
   }
 );
 
+const isSellerSelected = computed(() =>
+  sellObject.sellerName.id ? true : false
+);
+
 const dialogFunctions = {
-  calendar: () => (calendarDialog.value = true),
-  resources: () => (resourcesDialog.value = true),
-  products: () => (productsDialog.value = true),
+  calendar: (isOpen) => (calendarDialog.value = isOpen),
+  resources: (isOpen) => (resourcesDialog.value = isOpen),
+  products: (isOpen) => (productsDialog.value = isOpen),
 };
 
-const handleOpenDialog = (type) => {
+const handleDialogs = (type, isOpen = true) => {
   const openDialog = dialogFunctions[type];
-  if (openDialog) openDialog();
+  if (openDialog) openDialog(isOpen);
   else console.error(`Unsupported dialog type: ${type}`);
 };
 
-const toggleProductsDialog = (isOpen) => {
-  productsDialog.value = isOpen;
-};
-
 function handleCloseCalendar(selectedDate) {
-  calendarDialog.value = false;
+  handleDialogs("calendar", false);
   sellObject.date = selectedDate;
 }
 
-const closeDialog = (payload) => {
-  payload === "resources"
-    ? (resourcesDialog.value = false)
-    : (productsDialog.value = false);
-};
-
 const setProductsForSale = (selectedProductsForSale) => {
-  productsForSale.value = selectedProductsForSale;
-  toggleProductsDialog(false);
+  sellObject.products.value = selectedProductsForSale;
+  handleDialogs("products", false);
 };
 
 const saveResourceQuantitiesToProduct = (resourceContentValue) => {
@@ -138,22 +131,18 @@ const saveResourceQuantitiesToProduct = (resourceContentValue) => {
     return resource;
   });
 
-  currentResourcePrice.value = 0;
-  resourceContent.value.forEach((x) => {
-    currentResourcePrice.value += x.currentResourcePrice;
-  });
-
-  closeDialog("resources");
+  handleDialogs("resources", false);
 };
 
 const resetForm = () => {
   if (form.value) {
     form.value.reset();
     form.value.resetValidation();
-    sellerName.value = [];
-    buyerName.value = [];
-    productsForSale.value = [];
-    resourceContent.value = [];
+    // sellObject.sellerName = ''
+    // sellerName.value = [];
+    // buyerName.value = [];
+    // productsForSale.value = [];
+    // resourceContent.value = [];
   }
 };
 
@@ -171,7 +160,7 @@ const isProductsValidated = () => {
 };
 
 const isDateValidated = () => {
-  if (formattedDate.value.length <= 0) {
+  if (sellObject.date.length <= 0) {
     snackbarProvider.showErrorSnackbar("Please select a date!");
     return false;
   }
@@ -208,7 +197,7 @@ const postSale = async (data) => {
 const handleSubmit = async () => {
   // if (!(await isFormValid())) return;
   // if (!isProductsValidated()) return;
-  // if (!isDateValidated()) return;
+  if (!isDateValidated()) return;
   console.log(sellObject);
   // const data = buildSaleRequestData();
   // await postSale(data);

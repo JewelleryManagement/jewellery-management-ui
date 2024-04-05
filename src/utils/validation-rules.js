@@ -81,9 +81,8 @@ export function usePositiveNumberRules(currentValue) {
 }
 
 export function validateAuthors(authors) {
-  if (authors.length === 0) {
-    return "Please select at least one author.";
-  }
+  if (authors === undefined || authors === null) return ''
+  if (authors.length === 0) return "Please select at least one author.";
   return true;
 }
 
