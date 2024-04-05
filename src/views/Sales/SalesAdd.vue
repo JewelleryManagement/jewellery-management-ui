@@ -1,4 +1,4 @@
-``<template>
+<template>
   <v-container>
     <v-sheet width="300" class="mx-auto">
       <div class="mx-auto text-center" style="font-size: 24px">
@@ -6,62 +6,17 @@
       </div>
       <v-form @submit.prevent="handleSubmit" ref="form">
         <SaleInputs :sellObject="sellObject" :all-users="allUsers" />
-        <SaleButtons :selected-user="selectedUser" @open-dialog="handleOpenDialog" />         
-
-        <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
-          Selected date: {{ formattedDate }}
-        </p>
-
+        <SaleButtons
+          :selected-user="selectedUser"
+          @open-dialog="handleOpenDialog"
+        />
+        <SaleCalendar
+          :calendarDialog="calendarDialog"
+          @close-dialog="handleCloseCalendar"
+        />
         <SelectedResource :resources="resourceContent" />
-
-<!-- 
-        <v-container v-if="resourceContent.length > 0">
-          <div class="mx-auto text-center" style="font-size: 16px">
-            Currently selected resources:
-          </div>
-          <ResourcePriceDiscountRow
-            v-for="(resource, i) in resourceContent"
-            :key="resource"
-            :resource="resourceContent[i]"
-          />
-        </v-container>
-
-        <v-container
-          class="d-flex flex-column mt-4"
-          v-if="resourceContent.length > 0"
-        >
-          <h5>Resources:</h5>
-          <p>Price: € {{ currentResourcePrice.toFixed(2) }}</p>
-          <p>Discount: {{ computedResourcePrice.toFixed(2) }} %</p>
-          <p>Final price: € {{ finalResourcePrice.toFixed(2) }}</p>
-        </v-container>
-
-
-        <v-container v-if="productsForSale.length > 0">
-          <div class="mx-auto text-center" style="font-size: 16px">
-            Currently selected products:
-          </div>
-          <Product-price-discount-row
-            v-for="(product, i) in productsForSale"
-            :key="product"
-            :product="productsForSale[i]"
-          />
-        </v-container>
-
-        <v-container
-          class="d-flex flex-column mt-4"
-          v-if="productsForSale.length > 0"
-        >
-          <h5>Products:</h5>
-          <p>Price: € {{ totalAmount.toFixed(2) || 0 }}</p>
-          <p>Discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
-          <p>
-            Final amount: €
-            {{ (discountedAmount + finalResourcePrice).toFixed(2) || 0 }}
-          </p>
-        </v-container>
-
-        <form-buttons @reset-form="resetForm" /> -->
+        <SelectedProducts :products="productsForSale" />
+        <form-buttons @reset-form="resetForm" />
       </v-form>
     </v-sheet>
     <products-dialog
@@ -81,30 +36,24 @@
       @save-resources-dialog="saveResourceQuantitiesToProduct"
       :clearTable="clearTable"
     ></resources-dialog>
-
-    <calendar-dialog
-      v-model="calendarDialog"
-      @close-dialog="handleCloseCalendar"
-    />
   </v-container>
 </template>
 
 <script setup>
-import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
-import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
-import ResourcePriceDiscountRow from "@/components/ResourcePriceDiscountRow.vue";
-
-import SaleInputs from "@/components/Sale/SaleInputs.vue";
-import SaleButtons from '@/components/Sale/SaleButtons.vue';
-import SelectedResource from '@/components/Sale/SelectedResource.vue';
-
+import { ref, computed, watch, inject, reactive } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
+import {
+  SaleInputs,
+  SaleButtons,
+  SelectedResource,
+  SelectedProducts,
+  SaleCalendar,
+} from "@/components/Sale";
 
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 
-import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
-import { ref, computed, watch, inject, reactive } from "vue";
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
@@ -126,72 +75,34 @@ const clearTable = ref(false);
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 const sellObject = reactive({
-  sellerName: '',
-  buyerName: ''
-})
+  sellerName: "",
+  buyerName: "",
+  date: "",
+});
 
-watch(() => sellObject.sellerName, async (newValue) => {
-  selectedUser.value = allUsers.find((user) => user.id == sellObject.sellerName.id);
-  
-  if (selectedUser.value) {
-    const res = await store.dispatch(
-      "users/fetchResourcesForUser",
-      selectedUser.value.id
+watch(
+  () => sellObject.sellerName,
+  async (newValue) => {
+    selectedUser.value = allUsers.find(
+      (user) => user.id == sellObject.sellerName.id
     );
-    resourcesForSale.value = res.resourcesAndQuantities;
+
+    if (selectedUser.value) {
+      const res = await store.dispatch(
+        "users/fetchResourcesForUser",
+        selectedUser.value.id
+      );
+      resourcesForSale.value = res.resourcesAndQuantities;
+    }
+
+    productsForSale.value = [];
   }
-
-  productsForSale.value = [];
-});
-
-
-const computedResourcePrice = computed(() => {
-  return resourceContent.value.reduce(
-    (amount, resource) =>
-      amount +
-      (Number(resource.currentResourcePrice) * (resource.discount ?? 0)) / 100,
-    0
-  );
-});
-
-const totalAmount = computed(() =>
-  productsForSale.value.reduce(
-    (amount, product) => amount + Number(product.salePrice),
-    0
-  )
 );
-
-const discountedSmallAmount = computed(() =>
-  productsForSale.value.reduce(
-    (amount, product) =>
-      amount + (product.salePrice * (product.discount ?? 0)) / 100,
-    0
-  )
-);
-
-const finalResourcePrice = computed(
-  () => Number(currentResourcePrice.value) - Number(computedResourcePrice.value)
-);
-
-const discountedAmount = computed(
-  () => totalAmount.value - discountedSmallAmount.value
-);
-
-const totalDiscount = computed(() => {
-  const totalAmountValue = totalAmount.value;
-  const discountedAmountValue = discountedAmount.value;
-
-  if (totalAmountValue === 0 || isNaN(discountedAmountValue)) {
-    return 0;
-  }
-
-  return 100 - (discountedAmountValue / totalAmountValue) * 100;
-});
 
 const dialogFunctions = {
-  calendar: () => calendarDialog.value = true,
-  resources: () => resourcesDialog.value = true,
-  products: () => productsDialog.value = true
+  calendar: () => (calendarDialog.value = true),
+  resources: () => (resourcesDialog.value = true),
+  products: () => (productsDialog.value = true),
 };
 
 const handleOpenDialog = (type) => {
@@ -200,19 +111,14 @@ const handleOpenDialog = (type) => {
   else console.error(`Unsupported dialog type: ${type}`);
 };
 
-
 const toggleProductsDialog = (isOpen) => {
   productsDialog.value = isOpen;
 };
 
-const toggleResourcesDialog = (isOpen) => {
-  resourcesDialog.value = isOpen;
-};
-
 function handleCloseCalendar(selectedDate) {
+  console.log(selectedDate);
   calendarDialog.value = false;
-  if (!selectedDate) return;
-  formattedDate.value = selectedDate;
+  sellObject.date = selectedDate;
 }
 
 const closeDialog = (payload) => {

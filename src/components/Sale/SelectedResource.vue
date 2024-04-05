@@ -1,15 +1,14 @@
 <template>
-  <v-container v-if="resources.length > 0">
+  <v-container v-if="props.resources.length > 0">
     <div class="mx-auto text-center" style="font-size: 16px">
       Currently selected resources:
     </div>
     <ResourcePriceDiscountRow
-      v-for="(resource, index) in resources"
+      v-for="(resource, index) in props.resources"
       :key="index"
       :resource="resource"
     />
   </v-container>
-  {{ resources }}
 
   <v-container v-if="resources.length > 0" class="d-flex flex-column mt-4">
     <h5>Resources:</h5>
@@ -20,11 +19,11 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 
 import ResourcePriceDiscountRow from "@/components/ResourcePriceDiscountRow.vue";
 
-const { resources } = defineProps({
+const props = defineProps({
   resources: {
     type: Array,
     required: true,
@@ -32,15 +31,14 @@ const { resources } = defineProps({
 });
 
 const currentResourcePrice = computed(() =>
-  resources.reduce((total, resource) => {
-    console.log(resource);
-    return total + resource.currentResourcePrice
-  }, 0)
+  props.resources.reduce(
+    (total, resource) => total + resource.currentResourcePrice,
+    0
+  )
 );
 
-
 const computedResourcePrice = computed(() =>
-  resources.reduce(
+  props.resources.reduce(
     (amount, resource) =>
       amount +
       (Number(resource.currentResourcePrice) * (resource.discount ?? 0)) / 100,
