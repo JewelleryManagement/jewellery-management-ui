@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
+    <p v-if="formattedDate" class="mt-2 mx-auto text-center">
       Selected date: {{ formattedDate }}
     </p>
 
@@ -15,18 +15,17 @@
 
 <script setup>
 import { ref } from "vue";
-import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
+import { CalendarDialog } from "@/components";
 
-const props = defineProps({ calendarDialog: Boolean });
+const props = defineProps({ calendarDialog: Boolean, sellObject: Object });
 const emits = defineEmits(["close-dialog"]);
 
 const formattedDate = ref("");
 
-
 function handleCloseCalendar(selectedDate) {
   if (!selectedDate) return;
-  formattedDate.value = selectedDate;
-  emits('close-dialog', selectedDate)
+  formattedDate.value = selectedDate
+  props.sellObject.date = selectedDate;
+  emits('close-dialog')
 }
-
 </script>

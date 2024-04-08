@@ -7,12 +7,12 @@
       <v-form @submit.prevent="handleSubmit" ref="form">
         <SaleInputs :sellObject="sellObject" :all-users="allUsers" />
         <SaleButtons
-          v-if="isSellerSelected"
-          :selected-user="sellObject.sellerName"
+          :sellObject="sellObject"
           @open-dialog="handleDialogs"
         />
 
         <SaleCalendar
+          :sellObject="sellObject"
           :calendarDialog="calendarDialog"
           @close-dialog="handleCloseCalendar"
         />
@@ -62,18 +62,15 @@ const store = useStore();
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
-const [resourcesDialog, resourcesForSale] = [
-  ref(false),
-  ref([]),
-];
+const [resourcesDialog, resourcesForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const clearTable = ref(false);
 
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 const sellObject = reactive({
-  sellerName: "",
-  buyerName: "",
+  sellerName: {},
+  buyerName: {},
   products: ref([]),
   resources: ref([]),
   date: "",
@@ -95,7 +92,7 @@ watch(
 );
 
 const isSellerSelected = computed(() =>
-  sellObject.sellerName.id ? true : false
+  sellObject.sellerName?.id ? true : false
 );
 
 const dialogFunctions = {
@@ -110,9 +107,8 @@ const handleDialogs = (type, isOpen = true) => {
   else console.error(`Unsupported dialog type: ${type}`);
 };
 
-function handleCloseCalendar(selectedDate) {
+function handleCloseCalendar() {
   handleDialogs("calendar", false);
-  sellObject.date = selectedDate;
 }
 
 const setProductsForSale = (selectedProductsForSale) => {
@@ -135,11 +131,11 @@ const resetForm = () => {
   if (form.value) {
     // form.value.reset();
     form.value.resetValidation();
-    // sellObject.sellerName = ''
-    // sellerName.value = [];
-    // buyerName.value = [];
-    // productsForSale.value = [];
-    // resourceContent.value = [];
+    sellObject.sellerName = "";
+    sellObject.buyerName = "";
+    sellObject.products.value = "";
+    sellObject.resources.value = "";
+    sellObject.date = "";
   }
 };
 
@@ -172,11 +168,24 @@ const mapSelectedProducts = () => {
   }));
 };
 
+const mapSelectedResources = () => {
+  if (sellObject.resources.length <= 0) return [];
+
+  return sellObject.resources.value.map((resource) => ({
+    resourceAndQuantity: {
+      resourceId: resource.id,
+      quantity: resource.quantity,
+    },
+    discount: Number(resource.discount) || 0,
+  }));
+};
+
 const buildSaleRequestData = () => {
   return {
     sellerId: sellObject.sellerName.id,
     buyerId: sellObject.buyerName.id,
     products: mapSelectedProducts(),
+    resources: mapSelectedResources(),
     date: sellObject.date,
   };
 };

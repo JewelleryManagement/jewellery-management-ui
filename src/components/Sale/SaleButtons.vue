@@ -4,7 +4,7 @@
       size="small"
       color="green lighten-1"
       @click="$emit('open-dialog', 'calendar')"
-      :disabled="!props.selectedUser.id"
+      :disabled="!props.sellObject.sellerName.id"
       >Calendar</v-btn
     >
 
@@ -12,7 +12,7 @@
       size="small"
       color="primary"
       @click="$emit('open-dialog', 'products')"
-      :disabled="!props.selectedUser.id"
+      :disabled="!props.sellObject.date"
     >
       Products
     </v-btn>
@@ -21,7 +21,7 @@
       size="small"
       color="#009688"
       @click="$emit('open-dialog', 'resources')"
-      :disabled="!props.selectedUser.id"
+      :disabled="!props.sellObject.date"
     >
       Resources
     </v-btn>
@@ -30,7 +30,7 @@
 
 <script setup>
 const props = defineProps({
-  selectedUser: {
+  sellObject: {
     type: Object,
     required: true,
   },
