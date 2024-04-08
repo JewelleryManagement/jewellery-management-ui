@@ -7,10 +7,15 @@
       v-for="(resource, index) in props.resources.value"
       :key="index"
       :resource="resource"
-    />
+    >
+      {{ resource }}
+    </ResourcePriceDiscountRow>
   </v-container>
 
-  <v-container v-if="props.resources.value?.length > 0" class="d-flex flex-column mt-4">
+  <v-container
+    v-if="props.resources.value?.length > 0"
+    class="d-flex flex-column mt-4"
+  >
     <h5>Resources:</h5>
     <p>Price: € {{ currentResourcePrice.toFixed(2) }}</p>
     <p>Discount: {{ computedResourcePrice.toFixed(2) }} %</p>
@@ -28,7 +33,10 @@ const props = defineProps({
     type: Array,
     required: true,
   },
+  allResources: { Object },
 });
+
+console.log(props.allResources);
 
 const currentResourcePrice = computed(() =>
   props.resources.value.reduce(

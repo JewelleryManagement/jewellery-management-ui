@@ -1,5 +1,7 @@
 <template>
   <v-row class="mt-4">
+    <v-tooltip activator="parent" location="top"> <slot> </slot> </v-tooltip>
+
     <v-col cols="8" class="pa-0">
       <v-text-field
         prefix="€"
@@ -36,8 +38,7 @@ const resourceName = computed(() => {
 });
 
 const formattedDiscount = computed({
-  get: () =>
-    props.resource?.discount !== null ? props.resource.discount : 0,
+  get: () => (props.resource?.discount !== null ? props.resource.discount : 0),
   set: (value) => (props.resource.discount = value),
 });
 const formattedResourcePrice = computed(() => {

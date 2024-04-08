@@ -17,7 +17,7 @@
           @close-dialog="handleCloseCalendar"
         />
 
-        <SelectedResource :resources="sellObject.resources" />
+        <SelectedResource :resources="sellObject.resources" :allResources="resourcesForSale" />
         <SelectedProducts :products="sellObject.products" />
         <form-buttons @reset-form="resetForm" />
       </v-form>
@@ -84,6 +84,7 @@ watch(
         "users/fetchResourcesForUser",
         newSeller.id
       );
+      console.log(res);
       resourcesForSale.value = res.resourcesAndQuantities;
     }
 
