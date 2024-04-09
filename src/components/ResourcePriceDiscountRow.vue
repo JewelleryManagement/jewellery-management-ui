@@ -1,6 +1,6 @@
 <template>
   <v-row class="mt-4">
-    <v-tooltip activator="parent" location="top"> <slot> </slot> </v-tooltip>
+     <slot> </slot> 
 
     <v-col cols="8" class="pa-0">
       <v-text-field

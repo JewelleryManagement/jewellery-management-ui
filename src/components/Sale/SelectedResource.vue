@@ -8,7 +8,7 @@
       :key="index"
       :resource="resource"
     >
-      {{ resource }}
+      <SaleToolTipResource :sale-data="props.allResources" :resource="resource" />
     </ResourcePriceDiscountRow>
   </v-container>
 
@@ -27,6 +27,7 @@
 import { computed } from "vue";
 
 import ResourcePriceDiscountRow from "@/components/ResourcePriceDiscountRow.vue";
+import { SaleToolTipResource } from "../Tooltip";
 
 const props = defineProps({
   resources: {
@@ -36,7 +37,6 @@ const props = defineProps({
   allResources: { Object },
 });
 
-console.log(props.allResources);
 
 const currentResourcePrice = computed(() =>
   props.resources.value.reduce(
