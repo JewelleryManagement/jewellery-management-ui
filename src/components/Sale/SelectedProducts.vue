@@ -7,10 +7,15 @@
       v-for="(product, i) in props.products.value"
       :key="product"
       :product="props.products.value[i]"
-    />
+    >
+    <SaleToolTipProduct :sale-data="props.products.value" :product="product" />
+    </Product-price-discount-row>
   </v-container>
 
-  <v-container class="d-flex flex-column mt-4" v-if="props.products.value?.length > 0">
+  <v-container
+    class="d-flex flex-column mt-4"
+    v-if="props.products.value?.length > 0"
+  >
     <h5>Products:</h5>
     <p>Price: € {{ totalAmount.toFixed(2) || 0 }}</p>
     <p>Discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
@@ -23,8 +28,8 @@
 
 <script setup>
 import { computed } from "vue";
-
 import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
+import { SaleToolTipProduct } from "@/components";
 
 const props = defineProps({
   products: {

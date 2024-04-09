@@ -1,5 +1,6 @@
 <template>
   <v-row class="mt-4">
+    <slot></slot>
     <v-col cols="8" class="pa-0">
       <v-text-field
         prefix="€"
