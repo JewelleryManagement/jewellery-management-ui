@@ -14,13 +14,17 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { CalendarDialog } from "@/components";
 
 const props = defineProps({ calendarDialog: Boolean, sellObject: Object });
 const emits = defineEmits(["close-dialog"]);
 
 const formattedDate = ref("");
+
+watch(() => props.sellObject.date, (newValue) => {
+  formattedDate.value = newValue;
+});
 
 function handleCloseCalendar(selectedDate) {
   if (!selectedDate) return;

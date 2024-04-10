@@ -6,10 +6,7 @@
       </div>
       <v-form @submit.prevent="handleSubmit" ref="form">
         <SaleInputs :sellObject="sellObject" :all-users="allUsers" />
-        <SaleButtons
-          :sellObject="sellObject"
-          @open-dialog="handleDialogs"
-        />
+        <SaleButtons :sellObject="sellObject" @open-dialog="handleDialogs" />
 
         <SaleCalendar
           :sellObject="sellObject"
@@ -17,7 +14,10 @@
           @close-dialog="handleCloseCalendar"
         />
 
-        <SelectedResource :resources="sellObject.resources" :allResources="resourcesForSale" />
+        <SelectedResource
+          :resources="sellObject.resources"
+          :allResources="resourcesForSale"
+        />
         <SelectedProducts :products="sellObject.products" />
         <form-buttons @reset-form="resetForm" />
       </v-form>
@@ -28,6 +28,7 @@
       @close-dialog="handleDialogs('products', false)"
       @save-product-dialog="setProductsForSale"
       :userId="sellObject.sellerName.id"
+      :clearTable="clearTable"
     >
     </ProductsDialog>
 
@@ -134,9 +135,12 @@ const resetForm = () => {
     form.value.resetValidation();
     sellObject.sellerName = "";
     sellObject.buyerName = "";
-    sellObject.products.value = "";
-    sellObject.resources.value = "";
+    sellObject.products.value = [];
+    sellObject.resources.value = [];
+    resourcesForSale.value = []
     sellObject.date = "";
+
+    // clearTable.value = !clearTable.value
   }
 };
 
@@ -146,15 +150,22 @@ const isFormValid = async () => {
 };
 
 const isProductsValidated = () => {
-  if (!sellObject.products.value) {
-    snackbarProvider.showErrorSnackbar("Please select a product!");
+  const isProductsValid = sellObject.products.value;
+  const isResourcesValid = sellObject.resources.value;
+
+  if (!isProductsValid && !isResourcesValid) {
+    snackbarProvider.showErrorSnackbar(
+      "Please select a product or a resource!"
+    );
     return false;
   }
   return true;
 };
 
 const isDateValidated = () => {
-  if (sellObject.date.length <= 0) {
+  const isDateValid = sellObject.date;
+
+  if (isDateValid.length <= 0) {
     snackbarProvider.showErrorSnackbar("Please select a date!");
     return false;
   }
@@ -162,15 +173,20 @@ const isDateValidated = () => {
 };
 
 const mapSelectedProducts = () => {
+  const isProductsValid = sellObject.products.value;
+
+  if (!isProductsValid || isProductsValid.length <= 0) return [];
+
   return sellObject.products.value.map((product) => ({
     productId: product.id,
-    salePrice: Number(product.salePrice),
     discount: Number(product.discount) || 0,
   }));
 };
 
 const mapSelectedResources = () => {
-  if (sellObject.resources.length <= 0) return [];
+  const isResourcesValid = sellObject.resources.value;
+
+  if (!isResourcesValid || isResourcesValid.length <= 0) return [];
 
   return sellObject.resources.value.map((resource) => ({
     resourceAndQuantity: {
@@ -203,11 +219,9 @@ const postSale = async (data) => {
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
-  if (!isProductsValidated()) return;
   if (!isDateValidated()) return;
-  console.log(sellObject);
+  if (!isProductsValidated()) return;
   const data = buildSaleRequestData();
-  console.log(data);
-  // await postSale(data);
+  await postSale(data);
 };
 </script>
