@@ -139,7 +139,7 @@ const resetForm = () => {
     resourcesForSale.value = [];
     sellObject.date = "";
 
-    // clearTable.value = !clearTable.value
+    clearTable.value = !clearTable.value
   }
 };
 
