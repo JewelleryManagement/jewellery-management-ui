@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
@@ -45,8 +45,4 @@ const formattedResourcePrice = computed(() => {
   return props.resource.currentResourcePrice.toFixed(2);
 });
 
-// watch(formattedDiscount, (newValue, oldValue) => {
-//   props.resource.discount = newValue;
-//   console.log(props.resource.discount);
-// });
 </script>

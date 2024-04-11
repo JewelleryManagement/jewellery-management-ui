@@ -85,7 +85,6 @@ watch(
         "users/fetchResourcesForUser",
         newSeller.id
       );
-      console.log(res);
       resourcesForSale.value = res.resourcesAndQuantities;
     }
 
@@ -106,7 +105,7 @@ const dialogFunctions = {
 const handleDialogs = (type, isOpen = true) => {
   const openDialog = dialogFunctions[type];
   if (openDialog) openDialog(isOpen);
-  else console.error(`Unsupported dialog type: ${type}`);
+  else snackbarProvider.showErrorSnackbar(`Unsupported dialog type: ${type}`);
 };
 
 function handleCloseCalendar() {
@@ -137,7 +136,7 @@ const resetForm = () => {
     sellObject.buyerName = "";
     sellObject.products.value = [];
     sellObject.resources.value = [];
-    resourcesForSale.value = []
+    resourcesForSale.value = [];
     sellObject.date = "";
 
     // clearTable.value = !clearTable.value
