@@ -70,8 +70,8 @@ const clearTable = ref(false);
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 const sellObject = reactive({
-  sellerName: {},
-  buyerName: {},
+  sellerName: '',
+  buyerName: '',
   products: ref([]),
   resources: ref([]),
   date: "",
