@@ -1,20 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { appLogin, navigateToPage } from "tests/utils/functions";
-
-const myContext = {};
-
-const createGlobalVariables = async (page) => {
-  myContext.newSaleBtn = page.getByRole("link", { name: "New Sale" });
-  myContext.calendarBtn = page.getByRole("button", { name: "Calendar" });
-
-  myContext.productsBtn = page.getByRole("button", { name: "Products" });
-  myContext.resourcesBtn = page.getByRole("button", { name: "Resources" });
-  myContext.saveBtn = page.getByRole("button", { name: "Save" });
-
-  myContext.submitButton = page.getByRole("button", { name: "Submit" });
-  myContext.resetButton = page.getByRole("button", { name: "Reset" });
-  myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
-};
+import {
+  firstInputSelect,
+  secondInputSelect,
+  selectDate,
+  selectProduct,
+  selectResource,
+  myContext,
+  createGlobalVariables,
+} from "tests/utils/salesUtils";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
@@ -25,55 +19,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ page }) => {
-  await page.close();
+  // await page.close();
 });
-
-const firstInputSelect = async (page) => {
-  await page.locator(".v-field__input").first().click();
-  await page.getByRole("option", { name: "root test root@gmail.com" }).click();
-};
-
-const secondInputSelect = async (page) => {
-  await page
-    .locator(
-      "div:nth-child(2) > .v-input__control > .v-field > .v-field__field > .v-field__input"
-    )
-    .click();
-  await page.getByRole("option", { name: "testUser1 test testUser1@" }).click();
-};
-
-const selectDate = async (page) => {
-  const { calendarBtn } = myContext;
-
-  const today = new Date();
-  const day = today.getDate().toString().padStart(2, "0");
-  const month = (today.getMonth() + 1).toString().padStart(2, "0");
-
-  const year = today.getFullYear();
-  await calendarBtn.click();
-  await page.getByRole("button", { name: day.toString() }).click();
-  await expect(
-    page.getByText(`Selected date: ${day}/${month}/${year}`)
-  ).toBeVisible();
-};
-
-const selectProduct = async (page) => {
-  const { productsBtn, saveBtn } = myContext;
-
-  await productsBtn.click();
-  await page.locator("td").first().click();
-  await saveBtn.click();
-};
-
-const selectResource = async (page) => {
-  const { resourcesBtn, saveBtn } = myContext;
-
-  await resourcesBtn.click();
-  const locator = page.locator("td").first();
-  await locator.click();
-  await locator.press("1");
-  await saveBtn.click();
-};
 
 test("Create sale", async ({ page }) => {
   const { newSaleBtn, submitButton } = myContext;
@@ -85,8 +32,47 @@ test("Create sale", async ({ page }) => {
   await selectDate(page);
 
   await selectProduct(page);
-
   await selectResource(page);
 
   await submitButton.click();
+  expect(page.getByText("Successfully sold the product!")).toBeVisible();
+});
+
+test("Create sale with a discount", async ({ page }) => {
+  const { newSaleBtn, submitButton } = myContext;
+  await newSaleBtn.click();
+
+  await firstInputSelect(page);
+  await secondInputSelect(page);
+
+  await selectDate(page);
+
+  await selectProduct(page);
+  await page.locator("#input-154").fill("1");
+
+  await selectResource(page);
+  await page.locator("#input-181").fill("1");
+
+  await submitButton.click();
+  expect(page.getByText("Successfully sold the product!")).toBeVisible();
+});
+
+test("Create sale without any information fails", async ({ page }) => {
+  const { newSaleBtn, submitButton } = myContext;
+  await newSaleBtn.click();
+
+
+  await submitButton.click();
+  await expect(page.getByText('Please select a date!')).toBeVisible();
+});
+
+test("Create sale fails without a date", async ({ page }) => {
+  const { newSaleBtn, submitButton } = myContext;
+  await newSaleBtn.click();
+
+  await firstInputSelect(page);
+  await secondInputSelect(page);
+
+  await submitButton.click();
+  await expect(page.getByText('Please select a date!')).toBeVisible();
 });
