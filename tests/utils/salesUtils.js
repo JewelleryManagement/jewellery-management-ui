@@ -20,12 +20,8 @@ export const firstInputSelect = async (page) => {
 };
 
 export const secondInputSelect = async (page) => {
-  await page
-    .locator(
-      "div:nth-child(2) > .v-input__control > .v-field > .v-field__field > .v-field__input"
-    )
-    .click();
-  await page.getByRole("option", { name: "testUser1 test testUser1@" }).click();
+  await page.locator(".v-field__input").nth(1).click();
+  await page.getByRole("option", { name: "testUser1 test testUser1@gmail.com", exact: true }).click();
 };
 
 export const selectDate = async (page, expect) => {
