@@ -11,6 +11,7 @@ import {
   checkErrorMessages,
   checkDisabledButtons,
 } from "tests/utils/salesUtils";
+import { wait } from "tests/utils/functions";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
@@ -28,6 +29,7 @@ test("Create sale", async ({ page }) => {
   const { newSaleBtn, submitButton } = myContext;
   await newSaleBtn.click();
 
+  await wait(3);
   await firstInputSelect(page);
   await secondInputSelect(page);
 
@@ -44,6 +46,7 @@ test("Create sale with a discount", async ({ page }) => {
   const { newSaleBtn, submitButton } = myContext;
   await newSaleBtn.click();
 
+  await wait(3);
   await firstInputSelect(page);
   await secondInputSelect(page);
 
@@ -79,6 +82,7 @@ test("Create sale - without a date - fails", async ({ page }) => {
   const { newSaleBtn, submitButton } = myContext;
   await newSaleBtn.click();
 
+  await wait(3);
   await firstInputSelect(page);
   await secondInputSelect(page);
 
@@ -90,6 +94,7 @@ test("Create sale - without a products/resources - fails", async ({ page }) => {
   const { newSaleBtn, submitButton } = myContext;
   await newSaleBtn.click();
 
+  await wait(3);
   await firstInputSelect(page);
   await secondInputSelect(page);
   await selectDate(page, expect);
@@ -105,6 +110,7 @@ test("Reset button - works as expected", async ({ page }) => {
     myContext;
   await newSaleBtn.click();
 
+  await wait(3);
   await firstInputSelect(page);
   await secondInputSelect(page);
   await selectDate(page, expect);
@@ -125,10 +131,9 @@ test("Reset button - works as expected", async ({ page }) => {
 });
 
 test("GoBack button - works as expected", async ({ page }) => {
-  const { newSaleBtn, goBackButton } =
-    myContext;
+  const { newSaleBtn, goBackButton } = myContext;
   await newSaleBtn.click();
   await expect(page).toHaveURL("/sales/add");
-  await goBackButton.click()
+  await goBackButton.click();
   await expect(page).toHaveURL("/sales");
 });
