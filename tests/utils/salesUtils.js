@@ -62,14 +62,10 @@ export const selectResource = async (page) => {
 };
 
 export const checkErrorMessages = async (page, expect) => {
-  const errorMessages = [
-    { selector: "#input-37-messages", message: "Please select at least one" },
-    { selector: "#input-40-messages", message: "Please select at least one" },
-  ];
 
-  for (const { selector, message } of errorMessages) {
-    await expect(page.locator(selector).getByText(message)).toBeVisible();
-  }
+  await expect(page.getByText('Please select at least one author').first()).toBeVisible()
+  await expect(page.getByText('Please select at least one author').nth(1)).toBeVisible()
+
 };
 
 export const checkDisabledButtons = async (

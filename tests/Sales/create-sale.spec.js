@@ -39,7 +39,7 @@ test("Create sale", async ({ page }) => {
   await selectResource(page);
 
   await submitButton.click();
-  expect(page.getByText("Successfully sold the product!")).toBeVisible();
+  await expect(page.getByText("Successfully sold the product!")).toBeVisible();
 });
 
 test("Create sale with a discount", async ({ page }) => {
@@ -53,13 +53,12 @@ test("Create sale with a discount", async ({ page }) => {
   await selectDate(page, expect);
 
   await selectProduct(page);
-  await page.locator("#input-156").fill("1");
-
+  await page.getByLabel("Discount").first().fill("1");
   await selectResource(page);
-  await page.locator("#input-183").fill("1");
+  await page.getByLabel("Discount").nth(0).fill("1");
 
   await submitButton.click();
-  expect(page.getByText("Successfully sold the product!")).toBeVisible();
+  await expect(page.getByText("Successfully sold the product!")).toBeVisible();
 });
 
 test("Create sale - with empty inputs - fails", async ({ page }) => {
