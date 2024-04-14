@@ -21,7 +21,7 @@ export const firstInputSelect = async (page) => {
 
 export const secondInputSelect = async (page) => {
   await page.locator(".v-field__input").nth(1).click();
-  await page.getByRole("option", { name: "admin test admin@gmail.com", exact: true }).click();
+  await page.getByText("admin test").click();
 };
 
 export const selectDate = async (page, expect) => {
