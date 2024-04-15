@@ -16,12 +16,12 @@ export const createGlobalVariables = async (page) => {
 
 export const firstInputSelect = async (page) => {
   await page.locator(".v-field__input").first().click();
-  await page.getByRole("option", { name: "root test root@gmail.com" }).click();
+  await page.getByRole('option').first().click()
 };
 
 export const secondInputSelect = async (page) => {
   await page.locator(".v-field__input").nth(1).click();
-  await page.getByRole("option", { name: "root test root@gmail.com" }).click();
+  await page.getByRole('option').nth(1).click()
 };
 
 export const selectDate = async (page, expect) => {
