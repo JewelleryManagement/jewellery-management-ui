@@ -1,12 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
 
-const wait = (seconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
-
 const getUsers = async (page) => {
   const responsePromise = page.waitForResponse("http://localhost:8080/users");
   const response = await responsePromise;
@@ -33,7 +27,7 @@ test.describe("Edit user tests", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    await page.close();
+    // await page.close();
   });
 
   test("Access edit user page", async ({ page }) => {
@@ -76,16 +70,10 @@ test.describe("Edit user tests", () => {
     await expect(page.getByLabel("First name")).toBeEmpty();
     await expect(page.getByLabel("Last name")).toBeEmpty();
     await expect(page.getByLabel("Email")).toBeEmpty();
-    await expect(
-      page.locator("#input-23-messages").getByText("Input field is required")
-    ).toBeVisible();
-    await expect(
-      page.locator("#input-25-messages").getByText("Input field is required")
-    ).toBeVisible();
+    await expect(page.getByText("Input field is required").first()).toBeVisible();
+    await expect(page.getByText("Input field is required").nth(1)).toBeVisible();
     await expect(page.getByText("Email field is required")).toBeVisible();
-    await expect(
-      page.locator("#input-39-messages").getByText("Input field is required")
-    ).toBeVisible();
+    await expect(page.getByText("Input field is required").nth(2)).toBeVisible();
   });
 
   test("Edit user successfully", async ({ page }) => {
