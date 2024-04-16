@@ -96,6 +96,9 @@ const mainMenuPages = [
   {
     link: { text: "Sales", url: "/sales" },
   },
+  {
+    link: { text: "Organizations", url: "/organizations" },
+  },
 ];
 
 const profileDropdown = {
