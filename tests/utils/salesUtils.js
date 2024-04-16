@@ -72,11 +72,11 @@ export const checkDisabledButtons = async (
   expect
 ) => {
   const calendarClassAttr =
-    "v-btn v-btn--disabled v-theme--light bg-green lighten-1 v-btn--density-default v-btn--size-small v-btn--variant-elevated";
+    "v-btn v-btn--disabled v-theme--light bg-primary-green v-btn--density-default v-btn--size-small v-btn--variant-elevated";
   const productsClassAttr =
-    "v-btn v-btn--disabled v-theme--light bg-primary v-btn--density-default v-btn--size-small v-btn--variant-elevated";
+    "v-btn v-btn--disabled v-theme--light bg-primary-blue v-btn--density-default v-btn--size-small v-btn--variant-elevated";
   const resourcesClassAttr =
-    "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-small v-btn--variant-elevated";
+    "v-btn v-btn--disabled v-theme--light bg-teal v-btn--density-default v-btn--size-small v-btn--variant-elevated";
 
   await expect(page.getByText("Selected date: ")).not.toBeVisible();
   await expect(calendarBtn).toHaveClass(calendarClassAttr);
