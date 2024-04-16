@@ -1,6 +1,6 @@
 <template>
   <v-row class="mt-4">
-     <slot> </slot> 
+    <slot> </slot>
 
     <v-col cols="8" class="pa-0">
       <v-text-field
@@ -38,11 +38,10 @@ const resourceName = computed(() => {
 });
 
 const formattedDiscount = computed({
-  get: () => (props.resource?.discount !== null ? props.resource.discount : 0),
+  get: () => props.resource?.discount ?? 0,
   set: (value) => (props.resource.discount = value),
 });
 const formattedResourcePrice = computed(() => {
   return props.resource.currentResourcePrice.toFixed(2);
 });
-
 </script>

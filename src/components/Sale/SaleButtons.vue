@@ -2,7 +2,7 @@
   <v-container class="d-flex flex-row justify-center align-center ga-1">
     <v-btn
       size="small"
-      color="green lighten-1"
+      color="primary-green"
       @click="$emit('open-dialog', 'calendar')"
       :disabled="!props.sellObject.sellerName.id || !props.sellObject.buyerName.id"
       >Calendar</v-btn
@@ -10,7 +10,7 @@
 
     <v-btn
       size="small"
-      color="primary"
+      color="primary-blue"
       @click="$emit('open-dialog', 'products')"
       :disabled="!props.sellObject.date"
     >
@@ -19,7 +19,7 @@
 
     <v-btn
       size="small"
-      color="#009688"
+      color="teal"
       @click="$emit('open-dialog', 'resources')"
       :disabled="!props.sellObject.date"
     >

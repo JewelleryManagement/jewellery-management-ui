@@ -70,8 +70,8 @@ const clearTable = ref(false);
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 const sellObject = reactive({
-  sellerName: '',
-  buyerName: '',
+  sellerName: "",
+  buyerName: "",
   products: ref([]),
   resources: ref([]),
   date: "",
@@ -130,7 +130,6 @@ const saveResourceQuantitiesToProduct = (resourceContentValue) => {
 
 const resetForm = () => {
   if (form.value) {
-    // form.value.reset();
     form.value.resetValidation();
     sellObject.sellerName = "";
     sellObject.buyerName = "";
@@ -139,7 +138,7 @@ const resetForm = () => {
     resourcesForSale.value = [];
     sellObject.date = "";
 
-    clearTable.value = !clearTable.value
+    clearTable.value = !clearTable.value;
   }
 };
 
@@ -149,10 +148,10 @@ const isFormValid = async () => {
 };
 
 const isProductsValidated = () => {
-  const isProductsValid = sellObject.products.value;
-  const isResourcesValid = sellObject.resources.value;
+  const selectedProducts = sellObject.products.value;
+  const selectedResources = sellObject.resources.value;
 
-  if (!isProductsValid && !isResourcesValid) {
+  if (!selectedProducts && !selectedResources) {
     snackbarProvider.showErrorSnackbar(
       "Please select a product or a resource!"
     );
@@ -162,9 +161,9 @@ const isProductsValidated = () => {
 };
 
 const isDateValidated = () => {
-  const isDateValid = sellObject.date;
+  const saleDate = sellObject.date;
 
-  if (isDateValid.length <= 0) {
+  if (!saleDate) {
     snackbarProvider.showErrorSnackbar("Please select a date!");
     return false;
   }
@@ -172,9 +171,9 @@ const isDateValidated = () => {
 };
 
 const mapSelectedProducts = () => {
-  const isProductsValid = sellObject.products.value;
+  const selectedProducts = sellObject.products.value;
 
-  if (!isProductsValid || isProductsValid.length <= 0) return [];
+  if (!selectedProducts) return [];
 
   return sellObject.products.value.map((product) => ({
     productId: product.id,
@@ -183,9 +182,9 @@ const mapSelectedProducts = () => {
 };
 
 const mapSelectedResources = () => {
-  const isResourcesValid = sellObject.resources.value;
+  const selectedResources = sellObject.resources.value;
 
-  if (!isResourcesValid || isResourcesValid.length <= 0) return [];
+  if (!selectedResources) return [];
 
   return sellObject.resources.value.map((resource) => ({
     resourceAndQuantity: {

@@ -6,7 +6,6 @@ registerPlugins(app);
 
 import {
   ResourceContentDialog,
-  ProductTransferDialog,
   UserResourceForm,
   DisassemblyButton,
   FormButtons,
@@ -18,6 +17,7 @@ import {
   PartOfProduct,
   TableButton,
   ReturnProductButton,
+  ProductsContentDialog
 } from "@/components";
 
 app.component("bar-code", BarCode);
@@ -32,5 +32,5 @@ app.component("user-resource-form", UserResourceForm);
 app.component("return-product-button", ReturnProductButton);
 app.component("product-transfer-button", ProductTransferButton);
 app.component("resource-content-dialog", ResourceContentDialog);
-app.component("products-content-dialog", ProductTransferDialog);
+app.component("products-content-dialog", ProductsContentDialog);
 app.mount("#app");

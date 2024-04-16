@@ -25,7 +25,7 @@
 import { computed } from "vue";
 const props = defineProps({ product: Object });
 const formattedDiscount = computed({
-  get: () => (props.product?.discount !== null ? props.product.discount : 0),
+  get: () => props.product?.discount ?? 0,
   set: (value) => (props.product.discount = value),
 });
 

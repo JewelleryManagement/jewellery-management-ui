@@ -3,13 +3,13 @@
     <div class="mx-auto text-center" style="font-size: 16px">
       Currently selected products:
     </div>
-    <Product-price-discount-row
+    <ProductPriceDiscountRow
       v-for="(product, i) in props.products.value"
       :key="product"
       :product="props.products.value[i]"
     >
     <SaleToolTipProduct :sale-data="props.products.value" :product="product" />
-    </Product-price-discount-row>
+    </ProductPriceDiscountRow>
   </v-container>
 
   <v-container
