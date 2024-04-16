@@ -38,6 +38,10 @@ export async function fetchProducts() {
   return await fetchData("/products");
 }
 
+export async function fetchOrgs() {
+  return await fetchData("/organizations");
+}
+
 export async function fetchPicture(productId) {
   const options = {
     responseType: "blob",
@@ -90,6 +94,10 @@ export async function postSale(data) {
 }
 export async function postUser(userData) {
   return await postData("/users", userData);
+}
+
+export async function postOrg(orgData) {
+  return await postData("/organizations", orgData);
 }
 
 export async function postPicture(productId, image) {

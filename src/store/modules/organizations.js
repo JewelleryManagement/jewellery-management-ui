@@ -1,3 +1,5 @@
+import { fetchOrgs, postOrg } from "@/services/HttpClientService";
+
 export default {
   namespaced: true,
   state: {
@@ -10,17 +12,23 @@ export default {
     ],
   },
   mutations: {
-    setProducts(state, organizations) {
+    setOrgs(state, organizations) {
       state.organizations = organizations;
     },
   },
-  actions: {},
+  actions: {
+    async fetchOrgs({ commit }) {
+      const res = await fetchOrgs();
+      commit("setOrgs", res);
+    },
+    async postOrg({ commit }, data) {
+      await postOrg(data);
+    },
+  },
   getters: {
     allOrganizations: (state) => {
       return state.organizations;
     },
-    getColumns: (state) => [
-        ...state.tableColumns,
-      ],
+    getColumns: (state) => [...state.tableColumns],
   },
 };

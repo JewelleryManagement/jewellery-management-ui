@@ -31,15 +31,20 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+const snackbarProvider = inject("snackbarProvider");
+
 const search = ref("");
 const store = useStore();
-const router = useRouter();
 
+try {
+  await store.dispatch("organizations/fetchOrgs");
+} catch (error) {
+  snackbarProvider.showErrorSnackbar("Couldn't fetch the organizations!");
+}
 
 const tableColumns = computed(() => store.getters["organizations/getColumns"]);
-const organizations = ref([])
+const organizations = computed(() => store.getters["organizations/allOrganizations"])
 
 </script>
