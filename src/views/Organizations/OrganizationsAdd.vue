@@ -70,7 +70,7 @@ const isFormValid = async () => {
 const postOrg = async (data) => {
   try {
     await store.dispatch("organizations/postOrg", data);
-    snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
+    snackbarProvider.showSuccessSnackbar("Successfully created an organization!");
     router.push("/organizations");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
