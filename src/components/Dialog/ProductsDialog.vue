@@ -4,6 +4,7 @@
     @update:model-value="props.modelValue"
     transition="dialog-top-transition"
     width="auto"
+    @click:outside="closeOuterDialog"
   >
     <template v-slot:default>
       <v-card>

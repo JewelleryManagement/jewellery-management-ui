@@ -1,5 +1,6 @@
 <template>
   <v-row class="mt-4">
+    <slot></slot>
     <v-col cols="8" class="pa-0">
       <v-text-field
         prefix="€"
@@ -24,14 +25,11 @@
 import { computed } from "vue";
 const props = defineProps({ product: Object });
 const formattedDiscount = computed({
-  get: () =>
-    props.product?.discount !== undefined ? props.product.discount : 0,
-  set: (value) => {
-    props.product.discount = value;
-  },
+  get: () => props.product?.discount ?? 0,
+  set: (value) => (props.product.discount = value),
 });
 
 const formattedSalePrice = computed({
-  get: () => (props.product.salePrice).toFixed(2),
+  get: () => props.product.salePrice.toFixed(2),
 });
 </script>

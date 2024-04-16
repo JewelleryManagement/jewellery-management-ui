@@ -5,161 +5,140 @@
         {{ pageTitle }}
       </div>
       <v-form @submit.prevent="handleSubmit" ref="form">
-        <v-select
-          label="Seller"
-          v-model="sellerName"
-          :items="allUsers"
-          :item-props="userPropsFormatter"
-          :rules="[validateAuthors(sellerName)]"
-        >
-        </v-select>
+        <SaleInputs :sellObject="sellObject" :all-users="allUsers" />
+        <SaleButtons :sellObject="sellObject" @open-dialog="handleDialogs" />
 
-        <v-select
-          v-model="buyerName"
-          label="Buyer"
-          :items="allUsers"
-          :item-props="userPropsFormatter"
-          :rules="[validateAuthors(buyerName)]"
-        >
-        </v-select>
+        <SaleCalendar
+          :sellObject="sellObject"
+          :calendarDialog="calendarDialog"
+          @close-dialog="handleCloseCalendar"
+        />
 
-        <v-container class="d-flex flex-column">
-          <v-btn
-            color="green lighten-1"
-            @click="() => (calendarDialog = true)"
-            :disabled="!selectedUser"
-            >Calendar</v-btn
-          >
-
-          <p v-if="formattedDate.length > 0" class="mt-2 mx-auto text-center">
-            Selected date: {{ formattedDate }}
-          </p>
-
-          <v-btn
-            class="mt-2"
-            color="primary"
-            @click="toggleProductsDialog(true)"
-            :disabled="!selectedUser"
-          >
-            Products
-          </v-btn>
-        </v-container>
-
-        <v-container v-if="productsForSale.length > 0">
-          <div class="mx-auto text-center" style="font-size: 16px">
-            Currently selected products:
-          </div>
-          <Product-price-discount-row
-            v-for="(product, i) in productsForSale"
-            :key="product"
-            :product="productsForSale[i]"
-          />
-        </v-container>
-
-        <v-container class="d-flex flex-column mt-4">
-          <p>Total amount: € {{ totalAmount.toFixed(2) || 0 }}</p>
-          <p>Discounted amount: € {{ discountedAmount.toFixed(2) || 0 }}</p>
-          <p>Total discount: {{ totalDiscount.toFixed(2) || 0 }} %</p>
-        </v-container>
-
+        <SelectedResource
+          :resources="sellObject.resources"
+          :allResources="resourcesForSale"
+        />
+        <SelectedProducts :products="sellObject.products" />
         <form-buttons @reset-form="resetForm" />
       </v-form>
     </v-sheet>
-    <products-dialog
-      v-if="selectedUser"
+    <ProductsDialog
+      v-if="isSellerSelected"
       v-model="productsDialog"
-      @close-dialog="toggleProductsDialog(false)"
+      @close-dialog="handleDialogs('products', false)"
       @save-product-dialog="setProductsForSale"
-      :userId="selectedUser.id"
+      :userId="sellObject.sellerName.id"
+      :clearTable="clearTable"
     >
-    </products-dialog>
+    </ProductsDialog>
 
-    <calendar-dialog
-      v-model="calendarDialog"
-      @close-dialog="handleCloseCalendar"
-    />
+    <ResourcesDialog
+      v-if="isSellerSelected"
+      v-model="resourcesDialog"
+      :inputResources="resourcesForSale"
+      @close-dialog="handleDialogs('resources', false)"
+      @save-resources-dialog="saveResourceQuantitiesToProduct"
+      :clearTable="clearTable"
+    ></ResourcesDialog>
   </v-container>
 </template>
 
 <script setup>
-import { userPropsFormatter } from "@/utils/data-formatter.js";
-import CalendarDialog from "@/components/Dialog/CalendarDialog.vue";
-import ProductPriceDiscountRow from "@/components/ProductPriceDiscountRow.vue";
-import { validateAuthors } from "@/utils/validation-rules";
-import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
+import { ref, computed, watch, inject, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { ref, computed, watch, inject } from "vue";
+import {
+  SaleInputs,
+  SaleButtons,
+  SelectedResource,
+  SelectedProducts,
+  SaleCalendar,
+  ProductsDialog,
+  ResourcesDialog,
+} from "@/components";
+
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const pageTitle = ref(route.meta.title);
-const [sellerName, buyerName] = [ref(""), ref("")];
 const form = ref(null);
-const selectedUser = ref("");
 const [productsDialog, productsForSale] = [ref(false), ref([])];
+const [resourcesDialog, resourcesForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
-const formattedDate = ref("");
+const clearTable = ref(false);
 
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
-watch(sellerName, (newValue) => {
-  selectedUser.value = allUsers.find((user) => user.id == sellerName.value.id);
-  productsForSale.value = [];
+const sellObject = reactive({
+  sellerName: "",
+  buyerName: "",
+  products: ref([]),
+  resources: ref([]),
+  date: "",
 });
 
-const totalAmount = computed(() =>
-  productsForSale.value.reduce(
-    (amount, product) => amount + Number(product.salePrice),
-    0
-  )
-);
+watch(
+  () => sellObject.sellerName,
+  async (newSeller) => {
+    if (newSeller) {
+      const res = await store.dispatch(
+        "users/fetchResourcesForUser",
+        newSeller.id
+      );
+      resourcesForSale.value = res.resourcesAndQuantities;
+    }
 
-const discountedSmallAmount = computed(() =>
-  productsForSale.value.reduce(
-    (amount, product) =>
-      amount + (product.salePrice * (product.discount ?? 0)) / 100,
-    0
-  )
-);
-
-const discountedAmount = computed(
-  () => totalAmount.value - discountedSmallAmount.value
-);
-
-const totalDiscount = computed(() => {
-  const totalAmountValue = totalAmount.value;
-  const discountedAmountValue = discountedAmount.value;
-
-  if (totalAmountValue === 0 || isNaN(discountedAmountValue)) {
-    return 0;
+    productsForSale.value = [];
   }
+);
 
-  return 100 - (discountedAmountValue / totalAmountValue) * 100;
-});
+const isSellerSelected = computed(() =>
+  sellObject.sellerName?.id ? true : false
+);
 
-const toggleProductsDialog = (isOpen) => {
-  productsDialog.value = isOpen;
+const dialogFunctions = {
+  calendar: (isOpen) => (calendarDialog.value = isOpen),
+  resources: (isOpen) => (resourcesDialog.value = isOpen),
+  products: (isOpen) => (productsDialog.value = isOpen),
 };
 
-function handleCloseCalendar(selectedDate) {
-  calendarDialog.value = false;
-  if (!selectedDate) return;
-  formattedDate.value = selectedDate;
+const handleDialogs = (type, isOpen = true) => {
+  const openDialog = dialogFunctions[type];
+  if (openDialog) openDialog(isOpen);
+  else snackbarProvider.showErrorSnackbar(`Unsupported dialog type: ${type}`);
+};
+
+function handleCloseCalendar() {
+  handleDialogs("calendar", false);
 }
 
 const setProductsForSale = (selectedProductsForSale) => {
-  productsForSale.value = selectedProductsForSale
-  toggleProductsDialog(false);
+  sellObject.products.value = selectedProductsForSale;
+  handleDialogs("products", false);
+};
+
+const saveResourceQuantitiesToProduct = (resourceContentValue) => {
+  sellObject.resources.value = resourceContentValue.map((resource) => {
+    if (resource.discount === undefined) {
+      resource.discount = null;
+    }
+    return resource;
+  });
+
+  handleDialogs("resources", false);
 };
 
 const resetForm = () => {
   if (form.value) {
-    form.value.reset();
     form.value.resetValidation();
-    sellerName.value = [];
-    buyerName.value = [];
-    productsForSale.value = [];
+    sellObject.sellerName = "";
+    sellObject.buyerName = "";
+    sellObject.products.value = [];
+    sellObject.resources.value = [];
+    resourcesForSale.value = [];
+    sellObject.date = "";
+
+    clearTable.value = !clearTable.value;
   }
 };
 
@@ -169,15 +148,22 @@ const isFormValid = async () => {
 };
 
 const isProductsValidated = () => {
-  if (productsForSale.value.length <= 0) {
-    snackbarProvider.showErrorSnackbar("Please select a product!");
+  const selectedProducts = sellObject.products.value;
+  const selectedResources = sellObject.resources.value;
+
+  if (!selectedProducts && !selectedResources) {
+    snackbarProvider.showErrorSnackbar(
+      "Please select a product or a resource!"
+    );
     return false;
   }
   return true;
 };
 
 const isDateValidated = () => {
-  if (formattedDate.value.length <= 0) {
+  const saleDate = sellObject.date;
+
+  if (!saleDate) {
     snackbarProvider.showErrorSnackbar("Please select a date!");
     return false;
   }
@@ -185,19 +171,37 @@ const isDateValidated = () => {
 };
 
 const mapSelectedProducts = () => {
-  return productsForSale.value.map((product) => ({
+  const selectedProducts = sellObject.products.value;
+
+  if (!selectedProducts) return [];
+
+  return sellObject.products.value.map((product) => ({
     productId: product.id,
-    salePrice: Number(product.salePrice),
     discount: Number(product.discount) || 0,
+  }));
+};
+
+const mapSelectedResources = () => {
+  const selectedResources = sellObject.resources.value;
+
+  if (!selectedResources) return [];
+
+  return sellObject.resources.value.map((resource) => ({
+    resourceAndQuantity: {
+      resourceId: resource.id,
+      quantity: resource.quantity,
+    },
+    discount: Number(resource.discount) || 0,
   }));
 };
 
 const buildSaleRequestData = () => {
   return {
-    sellerId: sellerName.value.id,
-    buyerId: buyerName.value.id,
+    sellerId: sellObject.sellerName.id,
+    buyerId: sellObject.buyerName.id,
     products: mapSelectedProducts(),
-    date: formattedDate.value,
+    resources: mapSelectedResources(),
+    date: sellObject.date,
   };
 };
 
@@ -213,9 +217,8 @@ const postSale = async (data) => {
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
-  if (!isProductsValidated()) return;
   if (!isDateValidated()) return;
-
+  if (!isProductsValidated()) return;
   const data = buildSaleRequestData();
   await postSale(data);
 };
