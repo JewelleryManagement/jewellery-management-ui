@@ -25,7 +25,7 @@ test.afterEach(async ({ page }) => {
   await page.close();
 });
 
-test.skip("Create sale", async ({ page }) => {
+test("Create sale", async ({ page }) => {
   const { newSaleBtn, submitButton } = myContext;
   await newSaleBtn.click();
 
