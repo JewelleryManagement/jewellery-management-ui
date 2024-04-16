@@ -1,6 +1,6 @@
 <template>
     <base-card>
-        <org-table> </org-table>
+        Add
     </base-card>
 </template>
 
