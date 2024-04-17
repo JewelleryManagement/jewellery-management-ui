@@ -27,7 +27,7 @@ test.describe("Edit user tests", () => {
   });
 
   test.afterEach(async ({ page }) => {
-    // await page.close();
+    await page.close();
   });
 
   test("Access edit user page", async ({ page }) => {

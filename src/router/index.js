@@ -136,7 +136,7 @@ const routes = [
   { path: "/logout", redirect: "/login" },
   {
     path: "/organizations",
-    meta: { title: "Organizations Details", requiresAuth: true },
+    meta: { title: "Organizations Page", requiresAuth: true },
     component: () => import("../views/Organizations/Organizations.vue"),
   },
   {
