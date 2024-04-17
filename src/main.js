@@ -17,10 +17,12 @@ import {
   PartOfProduct,
   TableButton,
   ReturnProductButton,
-  ProductsContentDialog
+  ProductsContentDialog,
+  OrgTable,
 } from "@/components";
 
 app.component("bar-code", BarCode);
+app.component("org-table", OrgTable);
 app.component("base-card", BaseCard);
 app.component("form-buttons", FormButtons);
 app.component("table-button", TableButton);

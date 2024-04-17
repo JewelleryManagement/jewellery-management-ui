@@ -135,6 +135,16 @@ const routes = [
   },
   { path: "/logout", redirect: "/login" },
   {
+    path: "/organizations",
+    meta: { title: "Organizations Page", requiresAuth: true },
+    component: () => import("../views/Organizations/Organizations.vue"),
+  },
+  {
+    path: "/organizations/add",
+    meta: { title: "Create organization", requiresAuth: true },
+    component: () => import("../views/Organizations/OrganizationsAdd.vue"),
+  },
+  {
     path: "/:notFound(.*)",
     component: () => import("../views/NotFound.vue"),
     meta: { requiresunAuth: true },

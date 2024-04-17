@@ -4,11 +4,16 @@ import {
   getRandomNumberAsString,
 } from "tests/utils/getRandomNumberOrString";
 import { appLogin, navigateToPage } from "tests/utils/functions";
-import { createGlobalVariables, myContext, fillProductForm, fillTableCellAndPress } from "tests/utils/productsUtils";
+import {
+  createGlobalVariables,
+  myContext,
+  fillProductForm,
+  fillTableCellAndPress,
+} from "tests/utils/productsUtils";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(page, expect, 'products');
+  await navigateToPage(page, expect, "products");
   await createGlobalVariables(page);
 });
 
@@ -17,7 +22,7 @@ test.afterEach(async ({ page }) => {
 });
 
 test("Access products page", async ({ page }) => {
-  await navigateToPage(page, expect, 'products');
+  await navigateToPage(page, expect, "products");
 });
 
 test("Acces a product creation page", async ({ page }) => {
@@ -56,16 +61,10 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
   await expect(submitButton).toBeVisible();
   await submitButton.click();
 
-  await expect(
-    page.locator("#input-8-messages").getByText("Input field is required")
-  ).toBeVisible();
-  await expect(
-    page.locator("#input-10-messages").getByText("Input field is required")
-  ).toBeVisible();
+  await expect(page.getByText("Input field is required").first()).toBeVisible();
+  await expect(page.getByText("Input field is required").nth(1)).toBeVisible();
   await expect(page.getByText("Please select at least 1 author")).toBeVisible();
-  await expect(
-    page.locator("#input-15-messages").getByText("Input field is required")
-  ).toBeVisible();
+  await expect(page.getByText("Input field is required").nth(2)).toBeVisible();
   await expect(
     page.getByText(
       "Input field is required, Input must be less than 100 characters"
@@ -113,7 +112,7 @@ test("Create a product is successful", async ({ page }) => {
 
   await page.getByRole("button", { name: "Save" }).click();
 
-  await additionalPrice.fill('2')
+  await additionalPrice.fill("2");
 
   await submitButton.click();
   await expect(page.getByText("Successfully added product!")).toBeVisible();
@@ -124,7 +123,9 @@ test("Create a product is successful", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("Create a product with a product is successful and negative additional price", async ({ page }) => {
+test("Create a product with a product is successful and negative additional price", async ({
+  page,
+}) => {
   const { submitButton, additionalPrice } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
@@ -149,7 +150,7 @@ test("Create a product with a product is successful and negative additional pric
 
   await page.getByRole("button", { name: "Save" }).click();
 
-  await additionalPrice.fill('-2')
+  await additionalPrice.fill("-2");
 
   await submitButton.click();
   await expect(page.getByText("Successfully added product!")).toBeVisible();

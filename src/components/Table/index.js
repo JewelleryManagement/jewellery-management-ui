@@ -3,3 +3,4 @@ export { default as ResourceAvailabilityTable } from './ResourceAvailabilityTabl
 export { default as ResourceTable } from './ResourceTable.vue';
 export { default as SalesTable } from './SalesTable.vue';
 export { default as UsersTable } from './UsersTable.vue';
+export { default as OrgTable } from './OrganizationsTable'
