@@ -38,9 +38,9 @@ export function useTextAreaFieldRules() {
 
 export function useDiscountFieldRules() {
   return [
-    (v) => !!v || `Input field is required`,
-    (v) => (v && v >= 0) || "Discount should be 0 or above!",
-    (v) => (v && v <= 100) || "Discount should be 100 or below!",
+    (v) => v !== undefined && v !== '' || "Input field is required",
+    (v) => v === undefined || v >= 0 || "Discount should be 0 or above!",
+    (v) => v === undefined || v <= 100 || "Discount should be 100 or below!",
   ];
 }
 
@@ -58,7 +58,10 @@ export function useBarCodeValidationRules(value) {
 
   addRule("Input field is required", !!value);
   addRule("Only English letters and signs are allowed", regex.test(value));
-  addRule("Input must be less than 100 characters", value && value.length <= 100);
+  addRule(
+    "Input must be less than 100 characters",
+    value && value.length <= 100
+  );
 
   return {
     messages: messages.join(", "),
@@ -89,7 +92,7 @@ export function usePositiveNumberRules(currentValue) {
 }
 
 export function validateAuthors(authors) {
-  if (authors === undefined || authors === null) return ''
+  if (authors === undefined || authors === null) return "";
   if (authors.length === 0) return "Please select at least one author.";
   return true;
 }
