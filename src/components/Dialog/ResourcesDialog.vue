@@ -1,5 +1,9 @@
 <template>
-  <v-dialog transition="dialog-top-transition" width="auto">
+  <v-dialog
+    transition="dialog-top-transition"
+    width="auto"
+    @click:outside="closeDialog"
+  >
     <template v-slot:default>
       <v-card>
         <v-toolbar color="red" title="Reasources..."></v-toolbar>
@@ -79,7 +83,7 @@ const tableColumns = [
   computed(() => store.state.resources.tableColumnQuantity).value,
   ...computed(() => store.state.resources.tableColumns).value,
 ];
-const resourcesInUser = ref(store.getters["users/getUserResources"]);
+const resourcesInUser = computed(() => store.getters["users/getUserResources"]);
 
 const copyCurrentInputQuantities = () => {
   let quantities = [];
@@ -148,7 +152,7 @@ const saveTableValues = () => {
       savedQuantitiesInProduct.value.push({
         id: resourceId,
         quantity: Number(quantity),
-        currentResourcePrice
+        currentResourcePrice,
       });
     });
     emits("save-resources-dialog", savedQuantitiesInProduct.value);

@@ -3,7 +3,7 @@ import {
   fetchResourcePerUser,
   postResourceAvailability,
   postUser,
-  updateUser
+  updateUser,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -16,10 +16,10 @@ export default {
       { key: "firstName", title: "First Name" },
       { key: "lastName", title: "Last Name" },
       { key: "email", title: "Email" },
-      { key: "address", title: "Address", align: " d-none"  },
-      { key: "phone", title: "Phone", align: " d-none"  },
-      { key: "phone2", title: "Phone2", align: " d-none"  },
-      { key: "birthDate", title: "Birth Date", align: " d-none"  },
+      { key: "address", title: "Address", align: " d-none" },
+      { key: "phone", title: "Phone", align: " d-none" },
+      { key: "phone2", title: "Phone2", align: " d-none" },
+      { key: "birthDate", title: "Birth Date", align: " d-none" },
       { key: "note", title: "Note" },
       { key: "role", title: "Role" },
     ],
@@ -42,14 +42,15 @@ export default {
       commit("setUsers", res);
     },
     async createUser({ commit }, userData) {
-      return await postUser(userData)
+      return await postUser(userData);
     },
-    async updateUser({ commit }, {userId, data}) {
-      return await updateUser(userId, data)
+    async updateUser({ commit }, { userId, data }) {
+      return await updateUser(userId, data);
     },
     async fetchResourcesForUser({ commit }, userId) {
       const res = await fetchResourcePerUser(userId);
       commit("setUsersResources", res);
+      return res;
     },
     async postResourcesToUser({ commit }, data) {
       await postResourceAvailability(data);

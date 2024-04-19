@@ -77,11 +77,11 @@
 
       <div class="d-flex flex-column">
         <div class="d-flex justify-space-between">
-          <v-btn color="primary" @click="resourceDialog = true">
+          <v-btn color="primary-blue" @click="resourceDialog = true">
             Resources
           </v-btn>
 
-          <v-btn color="primary" @click="productsDialog = true">
+          <v-btn color="primary-blue" @click="productsDialog = true">
             Products
           </v-btn>
         </div>
