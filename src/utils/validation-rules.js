@@ -36,6 +36,14 @@ export function useTextAreaFieldRules() {
   ];
 }
 
+export function useDiscountFieldRules() {
+  return [
+    (v) => !!v || `Input field is required`,
+    (v) => (v && v >= 0) || "Discount should be 0 or above!",
+    (v) => (v && v <= 100) || "Discount should be 100 or below!",
+  ];
+}
+
 export function useBarCodeValidationRules(value) {
   const regex = /^[0-9a-zA-Z!@#$%^&*()_'"+-={}[\]:;<>,.?~\\s]+$/;
   let messages = [];
