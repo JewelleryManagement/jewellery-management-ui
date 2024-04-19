@@ -15,16 +15,16 @@
 
         <v-text-field
           v-model="orgObject.address"
-          :counter="35"
+          :counter="100"
           label="Address"
-          :rules="useTextFieldRules()"
+          :rules="useTextAreaFieldRules()"
           required
         ></v-text-field>
 
         <v-textarea
           v-model="orgObject.note"
           :counter="100"
-          :rules="useTextFieldLargeRules()"
+          :rules="useTextAreaFieldRules()"
           rows="2"
           label="Note"
           required
@@ -38,7 +38,7 @@
 <script setup>
 import {
   useTextFieldRules,
-  useTextFieldLargeRules,
+  useTextAreaFieldRules,
 } from "../../utils/validation-rules.js";
 import { ref, reactive, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";

@@ -18,7 +18,7 @@
   >
     <h5>Resources:</h5>
     <p>Price: € {{ currentResourcePrice.toFixed(2) }}</p>
-    <p>Discount: {{ computedResourcePrice.toFixed(2) }} %</p>
+    <p>Discount: {{ totalDiscount.toFixed(2) }} %</p>
     <p>Final price: € {{ finalResourcePrice.toFixed(2) }}</p>
   </v-container>
 </template>
@@ -40,7 +40,7 @@ const props = defineProps({
 
 const currentResourcePrice = computed(() =>
   props.resources.value.reduce(
-    (total, resource) => total + resource.currentResourcePrice,
+    (total, resource) => total + Number(resource.currentResourcePrice),
     0
   )
 );
@@ -57,4 +57,15 @@ const computedResourcePrice = computed(() =>
 const finalResourcePrice = computed(
   () => Number(currentResourcePrice.value) - Number(computedResourcePrice.value)
 );
+
+const totalDiscount = computed(() => {
+  const totalAmountValue = currentResourcePrice.value;
+  const discountedAmountValue = finalResourcePrice.value;
+
+  if (totalAmountValue === 0 || isNaN(discountedAmountValue)) {
+    return 0;
+  }
+
+  return 100 - (discountedAmountValue / totalAmountValue) * 100;
+});
 </script>

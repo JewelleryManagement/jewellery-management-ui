@@ -10,8 +10,8 @@ export default {
       { key: "buyer", title: "Buyer" },
       { key: "products", title: "Products", align: "center" },
       { key: "totalPrice", title: "Total Price" },
-      { key: "totalDiscountedPrice", title: "Discounted Price" },
       { key: "totalDiscount", title: "Discount" },
+      { key: "totalDiscountedPrice", title: "Discounted Price" },
       { key: "date", title: "Date" },
     ],
     tableColumnReturn: { key: "return", title: "Return" },
@@ -21,8 +21,8 @@ export default {
       state.sales = sales.map((product) => ({
         ...product,
         totalPrice: `€${product.totalPrice}`,
-        totalDiscountedPrice: `${(+product.totalDiscount).toFixed(2)}%`,
-        totalDiscount: `€${(+product.totalDiscountedPrice).toFixed(2)}`,
+        totalDiscount: `${(+product.totalDiscount).toFixed(2)}%`,
+        totalDiscountedPrice: `€${(+product.totalDiscountedPrice).toFixed(2)}`,
       }));
     },
   },

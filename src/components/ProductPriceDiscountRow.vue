@@ -16,6 +16,7 @@
         suffix="%"
         label="Discount"
         v-model="formattedDiscount"
+        :rules="useDiscountFieldRules()"
       ></v-text-field>
     </v-col>
   </v-row>
@@ -23,6 +24,7 @@
 
 <script setup>
 import { computed } from "vue";
+import { useDiscountFieldRules } from "@/utils/validation-rules";
 const props = defineProps({ product: Object });
 const formattedDiscount = computed({
   get: () => props.product?.discount ?? 0,
