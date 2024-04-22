@@ -12,6 +12,7 @@
         v-model="selectedOrg"
         required
         :rules="[validateOrgs]"
+        :disabled="isRouteRemove"
       >
       </v-select>
 
@@ -39,69 +40,45 @@
 <script setup>
 import { orgsPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
-import { ref, computed } from "vue";
-import { useNumberFieldRules, validateOrgs } from "../../utils/validation-rules";
+import { ref, computed, onMounted } from "vue";
+import {
+  useNumberFieldRules,
+  validateOrgs,
+} from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
+const emits = defineEmits(["handle-submit"]);
+const form = ref(null);
 const store = useStore();
 const route = useRoute();
+const pageTitle = ref(route.meta.title);
 const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
 const selectedOrg = ref("");
 const quantity = ref("");
 const dealPrice = ref("");
+const allOrgsByUser = computed(
+  () => store.getters["organizations/getUserOrgs"]
+);
+const isRouteTransfer = route.path.includes("/transfer");
+const isRouteRemove = route.path.includes("/remove");
 
-const allUsers = computed(() => store.getters["users/allUsers"]);
-const allOrgsByUser = computed(() => store.getters["organizations/getUserOrgs"])
-const isRouteTransfer = route.path.includes("/transfer")
-
-if (route.path.includes("/remove")) {
-  const resourceId = route.params.resourceId;
-  const affectedUserId = route.params.userId;
-
-  const affectedUser = computed(() =>
-    store.getters["users/getUserById"](affectedUserId)
-  ).value;
-
-  selectedUser.value = affectedUser;
-
-  const resourceAvailability = await fetchResourceAvailability(resourceId);
-
-  const quantityByUser = findQuantityByUser(
-    resourceAvailability,
-    affectedUser.id
-  );
-  quantity.value = quantityByUser;
-}
-
-async function fetchResourceAvailability(resourceId) {
-  const resourceAvailability = ref({});
-  resourceAvailability.value = await store.dispatch(
-    "resources/fetchAvailabilityResourceById",
-    resourceId
-  );
-  return resourceAvailability.value;
-}
-
-function findQuantityByUser(resourceAvailability, userId) {
-  return resourceAvailability.usersAndQuantities.find(
-    (item) => item.owner.id === userId
-  ).quantity;
-}
-
-const pageTitle = ref(route.meta.title);
-const form = ref(null);
-
-const emits = defineEmits(["handle-submit"]);
+onMounted(() => {
+  if (isRouteRemove || isRouteTransfer) quantity.value = route.params.quantity;
+  if (isRouteRemove) setCurrentOrgInTheList();
+  if (isRouteTransfer) removeCurrentOrgFromList();
+});
 
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
   if (!valid) return;
 
   const data = {
-    organizationId: selectedOrg.value.id,
+    organizationId: isRouteRemove
+      ? selectedOrg.value[0].id
+      : selectedOrg.value.id,
     userId: selectedUser.value.id,
     quantity: quantity.value,
-    dealPrice: Number(dealPrice.value).toFixed(2)
+    dealPrice: Number(dealPrice.value).toFixed(2),
   };
 
   emits("handle-submit", data);
@@ -112,5 +89,21 @@ const resetForm = () => {
     form.value.reset();
     form.value.resetValidation();
   }
+};
+
+const removeCurrentOrgFromList = () => {
+  const organizationId = route.params.organizationId;
+  const indexToRemove = allOrgsByUser.value.findIndex(
+    (x) => x.id === organizationId
+  );
+  if (indexToRemove !== -1) {
+    allOrgsByUser.value.splice(indexToRemove, 1);
+  }
+};
+
+const setCurrentOrgInTheList = () => {
+  selectedOrg.value = allOrgsByUser.value.filter(
+    (x) => x.id === route.params.organizationId
+  );
 };
 </script>

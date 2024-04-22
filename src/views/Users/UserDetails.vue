@@ -11,14 +11,14 @@
           </suspense>
 
           <div class="d-flex justify-center mt-10">
-            <v-btn
+            <!-- <v-btn
               color="red"
               :size="isSmallScreen() ? 'small' : 'large'"
               @click="() => (isResourceTableVisible = !isResourceTableVisible)"
               >{{
                 isResourceTableVisible ? "Hide Resources" : "Show Resources"
               }}</v-btn
-            >
+            > -->
             <v-btn
               color="green"
               :size="isSmallScreen() ? 'small' : 'large'"

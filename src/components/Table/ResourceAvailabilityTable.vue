@@ -1,6 +1,7 @@
 <template>
   <div class="text-center">
-    <h1>{{ user.firstName }} {{ user.lastName }}'s resource table</h1>
+    <!-- <h1>{{ user.firstName }} {{ user.lastName }}'s resource table</h1> -->
+    <h1>{{ org }}'s resource table</h1>
   </div>
   <v-card-title>
     <v-spacer></v-spacer>
@@ -18,7 +19,7 @@
       <router-link
         :to="{
           name: 'Remove-Quantity',
-          params: { resourceId: item.id, userId: user.id },
+          params: { resourceId: item.id, quantity: item.quantity },
         }"
       >
         <v-icon color="blue">mdi-minus</v-icon>
@@ -29,7 +30,7 @@
       <router-link
         :to="{
           name: 'Transfer-Quantity',
-          params: { resourceId: item.id, userId: user.id },
+          params: { resourceId: item.id, quantity: item.quantity },
         }"
       >
         <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
@@ -44,9 +45,9 @@ import { ref, toRefs } from "vue";
 const props = defineProps({
   tableColumns: Array,
   resourceItem: Object,
-  user: Object,
+  org: String,
 });
-const { tableColumns, resourceItem, user } = toRefs(props);
+const { tableColumns, resourceItem, org } = toRefs(props);
 
 const search = ref("");
 </script>

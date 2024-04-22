@@ -66,6 +66,10 @@ export async function getUserOrganizations() {
   return await fetchData("/organizations/by-permission/ADD_RESOURCE_QUANTITY");
 }
 
+export async function getUserOrganizationsById(organizationId) {
+  return await fetchData(`/organizations/resources-availability/${organizationId}`);
+}
+
 // POSTS REQUESTS
 async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {

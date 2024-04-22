@@ -2,6 +2,7 @@ import {
   fetchOrgs,
   postOrg,
   getUserOrganizations,
+  getUserOrganizationsById,
   postResourceToOrg,
   removeResourceFromOrg,
   postResourceTranferToOrg
@@ -31,6 +32,9 @@ export default {
     async fetchOrgs({ commit }) {
       const res = await fetchOrgs();
       commit("setOrgs", res);
+    },
+    async fetchOrgsById({ commit }, orgId) {
+      return await getUserOrganizationsById(orgId);
     },
     async postOrg({ commit }, data) {
       await postOrg(data);
