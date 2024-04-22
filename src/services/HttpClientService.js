@@ -107,6 +107,13 @@ export async function postResourceToOrg(orgData) {
   return await postData("/organizations/resources-availability", orgData);
 }
 
+export async function postResourceTranferToOrg(orgData) {
+  return await postData(
+    "/organizations/resources-availability/transfer",
+    orgData
+  );
+}
+
 export async function postPicture(productId, image) {
   const formData = new FormData();
   formData.append("image", image[0]);
@@ -137,6 +144,16 @@ export async function removeResourceQuantity(userId, resourceId, quantity) {
 
 export async function disassmebleProduct(productId) {
   return await removeData(`/products/${productId}`);
+}
+
+export async function removeResourceFromOrg(
+  organizationId,
+  resourceId,
+  quantity
+) {
+  return await removeData(
+    `/organizations/resources-availability/${organizationId}/${resourceId}/${quantity}`
+  );
 }
 
 // PUT REQUEST

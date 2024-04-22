@@ -140,6 +140,13 @@ const routes = [
     component: () => import("../views/Organizations/Organizations.vue"),
   },
   {
+    path: "/organization/:organizationId",
+    name: "Organization Details",
+    props: true,
+    component: () => import("../views/Organizations/OrganizationById"),
+    meta: { title: "Organization details", requiresAuth: true },
+  },
+  {
     path: "/organizations/add",
     meta: { title: "Create organization", requiresAuth: true },
     component: () => import("../views/Organizations/OrganizationsAdd.vue"),

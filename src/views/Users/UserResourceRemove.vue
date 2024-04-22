@@ -27,16 +27,15 @@ resourceAvailability.value = await store.dispatch(
 );
 
 const handleSubmit = async (inputsData) => {
-  const { selectedUser, quantity } = inputsData;
+  const { organizationId, quantity } = inputsData;
   const userId = route.params.userId;
-
   const data = {
-    userId: userId,
+    organizationId: organizationId,
     resourceId: resourceId,
     quantity: Number(quantity),
   };
   try {
-    await store.dispatch("resources/removeQuantityFromResource", data);
+    await store.dispatch("organizations/removeResourceFromOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
     router.push(`/users/${userId}`);
   } catch (error) {

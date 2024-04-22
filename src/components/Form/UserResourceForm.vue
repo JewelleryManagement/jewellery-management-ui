@@ -6,8 +6,7 @@
 
     <v-form @submit.prevent="handleSubmit" ref="form" class="mt-4">
       <v-select
-        v-if="!route.path.includes('/remove')"
-        label="Select user"
+        label="Select organization"
         :items="allOrgsByUser"
         :item-props="orgsPropsFormatter"
         v-model="selectedOrg"
