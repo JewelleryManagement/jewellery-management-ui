@@ -62,6 +62,10 @@ export async function fetchSales() {
   return await fetchData("/sales");
 }
 
+export async function getUserOrganizations() {
+  return await fetchData("/organizations/by-permission/ADD_RESOURCE_QUANTITY");
+}
+
 // POSTS REQUESTS
 async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {
@@ -98,6 +102,9 @@ export async function postUser(userData) {
 
 export async function postOrg(orgData) {
   return await postData("/organizations", orgData);
+}
+export async function postResourceToOrg(orgData) {
+  return await postData("/organizations/resources-availability", orgData);
 }
 
 export async function postPicture(productId, image) {

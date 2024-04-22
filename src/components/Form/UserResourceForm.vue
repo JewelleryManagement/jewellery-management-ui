@@ -6,13 +6,13 @@
 
     <v-form @submit.prevent="handleSubmit" ref="form" class="mt-4">
       <v-select
+        v-if="!route.path.includes('/remove')"
         label="Select user"
-        :items="allUsers"
-        :item-props="userPropsFormatter"
-        v-model="selectedUser"
-        :disabled="route.path.includes('/remove')"
+        :items="allOrgsByUser"
+        :item-props="orgsPropsFormatter"
+        v-model="selectedOrg"
         required
-        :rules="[validateUser]"
+        :rules="[validateOrgs]"
       >
       </v-select>
 
@@ -38,19 +38,21 @@
 </template>
 
 <script setup>
-import { userPropsFormatter } from "@/utils/data-formatter";
+import { orgsPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
 import { ref, computed } from "vue";
-import { useNumberFieldRules, validateUser } from "../../utils/validation-rules";
+import { useNumberFieldRules, validateOrgs } from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
 const store = useStore();
 const route = useRoute();
 const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
+const selectedOrg = ref("");
 const quantity = ref("");
 const dealPrice = ref("");
 
 const allUsers = computed(() => store.getters["users/allUsers"]);
+const allOrgsByUser = computed(() => store.getters["organizations/getUserOrgs"])
 const isRouteTransfer = route.path.includes("/transfer")
 
 if (route.path.includes("/remove")) {
@@ -95,7 +97,9 @@ const emits = defineEmits(["handle-submit"]);
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
   if (!valid) return;
+
   const data = {
+    organizationId: selectedOrg.value.id,
     userId: selectedUser.value.id,
     quantity: quantity.value,
     dealPrice: Number(dealPrice.value).toFixed(2)
