@@ -1,6 +1,5 @@
 <template>
   <div class="text-center">
-    <!-- <h1>{{ user.firstName }} {{ user.lastName }}'s resource table</h1> -->
     <h1>{{ org }}'s resource table</h1>
   </div>
   <v-card-title>
