@@ -30,8 +30,6 @@ resourceAvailability.value = await store.dispatch(
 const handleSubmit = async (inputsData) => {
   const { organizationId, quantity } = inputsData;
   
-  console.log(inputsData);
-
   const data = {
     organizationId: organizationId,
     resourceId: resourceId,
