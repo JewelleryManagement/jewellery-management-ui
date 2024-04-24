@@ -4,7 +4,7 @@
       :resourceAvailability="resourceAvailability"
     ></resource-availability-card>
 
-    <org-resource-form @handle-submit="handleSubmit" />
+    <user-resource-form @handle-submit="handleSubmit" />
   </v-container>
 </template>
 
@@ -27,12 +27,16 @@ resourceAvailability.value = await store.dispatch(
 );
 
 onMounted(async () => {
+  fetchUserOrg()
+});
+
+const fetchUserOrg = async () => {
   try {
     await store.dispatch("organizations/fetchUserOrgs");
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
   }
-});
+};
 
 const postAddQuantity = async (data) => {
   try {
