@@ -16,12 +16,12 @@ export const createGlobalVariables = async (page) => {
 
 export const firstInputSelect = async (page) => {
   await page.locator(".v-field__input").first().click();
-  await page.getByRole('option').first().click()
+  await page.getByRole("option").first().click();
 };
 
 export const secondInputSelect = async (page) => {
   await page.locator(".v-field__input").nth(1).click();
-  await page.getByRole('option').nth(1).click()
+  await page.getByRole("option").nth(1).click();
 };
 
 export const selectDate = async (page, expect) => {
@@ -30,10 +30,9 @@ export const selectDate = async (page, expect) => {
   const today = new Date();
   const day = today.getDate().toString().padStart(2, "0");
   const month = (today.getMonth() + 1).toString().padStart(2, "0");
-
   const year = today.getFullYear();
   await calendarBtn.click();
-  await page.getByRole("button", { name: day.toString() }).click();
+  await page.getByRole("button", { name: day.toString(), exact: true }).click();
   await expect(
     page.getByText(`Selected date: ${day}/${month}/${year}`)
   ).toBeVisible();
@@ -58,10 +57,12 @@ export const selectResource = async (page) => {
 };
 
 export const checkErrorMessages = async (page, expect) => {
-
-  await expect(page.getByText('Please select at least one author').first()).toBeVisible()
-  await expect(page.getByText('Please select at least one author').nth(1)).toBeVisible()
-
+  await expect(
+    page.getByText("Please select at least one author").first()
+  ).toBeVisible();
+  await expect(
+    page.getByText("Please select at least one author").nth(1)
+  ).toBeVisible();
 };
 
 export const checkDisabledButtons = async (
