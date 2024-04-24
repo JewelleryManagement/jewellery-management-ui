@@ -24,14 +24,13 @@
       ></v-text-field>
 
       <v-text-field
-        v-if="!isRouteTransfer"
+        v-if="!isRouteTransfer && !isRouteRemove"
         prefix="€"
         label="Delivery Cost"
         v-model="dealPrice"
         :rules="numberFieldRules"
         required
       ></v-text-field>
-
       <form-buttons @reset-form="resetForm" />
     </v-form>
   </v-sheet>

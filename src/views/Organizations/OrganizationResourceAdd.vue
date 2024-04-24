@@ -4,7 +4,7 @@
       :resourceAvailability="resourceAvailability"
     ></resource-availability-card>
 
-    <user-resource-form @handle-submit="handleSubmit" />
+    <org-resource-form @handle-submit="handleSubmit" />
   </v-container>
 </template>
 

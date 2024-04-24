@@ -6,7 +6,7 @@ registerPlugins(app);
 
 import {
   ResourceContentDialog,
-  UserResourceForm,
+  OrganizationResourceForm,
   DisassemblyButton,
   FormButtons,
   UserToolTip,
@@ -30,7 +30,7 @@ app.component("user-tool-tip", UserToolTip);
 app.component("picture-button", PictureButton);
 app.component("part-of-product", PartOfProduct);
 app.component("disassembly-button", DisassemblyButton);
-app.component("user-resource-form", UserResourceForm);
+app.component("org-resource-form", OrganizationResourceForm);
 app.component("return-product-button", ReturnProductButton);
 app.component("product-transfer-button", ProductTransferButton);
 app.component("resource-content-dialog", ResourceContentDialog);
