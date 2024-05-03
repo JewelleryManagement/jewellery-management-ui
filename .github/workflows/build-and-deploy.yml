@@ -2,7 +2,7 @@ name: Build and copy to S3
 
 on:
   push:
-    branches: [ "dev-env" ] #not existent yet
+    branches: [ "*" ]
 
 env:
   AWS_REGION : eu-central-1
