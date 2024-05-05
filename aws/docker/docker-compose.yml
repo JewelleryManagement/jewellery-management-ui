@@ -14,7 +14,10 @@ services:
       - /etc/letsencrypt/live/jms.katrantech.com/privkey.pem:/etc/nginx/certs/domain.key
     ports:
       - '3000:80'
+      - '443:443'
+    networks:
+      - jms-docker-be_jms-network
 
 networks:
-  jms-network:
+  jms-docker-be_jms-network:
     external: true
