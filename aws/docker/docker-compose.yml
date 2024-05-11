@@ -16,8 +16,8 @@ services:
       - '3000:80'
       - '443:443'
     networks:
-      - jms-docker-be_jms-network
+      - jms-network
 
 networks:
-  jms-docker-be_jms-network:
+  jms-network:
     external: true
