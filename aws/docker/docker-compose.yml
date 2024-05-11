@@ -10,5 +10,14 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./app:/app
+      - /etc/letsencrypt/live/jms.katrantech.com/fullchain.pem:/etc/nginx/certs/domain.crt
+      - /etc/letsencrypt/live/jms.katrantech.com/privkey.pem:/etc/nginx/certs/domain.key
     ports:
       - '3000:80'
+      - '443:443'
+    networks:
+      - jms-network
+
+networks:
+  jms-network:
+    external: true
