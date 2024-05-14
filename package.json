@@ -10,7 +10,7 @@
     "test-create-build": "cp -r dist docker_tests/app",
     "test-env-up": "docker compose -f docker_tests/docker-compose.yml up -d",
     "test-env-down": "docker compose -f docker_tests/docker-compose.yml down",
-    "ptest": "npm run test-remove-build && npm run build && npm run test-create-build && npm run test-env-up",
+    "ptest": "npm run test-remove-build && npm run test-env-down && npm run build && npm run test-create-build && npm run test-env-up",
     "test": "npx playwright test"
   },
   "dependencies": {
