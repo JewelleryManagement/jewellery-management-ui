@@ -68,8 +68,8 @@ onMounted(() => {
 });
 
 const handleSubmit = async () => {
-  const { valid } = await form.value.validate();
-  if (!valid) return;
+  const { valid  } = await form.value.validate();
+  if (!valid ) return;
 
   const data = {
     organizationId: isRouteRemove

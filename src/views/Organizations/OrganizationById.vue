@@ -4,7 +4,7 @@
       <resource-availability-table
         :tableColumns="tableColumnsResources"
         :resourceItem="organizationDetailsItems"
-        :org="orgName.name"
+        :orgName="orgName.name"
       ></resource-availability-table>
     </base-card>
   </v-container>

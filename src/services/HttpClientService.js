@@ -63,11 +63,15 @@ export async function fetchSales() {
 }
 
 export async function getUserOrganizations() {
-  return await fetchData("/organizations/by-permission/ADD_RESOURCE_QUANTITY");
+  return await fetchData("/organizations");
 }
 
-export async function getUserOrganizationsById(organizationId) {
+export async function getResourceAvailabilityByOrganization(organizationId) {
   return await fetchData(`/organizations/resources-availability/${organizationId}`);
+}
+
+export async function getUserOrganizationsByPermission(permission) {
+  return await fetchData(`/organizations/by-permission/${permission}`);
 }
 
 // POSTS REQUESTS

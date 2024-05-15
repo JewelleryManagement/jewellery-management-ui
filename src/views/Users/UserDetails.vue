@@ -12,6 +12,14 @@
 
           <div class="d-flex justify-center mt-10">
             <v-btn
+              color="red"
+              :size="isSmallScreen() ? 'small' : 'large'"
+              @click="() => (isResourceTableVisible = !isResourceTableVisible)"
+              >{{
+                isResourceTableVisible ? "Hide Resources" : "Show Resources"
+              }}</v-btn
+            >
+            <v-btn
               color="green"
               :size="isSmallScreen() ? 'small' : 'large'"
               @click="() => (isProductsTableVisible = !isProductsTableVisible)"
@@ -20,6 +28,16 @@
               }}</v-btn
             >
           </div>
+
+          <transition>
+            <base-card v-if="isResourceTableVisible">
+              <resource-availability-table
+                :tableColumns="tableColumnsResources"
+                :resourceItem="resourceItemResources"
+                :orgName="user.firstName"
+              ></resource-availability-table>
+            </base-card>
+          </transition>
 
           <transition>
             <base-card v-if="isProductsTableVisible">
@@ -69,8 +87,10 @@ import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
 import { isSmallScreen } from "@/utils/display";
 import { useRoute, useRouter } from "vue-router";
+import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
+const isResourceTableVisible = ref(false);
 const isProductsTableVisible = ref(false);
 const route = useRoute();
 const router = useRouter();
@@ -106,6 +126,7 @@ async function fetchProductsForUser() {
 await fetchResourcesForUser();
 await fetchProductsForUser();
 
+const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const resourceItemResources = computed(
   () => store.getters["users/getUserResources"]
 );
