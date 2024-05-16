@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ page }) => {
-  await page.close();
+  // await page.close();
 });
 
 
@@ -36,7 +36,7 @@ test("Sold products should not have disassemble and transfer buttons enabled ", 
   const classAttribute =
     "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-plain";
 
-  await page.getByRole("cell", { name: "Sold" }).dblclick();
+  await page.getByRole("cell", { name: "Sold", exact: true }).dblclick();
   await expect(page.locator("td:nth-child(6)").first()).toContainText('Yes');
   const disassemblyButtonLocator = page
     .locator("td:nth-child(12) button.v-btn")
