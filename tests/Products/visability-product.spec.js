@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.afterEach(async ({ page }) => {
-  // await page.close();
+  await page.close();
 });
 
 
