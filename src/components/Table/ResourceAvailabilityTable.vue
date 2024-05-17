@@ -14,7 +14,9 @@
   </v-card-title>
 
   <v-data-table :headers="tableColumns" :items="resourceItem" :search="search">
-
+    <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
+      <slot :name="slot" v-bind="scope || {}" />
+    </template>
   </v-data-table>
 </template>
 
@@ -27,7 +29,6 @@ const props = defineProps({
   orgName: String,
 });
 const { tableColumns, resourceItem, orgName } = toRefs(props);
-console.log(resourceItem);
 const search = ref("");
 </script>
 

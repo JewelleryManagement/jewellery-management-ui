@@ -5,7 +5,29 @@
         :tableColumns="tableColumnsResources"
         :resourceItem="organizationDetailsItems"
         :orgName="orgName.name"
-      ></resource-availability-table>
+      >
+        <template v-slot:item.remove="{ item }">
+          <router-link
+            :to="{
+              name: 'Remove-Quantity',
+              params: { resourceId: item?.id, quantity: item.quantity },
+            }"
+          >
+            <v-icon color="blue">mdi-minus</v-icon>
+          </router-link>
+        </template>
+
+        <template v-slot:item.transfer="{ item }">
+          <router-link
+            :to="{
+              name: 'Transfer-Quantity',
+              params: { resourceId: item?.id, quantity: item.quantity },
+            }"
+          >
+            <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
+          </router-link>
+        </template>
+      </resource-availability-table>
     </base-card>
   </v-container>
 </template>
@@ -27,6 +49,8 @@ onMounted(async () => {
   fetchUserOrgs();
   fetchOrganizationDetails();
 });
+
+console.log(organizationDetailsItems.value);
 
 const fetchOrganizationDetails = async () => {
   const orgId = route.params.organizationId;
