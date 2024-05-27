@@ -43,7 +43,7 @@ const postRemoveResource = async (organizationId, data) => {
   try {
     await store.dispatch("organizations/removeResourceFromOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
-    router.push(`/organization/${organizationId}`);
+    router.push(`/organizations/${organizationId}`);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

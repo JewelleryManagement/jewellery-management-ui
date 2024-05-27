@@ -3,7 +3,7 @@
     <base-card>
       <resource-availability-table
         :tableColumns="tableColumnsResources"
-        :resourceItem="organizationDetailsItems"
+        :resourceItem="organizationResources"
         :orgName="orgName.name"
       >
         <template v-slot:item.remove="{ item }">
@@ -41,25 +41,25 @@ import { useStore } from "vuex";
 const store = useStore();
 const route = useRoute();
 const snackbarProvider = inject("snackbarProvider");
-const organizationDetailsItems = ref([]);
+const organizationResources = ref([]);
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const orgName = ref({});
 
 onMounted(async () => {
-  fetchUserOrgs();
   fetchOrganizationDetails();
 });
-
-console.log(organizationDetailsItems.value);
 
 const fetchOrganizationDetails = async () => {
   const orgId = route.params.organizationId;
 
   try {
-    const res = await store.dispatch("organizations/fetchOrgsById", orgId);
+    const res = await store.dispatch(
+      "organizations/getResourceAvailabilityByOrganization",
+      orgId
+    );
     orgName.value = res.owner;
     for (const item of res.resourcesAndQuantities) {
-      organizationDetailsItems.value.push({
+      organizationResources.value.push({
         ...item.resource,
         quantity: item.quantity,
       });
@@ -68,14 +68,6 @@ const fetchOrganizationDetails = async () => {
     snackbarProvider.showErrorSnackbar(
       "Couldn't fetch the organization details!"
     );
-  }
-};
-
-const fetchUserOrgs = async () => {
-  try {
-    await store.dispatch("organizations/fetchUserOrgs");
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
   }
 };
 </script>

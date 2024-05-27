@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
@@ -20,6 +20,18 @@ const router = useRouter();
 const resourceId = route.params.resourceId;
 const organizationId = route.params.organizationId;
 
+onMounted(async () => {
+  fetchUserOrgs();
+});
+
+const fetchUserOrgs = async () => {
+  try {
+    await store.dispatch("organizations/fetchUserOrgs");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
+  }
+};
+
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
   "resources/fetchAvailabilityResourceById",
@@ -30,7 +42,7 @@ const postQuantityTransfer = async (data) => {
   try {
     await store.dispatch("organizations/transferResourceFromOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully transfered!");
-    router.push(`/organization/${organizationId}`);
+    router.push(`/organizations/${organizationId}`);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

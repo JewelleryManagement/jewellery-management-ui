@@ -119,7 +119,7 @@ const routes = [
     component: () => import("../views/Organizations/Organizations.vue"),
   },
   {
-    path: "/organization/:organizationId",
+    path: "/organizations/:organizationId",
     name: "Organization Details",
     props: true,
     component: () => import("../views/Organizations/OrganizationById"),
