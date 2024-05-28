@@ -3,7 +3,7 @@
     <base-card>
       <resource-availability-table
         :tableColumns="tableColumnsResources"
-        :resourceItem="organizationDetailsItems"
+        :resourceItem="organizationResources"
         :name="organization.name"
       >
         <template v-slot:item.remove="{ item }">
@@ -41,15 +41,13 @@ import { useStore } from "vuex";
 const store = useStore();
 const route = useRoute();
 const snackbarProvider = inject("snackbarProvider");
-const organizationDetailsItems = ref([]);
+const organizationResources = ref([]);
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const organization = ref({});
 
 onMounted(async () => {
   fetchOrganizationDetails();
 });
-
-console.log(organizationDetailsItems.value);
 
 const fetchOrganizationDetails = async () => {
   const orgId = route.params.organizationId;
@@ -58,7 +56,7 @@ const fetchOrganizationDetails = async () => {
     const res = await store.dispatch("organizations/fetchOrganizationResources", orgId);
     organization.value = res.owner;
     for (const item of res.resourcesAndQuantities) {
-      organizationDetailsItems.value.push({
+      organizationResources.value.push({
         ...item.resource,
         quantity: item.quantity,
       });

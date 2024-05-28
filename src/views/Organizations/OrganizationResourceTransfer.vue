@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted, computed } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
@@ -20,12 +20,8 @@ const router = useRouter();
 const resourceId = route.params.resourceId;
 const organizationId = route.params.organizationId;
 const organizationName = ref("");
-const allOrgsByUser = computed(
-  () => store.getters["organizations/getUserOrgs"]
-);
 onMounted(async () => {
   fetchUserOrgs();
-  console.log(allOrgsByUser.value);
 });
 const fetchUserOrgs = async () => {
   try {
