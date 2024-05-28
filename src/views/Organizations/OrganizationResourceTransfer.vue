@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
@@ -19,6 +19,21 @@ const route = useRoute();
 const router = useRouter();
 const resourceId = route.params.resourceId;
 const organizationId = route.params.organizationId;
+const organizationName = ref("");
+const allOrgsByUser = computed(
+  () => store.getters["organizations/getUserOrgs"]
+);
+onMounted(async () => {
+  fetchUserOrgs();
+  console.log(allOrgsByUser.value);
+});
+const fetchUserOrgs = async () => {
+  try {
+    await store.dispatch("organizations/fetchUserOrgs");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
+  }
+};
 
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
@@ -30,11 +45,11 @@ const postQuantityTransfer = async (data) => {
   try {
     await store.dispatch("organizations/transferResourceFromOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully transfered!");
-    router.push(`/organization/${organizationId}`);
+    router.push(`/organizations/${organizationId}`);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
-}
+};
 
 const handleSubmit = async (inputsData) => {
   const { organizationId: newOwnerId, quantity } = inputsData;
@@ -46,7 +61,7 @@ const handleSubmit = async (inputsData) => {
     quantity: Number(quantity),
   };
 
-  postQuantityTransfer(data)
+  postQuantityTransfer(data);
 };
 </script>
 

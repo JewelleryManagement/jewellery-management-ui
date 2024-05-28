@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <h1>{{ orgName }}'s resource table</h1>
+    <h1>{{ name }}'s resource table</h1>
   </div>
   <v-card-title>
     <v-spacer></v-spacer>
@@ -26,9 +26,9 @@ import { ref, toRefs } from "vue";
 const props = defineProps({
   tableColumns: Array,
   resourceItem: Object,
-  orgName: String,
+  name: String,
 });
-const { tableColumns, resourceItem, orgName } = toRefs(props);
+const { tableColumns, resourceItem, name } = toRefs(props);
 const search = ref("");
 </script>
 

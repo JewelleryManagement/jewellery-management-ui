@@ -4,7 +4,7 @@
       <resource-availability-table
         :tableColumns="tableColumnsResources"
         :resourceItem="organizationDetailsItems"
-        :orgName="orgName.name"
+        :name="organization.name"
       >
         <template v-slot:item.remove="{ item }">
           <router-link
@@ -43,10 +43,9 @@ const route = useRoute();
 const snackbarProvider = inject("snackbarProvider");
 const organizationDetailsItems = ref([]);
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
-const orgName = ref({});
+const organization = ref({});
 
 onMounted(async () => {
-  fetchUserOrgs();
   fetchOrganizationDetails();
 });
 
@@ -56,8 +55,8 @@ const fetchOrganizationDetails = async () => {
   const orgId = route.params.organizationId;
 
   try {
-    const res = await store.dispatch("organizations/fetchOrgsById", orgId);
-    orgName.value = res.owner;
+    const res = await store.dispatch("organizations/fetchOrganizationResources", orgId);
+    organization.value = res.owner;
     for (const item of res.resourcesAndQuantities) {
       organizationDetailsItems.value.push({
         ...item.resource,
@@ -68,14 +67,6 @@ const fetchOrganizationDetails = async () => {
     snackbarProvider.showErrorSnackbar(
       "Couldn't fetch the organization details!"
     );
-  }
-};
-
-const fetchUserOrgs = async () => {
-  try {
-    await store.dispatch("organizations/fetchUserOrgs");
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
   }
 };
 </script>

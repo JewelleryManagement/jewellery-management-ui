@@ -34,7 +34,7 @@
               <resource-availability-table
                 :tableColumns="tableColumnsResources"
                 :resourceItem="purchasedResources"
-                :orgName="user.firstName"
+                :name="`${user.firstName + ' ' + user.lastName}`"
               ></resource-availability-table>
             </base-card>
           </transition>

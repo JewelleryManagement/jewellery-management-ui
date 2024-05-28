@@ -2,7 +2,7 @@ version: '3.8'
 name: jms-docker-be-fe-test
 services:
   jms-be:
-    image: vladokat/jms-be:883e70a
+    image: vladokat/jms-be:41ce26d
     build:
       context: .
       dockerfile: Dockerfile_BE
