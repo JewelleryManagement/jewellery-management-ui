@@ -21,6 +21,7 @@
       :headers="tableColumns"
       :items="organizations"
       :search="search"
+      @click:row="rowClickHandler"
       hover
     >
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -31,8 +32,11 @@
 </template>
 
 <script setup>
+import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 
 const search = ref("");
@@ -46,5 +50,9 @@ try {
 
 const tableColumns = computed(() => store.getters["organizations/getColumns"]);
 const organizations = computed(() => store.getters["organizations/allOrganizations"])
+
+const rowClickHandler = (organization) => {
+  navigateToItemDetails(router, organization, "organizations");
+};
 
 </script>

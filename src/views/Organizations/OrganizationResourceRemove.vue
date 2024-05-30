@@ -3,7 +3,7 @@
     <resource-availability-card
       :resourceAvailability="resourceAvailability"
     ></resource-availability-card>
-    <user-resource-form @handle-submit="handleSubmit"></user-resource-form>
+    <org-resource-form @handle-submit="handleSubmit"></org-resource-form>
   </v-container>
 </template>
 
@@ -16,6 +16,7 @@ const { resourceId, userId } = defineProps({
   resourceId: String,
   userId: String,
 });
+
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
 const route = useRoute();
@@ -27,22 +28,24 @@ resourceAvailability.value = await store.dispatch(
 );
 
 const handleSubmit = async (inputsData) => {
-  const { selectedUser, quantity } = inputsData;
-  const userId = route.params.userId;
+  const { organizationId, quantity } = inputsData;
 
   const data = {
-    userId: userId,
+    organizationId: organizationId,
     resourceId: resourceId,
     quantity: Number(quantity),
   };
+
+  await postRemoveResource(organizationId, data);
+};
+
+const postRemoveResource = async (organizationId, data) => {
   try {
-    await store.dispatch("resources/removeQuantityFromResource", data);
+    await store.dispatch("organizations/removeResourceFromOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
-    router.push(`/users/${userId}`);
+    router.push(`/organizations/${organizationId}`);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
 </script>
-
-<style scoped></style>

@@ -3,20 +3,19 @@
     <resource-availability-card
       :resourceAvailability="resourceAvailability"
     ></resource-availability-card>
-
-    <user-resource-form @handle-submit="handleSubmit" />
+    <org-resource-form @handle-submit="handleSubmit"></org-resource-form>
   </v-container>
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
-const { resourceId, userId } = defineProps({
+const { resourceId } = defineProps({
   resourceId: String,
-  userId: String,
 });
+
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
 const router = useRouter();
@@ -26,9 +25,21 @@ resourceAvailability.value = await store.dispatch(
   resourceId
 );
 
+onMounted(async () => {
+  fetchUserOrg()
+});
+
+const fetchUserOrg = async () => {
+  try {
+    await store.dispatch("organizations/fetchUserOrgs");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
+  }
+};
+
 const postAddQuantity = async (data) => {
   try {
-    await store.dispatch("users/postResourcesToUser", data);
+    await store.dispatch("organizations/postResourceToOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
     router.push("/resources");
   } catch (error) {
@@ -37,12 +48,13 @@ const postAddQuantity = async (data) => {
 };
 
 const handleSubmit = async (inputsData) => {
-  const { userId, quantity, dealPrice } = inputsData;
+  const { organizationId, quantity, dealPrice } = inputsData;
+
   const data = {
-    userId: userId,
+    organizationId: organizationId,
     resourceId: resourceId,
     quantity: Number(quantity),
-    dealPrice: dealPrice
+    dealPrice: dealPrice,
   };
 
   postAddQuantity(data);

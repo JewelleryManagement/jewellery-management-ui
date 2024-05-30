@@ -5,4 +5,4 @@ export { default as PreciousStone } from './PreciousStone.vue';
 export { default as ProductCreateAndEditForm } from './ProductCreateAndEditForm.vue';
 export { default as SemiPreciousStone } from './SemiPreciousStone.vue';
 export { default as UserForm } from './UserForm.vue';
-export { default as UserResourceForm } from './UserResourceForm.vue';
+export { default as OrganizationResourceForm } from './OrganizationResourceForm.vue';

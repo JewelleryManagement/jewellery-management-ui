@@ -16,6 +16,13 @@ export function userPropsFormatter(user) {
   };
 }
 
+export function orgsPropsFormatter(org) {
+  return {
+    title: org.name,
+    subtitle: org.address,
+  };
+}
+
 export function mapUserDataToNewData(userData) {
   const newUserData = {};
   Object.keys(userData.value).forEach((key) => {
