@@ -4,7 +4,7 @@
       <resource-availability-table
         :tableColumns="tableColumnsResources"
         :resourceItem="organizationResources"
-        :orgName="orgName.name"
+        :name="organization.name"
       >
         <template v-slot:item.remove="{ item }">
           <router-link
@@ -43,7 +43,7 @@ const route = useRoute();
 const snackbarProvider = inject("snackbarProvider");
 const organizationResources = ref([]);
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
-const orgName = ref({});
+const organization = ref({});
 
 onMounted(async () => {
   fetchOrganizationDetails();
@@ -53,11 +53,8 @@ const fetchOrganizationDetails = async () => {
   const orgId = route.params.organizationId;
 
   try {
-    const res = await store.dispatch(
-      "organizations/getResourceAvailabilityByOrganization",
-      orgId
-    );
-    orgName.value = res.owner;
+    const res = await store.dispatch("organizations/fetchOrganizationResources", orgId);
+    organization.value = res.owner;
     for (const item of res.resourcesAndQuantities) {
       organizationResources.value.push({
         ...item.resource,

@@ -31,7 +31,7 @@ export async function fetchPurchasedResourcePerUser(userId) {
 }
 
 export async function fetchAvailabilityResourceById(resourceId) {
-  return await fetchData(`/resources/availability/by-resource/${resourceId}`);
+  return await fetchData(`/organizations/resources-availability/by-resource/${resourceId}`);
 }
 
 export async function fetchQuantityByResourceId(resourceId) {

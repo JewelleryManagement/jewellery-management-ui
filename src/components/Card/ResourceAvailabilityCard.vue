@@ -7,8 +7,8 @@
         <v-icon color="pink">mdi-diamond</v-icon>
       </v-card-title>
 
-      <v-card-subtitle v-for="item in usersAndQuantities" :key="item.id">
-        User: {{ item.owner.firstName }} {{ item.owner.lastName }} - Quantity: {{ item.quantity }}
+      <v-card-subtitle v-for="item in organizationsAndQuantities" :key="item.id">
+        Organization: {{ item.owner.name }} - Quantity: {{ item.quantity }}
       </v-card-subtitle>
 
       <v-card-text>
@@ -44,7 +44,7 @@ const formatResource = (jsonObj) => {
 
 const resource = resourceAvailability.resource;
 const formattedResource = formatResource(resourceAvailability.resource);
-const usersAndQuantities = resourceAvailability.usersAndQuantities;
+const organizationsAndQuantities = resourceAvailability.organizationsAndQuantities;
 </script>
 
 

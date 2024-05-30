@@ -19,11 +19,10 @@ const route = useRoute();
 const router = useRouter();
 const resourceId = route.params.resourceId;
 const organizationId = route.params.organizationId;
-
+const organizationName = ref("");
 onMounted(async () => {
   fetchUserOrgs();
 });
-
 const fetchUserOrgs = async () => {
   try {
     await store.dispatch("organizations/fetchUserOrgs");
@@ -46,7 +45,7 @@ const postQuantityTransfer = async (data) => {
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
-}
+};
 
 const handleSubmit = async (inputsData) => {
   const { organizationId: newOwnerId, quantity } = inputsData;
@@ -58,7 +57,7 @@ const handleSubmit = async (inputsData) => {
     quantity: Number(quantity),
   };
 
-  postQuantityTransfer(data)
+  postQuantityTransfer(data);
 };
 </script>
 

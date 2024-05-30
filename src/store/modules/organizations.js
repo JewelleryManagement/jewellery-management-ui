@@ -33,7 +33,7 @@ export default {
       const res = await fetchOrgs();
       commit("setOrgs", res);
     },
-    async getResourceAvailabilityByOrganization({ commit }, orgId) {
+    async fetchOrganizationResources({ commit }, orgId) {
       return await getResourceAvailabilityByOrganization(orgId);
     },
     async postOrg({ commit }, data) {
