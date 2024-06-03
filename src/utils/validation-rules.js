@@ -100,6 +100,9 @@ export function validateAuthors(authors) {
 export function validateUser(value) {
   return !!value || "Please select a user";
 }
+export function validateOrgs(value) {
+  return !!value || "Please select an organization";
+}
 
 export function useEmailValidationRule() {
   return [

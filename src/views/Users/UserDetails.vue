@@ -33,8 +33,8 @@
             <base-card v-if="isResourceTableVisible">
               <resource-availability-table
                 :tableColumns="tableColumnsResources"
-                :resourceItem="resourceItemResources"
-                :user="user"
+                :resourceItem="purchasedResources"
+                :name="`${user.firstName + ' ' + user.lastName}`"
               ></resource-availability-table>
             </base-card>
           </transition>
@@ -44,7 +44,9 @@
               <products-table
                 :products="userProducts"
                 :additionalColumnsRight="disassemblyColumns"
-                :title="`${user.firstName + ' ' + user.lastName}'s products table`"
+                :title="`${
+                  user.firstName + ' ' + user.lastName
+                }'s products table`"
               >
                 <template v-slot:item.authors="{ item }">
                   <user-tool-tip
@@ -115,6 +117,14 @@ async function fetchResourcesForUser() {
   }
 }
 
+async function fetchPurhasedResourcePerUser() {
+  try {
+    await store.dispatch("users/fetchPurchasedResourcesPerUser", userId);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch purchased resources.");
+  }
+}
+
 async function fetchProductsForUser() {
   try {
     await store.dispatch("products/fetchProductsByOwner", userId);
@@ -124,11 +134,15 @@ async function fetchProductsForUser() {
 }
 
 await fetchResourcesForUser();
+await fetchPurhasedResourcePerUser();
 await fetchProductsForUser();
 
-const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
+const tableColumnsResources = computed(() => store.getters["users/getTableColumnsWithQuantity"]);
 const resourceItemResources = computed(
   () => store.getters["users/getUserResources"]
+);
+const purchasedResources = computed(
+  () => store.getters["users/getPurchasedResources"]
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
 const disassemblyColumns = computed(() => [

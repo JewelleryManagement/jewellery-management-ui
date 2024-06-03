@@ -4,6 +4,7 @@ import {
   postResourceAvailability,
   postUser,
   updateUser,
+  fetchPurchasedResourcePerUser,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -11,6 +12,7 @@ export default {
   state: {
     users: [],
     usersResources: [],
+    purchasedResources: [],
     tableColumns: [
       { key: "id", title: "Id", align: " d-none" },
       { key: "firstName", title: "First Name" },
@@ -32,6 +34,9 @@ export default {
     setUsersResources(state, usersResources) {
       state.usersResources = usersResources;
     },
+    setPurchasedResources(state, usersResources) {
+      state.purchasedResources = usersResources;
+    },
     setAllResourcesByUsers(state, usersResources) {
       state.allResourcesByUser.push(usersResources);
     },
@@ -52,6 +57,10 @@ export default {
       commit("setUsersResources", res);
       return res;
     },
+    async fetchPurchasedResourcesPerUser({ commit }, userId) {
+      const res = await fetchPurchasedResourcePerUser(userId);
+      commit("setPurchasedResources", res);
+    },
     async postResourcesToUser({ commit }, data) {
       await postResourceAvailability(data);
     },
@@ -66,10 +75,21 @@ export default {
     getTableColumnsWithEdit: (state) => {
       return [...state.tableColumns, state.tableColumnEdit];
     },
+    getTableColumnsWithQuantity: (state, getters, rootState, rootGetters) => {
+      return [rootState.resources.tableColumnQuantity, ...rootState.resources.tableColumns];
+    },
     allUsers(state) {
       return state.users;
     },
     getUserById: (state) => (id) => state.users.find((user) => user.id === id),
+    getPurchasedResources(state) {
+      return state.purchasedResources?.map((resource) => {
+        return {
+          quantity: resource.resourceAndQuantity.quantity,
+          ...resource.resourceAndQuantity.resource,
+        };
+      });
+    },
     getUserResources(state) {
       return state.usersResources?.resourcesAndQuantities?.map(
         (resourceQuantity) => {

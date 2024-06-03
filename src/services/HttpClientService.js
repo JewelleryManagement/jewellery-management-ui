@@ -26,8 +26,12 @@ export async function fetchResourcePerUser(userId) {
   return await fetchData(`/resources/availability/${userId}`);
 }
 
+export async function fetchPurchasedResourcePerUser(userId) {
+  return await fetchData(`/resources/availability/purchased/${userId}`);
+}
+
 export async function fetchAvailabilityResourceById(resourceId) {
-  return await fetchData(`/resources/availability/by-resource/${resourceId}`);
+  return await fetchData(`/organizations/resources-availability/by-resource/${resourceId}`);
 }
 
 export async function fetchQuantityByResourceId(resourceId) {
@@ -60,6 +64,18 @@ export async function fetchUsers() {
 
 export async function fetchSales() {
   return await fetchData("/sales");
+}
+
+export async function getUserOrganizations() {
+  return await fetchData("/organizations");
+}
+
+export async function getResourceAvailabilityByOrganization(organizationId) {
+  return await fetchData(`/organizations/resources-availability/${organizationId}`);
+}
+
+export async function getUserOrganizationsByPermission(permission) {
+  return await fetchData(`/organizations/by-permission/${permission}`);
 }
 
 // POSTS REQUESTS
@@ -99,6 +115,16 @@ export async function postUser(userData) {
 export async function postOrg(orgData) {
   return await postData("/organizations", orgData);
 }
+export async function postResourceToOrg(orgData) {
+  return await postData("/organizations/resources-availability", orgData);
+}
+
+export async function postResourceTranferToOrg(orgData) {
+  return await postData(
+    "/organizations/resources-availability/transfer",
+    orgData
+  );
+}
 
 export async function postPicture(productId, image) {
   const formData = new FormData();
@@ -130,6 +156,16 @@ export async function removeResourceQuantity(userId, resourceId, quantity) {
 
 export async function disassmebleProduct(productId) {
   return await removeData(`/products/${productId}`);
+}
+
+export async function removeResourceFromOrg(
+  organizationId,
+  resourceId,
+  quantity
+) {
+  return await removeData(
+    `/organizations/resources-availability/${organizationId}/${resourceId}/${quantity}`
+  );
 }
 
 // PUT REQUEST

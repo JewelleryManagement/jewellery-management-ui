@@ -3,12 +3,12 @@
     <resource-availability-card
       :resourceAvailability="resourceAvailability"
     ></resource-availability-card>
-    <user-resource-form @handle-submit="handleSubmit"></user-resource-form>
+    <org-resource-form @handle-submit="handleSubmit"></org-resource-form>
   </v-container>
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
@@ -18,7 +18,18 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const resourceId = route.params.resourceId;
-const ownerId = route.params.userId;
+const organizationId = route.params.organizationId;
+const organizationName = ref("");
+onMounted(async () => {
+  fetchUserOrgs();
+});
+const fetchUserOrgs = async () => {
+  try {
+    await store.dispatch("organizations/fetchUserOrgs");
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
+  }
+};
 
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
@@ -28,26 +39,25 @@ resourceAvailability.value = await store.dispatch(
 
 const postQuantityTransfer = async (data) => {
   try {
-    await store.dispatch("resources/resourceAvailabilityTransfer", data);
+    await store.dispatch("organizations/transferResourceFromOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully transfered!");
-    router.push(`/users/${ownerId}`);
+    router.push(`/organizations/${organizationId}`);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
-}
+};
 
 const handleSubmit = async (inputsData) => {
-  const { userId, quantity } = inputsData;
- 
+  const { organizationId: newOwnerId, quantity } = inputsData;
+
   const data = {
-    previousOwnerId: ownerId,
-    newOwnerId: userId,
+    previousOwnerId: organizationId,
+    newOwnerId: newOwnerId,
     transferredResourceId: resourceId,
     quantity: Number(quantity),
   };
 
-  postQuantityTransfer(data)
-
+  postQuantityTransfer(data);
 };
 </script>
 
