@@ -1,5 +1,10 @@
 <template>
   <v-sheet width="300" class="mx-auto">
+    <OrganizationSelect
+      :items="allOrgsByUser"
+      :selectedValue="selectedOrg"
+      @organization-changed="updateSelectedOrg"
+    />
     <v-form ref="form" @submit.prevent="handleSubmit" @keydown.enter.prevent>
       <v-text-field
         v-model="props.productInfo.catalogNumber"
@@ -56,9 +61,9 @@
       </div>
 
       <resources-dialog
-        v-if="isResourcesForUserFetched"
         v-model="resourceDialog"
         :inputResources="props.productInfo.resourcesContent"
+        :availableResources="resourcesToChooseFrom"
         @save-resources-dialog="saveResourceQuantitiesToProduct"
         @close-dialog="closeDialog"
         :clearTable="clearTable"
@@ -68,20 +73,28 @@
         v-model="productsDialog"
         @close-dialog="closeDialog"
         @save-product-dialog="productsTableValues"
-        :userId="owner.id"
         :inputProducts="props.productInfo.productsContent"
         :currentProductId="props.productInfo.id"
         :clearTable="clearTable"
+        :availableProducts="productsToChooseFrom"
       >
       </products-dialog>
 
       <div class="d-flex flex-column">
         <div class="d-flex justify-space-between">
-          <v-btn color="primary-blue" @click="resourceDialog = true">
+          <v-btn
+            :disabled="!selectedOrg"
+            color="primary-blue"
+            @click="resourceDialog = true"
+          >
             Resources
           </v-btn>
 
-          <v-btn color="primary-blue" @click="productsDialog = true">
+          <v-btn
+            :disabled="!selectedOrg"
+            color="primary-blue"
+            @click="productsDialog = true"
+          >
             Products
           </v-btn>
         </div>
@@ -114,6 +127,7 @@ import { ref, computed, onMounted, inject } from "vue";
 import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import ProductContentsInfoPanel from "@/components/ProductContentsInfoPanel.vue";
+import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 
 import {
   useTextFieldLargeRules,
@@ -129,6 +143,7 @@ const props = defineProps({
   productInfo: Object,
   submitReqFunction: Function,
 });
+
 const snackbarProvider = inject("snackbarProvider");
 const router = useRouter();
 const route = useRoute();
@@ -144,23 +159,34 @@ const [currentResourcePrice, currentProductPrice, totalPrice] = [
       (Number(props.productInfo.additionalPrice) || 0)
   ),
 ];
-
 const form = ref(null);
 const selectedPicture = ref(null);
 const clearTable = ref(false);
+//TODO: remnove this owner
 const owner = computed(() =>
   props.productInfo?.owner
     ? props.productInfo?.owner
     : store.getters["auth/getUser"]
 ).value;
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
-const isResourcesForUserFetched = ref(false);
+// const orgUsers = ref([]);
+const allOrgsByUser = ref([]);
+const resourcesToChooseFrom = ref([]);
+const productsToChooseFrom = ref([]);
+const selectedOrg = ref(null);
+
+const updateSelectedOrg = (newOrg) => {
+  resetForm();
+  props.productInfo.ownerId = newOrg.id;
+  selectedOrg.value = newOrg;
+  fetchResourcesForOrganization(newOrg);
+  fetchProductsForOrganization(newOrg);
+  // fetchUsersForOrganization(newOrg);
+};
 
 onMounted(async () => {
-  isResourcesForUserFetched.value = false;
-  await fetchResourcesForUser();
-  isResourcesForUserFetched.value = true;
   calculatePricesInEditView();
+  await fetchOrganizations();
 });
 
 const calculatePricesInEditView = async () => {
@@ -186,12 +212,69 @@ const calculatePricesInEditView = async () => {
     currentProductPrice.value = productsContentTotal;
   }
 };
+//TODO: use this when users in organization have full information
+// const fetchUsersForOrganization = async (organization) => {
+//   try {
+//     let response = await store.dispatch(
+//       "users/fetchUsersByOrganization",
+//       organization.id
+//     );
+//     console.log(response);
+//     orgUsers.value = response.members;
+//   } catch (error) {
+//     snackbarProvider.showErrorSnackbar("Could not fetch users!");
+//   }
+// };
 
-const fetchResourcesForUser = async () => {
+const fetchOrganizations = async () => {
   try {
-    await store.dispatch("users/fetchResourcesForUser", owner.id);
+    const permission = route.path.includes("edit")
+      ? "EDIT_PRODUCT"
+      : "CREATE_PRODUCT";
+    const response = await store.dispatch(
+      "organizations/fetchUserOrgsByPermission",
+      permission
+    );
+    allOrgsByUser.value = response;
   } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not fetch resources for user!");
+    snackbarProvider.showErrorSnackbar("Could not fetch organizations!");
+  }
+};
+
+const fetchResourcesForOrganization = async (organization) => {
+  try {
+    resourcesToChooseFrom.value = await store
+      .dispatch("organizations/fetchOrganizationResources", organization.id)
+      .then((resourcesResponse) =>
+        resourcesResponse.resourcesAndQuantities.map((resourceAndQuantity) => {
+          return {
+            quantity: resourceAndQuantity.quantity,
+            ...resourceAndQuantity.resource,
+          };
+        })
+      );
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Could not fetch resources for organization!"
+    );
+  }
+};
+const fetchProductsForOrganization = async (organization) => {
+  try {
+    productsToChooseFrom.value = await store
+      .dispatch("products/fetchProductsByOrganization", organization.id)
+      .then((productsResponse) => {
+        return productsResponse.products.filter(
+          (product) =>
+            !product.contentOf &&
+            !product.partOfSale &&
+            product.id !== props.currentProductId
+        );
+      });
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Could not fetch products for organization!"
+    );
   }
 };
 
@@ -219,6 +302,7 @@ const productsTableValues = (productsContentValue) => {
   props.productInfo.productsContent = productsContentValue;
   closeDialog("products");
 };
+
 const isFormValid = async () => {
   const { valid } = await form.value.validate();
   return valid;

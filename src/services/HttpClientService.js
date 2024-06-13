@@ -58,6 +58,14 @@ export async function fetchProductsByOwner(ownerId) {
   return await fetchData(`/products/by-owner/${ownerId}`);
 }
 
+export async function fetchProductsByOrganization(ownerId) {
+  return await fetchData(`/organizations/${ownerId}/products`);
+}
+
+export async function fetchUsersByOrganization(orgId) {
+  return await fetchData(`/organizations/${orgId}/users`);
+}
+
 export async function fetchUsers() {
   return await fetchData("/users");
 }
@@ -99,7 +107,7 @@ export async function postResourceAvailabilityTransfer(data) {
 }
 
 export async function postProduct(data) {
-  return await postData("/products", data);
+  return await postData("/organizations/products", data);
 }
 
 export async function postUserLogin(user) {

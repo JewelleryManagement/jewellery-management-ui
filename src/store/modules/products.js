@@ -2,6 +2,7 @@ import {
   fetchProducts,
   postProduct,
   fetchProductsByOwner,
+  fetchProductsByOrganization,
   disassmebleProduct,
   transferProduct,
   postPicture,
@@ -79,6 +80,9 @@ export default {
     async fetchProductsByOwner({ commit }, ownerId) {
       const res = await fetchProductsByOwner(ownerId);
       commit("setCurrentUserProducts", res);
+    },
+    async fetchProductsByOrganization({ commit }, ownerId) {
+      return await fetchProductsByOrganization(ownerId);
     },
     async disassmebleProduct({ commit }, productId) {
       await disassmebleProduct(productId);

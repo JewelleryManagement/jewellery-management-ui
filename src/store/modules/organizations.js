@@ -3,6 +3,7 @@ import {
   postOrg,
   getUserOrganizations,
   getResourceAvailabilityByOrganization,
+  getUserOrganizationsByPermission,
   postResourceToOrg,
   removeResourceFromOrg,
   postResourceTranferToOrg
@@ -42,6 +43,9 @@ export default {
     async fetchUserOrgs({ commit }) {
       const res = await getUserOrganizations();
       commit("setUserOrgs", res);
+    },
+    async fetchUserOrgsByPermission({ commit }, permission) {
+      return await getUserOrganizationsByPermission(permission);
     },
     async postResourceToOrg({ commit }, data) {
       await postResourceToOrg(data);
