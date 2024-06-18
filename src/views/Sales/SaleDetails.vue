@@ -45,12 +45,12 @@ const route = useRoute();
 const saleId = route.params.saleId;
 
 const currentSale = computed(() => store.getters["sales/getSaleById"](saleId));
-const saleProducts = currentSale.value.products
+const saleProducts = currentSale.value.products;
 const additionalColumns = computed(() => [
+  store.state.products.tableColumnOrganization,
   store.state.products.tableColumnOwner,
   store.state.sales.tableColumnReturn,
 ]);
-
 </script>
 
 <style lang="scss" scoped></style>

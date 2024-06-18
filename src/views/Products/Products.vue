@@ -28,6 +28,10 @@
           <user-tool-tip :user="item.owner" @click.stop />
         </template>
 
+        <template v-slot:item.organization="{ item }">
+          <organization-tool-tip :organization="item.organization" @click.stop />
+        </template>
+
         <template v-slot:item.disassembly="{ item }">
           <disassembly-button :item="item" @click.stop />
         </template>
@@ -63,6 +67,7 @@ const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const disassembleAndUserColumns = computed(() => [
   store.state.products.tableColumnOwner,
+  store.state.products.tableColumnOrganization,
   store.state.products.tableColumnDisassembly,
   store.state.products.tableColumnTransfer,
   store.state.products.tableColumnEdit,
@@ -72,6 +77,7 @@ onMounted(async () => {
   try {
     await store.dispatch("products/fetchProducts");
   } catch (error) {
+    console.log(error);
     snackbarProvider.showErrorSnackbar("Failed to fetch products");
   }
 });

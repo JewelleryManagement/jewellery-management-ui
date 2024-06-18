@@ -38,8 +38,8 @@ export async function fetchQuantityByResourceId(resourceId) {
   return await fetchData(`/resources/quantity/${resourceId}`);
 }
 
-export async function fetchProducts() {
-  return await fetchData("/products");
+export async function fetchProducts(orgId) {
+  return await fetchData(`organizations/${orgId}/products`);
 }
 
 export async function fetchOrgs() {

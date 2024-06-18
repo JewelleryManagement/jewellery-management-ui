@@ -49,7 +49,7 @@ const selectedUser = ref("");
 const selectedOrg = ref({});
 const quantity = ref("");
 const dealPrice = ref("");
-const allOrgsByUser = computed(() => store.getters["organizations/getUserOrgs"]);
+const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
 const isRouteTransfer = route.path.includes("/transfer");
 const isRouteRemove = route.path.includes("/remove");
 
@@ -68,7 +68,7 @@ const updateSelectedOrg = (newOrg) => {
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
   if (!valid) return;
-  
+
   const data = {
     organizationId: isRouteRemove ? selectedOrg.value[0].id : selectedOrg.value.id,
     userId: selectedUser.value.id,

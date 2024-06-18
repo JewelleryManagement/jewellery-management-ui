@@ -95,13 +95,11 @@
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import { ref, computed, inject, watch, onMounted } from "vue";
-const snackbarProvider = inject("snackbarProvider");
 
 import { useStore } from "vuex";
 const store = useStore();
 const props = defineProps({
   modelValue: Boolean,
-  // userId: String,
   inputProducts: Array,
   clearTable: Boolean,
   currentProductId: String,
@@ -117,14 +115,6 @@ const dialogTypes = {
 const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
-// watch(
-//   () => props.userId,
-//   async (newId, oldId) => {
-//     await store.dispatch("products/fetchProductsByOwner", newId);
-//     clearTableValues();
-//   }
-// );
-
 watch(
   () => props.clearTable,
   async (newId, oldId) => {
@@ -132,26 +122,13 @@ watch(
   }
 );
 
-// try {
-//   await store.dispatch("products/fetchProductsByOwner", props.userId);
-// } catch (error) {
-//   snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-// }
-// const availableProducts = computed(() =>
-//   store.getters["products/getCurrentUserProducts"].filter(
-//     (product) =>
-//       !product.contentOf &&
-//       !product.partOfSale &&
-//       product.id !== props.currentProductId
-//   )
-// );
-
 onMounted(async () => {
   if (!props.inputProducts) return;
-
+  console.log("logging available products:");
+  console.log(props.availableProducts);
   props.inputProducts.forEach((product) => {
     addProductById(product);
-    availableProducts.push(product);
+    props.availableProducts.push(product);
   });
 });
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);

@@ -4,6 +4,7 @@
       :items="allOrgsByUser"
       :selectedValue="selectedOrg"
       @organization-changed="updateSelectedOrg"
+      :disabled="isInEditView"
     />
     <v-form ref="form" @submit.prevent="handleSubmit" @keydown.enter.prevent>
       <v-text-field
@@ -26,7 +27,7 @@
         chips
         closable-chips
         label="Authors"
-        :items="allUsers"
+        :items="orgUsers"
         :item-props="userPropsFormatter"
         multiple
         :rules="
@@ -162,35 +163,41 @@ const [currentResourcePrice, currentProductPrice, totalPrice] = [
 const form = ref(null);
 const selectedPicture = ref(null);
 const clearTable = ref(false);
-//TODO: remnove this owner
-const owner = computed(() =>
-  props.productInfo?.owner
-    ? props.productInfo?.owner
-    : store.getters["auth/getUser"]
-).value;
-const allUsers = computed(() => store.getters["users/allUsers"]).value;
-// const orgUsers = ref([]);
+const orgUsers = ref([]);
 const allOrgsByUser = ref([]);
 const resourcesToChooseFrom = ref([]);
 const productsToChooseFrom = ref([]);
-const selectedOrg = ref(null);
+const isInEditView = ref(route.path.includes("edit"));
+console.log(props.productInfo);
+const selectedOrg = ref(isInEditView ? props.productInfo.organization : null);
 
-const updateSelectedOrg = (newOrg) => {
+const updateSelectedOrg = async (newOrg) => {
   resetForm();
-  props.productInfo.ownerId = newOrg.id;
-  selectedOrg.value = newOrg;
-  fetchResourcesForOrganization(newOrg);
-  fetchProductsForOrganization(newOrg);
-  // fetchUsersForOrganization(newOrg);
+  await populateFormData(newOrg);
+};
+
+const populateFormData = async (newOrg) => {
+  let currentOrg = newOrg ? newOrg : props.productInfo.organization;
+  console.log("currentOrg is");
+  console.log(currentOrg);
+  if (currentOrg) {
+    props.productInfo.ownerId = currentOrg.id;
+    selectedOrg.value = currentOrg;
+    return Promise.all([
+      fetchResourcesForOrganization(currentOrg),
+      fetchProductsForOrganization(currentOrg),
+      fetchUsersForOrganization(currentOrg),
+    ]);
+  }
 };
 
 onMounted(async () => {
   calculatePricesInEditView();
-  await fetchOrganizations();
+  await Promise.all([fetchOrganizations(), populateFormData()]);
 });
 
 const calculatePricesInEditView = async () => {
-  if (route.path.includes("edit")) {
+  if (isInEditView.value) {
     const resourceContentTotal = props.productInfo.resourcesContent.reduce(
       (total, resource) => {
         return (
@@ -212,19 +219,18 @@ const calculatePricesInEditView = async () => {
     currentProductPrice.value = productsContentTotal;
   }
 };
-//TODO: use this when users in organization have full information
-// const fetchUsersForOrganization = async (organization) => {
-//   try {
-//     let response = await store.dispatch(
-//       "users/fetchUsersByOrganization",
-//       organization.id
-//     );
-//     console.log(response);
-//     orgUsers.value = response.members;
-//   } catch (error) {
-//     snackbarProvider.showErrorSnackbar("Could not fetch users!");
-//   }
-// };
+const fetchUsersForOrganization = async (organization) => {
+  try {
+    let response = await store.dispatch(
+      "users/fetchUsersByOrganization",
+      organization.id
+    );
+    console.log(response);
+    orgUsers.value = response.members.map((member) => member.user);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not fetch users!");
+  }
+};
 
 const fetchOrganizations = async () => {
   try {
@@ -253,6 +259,23 @@ const fetchResourcesForOrganization = async (organization) => {
           };
         })
       );
+    if (isInEditView) {
+      console.log("fetched resources");
+      console.log(resourcesToChooseFrom.value);
+      console.log("content resources");
+      console.log(props.productInfo.resourcesContent);
+      props.productInfo.resourcesContent?.forEach((resource) => {
+        const indexOfFetchedResource = resourcesToChooseFrom.value.findIndex(
+          (fetchedResource) => fetchedResource.id == resource.id
+        );
+        if (indexOfFetchedResource > -1) {
+          props.productInfo.resourcesContent[indexOfFetchedResource].quantity +=
+            resource.quantity;
+        } else {
+          props.productInfo.resourcesContent.push(resource)
+        }
+      });
+    }
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
       "Could not fetch resources for organization!"
@@ -271,6 +294,15 @@ const fetchProductsForOrganization = async (organization) => {
             product.id !== props.currentProductId
         );
       });
+    if (isInEditView) {
+      console.log("fetched products");
+      console.log(productsToChooseFrom);
+      console.log("content products");
+      console.log(props.productInfo.productsContent);
+      props.productInfo.productsContent?.forEach((product) =>
+        productsToChooseFrom.push(product)
+      );
+    }
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
       "Could not fetch products for organization!"
