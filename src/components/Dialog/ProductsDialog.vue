@@ -124,8 +124,6 @@ watch(
 
 onMounted(async () => {
   if (!props.inputProducts) return;
-  console.log("logging available products:");
-  console.log(props.availableProducts);
   props.inputProducts.forEach((product) => {
     addProductById(product);
     props.availableProducts.push(product);

@@ -76,12 +76,10 @@ export default {
   actions: {
     async fetchProducts({ dispatch, rootGetters, commit }) {
       let orgs = rootGetters["organizations/getOrgs"];
-      console.log(orgs);
       if (!orgs || orgs.length == 0){
         await dispatch("organizations/fetchOrgs", null, { root: true });
         orgs = rootGetters["organizations/getOrgs"];
       }
-      console.log(orgs);
       let allProducts = []
       await Promise.all(orgs.map(async org => {
         let orgProductsResponse = await fetchProducts(org.id)

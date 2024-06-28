@@ -163,7 +163,7 @@ export async function removeResourceQuantity(userId, resourceId, quantity) {
 }
 
 export async function disassmebleProduct(productId) {
-  return await removeData(`/products/${productId}`);
+  return await removeData(`/organizations/products/${productId}`);
 }
 
 export async function removeResourceFromOrg(
@@ -188,7 +188,7 @@ export async function updateResource(id, data) {
 }
 
 export async function updateProduct(id, data) {
-  return await updateData(`/products/${id}`, data);
+  return await updateData(`/organizations/products/${id}`, data);
 }
 
 export async function updateUser(id, userData) {

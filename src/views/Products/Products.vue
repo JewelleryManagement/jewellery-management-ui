@@ -77,7 +77,6 @@ onMounted(async () => {
   try {
     await store.dispatch("products/fetchProducts");
   } catch (error) {
-    console.log(error);
     snackbarProvider.showErrorSnackbar("Failed to fetch products");
   }
 });

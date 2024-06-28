@@ -13,8 +13,6 @@
   const props = defineProps({
     organization: Object,
   });
-  console.log("called with");
-  console.log(props.organization);
   </script>
   
   <style scoped>

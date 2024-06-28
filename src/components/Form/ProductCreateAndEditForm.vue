@@ -168,7 +168,6 @@ const allOrgsByUser = ref([]);
 const resourcesToChooseFrom = ref([]);
 const productsToChooseFrom = ref([]);
 const isInEditView = ref(route.path.includes("edit"));
-console.log(props.productInfo);
 const selectedOrg = ref(isInEditView ? props.productInfo.organization : null);
 
 const updateSelectedOrg = async (newOrg) => {
@@ -178,8 +177,6 @@ const updateSelectedOrg = async (newOrg) => {
 
 const populateFormData = async (newOrg) => {
   let currentOrg = newOrg ? newOrg : props.productInfo.organization;
-  console.log("currentOrg is");
-  console.log(currentOrg);
   if (currentOrg) {
     props.productInfo.ownerId = currentOrg.id;
     selectedOrg.value = currentOrg;
@@ -225,7 +222,6 @@ const fetchUsersForOrganization = async (organization) => {
       "users/fetchUsersByOrganization",
       organization.id
     );
-    console.log(response);
     orgUsers.value = response.members.map((member) => member.user);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch users!");
@@ -260,19 +256,18 @@ const fetchResourcesForOrganization = async (organization) => {
         })
       );
     if (isInEditView) {
-      console.log("fetched resources");
-      console.log(resourcesToChooseFrom.value);
-      console.log("content resources");
-      console.log(props.productInfo.resourcesContent);
       props.productInfo.resourcesContent?.forEach((resource) => {
         const indexOfFetchedResource = resourcesToChooseFrom.value.findIndex(
-          (fetchedResource) => fetchedResource.id == resource.id
+          (fetchedResource) => fetchedResource.id == resource.resource.id
         );
         if (indexOfFetchedResource > -1) {
-          props.productInfo.resourcesContent[indexOfFetchedResource].quantity +=
+          resourcesToChooseFrom.value[indexOfFetchedResource].quantity +=
             resource.quantity;
         } else {
-          props.productInfo.resourcesContent.push(resource)
+          resourcesToChooseFrom.value.push({
+            ...resource.resource,
+            quantity: resource.quantity,
+          });
         }
       });
     }
@@ -291,16 +286,12 @@ const fetchProductsForOrganization = async (organization) => {
           (product) =>
             !product.contentOf &&
             !product.partOfSale &&
-            product.id !== props.currentProductId
+            product.id !== props.productInfo?.id
         );
       });
     if (isInEditView) {
-      console.log("fetched products");
-      console.log(productsToChooseFrom);
-      console.log("content products");
-      console.log(props.productInfo.productsContent);
       props.productInfo.productsContent?.forEach((product) =>
-        productsToChooseFrom.push(product)
+        productsToChooseFrom.value.push(product)
       );
     }
   } catch (error) {
@@ -396,7 +387,7 @@ const postPicture = async (id, image) => {
 
 async function submitPicture(productResponse) {
   if (productResponse && isPictureValidated()) {
-    const { id } = productResponse;
+    const { id } = productResponse.products[0];
     await postPicture(id, selectedPicture.value);
   }
 }
