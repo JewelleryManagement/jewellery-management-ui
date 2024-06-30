@@ -29,11 +29,18 @@
         </template>
 
         <template v-slot:item.organization="{ item }">
-          <organization-tool-tip :organization="item.organization" @click.stop />
+          <organization-tool-tip
+            :organization="item.organization"
+            @click.stop
+          />
         </template>
 
         <template v-slot:item.disassembly="{ item }">
-          <disassembly-button :item="item" @click.stop />
+          <disassembly-button
+            :item="item"
+            @disassembled-product="updateProductList"
+            @click.stop
+          />
         </template>
 
         <template v-slot:item.transfer="{ item }">
@@ -80,4 +87,7 @@ onMounted(async () => {
     snackbarProvider.showErrorSnackbar("Failed to fetch products");
   }
 });
+const updateProductList = async (productId) => {
+  await store.dispatch("products/fetchProducts");
+};
 </script>
