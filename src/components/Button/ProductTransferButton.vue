@@ -9,52 +9,33 @@
   </v-btn>
 
   <product-transfer-dialog
-    v-if="isResourceDialogOpen"
-    v-model="isResourceDialogOpen"
+    v-if="isProductTransferDialogOpen"
+    v-model="isProductTransferDialogOpen"
     :product="product"
-    :userId="userId"
     @close-dialog="closeDialog"
   />
 </template>
 
 <script setup>
 import ProductTransferDialog from "../Dialog/ProductTransferDialog.vue";
-import { ref, inject } from "vue";
-const snackbarProvider = inject("snackbarProvider");
-import { useStore } from "vuex";
-const store = useStore();
+import { ref } from "vue";
 
 const props = defineProps({
   product: Object,
-  userId: { type: String, default: null },
 });
 
-const [product, userId] = [props.product, props.userId];
-const isResourceDialogOpen = ref(false);
+const [product] = [props.product];
+const isProductTransferDialogOpen = ref(false);
 
 const openDialog = () => {
-  isResourceDialogOpen.value = true;
+  isProductTransferDialogOpen.value = true;
 };
 
+const emits = defineEmits(["transferred-product"]);
 const closeDialog = async (response) => {
-  response === "submitted"
-    ? await fetchData()
-    : (isResourceDialogOpen.value = false);
-};
-
-const fetchData = async () => {
-  const actionType = userId
-    ? "products/fetchProductsByOwner"
-    : "products/fetchProducts";
-  const errorMessage = userId
-    ? "Failed to fetch user products."
-    : "Failed to fetch products.";
-
-  try {
-    await store.dispatch(actionType, userId);
-    isResourceDialogOpen.value = false;
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar(errorMessage);
+  if (response === "submitted") {
+    emits("transferred-product", product.id);
   }
+  isProductTransferDialogOpen.value = false;
 };
 </script>

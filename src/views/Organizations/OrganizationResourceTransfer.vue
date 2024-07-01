@@ -19,13 +19,12 @@ const route = useRoute();
 const router = useRouter();
 const resourceId = route.params.resourceId;
 const organizationId = route.params.organizationId;
-const organizationName = ref("");
 onMounted(async () => {
   fetchUserOrgs();
 });
 const fetchUserOrgs = async () => {
   try {
-    await store.dispatch("organizations/fetchUserOrgs");
+    await store.dispatch("organizations/fetchOrgs");
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
   }

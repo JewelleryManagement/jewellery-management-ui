@@ -20,7 +20,7 @@
         <v-card-text>
           <v-data-table
             :headers="tableColumns"
-            :items="resourcesInUser"
+            :items="props.availableResources"
             class="elevation-1"
             :search="search"
           >
@@ -70,6 +70,7 @@ const isEditPage = route.path.includes("edit");
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const props = defineProps({
   inputResources: Array,
+  availableResources: Array,
   clearTable: Boolean,
 });
 const search = ref("");
@@ -83,7 +84,6 @@ const tableColumns = [
   computed(() => store.state.resources.tableColumnQuantity).value,
   ...computed(() => store.state.resources.tableColumns).value,
 ];
-const resourcesInUser = computed(() => store.getters["users/getUserResources"]);
 
 const copyCurrentInputQuantities = () => {
   let quantities = [];
@@ -98,13 +98,13 @@ const copyCurrentInputQuantities = () => {
 
 const addProductQuantitiesToAvailableInUser = () => {
   currentInputQuantities.value.forEach((currentInputQuantity) => {
-    let matchingResourceContent = resourcesInUser.value.find(
+    let matchingResourceContent = props.availableResources.find(
       (resourceInUser) => resourceInUser.id === currentInputQuantity.resource.id
     );
     if (matchingResourceContent) {
       matchingResourceContent.quantity += currentInputQuantity.quantity;
     } else {
-      resourcesInUser.value.push({
+      props.availableResources.push({
         ...currentInputQuantity.resource,
         quantity: currentInputQuantity.quantity,
       });
@@ -145,7 +145,7 @@ const saveTableValues = () => {
     currentInputFields.forEach(([resourceId, quantity]) => {
       let currentResourcePrice =
         Number(
-          resourcesInUser.value.find((resource) => resource.id === resourceId)
+          props.availableResources.find((resource) => resource.id === resourceId)
             .pricePerQuantity
         ) * Number(quantity);
 
@@ -166,7 +166,7 @@ const saveTableValues = () => {
 const quantityMoreThanTotalQuantity = (quantity, resourceId) => {
   return (
     Number(quantity) >
-    resourcesInUser.value.find((resource) => resource.id === resourceId)
+    props.availableResources.find((resource) => resource.id === resourceId)
       .quantity
   );
 };

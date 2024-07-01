@@ -31,15 +31,17 @@ export async function fetchPurchasedResourcePerUser(userId) {
 }
 
 export async function fetchAvailabilityResourceById(resourceId) {
-  return await fetchData(`/organizations/resources-availability/by-resource/${resourceId}`);
+  return await fetchData(
+    `/organizations/resources-availability/by-resource/${resourceId}`
+  );
 }
 
 export async function fetchQuantityByResourceId(resourceId) {
   return await fetchData(`/resources/quantity/${resourceId}`);
 }
 
-export async function fetchProducts() {
-  return await fetchData("/products");
+export async function fetchProducts(orgId) {
+  return await fetchData(`organizations/${orgId}/products`);
 }
 
 export async function fetchOrgs() {
@@ -58,6 +60,14 @@ export async function fetchProductsByOwner(ownerId) {
   return await fetchData(`/products/by-owner/${ownerId}`);
 }
 
+export async function fetchProductsByOrganization(ownerId) {
+  return await fetchData(`/organizations/${ownerId}/products`);
+}
+
+export async function fetchUsersByOrganization(orgId) {
+  return await fetchData(`/organizations/${orgId}/users`);
+}
+
 export async function fetchUsers() {
   return await fetchData("/users");
 }
@@ -71,7 +81,9 @@ export async function getUserOrganizations() {
 }
 
 export async function getResourceAvailabilityByOrganization(organizationId) {
-  return await fetchData(`/organizations/resources-availability/${organizationId}`);
+  return await fetchData(
+    `/organizations/resources-availability/${organizationId}`
+  );
 }
 
 export async function getUserOrganizationsByPermission(permission) {
@@ -99,7 +111,7 @@ export async function postResourceAvailabilityTransfer(data) {
 }
 
 export async function postProduct(data) {
-  return await postData("/products", data);
+  return await postData("/organizations/products", data);
 }
 
 export async function postUserLogin(user) {
@@ -155,7 +167,7 @@ export async function removeResourceQuantity(userId, resourceId, quantity) {
 }
 
 export async function disassmebleProduct(productId) {
-  return await removeData(`/products/${productId}`);
+  return await removeData(`/organizations/products/${productId}`);
 }
 
 export async function removeResourceFromOrg(
@@ -180,7 +192,7 @@ export async function updateResource(id, data) {
 }
 
 export async function updateProduct(id, data) {
-  return await updateData(`/products/${id}`, data);
+  return await updateData(`/organizations/products/${id}`, data);
 }
 
 export async function updateUser(id, userData) {
@@ -188,7 +200,9 @@ export async function updateUser(id, userData) {
 }
 
 export async function transferProduct(productId, recipientId) {
-  return await updateData(`/products/${productId}/transfer/${recipientId}`);
+  return await updateData(
+    `/organizations/products/${productId}/transfer/${recipientId}`
+  );
 }
 
 export async function productReturn(productId) {

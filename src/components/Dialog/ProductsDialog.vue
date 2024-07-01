@@ -11,7 +11,7 @@
         <v-toolbar color="green" title="Products..."></v-toolbar>
         <v-card-text>
           <products-table
-            :products="ownedNonContentAndNonSoldProducts"
+            :products="availableProducts"
             :additionalColumnsLeft="addColumn"
             :additionalColumnsRight="userColumn"
           >
@@ -95,16 +95,15 @@
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import { ref, computed, inject, watch, onMounted } from "vue";
-const snackbarProvider = inject("snackbarProvider");
 
 import { useStore } from "vuex";
 const store = useStore();
 const props = defineProps({
   modelValue: Boolean,
-  userId: String,
   inputProducts: Array,
   clearTable: Boolean,
   currentProductId: String,
+  availableProducts: Array
 });
 
 const ICON_ADD = ref("mdi-plus");
@@ -117,40 +116,17 @@ const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
 watch(
-  () => props.userId,
-  async (newId, oldId) => {
-    await store.dispatch("products/fetchProductsByOwner", newId);
-    clearTableValues();
-  }
-);
-
-watch(
   () => props.clearTable,
   async (newId, oldId) => {
     clearTableValues();
   }
 );
 
-try {
-  await store.dispatch("products/fetchProductsByOwner", props.userId);
-} catch (error) {
-  snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-}
-const ownedNonContentAndNonSoldProducts = computed(() =>
-  store.getters["products/getCurrentUserProducts"].filter(
-    (product) =>
-      !product.contentOf &&
-      !product.partOfSale &&
-      product.id !== props.currentProductId
-  )
-);
-
 onMounted(async () => {
   if (!props.inputProducts) return;
-
   props.inputProducts.forEach((product) => {
     addProductById(product);
-    ownedNonContentAndNonSoldProducts.value.push(product);
+    props.availableProducts.push(product);
   });
 });
 const addColumn = computed(() => [store.getters["products/getAddColumn"]]);

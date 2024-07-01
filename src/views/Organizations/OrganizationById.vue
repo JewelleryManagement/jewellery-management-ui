@@ -1,5 +1,6 @@
 <template>
   <v-container class="my-12" fluid>
+    <organization-card :organization="organization"></organization-card>
     <base-card>
       <resource-availability-table
         :tableColumns="tableColumnsResources"
@@ -29,11 +30,49 @@
         </template>
       </resource-availability-table>
     </base-card>
+    <base-card>
+      <products-table
+        :products="orgProducts"
+        :additionalColumnsRight="disassemblyColumns"
+        :title="`${organization.name}'s products table`"
+      >
+        <template v-slot:item.authors="{ item }">
+          <user-tool-tip
+            :user="author"
+            v-for="(author, index) in item.authors"
+            :key="item.id"
+            @click.stop
+          >
+            <template v-if="index < item.authors.length - 1"
+              >&comma;&nbsp;</template
+            >
+          </user-tool-tip>
+        </template>
+
+        <template v-slot:item.disassembly="{ item }">
+          <disassembly-button
+            :item="item"
+            @disassembled-product="updateOrganizationDetails"
+            @click.stop
+          ></disassembly-button>
+        </template>
+
+        <template v-slot:item.transfer="{ item }">
+          <product-transfer-button
+            :product="item"
+            @transferred-product="updateOrganizationDetails"
+          />
+        </template>
+      </products-table>
+    </base-card>
   </v-container>
 </template>
 
 <script setup>
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
+import ProductsTable from "@/components/Table/ProductsTable.vue";
+import OrganizationCard from "@/components/Card/OrganizationCard.vue";
+import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -44,17 +83,24 @@ const snackbarProvider = inject("snackbarProvider");
 const organizationResources = ref([]);
 const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
 const organization = ref({});
-
+const orgProducts = ref([]);
+const disassemblyColumns = computed(() => [
+  store.state.products.tableColumnDisassembly,
+  store.state.products.tableColumnTransfer,
+]);
+const orgId = route.params.organizationId;
 onMounted(async () => {
-  fetchOrganizationDetails();
+  await updateOrganizationDetails();
 });
 
-const fetchOrganizationDetails = async () => {
-  const orgId = route.params.organizationId;
-
+const fetchResourcesForOrganization = async () => {
   try {
-    const res = await store.dispatch("organizations/fetchOrganizationResources", orgId);
+    const res = await store.dispatch(
+      "organizations/fetchOrganizationResources",
+      orgId
+    );
     organization.value = res.owner;
+    organizationResources.value = [];
     for (const item of res.resourcesAndQuantities) {
       organizationResources.value.push({
         ...item.resource,
@@ -66,5 +112,21 @@ const fetchOrganizationDetails = async () => {
       "Couldn't fetch the organization details!"
     );
   }
+};
+const fetchProductsForOrganization = async () => {
+  try {
+    orgProducts.value = await store
+      .dispatch("products/fetchProductsByOrganization", orgId)
+      .then((productsResponse) => productsResponse.products);
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Could not fetch products for organization!"
+    );
+  }
+};
+
+const updateOrganizationDetails = async (productId) => {
+  await fetchProductsForOrganization();
+  await fetchResourcesForOrganization();
 };
 </script>

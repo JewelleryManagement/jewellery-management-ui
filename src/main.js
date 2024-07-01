@@ -10,6 +10,7 @@ import {
   DisassemblyButton,
   FormButtons,
   UserToolTip,
+  OrganizationToolTip,
   ProductTransferButton,
   BaseCard,
   PictureButton,
@@ -27,6 +28,7 @@ app.component("base-card", BaseCard);
 app.component("form-buttons", FormButtons);
 app.component("table-button", TableButton);
 app.component("user-tool-tip", UserToolTip);
+app.component("organization-tool-tip", OrganizationToolTip);
 app.component("picture-button", PictureButton);
 app.component("part-of-product", PartOfProduct);
 app.component("disassembly-button", DisassemblyButton);

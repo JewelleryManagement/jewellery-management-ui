@@ -14,27 +14,9 @@ import { inject } from "vue";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   item: Object,
-  userId: { type: String, default: null },
 });
 
 const store = useStore();
-const userId = props.userId;
-
-async function fetchProductsForUser() {
-  try {
-    await store.dispatch("products/fetchProductsByOwner", userId);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-  }
-}
-
-async function fetchProducts() {
-  try {
-    store.dispatch("products/fetchProducts");
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
-  }
-}
 
 const disassmebleProduct = async () => {
   const catalogNumber = props.item.catalogNumber;
@@ -46,10 +28,11 @@ const disassmebleProduct = async () => {
   if (confirmation) await sendDisassembleRequest(productId);
 };
 
+const emits = defineEmits(["disassembled-product"]);
 async function sendDisassembleRequest(productId) {
   try {
     await store.dispatch("products/disassmebleProduct", productId);
-    userId ? await fetchProductsForUser() : await fetchProducts();
+    emits("disassembled-product", productId);
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);

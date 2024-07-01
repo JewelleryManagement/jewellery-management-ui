@@ -5,6 +5,7 @@ import {
   postUser,
   updateUser,
   fetchPurchasedResourcePerUser,
+  fetchUsersByOrganization
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -42,6 +43,9 @@ export default {
     },
   },
   actions: {
+    async fetchUsersByOrganization({ commit }, organizationId) {
+      return await fetchUsersByOrganization(organizationId);
+    },
     async fetchUsers({ commit }) {
       const res = await fetchUsers();
       commit("setUsers", res);
