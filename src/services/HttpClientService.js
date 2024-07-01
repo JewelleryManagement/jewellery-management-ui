@@ -31,7 +31,9 @@ export async function fetchPurchasedResourcePerUser(userId) {
 }
 
 export async function fetchAvailabilityResourceById(resourceId) {
-  return await fetchData(`/organizations/resources-availability/by-resource/${resourceId}`);
+  return await fetchData(
+    `/organizations/resources-availability/by-resource/${resourceId}`
+  );
 }
 
 export async function fetchQuantityByResourceId(resourceId) {
@@ -79,7 +81,9 @@ export async function getUserOrganizations() {
 }
 
 export async function getResourceAvailabilityByOrganization(organizationId) {
-  return await fetchData(`/organizations/resources-availability/${organizationId}`);
+  return await fetchData(
+    `/organizations/resources-availability/${organizationId}`
+  );
 }
 
 export async function getUserOrganizationsByPermission(permission) {
@@ -196,7 +200,9 @@ export async function updateUser(id, userData) {
 }
 
 export async function transferProduct(productId, recipientId) {
-  return await updateData(`/products/${productId}/transfer/${recipientId}`);
+  return await updateData(
+    `/organizations/products/${productId}/transfer/${recipientId}`
+  );
 }
 
 export async function productReturn(productId) {

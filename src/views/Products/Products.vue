@@ -44,7 +44,10 @@
         </template>
 
         <template v-slot:item.transfer="{ item }">
-          <product-transfer-button :product="item" />
+          <product-transfer-button
+            :product="item"
+            @transferred-product="updateProductList"
+          />
         </template>
 
         <template v-slot:item.edit="{ item }">

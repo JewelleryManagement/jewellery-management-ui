@@ -58,7 +58,10 @@
         </template>
 
         <template v-slot:item.transfer="{ item }">
-          <product-transfer-button :product="item" :userId="userId" />
+          <product-transfer-button
+            :product="item"
+            @transferred-product="updateOrganizationDetails"
+          />
         </template>
       </products-table>
     </base-card>
@@ -87,7 +90,7 @@ const disassemblyColumns = computed(() => [
 ]);
 const orgId = route.params.organizationId;
 onMounted(async () => {
-  await updateOrganizationDetails()
+  await updateOrganizationDetails();
 });
 
 const fetchResourcesForOrganization = async () => {
@@ -97,7 +100,7 @@ const fetchResourcesForOrganization = async () => {
       orgId
     );
     organization.value = res.owner;
-    organizationResources.value = []
+    organizationResources.value = [];
     for (const item of res.resourcesAndQuantities) {
       organizationResources.value.push({
         ...item.resource,
@@ -123,7 +126,7 @@ const fetchProductsForOrganization = async () => {
 };
 
 const updateOrganizationDetails = async (productId) => {
-  await fetchProductsForOrganization()
-  await fetchResourcesForOrganization()
+  await fetchProductsForOrganization();
+  await fetchResourcesForOrganization();
 };
 </script>
