@@ -25,10 +25,10 @@ import { ref, toRefs } from "vue";
 
 const props = defineProps({
   tableColumns: Array,
-  resourceItem: Object,
+  resources: Object,
   name: String,
 });
-const { tableColumns, resourceItem, name } = toRefs(props);
+const { tableColumns, resources: resourceItem, name } = toRefs(props);
 const search = ref("");
 </script>
 

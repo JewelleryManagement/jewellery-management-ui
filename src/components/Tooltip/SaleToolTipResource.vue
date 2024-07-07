@@ -12,10 +12,10 @@
   const store = useStore()
   
   const getResourceInformationHtml = (resource) => {
-    const saleItem = props.saleData.find((item) => item.resource.id === resource.id);
+    const saleItem = props.saleData.find((item) => item.id === resource.id);
     if (!saleItem) return '';
   
-    const resourceData = saleItem.resource;
+    const resourceData = saleItem;
     const quantity = saleItem.quantity;
   
     const tableColumns = computed(() => store.getters["resources/getTableColumns"]).value;

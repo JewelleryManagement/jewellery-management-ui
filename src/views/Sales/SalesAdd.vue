@@ -27,7 +27,7 @@
       v-model="productsDialog"
       @close-dialog="handleDialogs('products', false)"
       @save-product-dialog="setProductsForSale"
-      :userId="sellObject.sellerName.id"
+      :userId="sellObject.seller.id"
       :clearTable="clearTable"
     >
     </ProductsDialog>
@@ -35,9 +35,9 @@
     <ResourcesDialog
       v-if="isSellerSelected"
       v-model="resourcesDialog"
-      :inputResources="resourcesForSale"
+      :availableResources="resourcesForSale"
       @close-dialog="handleDialogs('resources', false)"
-      @save-resources-dialog="saveResourceQuantitiesToProduct"
+      @save-resources-dialog="saveResourceQuantitiesToSale"
       :clearTable="clearTable"
     ></ResourcesDialog>
   </v-container>
@@ -70,22 +70,28 @@ const clearTable = ref(false);
 const allUsers = computed(() => store.getters["users/allUsers"]).value;
 
 const sellObject = reactive({
-  sellerName: "",
-  buyerName: "",
+  seller: {},
+  buyer: {},
   products: ref([]),
   resources: ref([]),
   date: "",
 });
 
 watch(
-  () => sellObject.sellerName,
+  () => sellObject.seller,
   async (newSeller) => {
     if (newSeller) {
-      const res = await store.dispatch(
-        "users/fetchResourcesForUser",
-        newSeller.id
+      resourcesForSale.value = await store
+      .dispatch("organizations/fetchOrganizationResources", newSeller.id)
+      .then((resourcesResponse) =>
+        resourcesResponse.resourcesAndQuantities
+        .map((resourceAndQuantity) => {
+          return {
+            quantity: resourceAndQuantity.quantity,
+            ...resourceAndQuantity.resource,
+          };
+        })
       );
-      resourcesForSale.value = res.resourcesAndQuantities;
     }
 
     productsForSale.value = [];
@@ -93,7 +99,7 @@ watch(
 );
 
 const isSellerSelected = computed(() =>
-  sellObject.sellerName?.id ? true : false
+  !!sellObject.seller?.id
 );
 
 const dialogFunctions = {
@@ -117,7 +123,7 @@ const setProductsForSale = (selectedProductsForSale) => {
   handleDialogs("products", false);
 };
 
-const saveResourceQuantitiesToProduct = (resourceContentValue) => {
+const saveResourceQuantitiesToSale = (resourceContentValue) => {
   sellObject.resources.value = resourceContentValue.map((resource) => {
     if (resource.discount === undefined) {
       resource.discount = null;
@@ -131,8 +137,8 @@ const saveResourceQuantitiesToProduct = (resourceContentValue) => {
 const resetForm = () => {
   if (form.value) {
     form.value.resetValidation();
-    sellObject.sellerName = "";
-    sellObject.buyerName = "";
+    sellObject.seller = {};
+    sellObject.buyer = {};
     sellObject.products.value = [];
     sellObject.resources.value = [];
     resourcesForSale.value = [];
@@ -197,8 +203,8 @@ const mapSelectedResources = () => {
 
 const buildSaleRequestData = () => {
   return {
-    sellerId: sellObject.sellerName.id,
-    buyerId: sellObject.buyerName.id,
+    sellerId: sellObject.seller.id,
+    buyerId: sellObject.buyer.id,
     products: mapSelectedProducts(),
     resources: mapSelectedResources(),
     date: sellObject.date,

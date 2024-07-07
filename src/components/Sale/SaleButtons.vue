@@ -4,7 +4,7 @@
       size="small"
       color="primary-green"
       @click="$emit('open-dialog', 'calendar')"
-      :disabled="!props.sellObject.sellerName.id || !props.sellObject.buyerName.id"
+      :disabled="!props.sellObject.seller.id || !props.sellObject.buyer.id"
       >Calendar</v-btn
     >
 

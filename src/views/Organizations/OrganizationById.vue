@@ -4,7 +4,7 @@
     <base-card>
       <resource-availability-table
         :tableColumns="tableColumnsResources"
-        :resourceItem="organizationResources"
+        :resources="organizationResources"
         :name="organization.name"
       >
         <template v-slot:item.remove="{ item }">

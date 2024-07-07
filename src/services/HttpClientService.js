@@ -73,7 +73,7 @@ export async function fetchUsers() {
 }
 
 export async function fetchSales() {
-  return await fetchData("/sales");
+  return await fetchData("/organizations/sales");
 }
 
 export async function getUserOrganizations() {
@@ -118,7 +118,7 @@ export async function postUserLogin(user) {
   return await postData("/login", user);
 }
 export async function postSale(data) {
-  return await postData("/sales", data);
+  return await postData("/organizations/sales", data);
 }
 export async function postUser(userData) {
   return await postData("/users", userData);
@@ -206,5 +206,9 @@ export async function transferProduct(productId, recipientId) {
 }
 
 export async function productReturn(productId) {
-  return await updateData(`/sales/return-product/${productId}`);
+  return await updateData(`/organizations/sales/return-product/${productId}`);
+}
+
+export async function resourceReturn(saleId, resourceId) {
+  return await updateData(`/organizations/sales/${saleId}/return-resource/${resourceId}`);
 }
