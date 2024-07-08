@@ -29,6 +29,7 @@
       @save-product-dialog="setProductsForSale"
       :userId="sellObject.seller.id"
       :clearTable="clearTable"
+      :available-products="productsForSale"
     >
     </ProductsDialog>
 
@@ -82,25 +83,30 @@ watch(
   async (newSeller) => {
     if (newSeller) {
       resourcesForSale.value = await store
-      .dispatch("organizations/fetchOrganizationResources", newSeller.id)
-      .then((resourcesResponse) =>
-        resourcesResponse.resourcesAndQuantities
-        .map((resourceAndQuantity) => {
-          return {
-            quantity: resourceAndQuantity.quantity,
-            ...resourceAndQuantity.resource,
-          };
-        })
-      );
-    }
+        .dispatch("organizations/fetchOrganizationResources", newSeller.id)
+        .then((resourcesResponse) =>
+          resourcesResponse.resourcesAndQuantities.map(
+            (resourceAndQuantity) => {
+              return {
+                quantity: resourceAndQuantity.quantity,
+                ...resourceAndQuantity.resource,
+              };
+            }
+          )
+        );
 
-    productsForSale.value = [];
+      productsForSale.value = await store
+        .dispatch("products/fetchProductsByOrganization", newSeller.id)
+        .then((productsResponse) => {
+          return productsResponse.products.filter(
+            (product) => !product.contentOf && !product.partOfSale
+          );
+        });
+    }
   }
 );
 
-const isSellerSelected = computed(() =>
-  !!sellObject.seller?.id
-);
+const isSellerSelected = computed(() => !!sellObject.seller?.id);
 
 const dialogFunctions = {
   calendar: (isOpen) => (calendarDialog.value = isOpen),

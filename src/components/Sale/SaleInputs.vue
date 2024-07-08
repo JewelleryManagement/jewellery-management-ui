@@ -19,11 +19,19 @@
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import { userPropsFormatter } from "@/utils/data-formatter.js";
 import { validateAuthors } from "@/utils/validation-rules";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 const props = defineProps({ sellObject: Object, allUsers: Object });
 const store = useStore();
-const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
+const allOrgsByUser = ref([]);
+
+onMounted(async () => {
+  allOrgsByUser.value = await store.dispatch(
+    "organizations/fetchUserOrgsByPermission",
+    "CREATE_SALE"
+  );
+});
+
 const updateSelectedOrg = (newOrg) => {
   if (newOrg) {
     props.sellObject.seller = newOrg;
