@@ -5,7 +5,7 @@ import {
   postUser,
   updateUser,
   fetchPurchasedResourcePerUser,
-  fetchUsersByOrganization
+  fetchUsersByOrganization,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -14,11 +14,13 @@ export default {
     users: [],
     usersResources: [],
     purchasedResources: [],
-    tableColumns: [
+    baseColumns: [
       { key: "id", title: "Id", align: " d-none" },
       { key: "firstName", title: "First Name" },
       { key: "lastName", title: "Last Name" },
       { key: "email", title: "Email" },
+    ],
+    additionalColumns: [
       { key: "address", title: "Address", align: " d-none" },
       { key: "phone", title: "Phone", align: " d-none" },
       { key: "phone2", title: "Phone2", align: " d-none" },
@@ -27,6 +29,11 @@ export default {
       { key: "role", title: "Role" },
     ],
     tableColumnEdit: { key: "edit", title: "Edit", slot: "edit" },
+    tableColumnPermissions: {
+      key: "permissions",
+      title: "Permissions",
+      slot: "permissions",
+    },
   },
   mutations: {
     setUsers(state, users) {
@@ -70,17 +77,15 @@ export default {
     },
   },
   getters: {
-    getColumns: (state, getters, rootState, rootGetters) => [
-      rootState.resources.tableColumnRemoveQuantity,
-      rootState.resources.tableColumnTransferQuantity,
-      rootState.resources.tableColumnQuantity,
-      ...rootState.resources.tableColumns,
-    ],
+    getOrganizationColumns: (state) => [...state.baseColumns, state.tableColumnPermissions],
     getTableColumnsWithEdit: (state) => {
-      return [...state.tableColumns, state.tableColumnEdit];
+      return [...state.baseColumns, ...state.additionalColumns, state.tableColumnEdit];
     },
     getTableColumnsWithQuantity: (state, getters, rootState, rootGetters) => {
-      return [rootState.resources.tableColumnQuantity, ...rootState.resources.tableColumns];
+      return [
+        rootState.resources.tableColumnQuantity,
+        ...rootState.resources.tableColumns,
+      ];
     },
     allUsers(state) {
       return state.users;

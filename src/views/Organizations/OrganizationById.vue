@@ -65,11 +65,24 @@
         </template>
       </products-table>
     </base-card>
+    <base-card>
+      <users-table
+        title="Organization members"
+        :users="orgMembers"
+        :columns="orgUsersColumns"
+      >
+        <template v-slot:item.permissions="{ item }">
+          <PermissionsTooltip :permissions="item.permissions"/>
+        </template>
+      </users-table>
+    </base-card>
   </v-container>
 </template>
 
 <script setup>
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
+import UsersTable from "@/components/Table/UsersTable.vue";
+import PermissionsTooltip from "@/components/Tooltip/PermissionsTooltip.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import OrganizationCard from "@/components/Card/OrganizationCard.vue";
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
@@ -81,9 +94,15 @@ const store = useStore();
 const route = useRoute();
 const snackbarProvider = inject("snackbarProvider");
 const organizationResources = ref([]);
-const tableColumnsResources = computed(() => store.getters["users/getColumns"]);
+const tableColumnsResources = computed(
+  () => store.getters["resources/getAvailabilityUpdateColumns"]
+);
+const orgUsersColumns = computed(
+  () => store.getters["users/getOrganizationColumns"]
+);
 const organization = ref({});
 const orgProducts = ref([]);
+const orgMembers = ref([]);
 const disassemblyColumns = computed(() => [
   store.state.products.tableColumnDisassembly,
   store.state.products.tableColumnTransfer,
@@ -124,9 +143,29 @@ const fetchProductsForOrganization = async () => {
     );
   }
 };
+const fetchUsersForOrganization = async () => {
+  try {
+    orgMembers.value = await store
+      .dispatch("users/fetchUsersByOrganization", orgId)
+      .then((usersResponse) => {
+        const formattedUsers = usersResponse.members.map((singleUser) => {
+          return {
+            ...singleUser.user,
+            permissions: singleUser.organizationPermissions,
+          };
+        });
+        return formattedUsers
+      });
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      "Could not fetch products for organization!"
+    );
+  }
+};
 
 const updateOrganizationDetails = async (productId) => {
   await fetchProductsForOrganization();
   await fetchResourcesForOrganization();
+  await fetchUsersForOrganization();
 };
 </script>

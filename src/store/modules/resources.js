@@ -141,6 +141,12 @@ export default {
       state.tableColumnEdit,
       state.tableColumnAdd,
     ],
+    getAvailabilityUpdateColumns: (state) => [
+      state.tableColumnRemoveQuantity,
+      state.tableColumnTransferQuantity,
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
     getColumnsForPearl: (state) =>
       filterColumnsByKey(state, [
         "quantity",
