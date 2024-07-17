@@ -6,3 +6,4 @@ export { default as ProductCreateAndEditForm } from './ProductCreateAndEditForm.
 export { default as SemiPreciousStone } from './SemiPreciousStone.vue';
 export { default as UserForm } from './UserForm.vue';
 export { default as OrganizationResourceForm } from './OrganizationResourceForm.vue';
+export { default as UserInOrganizationForm } from './UserInOrganizationForm.vue';

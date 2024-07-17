@@ -4,7 +4,7 @@
       <h1>{{ title }}</h1>
     </div>
     <div class="d-flex justify-end">
-      <table-button path="/users/create">Create user</table-button>
+      <table-button :path="headBtnPath">{{headBtnName}}</table-button>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -39,10 +39,14 @@ const props = defineProps({
   title: String,
   users: Array,
   columns: Array,
+  headBtnPath: String,
+  headBtnName: String
 });
 const store = useStore();
 const search = ref("");
 const router = useRouter();
+const headBtnPath = ref(props.headBtnPath ?? '/users/create')
+const headBtnName = ref(props.headBtnName ?? 'Create user')
 const allUsers = computed(() => store.getters["users/allUsers"]);
 const tableUsers = computed(() =>
   props.users?.length > 0 ? props.users : allUsers.value

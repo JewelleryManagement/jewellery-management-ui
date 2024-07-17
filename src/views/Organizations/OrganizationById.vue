@@ -70,6 +70,8 @@
         title="Organization members"
         :users="orgMembers"
         :columns="orgUsersColumns"
+        :head-btn-path="addUserToOrgPath"
+        head-btn-name="Add User"
       >
         <template v-slot:item.permissions="{ item }">
           <PermissionsTooltip :permissions="item.permissions"/>
@@ -108,6 +110,7 @@ const disassemblyColumns = computed(() => [
   store.state.products.tableColumnTransfer,
 ]);
 const orgId = route.params.organizationId;
+const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`)
 onMounted(async () => {
   await updateOrganizationDetails();
 });

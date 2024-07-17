@@ -19,6 +19,20 @@ export default {
       { key: "address", title: "Address" },
       { key: "note", title: "Note" },
     ],
+    userPermissions: [
+      "DESTROY_ORGANIZATION",
+      "MANAGE_USERS",
+      "ADD_RESOURCE_QUANTITY",
+      "REMOVE_RESOURCE_QUANTITY",
+      "CREATE_PRODUCT",
+      "EDIT_PRODUCT",
+      "DISASSEMBLE_PRODUCT",
+      "TRANSFER_PRODUCT",
+      "CREATE_SALE",
+      "RETURN_RESOURCE",
+      "RETURN_PRODUCT",
+      "TRANSFER_RESOURCE",
+    ],
   },
   mutations: {
     setOrgs(state, organizations) {
@@ -55,5 +69,6 @@ export default {
       if (state.organizations) return state.organizations;
     },
     getColumns: (state) => [...state.tableColumns],
+    getUserPermissions: (state) => state.userPermissions,
   },
 };
