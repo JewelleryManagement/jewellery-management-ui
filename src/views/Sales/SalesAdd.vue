@@ -68,7 +68,7 @@ const [resourcesDialog, resourcesForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const clearTable = ref(false);
 
-const allUsers = computed(() => store.getters["users/allUsers"]).value;
+const allUsers = computed(() => store.getters["users/getAllUsers"]).value;
 
 const sellObject = reactive({
   seller: {},

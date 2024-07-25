@@ -130,6 +130,10 @@ export async function postOrg(orgData) {
 export async function postResourceToOrg(orgData) {
   return await postData("/organizations/resources-availability", orgData);
 }
+export async function postUserToOrg(orgId, requestBody) {
+  return await postData(`/organizations/${orgId}/users`, requestBody);
+}
+
 
 export async function postResourceTranferToOrg(orgData) {
   return await postData(

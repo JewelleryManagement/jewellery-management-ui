@@ -87,7 +87,7 @@ export default {
         ...rootState.resources.tableColumns,
       ];
     },
-    allUsers(state) {
+    getAllUsers(state) {
       return state.users;
     },
     getUserById: (state) => (id) => state.users.find((user) => user.id === id),

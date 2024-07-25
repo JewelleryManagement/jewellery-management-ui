@@ -7,6 +7,7 @@ import {
   postResourceToOrg,
   removeResourceFromOrg,
   postResourceTranferToOrg,
+  postUserToOrg
 } from "@/services/HttpClientService";
 
 export default {
@@ -63,6 +64,10 @@ export default {
     async transferResourceFromOrg({ commit }, data) {
       await postResourceTranferToOrg(data);
     },
+    async addUserToOrg({commit}, data) {
+      const { requestBody, orgId } = data;
+      return await postUserToOrg(orgId, requestBody)
+    }
   },
   getters: {
     getOrgs: (state) => {

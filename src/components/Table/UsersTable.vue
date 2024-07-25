@@ -47,7 +47,7 @@ const search = ref("");
 const router = useRouter();
 const headBtnPath = ref(props.headBtnPath ?? '/users/create')
 const headBtnName = ref(props.headBtnName ?? 'Create user')
-const allUsers = computed(() => store.getters["users/allUsers"]);
+const allUsers = computed(() => store.getters["users/getAllUsers"]);
 const tableUsers = computed(() =>
   props.users?.length > 0 ? props.users : allUsers.value
 );
