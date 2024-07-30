@@ -7,7 +7,8 @@ import {
   postResourceToOrg,
   removeResourceFromOrg,
   postResourceTranferToOrg,
-  postUserToOrg
+  postUserToOrg,
+  putUserToOrg
 } from "@/services/HttpClientService";
 
 export default {
@@ -67,6 +68,10 @@ export default {
     async addUserToOrg({commit}, data) {
       const { requestBody, orgId } = data;
       return await postUserToOrg(orgId, requestBody)
+    },
+    async editUserInOrg({commit}, data) {
+      const { userId, orgId, requestBody } = data;
+      return await putUserToOrg(orgId, userId, requestBody)
     }
   },
   getters: {

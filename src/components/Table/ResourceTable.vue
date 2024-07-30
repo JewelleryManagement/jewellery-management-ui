@@ -15,16 +15,12 @@
     :search="search"
   >
     <template v-slot:item.delete="{ item }">
-      <v-icon color="red" @click="onDelete(item.id)"
-        >mdi-delete</v-icon
-      >
+      <v-icon color="red" @click="onDelete(item.id)">mdi-delete</v-icon>
     </template>
     <template v-slot:item.edit="{ item }">
-      <router-link
-        :to="{ name: 'Edit-Resource', params: { id: item.id } }"
-      >
-        <v-icon color="green">mdi-pencil</v-icon>
-      </router-link>
+      <EditButton
+        :routerPath="{ name: 'Edit-Resource', params: { id: item.id } }"
+      />
     </template>
     <template v-slot:item.add="{ item }">
       <router-link
@@ -39,6 +35,7 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useStore } from "vuex";
+import EditButton from "@/components/Button/EditButton.vue";
 
 const props = defineProps({
   selectedResourceType: String,

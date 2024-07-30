@@ -74,7 +74,15 @@
         head-btn-name="Add User"
       >
         <template v-slot:item.permissions="{ item }">
-          <PermissionsTooltip :permissions="item.permissions"/>
+          <PermissionsTooltip :permissions="item.permissions" />
+        </template>
+        <template v-slot:item.edit="{ item }">
+          <EditButton
+            :routerPath="{
+              name: 'Edit-user-in-Organization',
+              params: { organizationId: orgId, userId: item.id },
+            }"
+          />
         </template>
       </users-table>
     </base-card>
@@ -84,6 +92,7 @@
 <script setup>
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
+import EditButton from "@/components/Button/EditButton.vue";
 import PermissionsTooltip from "@/components/Tooltip/PermissionsTooltip.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import OrganizationCard from "@/components/Card/OrganizationCard.vue";
@@ -110,7 +119,7 @@ const disassemblyColumns = computed(() => [
   store.state.products.tableColumnTransfer,
 ]);
 const orgId = route.params.organizationId;
-const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`)
+const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`);
 onMounted(async () => {
   await updateOrganizationDetails();
 });
@@ -157,7 +166,7 @@ const fetchUsersForOrganization = async () => {
             permissions: singleUser.organizationPermissions,
           };
         });
-        return formattedUsers
+        return formattedUsers;
       });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(

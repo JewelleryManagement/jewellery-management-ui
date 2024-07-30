@@ -51,15 +51,10 @@
         </template>
 
         <template v-slot:item.edit="{ item }">
-          <router-link
+          <EditButton
             v-if="!item.partOfSale"
-            :to="`/products/edit/${item.id}`"
-            @click.stop
-          >
-            <v-btn variant="plain">
-              <v-icon color="green">mdi-pencil</v-icon>
-            </v-btn>
-          </router-link>
+            :routerPath="`/products/edit/${item.id}`"
+          />
           <v-btn v-else variant="plain" disabled>
             <v-icon color="green">mdi-pencil</v-icon>
           </v-btn>
@@ -71,6 +66,7 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
+import EditButton from "@/components/Button/EditButton.vue";
 import { onMounted, inject, computed } from "vue";
 import { useStore } from "vuex";
 const store = useStore();

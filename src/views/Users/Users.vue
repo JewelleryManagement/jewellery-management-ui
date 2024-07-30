@@ -3,9 +3,7 @@
     <base-card>
       <users-table title="Users table">
         <template v-slot:item.edit="{ item }">
-          <router-link :to="`/users/edit/${item.id}`" @click.stop>
-            <v-icon color="green">mdi-pencil</v-icon>
-          </router-link>
+          <EditButton :routerPath="`/users/edit/${item.id}`" />
         </template>
       </users-table>
     </base-card>
@@ -14,6 +12,7 @@
 <script setup>
 import { inject, onMounted } from "vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
+import EditButton from "@/components/Button/EditButton.vue";
 import { useStore } from "vuex";
 
 const store = useStore();

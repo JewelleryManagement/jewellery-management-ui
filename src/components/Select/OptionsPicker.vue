@@ -13,7 +13,7 @@
 </template>
   
 <script setup>
-import { ref, watch } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
   allOptions: {
@@ -22,16 +22,14 @@ const props = defineProps({
   },
   chosenOptions: {
     type: Array,
-    default: () => [],
+    default: [],
   },
 });
 
 const emit = defineEmits(["update:chosenOptions"]);
-
-const internalChosenOptions = ref([...props.chosenOptions]);
-
-watch(internalChosenOptions, (newOptions) => {
-  emit("update:chosenOptions", newOptions);
+const internalChosenOptions = computed({
+  get: () => props.chosenOptions,
+  set: (value) => emit("update:chosenOptions", value),
 });
 </script>
   

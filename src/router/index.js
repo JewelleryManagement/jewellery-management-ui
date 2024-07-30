@@ -159,6 +159,13 @@ const routes = [
     meta: { title: "Add user to Organization", requiresAuth: true },
   },
   {
+    path: "/organizations/:organizationId/edit-user/:userId",
+    name: "Edit-user-in-Organization",
+    props: true,
+    component: () => import("../views/Organizations/OrganizationUserEdit.vue"),
+    meta: { title: "Edit user in Organization", requiresAuth: true },
+  },
+  {
     path: "/:notFound(.*)",
     component: () => import("../views/NotFound.vue"),
     meta: { requiresunAuth: true },

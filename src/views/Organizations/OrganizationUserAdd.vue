@@ -2,6 +2,7 @@
   <UserInOrganizationForm
     :selectedOrg="selectedOrg"
     v-model:selectedUser="selectedUser"
+    v-model:chosenPermissions="selectedUser.permissions"
     :submitRequestFunction="addUserToOrg"
     @update:chosenPermissions="getChosenOptions"
   />
@@ -21,17 +22,16 @@ const selectedOrg = computed(
       (x) => x.id === route.params.organizationId
     )[0])
 );
-const selectedPermissions = ref([]);
 const selectedUser = ref({});
 const route = useRoute();
 const router = useRouter();
 const getChosenOptions = (chosenOptions) => {
-  selectedPermissions.value = chosenOptions;
+  selectedUser.value.permissions = chosenOptions;
 };
 const addUserToOrg = async () => {
   const requestBody = {
     userId: selectedUser.value.id,
-    organizationPermission: selectedPermissions.value,
+    organizationPermission: selectedUser.value.permissions,
   };
 
   const data = {

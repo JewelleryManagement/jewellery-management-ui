@@ -216,3 +216,7 @@ export async function productReturn(productId) {
 export async function resourceReturn(saleId, resourceId) {
   return await updateData(`/organizations/sales/${saleId}/return-resource/${resourceId}`);
 }
+
+export async function putUserToOrg(orgId, userId, permissions) {
+  return await updateData(`/organizations/${orgId}/users/${userId}`, permissions);
+}

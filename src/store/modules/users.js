@@ -77,9 +77,17 @@ export default {
     },
   },
   getters: {
-    getOrganizationColumns: (state) => [...state.baseColumns, state.tableColumnPermissions],
+    getOrganizationColumns: (state) => [
+      ...state.baseColumns,
+      state.tableColumnPermissions,
+      state.tableColumnEdit,
+    ],
     getTableColumnsWithEdit: (state) => {
-      return [...state.baseColumns, ...state.additionalColumns, state.tableColumnEdit];
+      return [
+        ...state.baseColumns,
+        ...state.additionalColumns,
+        state.tableColumnEdit,
+      ];
     },
     getTableColumnsWithQuantity: (state, getters, rootState, rootGetters) => {
       return [

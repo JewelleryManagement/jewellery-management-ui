@@ -9,12 +9,13 @@
       :loading="loading"
       no-data-text="No users found"
       hide-details
+      :disabled="disabled"
     ></v-autocomplete>
   </v-sheet>
 </template>
   
   <script setup>
-import { toRef, ref, watch } from "vue";
+import { computed, toRef, ref } from "vue";
 import { userPropsFormatter } from "@/utils/data-formatter";
 
 const props = defineProps({
@@ -23,7 +24,7 @@ const props = defineProps({
     required: true,
   },
   selectedUser: {
-    type: [String, Number],
+    type: Object,
     default: null,
   },
   disabled: {
@@ -34,14 +35,13 @@ const props = defineProps({
 
 const emit = defineEmits(["update:selectedUser"]);
 
-const selectedUser = ref(props.selectedUser);
+const selectedUser = computed({
+  get: () => props.selectedUser,
+  set: (value) => emit("update:selectedUser", value),
+});
 const users = toRef(props, "userOptions");
 const search = ref("");
 const loading = ref(false);
-
-watch(selectedUser, (newValue) => {
-  emit("update:selectedUser", newValue);
-});
 </script>
   
   <style lang="scss" scoped></style>

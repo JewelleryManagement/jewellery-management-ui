@@ -9,6 +9,7 @@
     <UserSelect
       :userOptions="allUsers"
       v-model:selectedUser="selectedUser"
+      @update:selectedUser="handleSelectedUserChange"
       :disabled="isUserSelectDisabled"
     />
     <OptionsPicker
@@ -23,12 +24,14 @@
 </template>
   
   <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
+import { useRoute } from "vue-router";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import UserSelect from "@/components/Select/UserSelect.vue";
 import OptionsPicker from "@/components/Select/OptionsPicker.vue";
 
+const route = useRoute();
 const emit = defineEmits(["update:selectedUser", "update:chosenPermissions"]);
 const props = defineProps({
   chosenPermissions: {
@@ -53,16 +56,22 @@ const props = defineProps({
 });
 
 const selectedOrg = ref(props.selectedOrg);
-const selectedUser = ref(props.selectedUser);
+const selectedUser = computed({
+  get: () => props.selectedUser,
+  set: (value) => handleSelectedUserChange(value),
+});
 const store = useStore();
 const isOrgSelectDisabled = ref(!!props.selectedOrg);
-const isUserSelectDisabled = ref(!!props.selectedUser);
+const isUserSelectDisabled = ref(route.path.includes("edit-user"));
 
 const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
 const allPermissions = computed(
   () => store.getters["organizations/getUserPermissions"]
 );
-const chosenPermissions = ref(props.chosenPermissions);
+const chosenPermissions = computed({
+  get: () => props.chosenPermissions,
+  set: (value) => handleChosenPermissionsChange(value),
+});
 const allUsers = ref([]);
 onMounted(async () => {
   if (props.selectedOrg) {
@@ -77,12 +86,11 @@ const updateSelectedOrg = async (newOrg) => {
   }
 };
 const handleChosenPermissionsChange = (newChosenOptions) => {
-  emit("update:chosenPermissions", chosenPermissions.value);
+  emit("update:chosenPermissions", newChosenOptions);
 };
-
-watch(selectedUser, (newUser) => {
+const handleSelectedUserChange = (newUser) => {
   emit("update:selectedUser", newUser);
-});
+}
 
 const getUsersOutsideOrg = async (organization) => {
   const usersInOrganization = await store.dispatch(
