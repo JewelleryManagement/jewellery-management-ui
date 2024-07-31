@@ -29,6 +29,7 @@ export default {
       { key: "role", title: "Role" },
     ],
     tableColumnEdit: { key: "edit", title: "Edit", slot: "edit" },
+    tableColumnDelete: { key: "delete", title: "Delete", slot: "delete" },
     tableColumnPermissions: {
       key: "permissions",
       title: "Permissions",
@@ -81,6 +82,7 @@ export default {
       ...state.baseColumns,
       state.tableColumnPermissions,
       state.tableColumnEdit,
+      state.tableColumnDelete,
     ],
     getTableColumnsWithEdit: (state) => {
       return [

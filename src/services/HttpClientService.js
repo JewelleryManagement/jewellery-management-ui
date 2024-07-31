@@ -184,6 +184,12 @@ export async function removeResourceFromOrg(
   );
 }
 
+export async function removeUserFromOrg(orgId, userId) {
+  return await removeData(
+    `/organizations/${orgId}/users/${userId}`
+  );
+}
+
 // PUT REQUEST
 
 async function updateData(endpoint, data) {

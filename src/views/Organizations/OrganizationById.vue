@@ -84,6 +84,11 @@
             }"
           />
         </template>
+        <template v-slot:item.delete="{ item }">
+          <v-icon color="red" @click.stop @click="onDelete(item.id)"
+            >mdi-delete</v-icon
+          >
+        </template>
       </users-table>
     </base-card>
   </v-container>
@@ -179,5 +184,18 @@ const updateOrganizationDetails = async (productId) => {
   await fetchProductsForOrganization();
   await fetchResourcesForOrganization();
   await fetchUsersForOrganization();
+};
+const onDelete = async (userId) => {
+  const confirmation = window.confirm(
+    "Are you sure that you would like to remove this user from organization?"
+  );
+  if (confirmation){
+    await store.dispatch("organizations/removeUser", {
+      userId: userId,
+      orgId: orgId,
+    });
+    await fetchUsersForOrganization()
+  }
+    
 };
 </script>
