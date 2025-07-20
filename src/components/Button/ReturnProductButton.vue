@@ -20,8 +20,8 @@ const store = useStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
 const isSalesPage = route.path.includes("/sales");
-const isPartOfProduct = props.currentProductInfo.partOfSale;
 const props = defineProps({ currentProductInfo: Object });
+const isPartOfProduct = props.currentProductInfo.partOfSale;
 const currentProductId = props.currentProductInfo.id;
 const submitReturn = () => {
   const confirm = window.confirm(
