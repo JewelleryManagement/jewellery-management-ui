@@ -5,6 +5,7 @@ import usersModule from "./modules/users";
 import authModule from "./modules/auth";
 import salesModule from "./modules/sales";
 import organizationsModule from "./modules/organizations";
+import allowedValuesModule from "./modules/allowedValues";
 import VuexPersistence from "vuex-persist";
 
 const vuexLocal = new VuexPersistence({
@@ -19,6 +20,7 @@ const store = createStore({
     auth: authModule,
     sales: salesModule,
     organizations: organizationsModule,
+    allowedValues: allowedValuesModule,
   },
   plugins: [vuexLocal.plugin],
 });

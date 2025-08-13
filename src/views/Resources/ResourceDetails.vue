@@ -40,6 +40,7 @@ import Element from "@/components/Form/Element.vue";
 import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { addNewAllowedValuesIfNeeded } from '@/utils/allowed-values.js';
 
 const props = defineProps({
   id: String,
@@ -95,8 +96,18 @@ const handleSubmit = async () => {
   }
 };
 
+const allowedFieldsByType = {
+  Metal: ["type", "quantityType", "purity", "color", "plating"],
+  Pearl: ["type", "quantityType", "quality", "color", "shape"],
+  PreciousStone: ["color", "cut", "clarity", "quantityType", "shape"],
+  SemiPreciousStone: ["color", "cut", "clarity", "quantityType", "shape"],
+  Element: ["quantityType"],
+};
+
 const editResource = async () => {
   try {
+    const fields = allowedFieldsByType[selected.value] || [];
+    await addNewAllowedValuesIfNeeded(store, selected.value, resourceDetails.value, fields);
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
     router.push("/resources");
@@ -107,6 +118,8 @@ const editResource = async () => {
 
 const createResource = async () => {
   try {
+    const fields = allowedFieldsByType[selected.value] || [];
+    await addNewAllowedValuesIfNeeded(store, selected.value, resourceDetails.value, fields);
     await store.dispatch("resources/createResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
     router.push("/resources");

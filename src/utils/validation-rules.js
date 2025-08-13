@@ -5,34 +5,65 @@ export function useInputValidate() {
 export function useTextFieldRules() {
   return [
     (v) => !!v || `Input field is required`,
-    (v) => (v && v.length <= 35) || "Input must be less than 35 characters",
+    (v) => {
+      if (typeof v === 'object' && v !== null && 'value' in v) {
+        return v.value.length <= 35 || "Input must be less than 35 characters";
+      }
+      return (v && v.length <= 35) || "Input must be less than 35 characters";
+    },
   ];
 }
 export function useTextFieldLargeRules() {
   return [
     (v) => !!v || `Input field is required`,
-    (v) => (v && v.length <= 50) || "Input must be less than 50 characters",
+    (v) => {
+      if (typeof v === 'object' && v !== null && 'value' in v) {
+        return v.value.length <= 50 || "Input must be less than 50 characters";
+      }
+      return (v && v.length <= 50) || "Input must be less than 50 characters";
+    },
   ];
 }
 
 export function useNumberFieldRules() {
   return [
-    (v) => !!v || `Input field is required`,
-    (v) => (v && v > 0) || "Input must be a number larger than 0",
+    (v) => {
+      if (typeof v === 'object' && v !== null && 'value' in v) {
+        return !!v.value || `Input field is required`;
+      }
+      return !!v || `Input field is required`;
+    },
+    (v) => {
+      const val = (typeof v === 'object' && v !== null && 'value' in v) ? v.value : v;
+      return (val && val > 0) || "Input must be a number larger than 0";
+    },
   ];
 }
 
 export function useAllNumberFieldRules() {
   return [
-    (v) => !!v || `Input field is required`,
-    (v) => !isNaN(parseFloat(v)) || "Input must be a valid number",
+    (v) => {
+      if (typeof v === 'object' && v !== null && 'value' in v) {
+        return !!v.value || `Input field is required`;
+      }
+      return !!v || `Input field is required`;
+    },
+    (v) => {
+      const val = (typeof v === 'object' && v !== null && 'value' in v) ? v.value : v;
+      return !isNaN(parseFloat(val)) || "Input must be a valid number";
+    },
   ];
 }
 
 export function useTextAreaFieldRules() {
   return [
     (v) => !!v || `Input field is required`,
-    (v) => (v && v.length <= 100) || "Input must be less than 100 characters",
+    (v) => {
+      if (typeof v === 'object' && v !== null && 'value' in v) {
+        return v.value.length <= 100 || "Input must be less than 100 characters";
+      }
+      return (v && v.length <= 100) || "Input must be less than 100 characters";
+    },
   ];
 }
 

@@ -1,42 +1,59 @@
 <template>
-  <v-text-field
+  <!-- Minimal Vuetify 3 v-combobox test for 'Type' field -->
+  <AllowedValueComboBox
     v-model="formData.type"
-    :counter="35"
+    :items="typeOptions"
     label="Type"
     :rules="smallFieldRules"
-    required
-  ></v-text-field>
+    :required="true"
+    :resource-clazz="resourceClazz"
+    field-name="type"
+    @deleted="fetchAllowedValues"
+  />
 
-  <v-text-field
+  <AllowedValueComboBox
     v-model="formData.quantityType"
-    :counter="35"
+    :items="quantityTypeOptions"
     label="Quantity Type"
     :rules="smallFieldRules"
-    required
-  ></v-text-field>
+    :required="true"
+    :resource-clazz="resourceClazz"
+    field-name="quantityType"
+    @deleted="fetchAllowedValues"
+  />
 
-  <v-text-field
+  <AllowedValueComboBox
     v-model="formData.purity"
-    :rules="numberFieldRules"
+    :items="purityOptions"
     label="Purity"
-    required
-  ></v-text-field>
+    :rules="numberFieldRules"
+    :required="true"
+    :resource-clazz="resourceClazz"
+    field-name="purity"
+    @deleted="fetchAllowedValues"
+  />
 
-  <v-text-field
+  <AllowedValueComboBox
     v-model="formData.color"
-    :counter="35"
+    :items="colorOptions"
     label="Color"
     :rules="smallFieldRules"
-    required
-  ></v-text-field>
+    :required="true"
+    :resource-clazz="resourceClazz"
+    field-name="color"
+    @deleted="fetchAllowedValues"
+  />
 
-  <v-text-field
+  <AllowedValueComboBox
     v-model="formData.plating"
-    :counter="35"
+    :items="platingOptions"
     label="Plating"
     :rules="smallFieldRules"
-    required
-  ></v-text-field>
+    :required="true"
+    :resource-clazz="resourceClazz"
+    field-name="plating"
+    @deleted="fetchAllowedValues"
+  />
 
   <v-text-field
     v-model="formData.pricePerQuantity"
@@ -56,18 +73,59 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted, watch } from "vue";
 import { useStore } from "vuex";
+import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import {
   useTextFieldRules,
   useNumberFieldRules,
   useTextFieldLargeRules,
 } from "../../utils/validation-rules.js";
+import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
 
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
+console.log("formData:", formData);
+console.log("formData.clazz:", formData.clazz);
+
+const resourceClazz = computed(() => {
+  const result = formData.clazz || "Metal";
+  console.log("resourceClazz computed result:", result);
+  return result;
+});
+
+// Add a watch to see when resourceClazz changes
+watch(resourceClazz, (newValue) => {
+  console.log("resourceClazz changed to:", newValue);
+});
 
 const smallFieldRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
+
+const typeOptions = ref([]);
+const quantityTypeOptions = ref([]);
+const colorOptions = ref([]);
+const platingOptions = ref([]);
+const purityOptions = ref([]);
+
+const fetchAllowedValues = async () => {
+  console.log("fetchAllowedValues - resourceClazz.value:", resourceClazz.value);
+  await Promise.all([
+    store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: resourceClazz.value, fieldName: "type" }),
+    store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: resourceClazz.value, fieldName: "quantityType" }),
+    store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: resourceClazz.value, fieldName: "color" }),
+    store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: resourceClazz.value, fieldName: "plating" }),
+    store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: resourceClazz.value, fieldName: "purity" }),
+  ]);
+  typeOptions.value = store.getters["allowedValues/getAllowedValues"](resourceClazz.value, "type");
+  quantityTypeOptions.value = store.getters["allowedValues/getAllowedValues"](resourceClazz.value, "quantityType");
+  colorOptions.value = store.getters["allowedValues/getAllowedValues"](resourceClazz.value, "color");
+  platingOptions.value = store.getters["allowedValues/getAllowedValues"](resourceClazz.value, "plating");
+  purityOptions.value = store.getters["allowedValues/getAllowedValues"](resourceClazz.value, "purity");
+};
+
+onMounted(fetchAllowedValues);
+watch(resourceClazz, fetchAllowedValues);
 </script>
 <style scoped></style>
