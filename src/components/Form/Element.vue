@@ -8,13 +8,16 @@
     required
   ></v-textarea>
 
-  <v-text-field
+  <AllowedValueComboBox
     v-model="formData.quantityType"
-    :counter="10"
-    :rules="smallInputRules"
+    :items="quantityTypeOptions"
     label="Quantity Type"
-    required
-  ></v-text-field>
+    :rules="smallInputRules"
+    :required="true"
+    :resource-clazz="resourceClazz"
+    field-name="quantityType"
+    @deleted="fetchAllowedValues"
+  />
 
   <v-text-field
     v-model="formData.pricePerQuantity"
@@ -35,6 +38,8 @@
 
 <script setup>
 import { useStore } from "vuex";
+import { computed, watch } from "vue";
+import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import {
   useTextFieldRules,
   useTextAreaFieldRules,
@@ -49,5 +54,20 @@ const smallInputRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
+
+const resourceClazz = computed(() => formData.value?.clazz || "Element");
+
+// Computed properties for allowed values
+const quantityTypeOptions = computed(() => 
+  store.getters["allowedValues/getAllowedValues"]("Element", "quantityType") || []
+);
+
+// Fetch allowed values when component mounts
+const fetchAllowedValues = async () => {
+  await store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: "Element", fieldName: "quantityType" });
+};
+
+// Fetch allowed values when component mounts
+fetchAllowedValues();
 </script>
 <style scoped></style>
