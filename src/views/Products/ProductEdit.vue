@@ -36,7 +36,7 @@ const pageTitle = ref(route.meta.title);
 const updateProduct = async () => {
   const updatedProduct = {
     ...productInfo.value,
-    ownerId: productInfo.value.owner.id,
+    ownerId: productInfo.value.organization.id,
     authors: productInfo.value.authors.map((author) => author.id),
     productsContent: prepareProductsContent(productInfo.value.productsContent),
     resourcesContent: prepareResourcesContent(

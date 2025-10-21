@@ -28,15 +28,12 @@ const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
 const route = useRoute();
 
-const user = computed(() => store.getters["auth/getUser"]).value;
-
 const pageTitle = ref(route.meta.title);
 const productInfo = ref({});
 
 const createProduct = async () => {
   const productForCreation = {
     ...productInfo.value,
-    ownerId: user.id,
     authors: productInfo.value.authors.map((author) => author.id),
     productsContent: prepareProductsContent(productInfo.value.productsContent),
     resourcesContent: prepareResourcesContent(

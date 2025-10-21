@@ -31,7 +31,7 @@ onMounted(async () => {
 
 const fetchUserOrg = async () => {
   try {
-    await store.dispatch("organizations/fetchUserOrgs");
+    await store.dispatch("organizations/fetchOrgs");
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
   }

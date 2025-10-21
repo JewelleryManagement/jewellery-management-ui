@@ -49,7 +49,7 @@ try {
 }
 
 const tableColumns = computed(() => store.getters["organizations/getColumns"]);
-const organizations = computed(() => store.getters["organizations/allOrganizations"])
+const organizations = computed(() => store.getters["organizations/getOrgs"])
 
 const rowClickHandler = (organization) => {
   navigateToItemDetails(router, organization, "organizations");

@@ -2,11 +2,12 @@ import {
   fetchProducts,
   postProduct,
   fetchProductsByOwner,
+  fetchProductsByOrganization,
   disassmebleProduct,
   transferProduct,
   postPicture,
   fetchPicture,
-  updateProduct
+  updateProduct,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -30,6 +31,11 @@ export default {
       key: "owner",
       title: "Owner",
       slot: "owner",
+    },
+    tableColumnOrganization: {
+      key: "organization",
+      title: "Organization",
+      slot: "organization",
     },
     tableColumnResourcesContent: {
       key: "resourceContent",
@@ -68,9 +74,24 @@ export default {
     },
   },
   actions: {
-    async fetchProducts({ commit }) {
-      const res = await fetchProducts();
-      commit("setProducts", res);
+    async fetchProducts({ dispatch, rootGetters, commit }) {
+      let orgs = rootGetters["organizations/getOrgs"];
+      if (!orgs || orgs.length == 0){
+        await dispatch("organizations/fetchOrgs", null, { root: true });
+        orgs = rootGetters["organizations/getOrgs"];
+      }
+      let allProducts = []
+      await Promise.all(orgs.map(async org => {
+        let orgProductsResponse = await fetchProducts(org.id)
+        let orgProducts = orgProductsResponse.products
+        orgProducts.forEach(product => {
+          allProducts.push({
+            ...product,
+            organization: org
+          })
+        })
+      }))
+      commit("setProducts", allProducts);
     },
     async createProduct({ commit }, product) {
       const res = await postProduct(product);
@@ -79,6 +100,9 @@ export default {
     async fetchProductsByOwner({ commit }, ownerId) {
       const res = await fetchProductsByOwner(ownerId);
       commit("setCurrentUserProducts", res);
+    },
+    async fetchProductsByOrganization({ commit }, ownerId) {
+      return await fetchProductsByOrganization(ownerId);
     },
     async disassmebleProduct({ commit }, productId) {
       await disassmebleProduct(productId);
@@ -90,8 +114,8 @@ export default {
     async postPicture({ commit }, { productId, image }) {
       await postPicture(productId, image);
     },
-    async updateProduct({commit}, {productId, updatedProduct}){
-      return await updateProduct(productId, updatedProduct)
+    async updateProduct({ commit }, { productId, updatedProduct }) {
+      return await updateProduct(productId, updatedProduct);
     },
     async getPicture({ commit }, productId) {
       try {
@@ -106,16 +130,15 @@ export default {
     allProducts: (state) => {
       return state.products;
     },
-    getProductById: (state ) => (productId) => {
-      return state.products.find(product => product.id === productId)
+    getProductById: (state) => (productId) => {
+      return state.products.find((product) => product.id === productId);
     },
     getColumns: (state) => [
       ...state.tableColumns,
       state.tableColumnResourcesContent,
       state.tableColumnProductsContent,
     ],
-    getCurrentUserProducts: (state) =>
-      state.currentUserProducts,
+    getCurrentUserProducts: (state) => state.currentUserProducts,
     getAddColumn: (state) => state.tableColumnAdd,
     getUserColumn: (state) => state.tableColumnOwner,
     getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],

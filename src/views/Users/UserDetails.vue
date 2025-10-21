@@ -43,7 +43,6 @@
             <base-card v-if="isProductsTableVisible">
               <products-table
                 :products="userProducts"
-                :additionalColumnsRight="disassemblyColumns"
                 :title="`${
                   user.firstName + ' ' + user.lastName
                 }'s products table`"
@@ -59,18 +58,6 @@
                       >&comma;&nbsp;</template
                     >
                   </user-tool-tip>
-                </template>
-
-                <template v-slot:item.disassembly="{ item }">
-                  <disassembly-button
-                    :item="item"
-                    :userId="userId"
-                    @click.stop
-                  ></disassembly-button>
-                </template>
-
-                <template v-slot:item.transfer="{ item }">
-                  <product-transfer-button :product="item" :userId="userId" />
                 </template>
               </products-table>
             </base-card>
@@ -145,10 +132,6 @@ const purchasedResources = computed(
   () => store.getters["users/getPurchasedResources"]
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
-const disassemblyColumns = computed(() => [
-  store.state.products.tableColumnDisassembly,
-  store.state.products.tableColumnTransfer,
-]);
 </script>
 
 <style scoped>
