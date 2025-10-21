@@ -10,14 +10,11 @@
         <v-card-title>
           Catalog Number: {{ product.catalogNumber }}
         </v-card-title>
-        <v-select
-          :items="allUsers"
-          :item-props="userPropsFormatter"
-          v-model="user"
-          label="Select User"
-          required
-          :rules="[validateUser]"
-        ></v-select>
+        <OrganizationSelect
+          :selectedValue="selectedOrg"
+          :items="allOrgsByUser"
+          @organization-changed="updateSelectedOrg"
+        />
         <div class="d-flex mx-auto">
           <v-btn color="success" class="mt-4" type="submit">Submit</v-btn>
           <v-btn color="error" class="mt-4" @click="closeDialog">Close</v-btn>
@@ -28,8 +25,7 @@
 </template>
 
 <script setup>
-import { userPropsFormatter } from "@/utils/data-formatter";
-import { validateUser } from "@/utils/validation-rules";
+import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import { ref, computed, inject } from "vue";
 import { useStore } from "vuex";
 const snackbarProvider = inject("snackbarProvider");
@@ -38,12 +34,12 @@ const props = defineProps({
   product: Object,
 });
 const { modelValue, product } = props;
-const [user, form] = [ref(""), ref(null)];
+const [selectedOrg, form] = [ref(""), ref(null)];
 const store = useStore();
 
 const emits = defineEmits(["close-dialog"]);
 
-const allUsers = computed(() => store.getters["users/allUsers"]);
+const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
 
 const postProducTransfer = async (data) => {
   try {
@@ -55,15 +51,21 @@ const postProducTransfer = async (data) => {
   }
 };
 
+const updateSelectedOrg = (newOrg) => {
+  if (newOrg) {
+    selectedOrg.value = newOrg;
+  }
+};
+
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
-  const selectedUserId = user.value.id;
+  const selectedOrgId = selectedOrg.value.id;
 
   if (!valid) return;
 
   const data = {
     productId: product.id,
-    recipientId: selectedUserId,
+    recipientId: selectedOrgId,
   };
 
   postProducTransfer(data);

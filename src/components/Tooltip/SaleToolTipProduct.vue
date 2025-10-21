@@ -15,6 +15,7 @@ const getProductInformationHtml = (product) => {
   const tableColumns = computed(() => [
     ...store.state.products.tableColumns,
     store.state.products.tableColumnOwner,
+    store.state.products.tableColumnOrganization,
   ]).value;
 
   let productInfoHtml = "";
