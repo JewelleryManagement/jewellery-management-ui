@@ -13,9 +13,9 @@
     :items="quantityTypeOptions"
     label="Quantity Type"
     :rules="smallInputRules"
-    :required="true"
     :resource-clazz="resourceClazz"
     field-name="quantityType"
+    :is-fetched="isFetching"
     @deleted="fetchAllowedValues"
   />
 
@@ -38,7 +38,7 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import {
   useTextFieldRules,
@@ -50,24 +50,31 @@ import {
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
 
+const resourceClazz = computed(() => formData.value?.clazz || "Element");
+
 const smallInputRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
+const isFetching = ref(true);
 
-const resourceClazz = computed(() => formData.value?.clazz || "Element");
-
-// Computed properties for allowed values
-const quantityTypeOptions = computed(() => 
-  store.getters["allowedValues/getAllowedValues"]("Element", "quantityType") || []
+const quantityTypeOptions = computed(
+  () =>
+    store.getters["allowedValues/getAllowedValues"](
+      "Element",
+      "quantityType"
+    ) || []
 );
 
-// Fetch allowed values when component mounts
 const fetchAllowedValues = async () => {
-  await store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: "Element", fieldName: "quantityType" });
+  await store.dispatch("allowedValues/fetchAllowedValues", {
+    resourceClazz: "Element",
+    fieldName: "quantityType",
+  });
+
+  isFetching.value = false;
 };
 
-// Fetch allowed values when component mounts
-fetchAllowedValues();
+onMounted(fetchAllowedValues);
 </script>
 <style scoped></style>
