@@ -60,7 +60,7 @@ const props = defineProps({
   isFetched: Boolean,
 });
 
-const emit = defineEmits(["update:modelValue", "deleted"]);
+const emit = defineEmits(["update:modelValue"]);
 
 const store = useStore();
 
@@ -84,7 +84,6 @@ async function handleDelete() {
     value: valueToDelete.value,
   });
 
-  emit("deleted");
   deleteDialog.value = false;
 }
 </script>

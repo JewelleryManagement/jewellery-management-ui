@@ -7,7 +7,6 @@
     :resource-clazz="resourceClazz"
     field-name="type"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <AllowedValueComboBox
@@ -18,7 +17,6 @@
     :resource-clazz="resourceClazz"
     field-name="quantityType"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <AllowedValueComboBox
@@ -29,7 +27,6 @@
     :resource-clazz="resourceClazz"
     field-name="purity"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <AllowedValueComboBox
@@ -40,7 +37,6 @@
     :resource-clazz="resourceClazz"
     field-name="color"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <AllowedValueComboBox
@@ -51,7 +47,6 @@
     :resource-clazz="resourceClazz"
     field-name="plating"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <v-text-field
@@ -94,11 +89,21 @@ const smallFieldRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const typeOptions = ref([]);
-const quantityTypeOptions = ref([]);
-const colorOptions = ref([]);
-const platingOptions = ref([]);
-const purityOptions = ref([]);
+const typeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "type")
+);
+const quantityTypeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quantityType")
+);
+const colorOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "color")
+);
+const platingOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "plating")
+);
+const purityOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "purity")
+);
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
@@ -109,16 +114,6 @@ const fetchAllowedValuesOptions = async () => {
     "plating",
     "purity",
   ]);
-
-  typeOptions.value = getAllowedValue(store, resourceClazz, "type");
-  quantityTypeOptions.value = getAllowedValue(
-    store,
-    resourceClazz,
-    "quantityType"
-  );
-  colorOptions.value = getAllowedValue(store, resourceClazz, "color");
-  platingOptions.value = getAllowedValue(store, resourceClazz, "plating");
-  purityOptions.value = getAllowedValue(store, resourceClazz, "purity");
 
   isFetching.value = false;
 };

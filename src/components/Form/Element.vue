@@ -16,7 +16,6 @@
     :resource-clazz="resourceClazz"
     field-name="quantityType"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <v-text-field
@@ -57,18 +56,19 @@ const smallInputRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
-const isFetching = ref(true);
 
-const quantityTypeOptions = ref([]);
+const quantityTypeOptions = computed(
+  () =>
+    (quantityTypeOptions.value = getAllowedValue(
+      store,
+      resourceClazz,
+      "quantityType"
+    ))
+);
+const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
   await fetchAllowedValues(store, resourceClazz, ["quantityType"]);
-
-  quantityTypeOptions.value = getAllowedValue(
-    store,
-    resourceClazz,
-    "quantityType"
-  );
 
   isFetching.value = false;
 };

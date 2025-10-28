@@ -7,7 +7,6 @@
     :resource-clazz="resourceClazz"
     field-name="type"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <v-text-field
@@ -26,7 +25,6 @@
     :resource-clazz="resourceClazz"
     field-name="quality"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <AllowedValueComboBox
@@ -37,7 +35,6 @@
     :resource-clazz="resourceClazz"
     field-name="quantityType"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <AllowedValueComboBox
@@ -48,7 +45,6 @@
     :resource-clazz="resourceClazz"
     field-name="color"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <AllowedValueComboBox
@@ -59,7 +55,6 @@
     :resource-clazz="resourceClazz"
     field-name="shape"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValuesOptions"
   />
 
   <v-text-field
@@ -99,11 +94,21 @@ const smallFieldRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const typeOptions = ref([]);
-const qualityOptions = ref([]);
-const quantityTypeOptions = ref([]);
-const colorOptions = ref([]);
-const shapeOptions = ref([]);
+const typeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "type")
+);
+const qualityOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quality")
+);
+const quantityTypeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quantityType")
+);
+const colorOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "color")
+);
+const shapeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "shape")
+);
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
@@ -114,16 +119,6 @@ const fetchAllowedValuesOptions = async () => {
     "color",
     "shape",
   ]);
-
-  typeOptions.value = getAllowedValue(store, resourceClazz, "type");
-  qualityOptions.value = getAllowedValue(store, resourceClazz, "quality");
-  quantityTypeOptions.value = getAllowedValue(
-    store,
-    resourceClazz,
-    "quantityType"
-  );
-  colorOptions.value = getAllowedValue(store, resourceClazz, "color");
-  shapeOptions.value = getAllowedValue(store, resourceClazz, "shape");
 
   isFetching.value = false;
 };
