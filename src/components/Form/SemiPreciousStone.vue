@@ -88,17 +88,18 @@ import {
   useNumberFieldRules,
   useTextFieldLargeRules,
 } from "../../utils/validation-rules.js";
+import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
 
-const resourceClazz = computed(
-  () => formData.value?.clazz || "SemiPreciousStone"
-);
-
 const smallFieldRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
+
+const resourceClazz = computed(
+  () => formData.value?.clazz || "SemiPreciousStone"
+);
 
 const colorOptions = ref([]);
 const cutOptions = ref([]);
@@ -116,31 +117,18 @@ const fetchAllowedValuesOptions = async () => {
     "shape",
   ]);
 
-  colorOptions.value = getAllowedValue("color");
-  cutOptions.value = getAllowedValue("cut");
-  clarityOptions.value = getAllowedValue("clarity");
-  quantityTypeOptions.value = getAllowedValue("quantityType");
-  shapeOptions.value = getAllowedValue("shape");
+  colorOptions.value = getAllowedValue(store, resourceClazz, "color");
+  cutOptions.value = getAllowedValue(store, resourceClazz, "cut");
+  clarityOptions.value = getAllowedValue(store, resourceClazz, "clarity");
+  quantityTypeOptions.value = getAllowedValue(
+    store,
+    resourceClazz,
+    "quantityType"
+  );
+  shapeOptions.value = getAllowedValue(store, resourceClazz, "shape");
 
   isFetching.value = false;
 };
-
-const fetchAllowedValues = async (store, resourceClazz, fields) => {
-  await Promise.all(
-    fields.map((fieldName) =>
-      store.dispatch("allowedValues/fetchAllowedValues", {
-        resourceClazz: resourceClazz.value ?? resourceClazz,
-        fieldName,
-      })
-    )
-  );
-};
-
-const getAllowedValue = (fieldName) =>
-  store.getters["allowedValues/getAllowedValues"](
-    resourceClazz.value,
-    fieldName
-  );
 
 onMounted(fetchAllowedValuesOptions);
 </script>

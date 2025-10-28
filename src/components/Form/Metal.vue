@@ -80,6 +80,7 @@ import {
   useNumberFieldRules,
   useTextFieldLargeRules,
 } from "../../utils/validation-rules.js";
+import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
@@ -109,31 +110,18 @@ const fetchAllowedValuesOptions = async () => {
     "purity",
   ]);
 
-  typeOptions.value = getAllowedValue("type");
-  quantityTypeOptions.value = getAllowedValue("quantityType");
-  colorOptions.value = getAllowedValue("color");
-  platingOptions.value = getAllowedValue("plating");
-  purityOptions.value = getAllowedValue("purity");
+  typeOptions.value = getAllowedValue(store, resourceClazz, "type");
+  quantityTypeOptions.value = getAllowedValue(
+    store,
+    resourceClazz,
+    "quantityType"
+  );
+  colorOptions.value = getAllowedValue(store, resourceClazz, "color");
+  platingOptions.value = getAllowedValue(store, resourceClazz, "plating");
+  purityOptions.value = getAllowedValue(store, resourceClazz, "purity");
 
   isFetching.value = false;
 };
-
-const fetchAllowedValues = async (store, resourceClazz, fields) => {
-  await Promise.all(
-    fields.map((fieldName) =>
-      store.dispatch("allowedValues/fetchAllowedValues", {
-        resourceClazz: resourceClazz.value ?? resourceClazz,
-        fieldName,
-      })
-    )
-  );
-};
-
-const getAllowedValue = (fieldName) =>
-  store.getters["allowedValues/getAllowedValues"](
-    resourceClazz.value,
-    fieldName
-  );
 
 onMounted(fetchAllowedValuesOptions);
 </script>

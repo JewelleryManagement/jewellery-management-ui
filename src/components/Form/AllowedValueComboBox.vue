@@ -84,7 +84,7 @@ async function handleDelete() {
     value: valueToDelete.value,
   });
 
-  emit("deleted", valueToDelete.value);
+  emit("deleted");
   deleteDialog.value = false;
 }
 </script>

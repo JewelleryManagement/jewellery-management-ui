@@ -16,7 +16,7 @@
     :resource-clazz="resourceClazz"
     field-name="quantityType"
     :is-fetched="isFetching"
-    @deleted="fetchAllowedValues"
+    @deleted="fetchAllowedValuesOptions"
   />
 
   <v-text-field
@@ -46,6 +46,7 @@ import {
   useTextFieldLargeRules,
   useNumberFieldRules,
 } from "../../utils/validation-rules.js";
+import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
@@ -58,23 +59,20 @@ const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
 const isFetching = ref(true);
 
-const quantityTypeOptions = computed(
-  () =>
-    store.getters["allowedValues/getAllowedValues"](
-      "Element",
-      "quantityType"
-    ) || []
-);
+const quantityTypeOptions = ref([]);
 
-const fetchAllowedValues = async () => {
-  await store.dispatch("allowedValues/fetchAllowedValues", {
-    resourceClazz: "Element",
-    fieldName: "quantityType",
-  });
+const fetchAllowedValuesOptions = async () => {
+  await fetchAllowedValues(store, resourceClazz, ["quantityType"]);
+
+  quantityTypeOptions.value = getAllowedValue(
+    store,
+    resourceClazz,
+    "quantityType"
+  );
 
   isFetching.value = false;
 };
 
-onMounted(fetchAllowedValues);
+onMounted(fetchAllowedValuesOptions);
 </script>
 <style scoped></style>
