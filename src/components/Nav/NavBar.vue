@@ -30,7 +30,9 @@
             :title="child.text"
             link
             @click="handleClick(child)"
-            :class="{ 'bg-grey-lighten-2': selected === child.text }"
+            :class="{
+              'bg-grey-lighten-2': isActive(child),
+            }"
           />
         </v-list-group>
 
@@ -58,7 +60,7 @@
 
 <script setup>
 import { isSmallScreen } from "@/utils/display";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
 import NavBarHomeButton from "./NavBarHomeButton.vue";
 
@@ -66,10 +68,10 @@ const { navBarButtons } = defineProps({
   navBarButtons: Object,
 });
 const router = useRouter();
+const route = useRoute();
 const drawer = ref(!isSmallScreen());
 const hovering = ref(false);
 const open = ref([]);
-const selected = ref("");
 
 const handleClick = (child) => {
   if (child.action) {
@@ -77,12 +79,21 @@ const handleClick = (child) => {
     return;
   }
 
-  selected.value = child.text;
-
   router.push({
     path: child.url,
     query: child.query || {},
   });
+};
+
+const isActive = (page) => {
+  let full = page.url;
+
+  if (page.query) {
+    const params = new URLSearchParams(page.query).toString();
+    full += `?${params}`;
+  }
+
+  return route.fullPath === full;
 };
 </script>
 
