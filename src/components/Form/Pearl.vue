@@ -4,10 +4,9 @@
     :items="typeOptions"
     label="Type"
     :rules="smallFieldRules"
-    :required="true"
     :resource-clazz="resourceClazz"
     field-name="type"
-    @deleted="fetchAllowedValues"
+    :is-fetched="isFetching"
   />
 
   <v-text-field
@@ -23,10 +22,9 @@
     :items="qualityOptions"
     label="Quality"
     :rules="smallFieldRules"
-    :required="true"
     :resource-clazz="resourceClazz"
     field-name="quality"
-    @deleted="fetchAllowedValues"
+    :is-fetched="isFetching"
   />
 
   <AllowedValueComboBox
@@ -34,10 +32,9 @@
     :items="quantityTypeOptions"
     label="Quantity Type"
     :rules="smallFieldRules"
-    :required="true"
     :resource-clazz="resourceClazz"
     field-name="quantityType"
-    @deleted="fetchAllowedValues"
+    :is-fetched="isFetching"
   />
 
   <AllowedValueComboBox
@@ -45,10 +42,9 @@
     :items="colorOptions"
     label="Color"
     :rules="smallFieldRules"
-    :required="true"
     :resource-clazz="resourceClazz"
     field-name="color"
-    @deleted="fetchAllowedValues"
+    :is-fetched="isFetching"
   />
 
   <AllowedValueComboBox
@@ -56,10 +52,9 @@
     :items="shapeOptions"
     label="Shape"
     :rules="smallFieldRules"
-    :required="true"
     :resource-clazz="resourceClazz"
     field-name="shape"
-    @deleted="fetchAllowedValues"
+    :is-fetched="isFetching"
   />
 
   <v-text-field
@@ -81,50 +76,53 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import {
   useTextFieldRules,
   useNumberFieldRules,
   useTextFieldLargeRules,
 } from "../../utils/validation-rules.js";
+import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 
 const store = useStore();
 const formData = store.getters["resources/getResourceDetails"];
+
+const resourceClazz = computed(() => formData.value?.clazz || "Pearl");
 
 const smallFieldRules = useTextFieldRules();
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const resourceClazz = computed(() => formData.value?.clazz || "Pearl");
+const typeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "type")
+);
+const qualityOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quality")
+);
+const quantityTypeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quantityType")
+);
+const colorOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "color")
+);
+const shapeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "shape")
+);
+const isFetching = ref(true);
 
-// Computed properties for allowed values
-const typeOptions = computed(() => 
-  store.getters["allowedValues/getAllowedValues"]("Pearl", "type") || []
-);
-const qualityOptions = computed(() => 
-  store.getters["allowedValues/getAllowedValues"]("Pearl", "quality") || []
-);
-const quantityTypeOptions = computed(() => 
-  store.getters["allowedValues/getAllowedValues"]("Pearl", "quantityType") || []
-);
-const colorOptions = computed(() => 
-  store.getters["allowedValues/getAllowedValues"]("Pearl", "color") || []
-);
-const shapeOptions = computed(() => 
-  store.getters["allowedValues/getAllowedValues"]("Pearl", "shape") || []
-);
+const fetchAllowedValuesOptions = async () => {
+  await fetchAllowedValues(store, resourceClazz, [
+    "type",
+    "quality",
+    "quantityType",
+    "color",
+    "shape",
+  ]);
 
-// Fetch allowed values when component mounts
-const fetchAllowedValues = async () => {
-  await store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: "Pearl", fieldName: "type" });
-  await store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: "Pearl", fieldName: "quality" });
-  await store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: "Pearl", fieldName: "quantityType" });
-  await store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: "Pearl", fieldName: "color" });
-  await store.dispatch("allowedValues/fetchAllowedValues", { resourceClazz: "Pearl", fieldName: "shape" });
+  isFetching.value = false;
 };
 
-// Fetch allowed values when component mounts
-fetchAllowedValues();
+onMounted(fetchAllowedValuesOptions);
 </script>
 <style scoped></style>
