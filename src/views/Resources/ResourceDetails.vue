@@ -40,7 +40,7 @@ import Element from "@/components/Form/Element.vue";
 import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { addNewAllowedValuesIfNeeded } from '@/utils/allowed-values.js';
+import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
 
 const props = defineProps({
   id: String,
@@ -107,10 +107,15 @@ const allowedFieldsByType = {
 const editResource = async () => {
   try {
     const fields = allowedFieldsByType[selected.value] || [];
-    await addNewAllowedValuesIfNeeded(store, selected.value, resourceDetails.value, fields);
+    await addNewAllowedValuesIfNeeded(
+      store,
+      selected.value,
+      resourceDetails.value,
+      fields
+    );
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
-    router.push("/resources");
+    router.push({ path: "/resources", query: { filter: selected.value } });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
@@ -119,10 +124,15 @@ const editResource = async () => {
 const createResource = async () => {
   try {
     const fields = allowedFieldsByType[selected.value] || [];
-    await addNewAllowedValuesIfNeeded(store, selected.value, resourceDetails.value, fields);
+    await addNewAllowedValuesIfNeeded(
+      store,
+      selected.value,
+      resourceDetails.value,
+      fields
+    );
     await store.dispatch("resources/createResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
-    router.push("/resources");
+    router.push({ path: "/resources", query: { filter: selected.value } });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
