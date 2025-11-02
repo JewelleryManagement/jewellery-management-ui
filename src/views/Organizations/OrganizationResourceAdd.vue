@@ -26,7 +26,7 @@ resourceAvailability.value = await store.dispatch(
 );
 
 onMounted(async () => {
-  fetchUserOrg()
+  fetchUserOrg();
 });
 
 const fetchUserOrg = async () => {
@@ -41,7 +41,10 @@ const postAddQuantity = async (data) => {
   try {
     await store.dispatch("organizations/postResourceToOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
-    router.push("/resources");
+    router.push({
+      path: "/resources",
+      query: { filter: resourceAvailability.value.resource.clazz },
+    });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
