@@ -1,5 +1,5 @@
 <template>
-  <base-card>
+  <div class="my-12">
     <v-container class="text-center text-h4 font-weight-bold">
       {{
         selectedResourceType === "All"
@@ -30,7 +30,7 @@
     <resource-table
       :selectedResourceType="selectedResourceType"
     ></resource-table>
-  </base-card>
+  </div>
 </template>
 
 <script setup>
