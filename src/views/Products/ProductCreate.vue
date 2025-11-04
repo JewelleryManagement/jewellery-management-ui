@@ -1,16 +1,14 @@
 <template>
   <v-container class="my-12" fluid>
-    <v-card class="mx-auto pa-10" width="800" height="auto">
-      <template v-slot:title>
-        <div class="mx-auto text-center" style="font-size: 24px">
-          {{ pageTitle }}
-        </div>
-      </template>
-      <ProductCreateAndEditForm
-        :productInfo="productInfo"
-        :submitReqFunction="createProduct"
-      />
-    </v-card>
+    <template v-slot:title>
+      <div class="mx-auto text-center" style="font-size: 24px">
+        {{ pageTitle }}
+      </div>
+    </template>
+    <ProductCreateAndEditForm
+      :productInfo="productInfo"
+      :submitReqFunction="createProduct"
+    />
   </v-container>
 </template>
 
@@ -42,7 +40,10 @@ const createProduct = async () => {
   };
 
   try {
-    const res = await store.dispatch("products/createProduct", productForCreation);
+    const res = await store.dispatch(
+      "products/createProduct",
+      productForCreation
+    );
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {

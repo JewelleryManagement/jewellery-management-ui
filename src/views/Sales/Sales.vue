@@ -1,5 +1,5 @@
 <template>
-  <base-card>
+  <div>
     <sales-table>
       <template v-slot:item.seller="{ item }">
         <organization-tool-tip
@@ -36,7 +36,7 @@
       @close-dialog="closeProductsDialog()"
     >
     </products-content-dialog>
-  </base-card>
+  </div>
 </template>
 
 <script setup>
@@ -57,7 +57,7 @@ const openProductsDialog = (products) => {
 const openResouresDialog = (resources) => {
   resourceDialogData.value = {
     resourcesContent: resources.map((resourcesSale) => ({
-      ...resourcesSale.resourceAndQuantity
+      ...resourcesSale.resourceAndQuantity,
     })),
   };
   isResourceDialogOpen.value = true;

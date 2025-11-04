@@ -1,9 +1,9 @@
 <template class="navbar">
   <v-navigation-drawer
     v-model="drawer"
-    :rail="!isSmallScreen()"
-    expand-on-hover
-    :temporary="isSmallScreen()"
+    :rail="!isMediumAndDownScreen()"
+    :expand-on-hover="hovering"
+    :temporary="isMediumAndDownScreen()"
     @mouseenter="hovering = true"
     @mouseleave="
       hovering = false;
@@ -29,7 +29,7 @@
             :key="childIndex"
             :title="child.text"
             link
-            @click="handleClick(child)"
+            @click="handleChildClick(child)"
             :class="{
               'bg-grey-lighten-2': isActive(child),
             }"
@@ -40,16 +40,21 @@
           v-else
           :title="page.link.text"
           :prepend-icon="page.icon"
-          :to="page.link.url"
+          @click="handlePageClick(page)"
           link
         />
       </template>
     </v-list>
   </v-navigation-drawer>
 
-  <v-app-bar :elevation="2" v-if="isSmallScreen()">
+  <v-app-bar :elevation="2" v-if="isMediumAndDownScreen()">
     <template v-slot:prepend>
-      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-app-bar-nav-icon
+        @click="
+          drawer = !drawer;
+          rail = false;
+        "
+      />
     </template>
 
     <NavBarHomeButton :size="70" :offset="0" />
@@ -59,7 +64,7 @@
 </template>
 
 <script setup>
-import { isSmallScreen } from "@/utils/display";
+import { isMediumAndDownScreen } from "@/utils/display";
 import { useRouter, useRoute } from "vue-router";
 import { ref } from "vue";
 import NavBarHomeButton from "./NavBarHomeButton.vue";
@@ -67,13 +72,20 @@ import NavBarHomeButton from "./NavBarHomeButton.vue";
 const { navBarButtons } = defineProps({
   navBarButtons: Object,
 });
+
 const router = useRouter();
 const route = useRoute();
-const drawer = ref(!isSmallScreen());
+const drawer = ref(!isMediumAndDownScreen());
 const hovering = ref(false);
 const open = ref([]);
 
-const handleClick = (child) => {
+const handlePageClick = (page) => {
+  router.push(page.link.url);
+  open.value = [];
+  hovering.value = false;
+};
+
+const handleChildClick = (child) => {
   if (child.action) {
     child.action();
     return;
@@ -83,6 +95,8 @@ const handleClick = (child) => {
     path: child.url,
     query: child.query || {},
   });
+  open.value = [];
+  hovering.value = false;
 };
 
 const isActive = (page) => {
