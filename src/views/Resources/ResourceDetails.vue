@@ -1,17 +1,15 @@
 <template>
   <v-container class="my-12" fluid>
-    <template v-slot:title>
-      <div class="mx-auto text-center" style="font-size: 24px">
-        {{ pageTitle }}
-      </div>
-    </template>
+    <div class="mx-auto text-center mb-6 text-h5">
+      {{ pageTitle }}
+    </div>
 
     <v-sheet width="300" class="mx-auto">
       <v-select
         v-model="selected"
         :items="options"
         label="Select resource type"
-        :disabled="isEditState"
+        :disabled="isEditState || isDuplicateState"
       ></v-select>
 
       <v-form @submit.prevent="handleSubmit" ref="form">
@@ -53,17 +51,20 @@ const options = ref([
   "PreciousStone",
   "SemiPreciousStone",
 ]);
-const pageTitle = ref(route.meta.title);
+const pageTitle = computed(() => route.meta.title);
 const resourceDetails = computed(
   () => store.getters["resources/getResourceDetails"]
 );
 const snackbarProvider = inject("snackbarProvider");
 const selected = ref("");
-const isEditState = props.id !== undefined;
+const isEditState = computed(() => route.path.startsWith("/resources/edit"));
+const isDuplicateState = computed(() =>
+  route.path.startsWith("/resources/duplicate")
+);
 
 const form = ref(null);
 
-if (isEditState) {
+if (isEditState.value || isDuplicateState.value) {
   const resourceDetails = computed(() =>
     store.getters["resources/getResourceById"](props.id)
   );
@@ -86,7 +87,7 @@ const resetForm = () => {
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
   if (valid) {
-    if (isEditState) {
+    if (isEditState.value) {
       editResource();
     } else {
       createResource();

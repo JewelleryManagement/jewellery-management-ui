@@ -1,5 +1,6 @@
 <template>
   <v-combobox
+    :model-value="modelValue"
     @update:model-value="$emit('update:modelValue', $event)"
     :items="items"
     :label="label"
