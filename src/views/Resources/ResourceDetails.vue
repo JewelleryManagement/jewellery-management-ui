@@ -64,17 +64,30 @@ const isDuplicateState = computed(() =>
 
 const form = ref(null);
 
-if (isEditState.value || isDuplicateState.value) {
-  const resourceDetails = computed(() =>
-    store.getters["resources/getResourceById"](props.id)
-  );
-  store.dispatch("resources/setResourceDetails", resourceDetails.value);
-  selected.value = resourceDetails.value.clazz;
-}
+const loadResourceDetails = () => {
+  if (isEditState.value || isDuplicateState.value) {
+    const resourceDetails = computed(() =>
+      store.getters["resources/getResourceById"](props.id)
+    );
+    store.dispatch("resources/setResourceDetails", resourceDetails.value);
+    selected.value = resourceDetails.value.clazz;
+  }
+};
+
+watch(
+  () => route.path,
+  () => {
+    if (route.path.startsWith("/resources/add")) {
+      selected.value = "";
+    } else loadResourceDetails();
+  },
+  { immediate: true }
+);
 
 watch(selected, (newValue) => {
-  //Reset input data on selection change
-  store.dispatch("resources/setResourceDetails", { clazz: newValue });
+  if (!isEditState.value && !isDuplicateState.value) {
+    store.dispatch("resources/setResourceDetails", { clazz: newValue });
+  }
 });
 
 const resetForm = () => {
