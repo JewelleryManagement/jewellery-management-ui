@@ -11,20 +11,24 @@ import {
 } from "@/services/HttpClientService.js";
 
 const filterColumnsByKey = (state, keys) => {
-
-  const additionalColumnsLeft = [
-    state.tableColumnQuantity
-  ]
+  const additionalColumnsLeft = [state.tableColumnQuantity];
 
   const additionalColumnsRight = [
     state.tableColumnDelete,
     state.tableColumnEdit,
+    state.tableColumnDuplicate,
     state.tableColumnAdd,
   ];
 
-  const filteredColumns = state.tableColumns.filter((column) => keys.includes(column.key));
-  const result = [...additionalColumnsLeft, ...filteredColumns,...additionalColumnsRight];
-  
+  const filteredColumns = state.tableColumns.filter((column) =>
+    keys.includes(column.key)
+  );
+  const result = [
+    ...additionalColumnsLeft,
+    ...filteredColumns,
+    ...additionalColumnsRight,
+  ];
+
   return result;
 };
 
@@ -52,6 +56,7 @@ export default {
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
+    tableColumnDuplicate: { key: "duplicate", title: "", slot: "duplicate" },
     tableColumnAdd: { key: "add", title: "", slot: "add" },
     tableColumnRemoveQuantity: { key: "remove", title: "", slot: "remove" },
     tableColumnTransferQuantity: {
@@ -139,6 +144,7 @@ export default {
       ...state.tableColumns,
       state.tableColumnDelete,
       state.tableColumnEdit,
+      state.tableColumnDuplicate,
       state.tableColumnAdd,
     ],
     getAvailabilityUpdateColumns: (state) => [

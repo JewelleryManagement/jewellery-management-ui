@@ -22,6 +22,13 @@
         :routerPath="{ name: 'Edit-Resource', params: { id: item.id } }"
       />
     </template>
+    <template v-slot:item.duplicate="{ item }">
+      <router-link
+        :to="{ name: 'Duplicate-Resource', params: { id: item.id } }"
+      >
+        <v-icon color="indigo"> mdi-content-duplicate </v-icon>
+      </router-link>
+    </template>
     <template v-slot:item.add="{ item }">
       <router-link
         :to="{ name: 'Add-Quantity', params: { resourceId: item.id } }"

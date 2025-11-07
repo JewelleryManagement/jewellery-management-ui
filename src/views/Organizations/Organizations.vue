@@ -1,9 +1,5 @@
 <template>
-    <base-card>
-        <org-table> </org-table>
-    </base-card>
+  <org-table> </org-table>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>

@@ -1,5 +1,5 @@
 <template>
-  <v-card class="elevation-12">
+  <div class="my-12">
     <div class="text-center">
       <h1>Sales table</h1>
     </div>
@@ -28,7 +28,7 @@
         <slot :name="slot" v-bind="scope || {}" />
       </template>
     </v-data-table>
-  </v-card>
+  </div>
 </template>
 
 <script setup>

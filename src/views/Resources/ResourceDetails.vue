@@ -1,33 +1,29 @@
 <template>
   <v-container class="my-12" fluid>
-    <v-card class="mx-auto pa-10" width="800" height="auto">
-      <template v-slot:title>
-        <div class="mx-auto text-center" style="font-size: 24px">
-          {{ pageTitle }}
+    <div class="mx-auto text-center mb-6 text-h5">
+      {{ pageTitle }}
+    </div>
+
+    <v-sheet width="300" class="mx-auto">
+      <v-select
+        v-model="selected"
+        :items="options"
+        label="Select resource type"
+        :disabled="isEditState || isDuplicateState"
+      ></v-select>
+
+      <v-form @submit.prevent="handleSubmit" ref="form">
+        <Pearl v-if="selected === 'Pearl'" />
+        <Metal v-if="selected === 'Metal'" />
+        <PreciousStone v-if="selected === 'PreciousStone'" />
+        <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
+        <Element v-if="selected === 'Element'" />
+
+        <div v-if="selected" class="d-flex flex-column">
+          <form-buttons @reset-form="resetForm" />
         </div>
-      </template>
-
-      <v-sheet width="300" class="mx-auto">
-        <v-select
-          v-model="selected"
-          :items="options"
-          label="Select resource type"
-          :disabled="isEditState"
-        ></v-select>
-
-        <v-form @submit.prevent="handleSubmit" ref="form">
-          <Pearl v-if="selected === 'Pearl'" />
-          <Metal v-if="selected === 'Metal'" />
-          <PreciousStone v-if="selected === 'PreciousStone'" />
-          <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
-          <Element v-if="selected === 'Element'" />
-
-          <div v-if="selected" class="d-flex flex-column">
-            <form-buttons @reset-form="resetForm" />
-          </div>
-        </v-form>
-      </v-sheet>
-    </v-card>
+      </v-form>
+    </v-sheet>
   </v-container>
 </template>
 
@@ -40,7 +36,7 @@ import Element from "@/components/Form/Element.vue";
 import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { addNewAllowedValuesIfNeeded } from '@/utils/allowed-values.js';
+import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
 
 const props = defineProps({
   id: String,
@@ -55,27 +51,43 @@ const options = ref([
   "PreciousStone",
   "SemiPreciousStone",
 ]);
-const pageTitle = ref(route.meta.title);
+const pageTitle = computed(() => route.meta.title);
 const resourceDetails = computed(
   () => store.getters["resources/getResourceDetails"]
 );
 const snackbarProvider = inject("snackbarProvider");
 const selected = ref("");
-const isEditState = props.id !== undefined;
+const isEditState = computed(() => route.path.startsWith("/resources/edit"));
+const isDuplicateState = computed(() =>
+  route.path.startsWith("/resources/duplicate")
+);
 
 const form = ref(null);
 
-if (isEditState) {
-  const resourceDetails = computed(() =>
-    store.getters["resources/getResourceById"](props.id)
-  );
-  store.dispatch("resources/setResourceDetails", resourceDetails.value);
-  selected.value = resourceDetails.value.clazz;
-}
+const loadResourceDetails = () => {
+  if (isEditState.value || isDuplicateState.value) {
+    const resourceDetails = computed(() =>
+      store.getters["resources/getResourceById"](props.id)
+    );
+    store.dispatch("resources/setResourceDetails", resourceDetails.value);
+    selected.value = resourceDetails.value.clazz;
+  }
+};
+
+watch(
+  () => route.path,
+  () => {
+    if (route.path.startsWith("/resources/add")) {
+      selected.value = "";
+    } else loadResourceDetails();
+  },
+  { immediate: true }
+);
 
 watch(selected, (newValue) => {
-  //Reset input data on selection change
-  store.dispatch("resources/setResourceDetails", { clazz: newValue });
+  if (!isEditState.value && !isDuplicateState.value) {
+    store.dispatch("resources/setResourceDetails", { clazz: newValue });
+  }
 });
 
 const resetForm = () => {
@@ -88,7 +100,7 @@ const resetForm = () => {
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
   if (valid) {
-    if (isEditState) {
+    if (isEditState.value) {
       editResource();
     } else {
       createResource();
@@ -107,10 +119,15 @@ const allowedFieldsByType = {
 const editResource = async () => {
   try {
     const fields = allowedFieldsByType[selected.value] || [];
-    await addNewAllowedValuesIfNeeded(store, selected.value, resourceDetails.value, fields);
+    await addNewAllowedValuesIfNeeded(
+      store,
+      selected.value,
+      resourceDetails.value,
+      fields
+    );
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
-    router.push("/resources");
+    router.push({ path: "/resources", query: { filter: selected.value } });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
@@ -119,10 +136,15 @@ const editResource = async () => {
 const createResource = async () => {
   try {
     const fields = allowedFieldsByType[selected.value] || [];
-    await addNewAllowedValuesIfNeeded(store, selected.value, resourceDetails.value, fields);
+    await addNewAllowedValuesIfNeeded(
+      store,
+      selected.value,
+      resourceDetails.value,
+      fields
+    );
     await store.dispatch("resources/createResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
-    router.push("/resources");
+    router.push({ path: "/resources", query: { filter: selected.value } });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
