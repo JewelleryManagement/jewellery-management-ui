@@ -78,7 +78,7 @@ import {
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 
 const store = useStore();
-const formData = store.getters["resources/getResourceDetails"];
+const formData = computed(() => store.getters["resources/getResourceDetails"]);
 
 const resourceClazz = computed(() => {
   const result = formData.clazz || "Metal";
