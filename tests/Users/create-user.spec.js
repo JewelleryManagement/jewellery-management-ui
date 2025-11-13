@@ -1,130 +1,165 @@
 import { test, expect } from "@playwright/test";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
+import { navigateToPage, appLogin, wait } from "tests/utils/functions";
+import { userContext, createGlobalVariables } from "tests/utils/userUtils";
 
-const wait = (seconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
+const firstName = "firstName" + getRandomNumber();
+const lastName = "lastName" + getRandomNumber();
+const email = "email" + getRandomNumber() + "@gmail.com";
+const password = "p@s5W07d" + getRandomNumber();
+const phone = "359884334" + getRandomNumber();
+const birthDate = "2024-02-14";
+const note = firstName + lastName + password + phone;
+
+const navigateToUserCreatePage = async (page) => {
+  await navigateToPage(
+    page,
+    expect,
+    "Users",
+    "/home",
+    "Create User",
+    "/users/create",
+    "Users Create"
+  );
 };
 
-const login = async (page) => {
-  await page.goto("./");
-  await page.getByPlaceholder("Email Address").fill("root@gmail.com");
-  await page.getByPlaceholder("Password").fill("p@s5W07d");
-  await page.getByRole("button", { name: "Log in" }).click();
+const navigateToUserTablePage = async (page) => {
+  await navigateToPage(
+    page,
+    expect,
+    "Users",
+    "/home",
+    "All Users",
+    "/users",
+    "Users table"
+  );
 };
 
 test.describe("Create user tests", () => {
   test.beforeEach(async ({ page }) => {
-    await login(page)
+    await appLogin(page);
+    createGlobalVariables(page);
   });
 
   test.afterEach(async ({ page }) => {
     await page.close();
   });
 
-  test("Access Create User page and going back and forth", async ({ page }) => {
-    await page.getByRole('link', { name: 'Users' }).click();
-    await expect(page).toHaveURL('/users');
-    await expect(page.getByRole('heading', { name: 'Users table' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Create user' })).toBeVisible();
+  test("Access Create User page from navbar and going back and forth", async ({
+    page,
+  }) => {
+    await navigateToUserCreatePage(page);
 
-    await page.getByRole('link', { name: 'Create user' }).click();
-    await expect(page).toHaveURL('/users/create');
-    
+    await expect(userContext.backButton).toBeVisible();
+    await wait(1);
 
-    await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
-    await wait(3)
-    await page.getByRole('button', { name: 'Go Back' }).click();
-    await expect(page).toHaveURL('/users');
+    await userContext.backButton.click();
+    await expect(page).toHaveURL("/home");
+    await wait(1);
 
-    await page.getByRole('link', { name: 'Create user' }).click();
-    await expect(page).toHaveURL('/users/create');
-    await expect(page.getByRole('button', { name: 'Go Back' })).toBeVisible();
-    await wait(3)
-    await page.getByRole('button', { name: 'Go Back' }).click();
-    await expect(page).toHaveURL('/users');
-});
+    await navigateToUserCreatePage(page);
+
+    await expect(userContext.backButton).toBeVisible();
+    await wait(1);
+
+    await userContext.backButton.click();
+    await expect(page).toHaveURL("/home");
+    await wait(1);
+  });
+
+  test("Access Create User page from users page and going back and forth", async ({
+    page,
+  }) => {
+    await navigateToUserTablePage(page);
+
+    await expect(userContext.createButton).toBeVisible();
+    await wait(1);
+
+    await userContext.createButton.click();
+    await expect(page).toHaveURL("/users/create");
+    await expect(userContext.backButton).toBeVisible();
+    await wait(1);
+
+    await userContext.backButton.click();
+    await expect(page).toHaveURL("/users");
+    await expect(userContext.tableHeader).toBeVisible();
+    await expect(userContext.createButton).toBeVisible();
+    await wait(1);
+
+    await userContext.createButton.click();
+    await expect(page).toHaveURL("/users/create");
+    await expect(userContext.backButton).toBeVisible();
+    await wait(1);
+
+    await userContext.backButton.click();
+    await expect(page).toHaveURL("/users");
+    await expect(userContext.tableHeader).toBeVisible();
+    await expect(userContext.createButton).toBeVisible();
+    await wait(1);
+  });
 
   test("Create user successfully", async ({ page }) => {
-    const firstName = "firstName" + getRandomNumber();
-    const lastName = "lastName" + getRandomNumber();
-    const email = "email" + getRandomNumber() + "@gmail.com";
-    const password = "p@s5W07d" + getRandomNumber();
+    await navigateToUserCreatePage(page);
 
-    await page.getByRole("link", { name: "Users" }).click();
-    await page.getByRole("link", { name: "Create user" }).click();
-    await page.getByLabel("First name").fill(firstName);
-    await page.getByLabel("Last name").fill(lastName);
-    await page.getByLabel("Email").fill(email);
-    await page.getByLabel("Password", { exact: true }).fill(password);
-    await page.getByRole("button", { name: "Submit" }).click();
+    await userContext.firstNameLabel.fill(firstName);
+    await userContext.lastNameLabel.fill(lastName);
+    await userContext.emailLabel.fill(email);
+    await userContext.passwordLabel.fill(password);
+    await userContext.submitButton.click();
 
     await expect(page.getByText("Successfully created user")).toBeVisible();
   });
 
   test("Create user with bad password is unsuccessful", async ({ page }) => {
-    const firstName = "firstName" + getRandomNumber();
-    const lastName = "lastName" + getRandomNumber();
-    const email = "email" + getRandomNumber() + "@gmail.com";
+    await navigateToUserCreatePage(page);
 
-    await page.getByRole("link", { name: "Users" }).click();
-    await page.getByRole("link", { name: "Create user" }).click();
-    await page.getByLabel("First name").fill(firstName);
-    await page.getByLabel("Last name").fill(lastName);
-    await page.getByLabel("Email").fill(email);
-    await page.getByLabel("Password", { exact: true }).fill("123");
-    await page.getByRole("button", { name: "Submit" }).click();
+    await userContext.firstNameLabel.fill(firstName);
+    await userContext.lastNameLabel.fill(lastName);
+    await userContext.emailLabel.fill(email);
+    await userContext.passwordLabel.fill("123");
+    await userContext.submitButton.click();
 
-    await expect(page.getByText("Password must contain at")).toBeVisible();
+    await expect(page.getByText("Password must be at")).toBeVisible();
   });
 
   test("Reset button makes all inputs empty", async ({ page }) => {
-    const firstName = "firstName" + getRandomNumber();
-    const lastName = "lastName" + getRandomNumber();
-    const email = "email" + getRandomNumber() + "@gmail.com";
-    const password = "p@s5W07d" + getRandomNumber();
-    const phone = "359884334" + getRandomNumber();
+    await navigateToUserCreatePage(page);
 
-    await page.getByRole("link", { name: "Users" }).click();
-    await page.getByRole("link", { name: "Create user" }).click();
+    await expect(userContext.firstNameLabel).toBeEmpty();
+    await expect(userContext.lastNameLabel).toBeEmpty();
+    await expect(userContext.emailLabel).toBeEmpty();
+    await expect(userContext.passwordLabel).toBeEmpty();
+    await expect(userContext.firstPhoneLabel).toBeEmpty();
+    await expect(userContext.secondPhoneLabel).toBeEmpty();
+    await expect(userContext.birthDateLabel).toBeEmpty();
+    await expect(userContext.noteLabel).toBeEmpty();
+    expect(userContext.role).toBeTruthy();
 
-    await expect(page.getByLabel("First name")).toBeEmpty();
-    await expect(page.getByLabel("Last name")).toBeEmpty();
-    await expect(page.getByLabel("Email")).toBeEmpty();
-    await expect(page.getByLabel("Password", { exact: true })).toBeEmpty();
-    await expect(page.getByLabel("Phone", { exact: true })).toBeEmpty();
-    await expect(page.getByLabel("Phone2")).toBeEmpty();
-    await expect(page.getByLabel("Birth date")).toBeEmpty();
-    await expect(page.getByLabel("Note")).toBeEmpty();
-    await expect(page.getByLabel("Birth date")).toBeEmpty();
-    expect(page.locator("div").filter({ hasText: /^USER$/ })).toBeTruthy();
-
-    await page.getByLabel("First name").fill(firstName);
-    await page.getByLabel("Last name").fill(lastName);
-    await page.getByLabel("Email").fill(email);
-    await page.getByLabel("Password", { exact: true }).fill(password);
-    await page.getByLabel("Phone", { exact: true }).fill(phone);
-    await page.getByLabel("Phone2", { exact: true }).fill(phone);
-    await page.getByLabel("Birth date").fill("2024-02-14");
-    await page.getByLabel("Note").fill(firstName + lastName + password + phone);
+    await userContext.firstNameLabel.fill(firstName);
+    await userContext.lastNameLabel.fill(lastName);
+    await userContext.emailLabel.fill(email);
+    await userContext.passwordLabel.fill(password);
+    await userContext.firstPhoneLabel.fill(phone);
+    await userContext.secondPhoneLabel.fill(phone);
+    await userContext.birthDateLabel.fill(birthDate);
+    await userContext.noteLabel.fill(note);
     await page
       .locator(
         "div:nth-child(10) > .v-input__control > .v-field > .v-field__append-inner"
       )
       .click();
     await page.getByText("ADMIN").click();
-    await page.getByRole("button", { name: "Reset" }).click();
 
-    await expect(page.getByLabel("First name")).toBeEmpty();
-    await expect(page.getByLabel("Last name")).toBeEmpty();
-    await expect(page.getByLabel("Email")).toBeEmpty();
-    await expect(page.getByLabel("Password", { exact: true })).toBeEmpty();
-    await expect(page.getByLabel("Phone", { exact: true })).toBeEmpty();
-    await expect(page.getByLabel("Phone2")).toBeEmpty();
-    await expect(page.getByLabel("Birth date")).toBeEmpty();
-    await expect(page.getByLabel("Note")).toBeEmpty();
-    await expect(page.getByLabel("Birth date")).toBeEmpty();
-    expect(page.locator("div").filter({ hasText: /^USER$/ })).toBeTruthy();
+    await userContext.resetButton.click();
+
+    await expect(userContext.firstNameLabel).toBeEmpty();
+    await expect(userContext.lastNameLabel).toBeEmpty();
+    await expect(userContext.emailLabel).toBeEmpty();
+    await expect(userContext.passwordLabel).toBeEmpty();
+    await expect(userContext.firstPhoneLabel).toBeEmpty();
+    await expect(userContext.secondPhoneLabel).toBeEmpty();
+    await expect(userContext.birthDateLabel).toBeEmpty();
+    await expect(userContext.noteLabel).toBeEmpty();
+    expect(userContext.role).toBeTruthy();
   });
 });

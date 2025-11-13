@@ -81,7 +81,7 @@ const sellObject = reactive({
 watch(
   () => sellObject.seller,
   async (newSeller) => {
-    if (newSeller) {
+    if (newSeller.id) {
       resourcesForSale.value = await store
         .dispatch("organizations/fetchOrganizationResources", newSeller.id)
         .then((resourcesResponse) =>

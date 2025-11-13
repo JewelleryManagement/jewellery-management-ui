@@ -12,8 +12,31 @@ export const appLogin = async (page) => {
   await wait(3);
 };
 
-export const navigateToPage = async (page, expect, name) => {
-  const thePage = name.charAt(0).toUpperCase() + name.slice(1);
-  await page.getByRole("link", { name: thePage }).click();
-  await expect(page).toHaveURL(`/${name}`);
+export const navigateToPage = async (
+  page,
+  expect,
+  navParrentButton,
+  expectedUrl,
+  navChildButton,
+  expectedNewUrl,
+  expectedHeader
+) => {
+  const drawer = page.locator(".v-navigation-drawer");
+
+  await drawer.hover();
+  await expect(
+    drawer.getByText(navParrentButton, { exact: true })
+  ).toBeVisible();
+  await wait(1);
+
+  await drawer.getByText(navParrentButton, { exact: true }).click();
+  await expect(page).toHaveURL(expectedUrl);
+  await expect(drawer.getByText(navChildButton, { exact: true })).toBeVisible();
+  await wait(1);
+
+  await drawer.getByText(navChildButton, { exact: true }).click();
+  await expect(page).toHaveURL(expectedNewUrl);
+  wait(1);
+  await expect(page.getByText(expectedHeader, { exact: true })).toBeVisible();
+  await wait(1);
 };

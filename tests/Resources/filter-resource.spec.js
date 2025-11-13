@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { navigateToPage } from "tests/utils/functions";
 
 const wait = (seconds) => {
   return new Promise((resolve) => {
@@ -15,10 +16,15 @@ const login = async (page) => {
 };
 
 const navigateToResourcePage = async (page) => {
-  await page.getByRole("link", { name: "Resources" }).click();
-  await expect(page).toHaveURL("/resources");
-  await expect(page.getByText("All resources table")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Add resource" })).toBeVisible();
+  await navigateToPage(
+    page,
+    expect,
+    "Resources",
+    "/home",
+    "All",
+    "/resources",
+    "All resources table"
+  );
 };
 
 const resourceTypes = [
@@ -37,9 +43,8 @@ const filterResourceTable = async (page, resourceTypeBtn) => {
   for (const { label, tableText } of resourceTypes) {
     await resourceTypeBtn.click();
     await page
-      .locator("div")
-      .filter({ hasText: new RegExp(`^${label}$`) })
-      .first()
+      .locator(".v-overlay__content")
+      .getByText(label, { exact: true })
       .click();
     await expect(page.getByText(tableText)).toBeVisible();
   }
@@ -63,10 +68,7 @@ test("FIlter button and its menu is visible ", async ({ page }) => {
 
   for (const resourceType of resourceTypes) {
     await expect(
-      page
-        .locator("div")
-        .filter({ hasText: new RegExp(`^${resourceType.label}$`) })
-        .first()
+      page.locator("div").filter({ hasText: resourceType.label }).first()
     ).toBeVisible();
   }
 });

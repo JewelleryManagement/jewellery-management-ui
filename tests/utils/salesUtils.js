@@ -32,17 +32,17 @@ export const selectDate = async (page, expect) => {
   const month = (today.getMonth() + 1).toString().padStart(2, "0");
   const year = today.getFullYear();
   await calendarBtn.click();
-  await page.getByRole("button", { name: day.toString(), exact: true }).click();
+  await page.getByRole("button", { name: new RegExp(day.toString()) }).click();
   await expect(
     page.getByText(`Selected date: ${day}/${month}/${year}`)
   ).toBeVisible();
 };
 
-export const selectProduct = async (page) => {
+export const selectProduct = async (page, raw) => {
   const { productsBtn, saveBtn } = myContext;
 
   await productsBtn.click();
-  await page.locator("td").first().click();
+  await page.locator("tr").nth(raw).locator("td").first().click();
   await saveBtn.click();
 };
 
