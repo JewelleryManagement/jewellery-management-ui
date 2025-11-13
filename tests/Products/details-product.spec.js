@@ -2,11 +2,19 @@ import { test, expect } from "@playwright/test";
 import { appLogin, navigateToPage } from "tests/utils/functions";
 import { createGlobalVariables } from "tests/utils/productsUtils";
 
-const PRODUCT_ID = "b17a976f-ebba-4142-a52e-5fd08bc7f8cd";
+const PRODUCT_ID = "353bd632-d7cf-4535-b9ea-76834ad2fbb9";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(page, expect, "products");
+  await navigateToPage(
+    page,
+    expect,
+    "Products",
+    "/home",
+    "All Products",
+    "/products",
+    "Products Table"
+  );
   await createGlobalVariables(page);
   await page.goto(`products/${PRODUCT_ID}`);
 });

@@ -5,12 +5,16 @@ import { createGlobalVariables, myContext } from "tests/utils/orgUtils";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(page, expect, "organizations");
-  await expect(page).toHaveURL("/organizations");
-  await expect(page.getByText("NEW ORGANIZATION")).toBeVisible();
+  await navigateToPage(
+    page,
+    expect,
+    "Organizations",
+    "/home",
+    "New Organization",
+    "/organizations/add",
+    "Create organization"
+  );
   createGlobalVariables(page);
-  const { createBtn } = myContext;
-  await createBtn.click();
 });
 
 test.afterEach(async ({ page }) => {
@@ -70,5 +74,5 @@ test("Go back button works", async ({ page }) => {
   const { goBackButton } = myContext;
   await verifyInputs(page);
   await goBackButton.click();
-  await expect(page).toHaveURL("/organizations");
+  await expect(page).toHaveURL("/home");
 });

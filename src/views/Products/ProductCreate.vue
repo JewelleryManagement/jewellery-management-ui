@@ -1,10 +1,8 @@
 <template>
   <v-container class="my-12" fluid>
-    <template v-slot:title>
-      <div class="mx-auto text-center" style="font-size: 24px">
-        {{ pageTitle }}
-      </div>
-    </template>
+    <div class="mx-auto text-center mb-6 text-h5">
+      {{ pageTitle }}
+    </div>
     <ProductCreateAndEditForm
       :productInfo="productInfo"
       :submitReqFunction="createProduct"

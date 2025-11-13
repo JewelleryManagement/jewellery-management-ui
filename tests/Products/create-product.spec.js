@@ -13,16 +13,20 @@ import {
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(page, expect, "products");
+  await navigateToPage(
+    page,
+    expect,
+    "Products",
+    "/home",
+    "Create Product",
+    "/products/add",
+    "Create product"
+  );
   await createGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
   await page.close();
-});
-
-test("Access products page", async ({ page }) => {
-  await navigateToPage(page, expect, "products");
 });
 
 test("Acces a product creation page", async ({ page }) => {
@@ -40,7 +44,6 @@ test("Acces a product creation page", async ({ page }) => {
     goBackButton,
   } = myContext;
 
-  await page.getByRole("link", { name: "Create Product" }).click();
   await expect(catalogNameButton).toBeVisible();
   await expect(descriptionButton).toBeVisible();
   await expect(authorsComboBox).toBeVisible();
@@ -57,7 +60,6 @@ test("Acces a product creation page", async ({ page }) => {
 test("Create a product with empty fields is unsuccessful", async ({ page }) => {
   const { submitButton } = myContext;
 
-  await page.getByRole("link", { name: "Create Product" }).click();
   await expect(submitButton).toBeVisible();
   await submitButton.click();
 
@@ -75,7 +77,7 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
     page,
     "Product" + getRandomNumber(),
     "Description" + getRandomNumber(),
-    ["testUser1 testtestUser1@gmail.com", "testUser2 testtestUser2@gmail.com"],
+    ["root testroot@gmail.com"],
     getRandomNumberAsString(),
     `asd${getRandomNumber()}asdf`
   );
@@ -90,13 +92,8 @@ test("Create a product is successful", async ({ page }) => {
   const { submitButton, additionalPrice } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
-  const authors = [
-    "testUser1 testtestUser1@gmail.com",
-    "testUser2 testtestUser2@gmail.com",
-  ];
+  const authors = ["root testroot@gmail.com"];
   const barcode = `asd${getRandomNumber()}asdf`;
-
-  await page.getByRole("link", { name: "Create Product" }).click();
 
   await fillProductForm(
     page,
@@ -108,7 +105,7 @@ test("Create a product is successful", async ({ page }) => {
 
   await page.getByRole("button", { name: "Resources" }).click();
 
-  await fillTableCellAndPress(page, 2, 1, "2");
+  await fillTableCellAndPress(page, 1, 1, "2");
 
   await page.getByRole("button", { name: "Save" }).click();
 
@@ -129,13 +126,8 @@ test("Create a product with a product is successful and negative additional pric
   const { submitButton, additionalPrice } = myContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
-  const authors = [
-    "testUser1 testtestUser1@gmail.com",
-    "testUser2 testtestUser2@gmail.com",
-  ];
+  const authors = ["root testroot@gmail.com"];
   const barcode = `asd${getRandomNumber()}asdf`;
-
-  await page.getByRole("link", { name: "Create Product" }).click();
 
   await fillProductForm(
     page,
@@ -146,7 +138,7 @@ test("Create a product with a product is successful and negative additional pric
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
-  await fillTableCellAndPress(page, 2, 1, "2");
+  await fillTableCellAndPress(page, 1, 1, "2");
 
   await page.getByRole("button", { name: "Save" }).click();
 
@@ -166,13 +158,8 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
 }) => {
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
-  const authors = [
-    "testUser1 testtestUser1@gmail.com",
-    "testUser2 testtestUser2@gmail.com",
-  ];
+  const authors = ["root testroot@gmail.com"];
   const barcode = `асд${getRandomNumber()}asdf`;
-
-  await page.getByRole("link", { name: "Create Product" }).click();
 
   await fillProductForm(
     page,

@@ -1,8 +1,8 @@
-version: '3.8'
+version: "3.8"
 name: jms-docker-be-fe-test
 services:
   jms-be:
-    image: vladokat/jms-be:4fbf246
+    image: vladokat/jms-be:5df0cf3
     build:
       context: .
       dockerfile: Dockerfile_BE
@@ -40,6 +40,4 @@ services:
       - ./app:/usr/share/nginx/html
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - '3000:80'
-
-
+      - "3000:80"
