@@ -29,7 +29,7 @@ jobs:
           cp -r dist docker_tests/app
       - name: Start docker containers with BE and FE
         run: docker compose -f docker_tests/docker-compose.yml up -d
-    tests:
+      # tests
       - name: Install dependencies
         run: npm ci
       - name: Install Playwright Browsers
