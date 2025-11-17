@@ -16,10 +16,7 @@ const navigateToUserPage = async (page) => {
     expectedHeader: "Users table",
   });
 
-  await page
-    .locator("tr", { hasText: "admin@gmail.com" })
-    .locator("i.mdi-pencil")
-    .click();
+  await page.locator("tr").nth(4).locator("i.mdi-pencil").click();
 };
 
 test.describe("Edit user tests", () => {
