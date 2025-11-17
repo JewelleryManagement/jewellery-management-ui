@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
-import { navigateToPage, appLogin, wait } from "tests/utils/functions";
+import { navigateViaNavbar, appLogin, wait } from "tests/utils/functions";
 import { userContext, createGlobalVariables } from "tests/utils/userUtils";
 
 const firstName = "firstName" + getRandomNumber();
@@ -12,27 +12,23 @@ const birthDate = "2024-02-14";
 const note = firstName + lastName + password + phone;
 
 const navigateToUserCreatePage = async (page) => {
-  await navigateToPage(
-    page,
-    expect,
-    "Users",
-    "/home",
-    "Create User",
-    "/users/create",
-    "Users Create"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Users",
+    expectedUrl: "/home",
+    navChildButtonText: "Create User",
+    expectedNewUrl: "/users/create",
+    expectedHeader: "Users Create",
+  });
 };
 
 const navigateToUserTablePage = async (page) => {
-  await navigateToPage(
-    page,
-    expect,
-    "Users",
-    "/home",
-    "All Users",
-    "/users",
-    "Users table"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Users",
+    expectedUrl: "/home",
+    navChildButtonText: "All Users",
+    expectedNewUrl: "/users",
+    expectedHeader: "Users table",
+  });
 };
 
 test.describe("Create user tests", () => {
@@ -143,12 +139,8 @@ test.describe("Create user tests", () => {
     await userContext.secondPhoneLabel.fill(phone);
     await userContext.birthDateLabel.fill(birthDate);
     await userContext.noteLabel.fill(note);
-    await page
-      .locator(
-        "div:nth-child(10) > .v-input__control > .v-field > .v-field__append-inner"
-      )
-      .click();
-    await page.getByText("ADMIN").click();
+    await page.locator(".v-input__control", { hasText: "Role" }).click();
+    await page.getByRole("option", { name: "ADMIN" }).click();
 
     await userContext.resetButton.click();
 

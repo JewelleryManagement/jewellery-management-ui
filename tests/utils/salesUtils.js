@@ -38,11 +38,15 @@ export const selectDate = async (page, expect) => {
   ).toBeVisible();
 };
 
-export const selectProduct = async (page, raw) => {
+export const selectProduct = async (page) => {
   const { productsBtn, saveBtn } = myContext;
 
   await productsBtn.click();
-  await page.locator("tr").nth(raw).locator("td").first().click();
+  await page
+    .locator("tr.v-data-table__tr--clickable")
+    .first()
+    .locator("i.mdi-plus")
+    .click();
   await saveBtn.click();
 };
 

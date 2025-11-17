@@ -12,31 +12,43 @@ export const appLogin = async (page) => {
   await wait(3);
 };
 
-export const navigateToPage = async (
+export const navigateViaNavbar = async (
   page,
   expect,
-  navParrentButton,
-  expectedUrl,
-  navChildButton,
-  expectedNewUrl,
-  expectedHeader
+  {
+    navParentButtonText,
+    expectedUrl,
+    navChildButtonText,
+    expectedNewUrl,
+    expectedHeader,
+  }
 ) => {
   const drawer = page.locator(".v-navigation-drawer");
 
   await drawer.hover();
   await expect(
-    drawer.getByText(navParrentButton, { exact: true })
+    drawer.getByText(navParentButtonText, { exact: true })
   ).toBeVisible();
   await wait(1);
 
-  await drawer.getByText(navParrentButton, { exact: true }).click();
+  await drawer.getByText(navParentButtonText, { exact: true }).click();
   await expect(page).toHaveURL(expectedUrl);
-  await expect(drawer.getByText(navChildButton, { exact: true })).toBeVisible();
+  await expect(
+    drawer.getByText(navChildButtonText, { exact: true })
+  ).toBeVisible();
   await wait(1);
 
-  await drawer.getByText(navChildButton, { exact: true }).click();
+  await drawer.getByText(navChildButtonText, { exact: true }).click();
   await expect(page).toHaveURL(expectedNewUrl);
   wait(1);
   await expect(page.getByText(expectedHeader, { exact: true })).toBeVisible();
   await wait(1);
 };
+
+export function requiredField(page, labelText) {
+  return page
+    .locator(".v-input", {
+      hasText: labelText,
+    })
+    .locator(".v-messages__message", { hasText: "Input field is required" });
+}

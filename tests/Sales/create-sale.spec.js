@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { appLogin, navigateToPage } from "tests/utils/functions";
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 import {
   firstInputSelect,
   secondInputSelect,
@@ -14,15 +14,13 @@ import { wait } from "tests/utils/functions";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(
-    page,
-    expect,
-    "Sales",
-    "/home",
-    "New Sale",
-    "/sales/add",
-    "New Sale"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Sales",
+    expectedUrl: "/home",
+    navChildButtonText: "New Sale",
+    expectedNewUrl: "/sales/add",
+    expectedHeader: "New Sale",
+  });
   createGlobalVariables(page);
 });
 
@@ -40,7 +38,7 @@ test.describe.serial("Tests that share state", () => {
     await selectDate(page, expect);
 
     await wait(3);
-    await selectProduct(page, 1);
+    await selectProduct(page);
     await selectResource(page);
 
     await submitButton.click();
@@ -58,10 +56,10 @@ test.describe.serial("Tests that share state", () => {
 
     await selectDate(page, expect);
 
-    await selectProduct(page, 1);
+    await selectProduct(page);
     await page.getByLabel("Discount").first().fill("1");
     await selectResource(page);
-    await page.getByLabel("Discount").nth(0).fill("1");
+    await page.getByLabel("Discount").first().fill("1");
 
     await submitButton.click();
     await expect(
@@ -116,7 +114,7 @@ test("Reset button - works as expected", async ({ page }) => {
   await firstInputSelect(page);
   await secondInputSelect(page);
   await selectDate(page, expect);
-  await selectProduct(page, 1);
+  await selectProduct(page);
   await selectResource(page);
 
   await resetButton.click();

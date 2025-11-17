@@ -6,7 +6,7 @@ import {
   preciousStoneFormFields,
   semiPreciousStoneFormFields,
 } from "tests/utils/resourceTypes";
-import { appLogin, navigateToPage } from "tests/utils/functions";
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 
 const submitResource = async (page) => {
   await page.getByRole("button", { name: "Submit" }).click();
@@ -29,15 +29,13 @@ const resourceTypesData = [
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(
-    page,
-    expect,
-    "Resources",
-    "/home",
-    "Add Resource",
-    "/resources/add",
-    "Add resource"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Resources",
+    expectedUrl: "/home",
+    navChildButtonText: "Add Resource",
+    expectedNewUrl: "/resources/add",
+    expectedHeader: "Add resource",
+  });
 });
 
 test.afterEach(async ({ page }) => {

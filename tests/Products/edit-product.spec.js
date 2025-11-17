@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { appLogin, navigateToPage } from "tests/utils/functions";
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
 import {
   createGlobalVariables,
@@ -12,15 +12,13 @@ const PRODUCT_ID = "3c552c1f-9a96-445a-aa36-b772a6c2c113";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(
-    page,
-    expect,
-    "Products",
-    "/home",
-    "All Products",
-    "/products",
-    "Products Table"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Products",
+    expectedUrl: "/home",
+    navChildButtonText: "All Products",
+    expectedNewUrl: "/products",
+    expectedHeader: "Products Table",
+  });
   await createGlobalVariables(page);
   await page.goto(`products/edit/${PRODUCT_ID}`);
 });

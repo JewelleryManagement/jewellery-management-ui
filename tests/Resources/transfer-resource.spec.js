@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
-import { wait, appLogin, navigateToPage } from "tests/utils/functions";
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 
 const myContext = {};
 
 const accessTransferPage = async (page) => {
   await myContext.table.click();
   await myContext.resourceTableBtn.click();
-  await myContext.organizationSelection.click();
+  await myContext.transferButton.click();
 };
 
 const assertTransferPageFields = async (page) => {
@@ -22,24 +22,20 @@ const assertTransferPageFields = async (page) => {
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(
-    page,
-    expect,
-    "Organizations",
-    "/home",
-    "All Organizations",
-    "/organizations",
-    "Organizations table"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Organizations",
+    expectedUrl: "/home",
+    navChildButtonText: "All Organizations",
+    expectedNewUrl: "/organizations",
+    expectedHeader: "Organizations table",
+  });
 
-  myContext.table = page.locator(".v-table").locator("tr").nth(1);
+  myContext.table = page
+    .locator(".v-table")
+    .locator(".v-data-table__tr")
+    .first();
   myContext.resourceTableBtn = page.getByText("resources table");
-  myContext.organizationSelection = page
-    .locator(".v-table__wrapper")
-    .locator("tr")
-    .nth(1)
-    .locator("td")
-    .nth(1);
+  myContext.transferButton = page.locator(".mdi-swap-horizontal").first();
   myContext.transferPageHeader = page.getByText("Transfer Quantity");
 
   myContext.organizationInputField = page

@@ -3,7 +3,11 @@ import {
   getRandomNumber,
   getRandomNumberAsString,
 } from "tests/utils/getRandomNumberOrString";
-import { appLogin, navigateToPage } from "tests/utils/functions";
+import {
+  appLogin,
+  navigateViaNavbar,
+  requiredField,
+} from "tests/utils/functions";
 import {
   createGlobalVariables,
   myContext,
@@ -13,15 +17,13 @@ import {
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(
-    page,
-    expect,
-    "Products",
-    "/home",
-    "Create Product",
-    "/products/add",
-    "Create product"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Products",
+    expectedUrl: "/home",
+    navChildButtonText: "Create Product",
+    expectedNewUrl: "/products/add",
+    expectedHeader: "Create product",
+  });
   await createGlobalVariables(page);
 });
 
@@ -63,10 +65,9 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
   await expect(submitButton).toBeVisible();
   await submitButton.click();
 
-  await expect(page.getByText("Input field is required").first()).toBeVisible();
-  await expect(page.getByText("Input field is required").nth(1)).toBeVisible();
+  await expect(requiredField(page, "Catalog name")).toBeVisible();
+  await expect(requiredField(page, "Description of the product")).toBeVisible();
   await expect(page.getByText("Please select at least 1 author")).toBeVisible();
-  await expect(page.getByText("Input field is required").nth(2)).toBeVisible();
   await expect(
     page.getByText(
       "Input field is required, Input must be less than 100 characters"

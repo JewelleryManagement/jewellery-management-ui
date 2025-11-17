@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { navigateToPage } from "tests/utils/functions";
+import { navigateViaNavbar } from "tests/utils/functions";
 
 const wait = (seconds) => {
   return new Promise((resolve) => {
@@ -16,15 +16,13 @@ const login = async (page) => {
 };
 
 const navigateToResourcePage = async (page) => {
-  await navigateToPage(
-    page,
-    expect,
-    "Resources",
-    "/home",
-    "All",
-    "/resources",
-    "All resources table"
-  );
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Resources",
+    expectedUrl: "/home",
+    navChildButtonText: "All",
+    expectedNewUrl: "/resources",
+    expectedHeader: "All resources table",
+  });
 };
 
 const resourceTypes = [

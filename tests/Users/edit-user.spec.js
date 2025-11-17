@@ -1,19 +1,25 @@
 import { test, expect } from "@playwright/test";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
-import { navigateToPage, appLogin } from "tests/utils/functions";
+import {
+  navigateViaNavbar,
+  appLogin,
+  requiredField,
+} from "tests/utils/functions";
 import { userContext, createGlobalVariables } from "tests/utils/userUtils";
 
 const navigateToUserPage = async (page) => {
-  await navigateToPage(
-    page,
-    expect,
-    "Users",
-    "/home",
-    "All Users",
-    "/users",
-    "Users table"
-  );
-  await page.getByRole("row").getByRole("link").nth(3).click();
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Users",
+    expectedUrl: "/home",
+    navChildButtonText: "All Users",
+    expectedNewUrl: "/users",
+    expectedHeader: "Users table",
+  });
+
+  await page
+    .locator("tr", { hasText: "admin@gmail.com" })
+    .locator("i.mdi-pencil")
+    .click();
 };
 
 test.describe("Edit user tests", () => {
@@ -54,16 +60,10 @@ test.describe("Edit user tests", () => {
     await expect(userContext.firstNameLabel).toBeEmpty();
     await expect(userContext.lastNameLabel).toBeEmpty();
     await expect(userContext.emailLabel).toBeEmpty();
-    await expect(
-      page.getByText("Input field is required").first()
-    ).toBeVisible();
-    await expect(
-      page.getByText("Input field is required").nth(1)
-    ).toBeVisible();
+    await expect(requiredField(page, "First name")).toBeVisible();
+    await expect(requiredField(page, "Last name")).toBeVisible();
     await expect(page.getByText("Email field is required")).toBeVisible();
-    await expect(
-      page.getByText("Input field is required").nth(2)
-    ).toBeVisible();
+    await expect(requiredField(page, "Role")).toBeVisible();
   });
 
   test("Edit user successfully", async ({ page }) => {
@@ -76,7 +76,8 @@ test.describe("Edit user tests", () => {
     await userContext.firstNameLabel.fill(firstName);
     await userContext.lastNameLabel.fill(lastName);
     await userContext.emailLabel.fill(email);
-    await page.getByRole("combobox").locator("i").nth(1).click();
+
+    await page.locator(".v-input__control", { hasText: "Role" }).click();
     await page.getByRole("option", { name: "USER" }).click();
 
     await userContext.submitButton.click();
