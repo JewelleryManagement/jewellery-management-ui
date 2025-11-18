@@ -1,14 +1,24 @@
 import { test, expect } from "@playwright/test";
-import { appLogin, navigateToPage } from "tests/utils/functions";
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
-import { createGlobalVariables, myContext, fillProductForm, fillTableCellAndPress } from "tests/utils/productsUtils";
+import {
+  createGlobalVariables,
+  myContext,
+  fillProductForm,
+  fillTableCellAndPress,
+} from "tests/utils/productsUtils";
 
-const PRODUCT_ID = "b17a976f-ebba-4142-a52e-5fd08bc7f8cd";
-
+const PRODUCT_ID = "3c552c1f-9a96-445a-aa36-b772a6c2c113";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(page, expect, 'products');
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Products",
+    expectedUrl: "/home",
+    navChildButtonText: "All Products",
+    expectedNewUrl: "/products",
+    expectedHeader: "Products Table",
+  });
   await createGlobalVariables(page);
   await page.goto(`products/edit/${PRODUCT_ID}`);
 });
@@ -17,8 +27,9 @@ test.afterEach(async ({ page }) => {
   await page.close();
 });
 
-
-test("Edit product and update additional price successfully", async ({ page }) => {
+test("Edit product and update additional price successfully", async ({
+  page,
+}) => {
   const { submitButton, additionalPrice } = myContext;
 
   await page.getByRole("button", { name: "Resources" }).click();
@@ -27,21 +38,20 @@ test("Edit product and update additional price successfully", async ({ page }) =
 
   await page.getByRole("button", { name: "Save" }).click();
 
-  await additionalPrice.fill('-2');
+  await additionalPrice.fill("-2");
   await submitButton.click();
 
   await expect(page.getByText("Successfully updated product!")).toBeVisible();
 });
 
-test("Edit product and update additional price successfully with reset button", async ({ page }) => {
+test("Edit product and update additional price successfully with reset button", async ({
+  page,
+}) => {
   const { submitButton, additionalPrice } = myContext;
 
   const catalogNameString = "catalog" + getRandomNumber();
   const descriptionString = "description" + getRandomNumber();
-  const authors = [
-    "testUser1 testtestUser1@gmail.com",
-    "testUser2 testtestUser2@gmail.com",
-  ];
+  const authors = ["root testroot@gmail.com"];
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await page.getByRole("button", { name: "Reset" }).click();
@@ -58,7 +68,7 @@ test("Edit product and update additional price successfully with reset button", 
   await fillTableCellAndPress(page, 1, 1, "2");
 
   await page.getByRole("button", { name: "Save" }).click();
-  await additionalPrice.fill('-2');
+  await additionalPrice.fill("-2");
   await submitButton.click();
 
   await expect(page.getByText("Successfully updated product!")).toBeVisible();

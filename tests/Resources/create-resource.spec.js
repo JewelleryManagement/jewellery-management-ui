@@ -6,7 +6,7 @@ import {
   preciousStoneFormFields,
   semiPreciousStoneFormFields,
 } from "tests/utils/resourceTypes";
-import { appLogin, navigateToPage } from "tests/utils/functions";
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 
 const submitResource = async (page) => {
   await page.getByRole("button", { name: "Submit" }).click();
@@ -29,8 +29,13 @@ const resourceTypesData = [
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(page, expect, 'resources')
-  await page.getByRole("link", { name: "Add resource" }).click();
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Resources",
+    expectedUrl: "/home",
+    navChildButtonText: "Add Resource",
+    expectedNewUrl: "/resources/add",
+    expectedHeader: "Add resource",
+  });
 });
 
 test.afterEach(async ({ page }) => {
@@ -38,9 +43,6 @@ test.afterEach(async ({ page }) => {
 });
 
 test("Access resources 'Add button' and its content ", async ({ page }) => {
-  await expect(page).toHaveURL("/resources/add");
-  await expect(page.getByText("Add resource")).toBeVisible();
-
   const resourceTypes = [
     "Pearl",
     "Metal",
@@ -49,24 +51,28 @@ test("Access resources 'Add button' and its content ", async ({ page }) => {
     "SemiPreciousStone",
   ];
 
-  await expect(page.getByRole("combobox")).toBeVisible();
-  const combobox = page.getByRole("combobox");
-  await combobox.click();
+  await expect(page.locator(".v-select")).toBeVisible();
 
   for (const resource of resourceTypes) {
-    await expect(
-      page
-        .locator("div")
-        .filter({ hasText: new RegExp(`^${resource}$`) })
-        .first()
-    ).toBeVisible();
+    await page.locator(".v-select .v-field__input").click();
+
+    const menu = page.locator(".v-overlay__content .v-list");
+    await menu.waitFor();
+
+    const option = menu.locator(".v-list-item-title", {
+      hasText: new RegExp(`^${resource}$`),
+    });
+
+    await expect(option).toBeVisible();
+
+    await page.click("body");
   }
 });
 
 for (const { type, fields } of resourceTypesData) {
   test(`Create a resource type '${type}'`, async ({ page }) => {
-    await expect(page.getByRole("combobox")).toBeVisible();
-    await page.getByRole("combobox").click();
+    await expect(page.locator(".v-select")).toBeVisible();
+    await page.locator(".v-select .v-field__input").click();
 
     await expect(
       page.getByRole("option", { name: `${type}`, exact: true })
@@ -74,9 +80,7 @@ for (const { type, fields } of resourceTypesData) {
     await page.getByRole("option", { name: type, exact: true }).click();
 
     for (const field of fields) {
-      await page
-        .getByLabel(field.label, { exact: field.exact })
-        .fill(field.value);
+      await page.getByLabel(field.label, { exact: true }).fill(field.value);
     }
 
     await submitResource(page, fields);

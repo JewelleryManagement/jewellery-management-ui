@@ -1,5 +1,5 @@
 <template>
-  <base-card>
+  <div class="my-12">
     <v-container class="text-center text-h4 font-weight-bold">
       {{
         selectedResourceType === "All"
@@ -30,16 +30,19 @@
     <resource-table
       :selectedResourceType="selectedResourceType"
     ></resource-table>
-  </base-card>
+  </div>
 </template>
 
 <script setup>
-import { onMounted, inject, ref } from "vue";
+import { onMounted, inject, ref, computed } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+const route = useRoute();
+const router = useRouter();
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
-const selectedResourceType = ref("All");
+const selectedResourceType = computed(() => route.query.filter || "All");
 
 const resourceTypes = ref([
   "All",
@@ -52,6 +55,12 @@ const resourceTypes = ref([
 
 const filterResourcesByType = (title) => {
   selectedResourceType.value = title;
+  router.replace({
+    query: {
+      ...route.query,
+      filter: title,
+    },
+  });
 };
 
 onMounted(async () => {

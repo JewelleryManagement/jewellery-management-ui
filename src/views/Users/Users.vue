@@ -1,13 +1,11 @@
 <template>
-  <v-container class="my-12" fluid>
-    <base-card>
-      <users-table title="Users table">
-        <template v-slot:item.edit="{ item }">
-          <EditButton :routerPath="`/users/edit/${item.id}`" />
-        </template>
-      </users-table>
-    </base-card>
-  </v-container>
+  <div class="my-12">
+    <users-table title="Users table">
+      <template v-slot:item.edit="{ item }">
+        <EditButton :routerPath="`/users/edit/${item.id}`" />
+      </template>
+    </users-table>
+  </div>
 </template>
 <script setup>
 import { inject, onMounted } from "vue";

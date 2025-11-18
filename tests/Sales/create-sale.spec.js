@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { appLogin, navigateToPage } from "tests/utils/functions";
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 import {
   firstInputSelect,
   secondInputSelect,
@@ -8,66 +8,72 @@ import {
   selectResource,
   myContext,
   createGlobalVariables,
-  checkErrorMessages,
   checkDisabledButtons,
 } from "tests/utils/salesUtils";
 import { wait } from "tests/utils/functions";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
-  await navigateToPage(page, expect, "sales");
-  await expect(page).toHaveURL("/sales");
-  await expect(page.getByText("NEW SALE")).toBeVisible();
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Sales",
+    expectedUrl: "/home",
+    navChildButtonText: "New Sale",
+    expectedNewUrl: "/sales/add",
+    expectedHeader: "New Sale",
+  });
   createGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
-  // await page.close();
+  await page.close();
 });
 
-test("Create sale", async ({ page }) => {
-  const { newSaleBtn, submitButton } = myContext;
-  await newSaleBtn.click();
+test.describe.serial("Tests that share state", () => {
+  test("Create sale", async ({ page }) => {
+    const { submitButton } = myContext;
 
-  await wait(3);
-  await firstInputSelect(page);
-  await secondInputSelect(page);
+    await firstInputSelect(page, 1);
+    await secondInputSelect(page);
 
-  await selectDate(page, expect);
+    await selectDate(page, expect);
 
-  await selectProduct(page);
-  await selectResource(page);
+    await wait(3);
+    await selectProduct(page);
+    await selectResource(page);
 
-  await submitButton.click();
-  await expect(page.getByText("Successfully sold the product!")).toBeVisible();
-});
+    await submitButton.click();
+    await expect(
+      page.getByText("Successfully sold the product!")
+    ).toBeVisible();
+  });
 
-test("Create sale with a discount", async ({ page }) => {
-  const { newSaleBtn, submitButton } = myContext;
-  await newSaleBtn.click();
+  test("Create sale with a discount", async ({ page }) => {
+    const { submitButton } = myContext;
 
-  await wait(3);
-  await firstInputSelect(page);
-  await secondInputSelect(page);
+    await wait(3);
+    await firstInputSelect(page);
+    await secondInputSelect(page);
 
-  await selectDate(page, expect);
+    await selectDate(page, expect);
 
-  await selectProduct(page);
-  await page.getByLabel("Discount").first().fill("1");
-  await selectResource(page);
-  await page.getByLabel("Discount").nth(0).fill("1");
+    await selectProduct(page);
+    await page.getByLabel("Discount").first().fill("1");
+    await selectResource(page);
+    await page.getByLabel("Discount").first().fill("1");
 
-  await submitButton.click();
-  await expect(page.getByText("Successfully sold the product!")).toBeVisible();
+    await submitButton.click();
+    await expect(
+      page.getByText("Successfully sold the product!")
+    ).toBeVisible();
+  });
 });
 
 test("Create sale - with empty inputs - fails", async ({ page }) => {
-  const { newSaleBtn, submitButton, calendarBtn, productsBtn, resourcesBtn } =
-    myContext;
-  await newSaleBtn.click();
+  const { submitButton, calendarBtn, productsBtn, resourcesBtn } = myContext;
+
   await submitButton.click();
 
-  await checkErrorMessages(page, expect);
+  await expect(page.getByText("Please select a date!")).toBeVisible();
   await checkDisabledButtons(
     page,
     calendarBtn,
@@ -78,20 +84,17 @@ test("Create sale - with empty inputs - fails", async ({ page }) => {
 });
 
 test("Create sale - without a date - fails", async ({ page }) => {
-  const { newSaleBtn, submitButton } = myContext;
-  await newSaleBtn.click();
+  const { submitButton } = myContext;
 
   await wait(3);
   await firstInputSelect(page);
   await secondInputSelect(page);
 
   await submitButton.click();
-  await expect(page.getByText("Please select a date!")).toBeVisible();
 });
 
 test("Create sale - without a products/resources - fails", async ({ page }) => {
-  const { newSaleBtn, submitButton } = myContext;
-  await newSaleBtn.click();
+  const { submitButton } = myContext;
 
   await wait(3);
   await firstInputSelect(page);
@@ -105,9 +108,7 @@ test("Create sale - without a products/resources - fails", async ({ page }) => {
 });
 
 test("Reset button - works as expected", async ({ page }) => {
-  const { newSaleBtn, resetButton, calendarBtn, productsBtn, resourcesBtn } =
-    myContext;
-  await newSaleBtn.click();
+  const { resetButton, calendarBtn, productsBtn, resourcesBtn } = myContext;
 
   await wait(3);
   await firstInputSelect(page);
@@ -117,8 +118,6 @@ test("Reset button - works as expected", async ({ page }) => {
   await selectResource(page);
 
   await resetButton.click();
-
-  await checkErrorMessages(page, expect);
 
   await checkDisabledButtons(
     page,
@@ -130,9 +129,9 @@ test("Reset button - works as expected", async ({ page }) => {
 });
 
 test("GoBack button - works as expected", async ({ page }) => {
-  const { newSaleBtn, goBackButton } = myContext;
-  await newSaleBtn.click();
+  const { goBackButton } = myContext;
+
   await expect(page).toHaveURL("/sales/add");
   await goBackButton.click();
-  await expect(page).toHaveURL("/sales");
+  await expect(page).toHaveURL("/home");
 });

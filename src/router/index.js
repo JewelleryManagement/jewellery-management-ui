@@ -62,6 +62,13 @@ const routes = [
     meta: { title: "Edit resource", requiresAuth: true },
   },
   {
+    path: "/resources/duplicate/:id",
+    name: "Duplicate-Resource",
+    props: true,
+    component: () => import("../views/Resources/ResourceDetails.vue"),
+    meta: { title: "Duplicate resource", requiresAuth: true },
+  },
+  {
     path: "/products",
     name: "Products",
     component: () => import("../views/Products/Products.vue"),
@@ -134,21 +141,24 @@ const routes = [
     path: "/organizations/availability/add/:resourceId",
     props: true,
     name: "Add-Quantity",
-    component: () => import("../views/Organizations/OrganizationResourceAdd.vue"),
+    component: () =>
+      import("../views/Organizations/OrganizationResourceAdd.vue"),
     meta: { title: "Add Quantity", requiresAuth: true },
   },
   {
     path: "/organizations/availability/remove/:organizationId/:resourceId/:quantity",
     props: true,
     name: "Remove-Quantity",
-    component: () => import("../views/Organizations/OrganizationResourceRemove.vue"),
+    component: () =>
+      import("../views/Organizations/OrganizationResourceRemove.vue"),
     meta: { title: "Remove Quantity", requiresAuth: true },
   },
   {
     path: "/organizations/availability/transfer/:organizationId/:resourceId/:quantity",
     props: true,
     name: "Transfer-Quantity",
-    component: () => import("../views/Organizations/OrganizationResourceTransfer.vue"),
+    component: () =>
+      import("../views/Organizations/OrganizationResourceTransfer.vue"),
     meta: { title: "Transfer Quantity", requiresAuth: true },
   },
   {

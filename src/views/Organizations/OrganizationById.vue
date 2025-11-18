@@ -1,97 +1,117 @@
 <template>
-  <v-container class="my-12" fluid>
+  <div class="my-12">
     <organization-card :organization="organization"></organization-card>
-    <base-card>
-      <resource-availability-table
-        :tableColumns="tableColumnsResources"
-        :resources="organizationResources"
-        :name="organization.name"
-      >
-        <template v-slot:item.remove="{ item }">
-          <router-link
-            :to="{
-              name: 'Remove-Quantity',
-              params: { resourceId: item?.id, quantity: item.quantity },
-            }"
-          >
-            <v-icon color="blue">mdi-minus</v-icon>
-          </router-link>
-        </template>
 
-        <template v-slot:item.transfer="{ item }">
-          <router-link
-            :to="{
-              name: 'Transfer-Quantity',
-              params: { resourceId: item?.id, quantity: item.quantity },
-            }"
-          >
-            <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
-          </router-link>
-        </template>
-      </resource-availability-table>
-    </base-card>
-    <base-card>
-      <products-table
-        :products="orgProducts"
-        :additionalColumnsRight="disassemblyColumns"
-        :title="`${organization.name}'s products table`"
+    <div class="my-12 d-flex flex-wrap justify-center">
+      <v-btn
+        v-for="button in buttons"
+        :key="button.label"
+        :prepend-icon="button.icon"
+        :class="isMediumAndDownScreen() ? 'mx-2 my-2 ' : 'mx-15'"
+        :size="isMediumAndDownScreen() ? 'small' : 'x-large'"
+        color="red"
+        rounded="xs"
+        :variant="selectedButton === button.label ? 'flat' : 'outlined'"
+        @click="
+          selectedButton === button.label
+            ? (selectedButton = null)
+            : (selectedButton = button.label)
+        "
       >
-        <template v-slot:item.authors="{ item }">
-          <user-tool-tip
-            :user="author"
-            v-for="(author, index) in item.authors"
-            :key="item.id"
-            @click.stop
-          >
-            <template v-if="index < item.authors.length - 1"
-              >&comma;&nbsp;</template
-            >
-          </user-tool-tip>
-        </template>
+        {{ getButtonLabel(button.label) }}
+      </v-btn>
+    </div>
 
-        <template v-slot:item.disassembly="{ item }">
-          <disassembly-button
-            :item="item"
-            @disassembled-product="updateOrganizationDetails"
-            @click.stop
-          ></disassembly-button>
-        </template>
+    <resource-availability-table
+      v-if="selectedButton === buttons[0].label"
+      :tableColumns="tableColumnsResources"
+      :resources="organizationResources"
+      :name="organization.name"
+    >
+      <template v-slot:item.remove="{ item }">
+        <router-link
+          :to="{
+            name: 'Remove-Quantity',
+            params: { resourceId: item?.id, quantity: item.quantity },
+          }"
+        >
+          <v-icon color="blue">mdi-minus</v-icon>
+        </router-link>
+      </template>
 
-        <template v-slot:item.transfer="{ item }">
-          <product-transfer-button
-            :product="item"
-            @transferred-product="updateOrganizationDetails"
-          />
-        </template>
-      </products-table>
-    </base-card>
-    <base-card>
-      <users-table
-        title="Organization members"
-        :users="orgMembers"
-        :columns="orgUsersColumns"
-        :head-btn-path="addUserToOrgPath"
-        head-btn-name="Add User"
-      >
-        <template v-slot:item.permissions="{ item }">
-          <PermissionsTooltip :permissions="item.permissions" />
-        </template>
-        <template v-slot:item.edit="{ item }">
-          <EditButton
-            :routerPath="{
-              name: 'Edit-user-in-Organization',
-              params: { organizationId: orgId, userId: item.id },
-            }"
-          />
-        </template>
-        <template v-slot:item.delete="{ item }">
-          <v-icon color="red" @click.stop @click="onDelete(item.id)"
-            >mdi-delete</v-icon
+      <template v-slot:item.transfer="{ item }">
+        <router-link
+          :to="{
+            name: 'Transfer-Quantity',
+            params: { resourceId: item?.id, quantity: item.quantity },
+          }"
+        >
+          <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
+        </router-link>
+      </template>
+    </resource-availability-table>
+
+    <products-table
+      v-if="selectedButton === buttons[1].label"
+      :products="orgProducts"
+      :additionalColumnsRight="disassemblyColumns"
+      :title="`${organization.name}'s products table`"
+    >
+      <template v-slot:item.authors="{ item }">
+        <user-tool-tip
+          :user="author"
+          v-for="(author, index) in item.authors"
+          :key="item.id"
+          @click.stop
+        >
+          <template v-if="index < item.authors.length - 1"
+            >&comma;&nbsp;</template
           >
-        </template>
-      </users-table>
-    </base-card>
-  </v-container>
+        </user-tool-tip>
+      </template>
+
+      <template v-slot:item.disassembly="{ item }">
+        <disassembly-button
+          :item="item"
+          @disassembled-product="updateOrganizationDetails"
+          @click.stop
+        ></disassembly-button>
+      </template>
+
+      <template v-slot:item.transfer="{ item }">
+        <product-transfer-button
+          :product="item"
+          @transferred-product="updateOrganizationDetails"
+        />
+      </template>
+    </products-table>
+
+    <users-table
+      v-if="selectedButton === buttons[2].label"
+      title="Organization members"
+      :users="orgMembers"
+      :columns="orgUsersColumns"
+      :head-btn-path="addUserToOrgPath"
+      head-btn-name="Add User"
+    >
+      <template v-slot:item.permissions="{ item }">
+        <PermissionsTooltip :permissions="item.permissions" />
+      </template>
+      <template v-slot:item.edit="{ item }">
+        <EditButton
+          :routerPath="{
+            name: 'Edit-user-in-Organization',
+            params: { organizationId: orgId, userId: item.id },
+          }"
+        />
+      </template>
+      <template v-slot:item.delete="{ item }">
+        <v-icon color="red" @click.stop @click="onDelete(item.id)"
+          >mdi-delete</v-icon
+        >
+      </template>
+    </users-table>
+  </div>
 </template>
 
 <script setup>
@@ -105,6 +125,7 @@ import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { isMediumAndDownScreen } from "@/utils/display";
 
 const store = useStore();
 const route = useRoute();
@@ -189,13 +210,27 @@ const onDelete = async (userId) => {
   const confirmation = window.confirm(
     "Are you sure that you would like to remove this user from organization?"
   );
-  if (confirmation){
+  if (confirmation) {
     await store.dispatch("organizations/removeUser", {
       userId: userId,
       orgId: orgId,
     });
-    await fetchUsersForOrganization()
+    await fetchUsersForOrganization();
   }
-    
+};
+
+const selectedButton = ref(null);
+
+const buttons = [
+  { label: "Resources", icon: "mdi-diamond-stone" },
+  { label: "Products", icon: "mdi-package-variant" },
+  {
+    label: "Members",
+    icon: "mdi-account-multiple",
+  },
+];
+
+const getButtonLabel = (label) => {
+  return label + (!isMediumAndDownScreen() ? " Table" : "");
 };
 </script>

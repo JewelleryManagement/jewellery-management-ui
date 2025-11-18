@@ -2,11 +2,7 @@
   <suspense>
     <template #default>
       <v-app>
-        <NavBar
-          v-if="isAuth"
-          :defaultMenuPages="defaultMenuPages"
-          :hamburgerMenuPages="hamburgerMenuPages"
-        />
+        <NavBar v-if="isAuth" :navBarButtons="navBarButtons" />
         <v-main>
           <router-view v-slot="slotProps">
             <transition name="route" mode="out-in">
@@ -76,59 +72,82 @@ const logoutHandler = () => {
   router.push("/login");
 };
 
-const navToProfile = () => {
-  router.push("/profile");
-};
-
 const mainMenuPages = [
   {
     link: { text: "Home", url: "/" },
+    icon: "mdi-home",
+    active: false,
   },
   {
     link: { text: "Users", url: "/users" },
+    children: [
+      { text: "All Users", url: "/users" },
+      { text: "Create User", url: "/users/create" },
+    ],
+    icon: "mdi-account-multiple",
+    active: false,
   },
   {
     link: { text: "Resources", url: "/resources" },
+    children: [
+      { text: "Add Resource", url: "/resources/add" },
+      { text: "All", url: "/resources" },
+      { text: "Pearl", url: "/resources", query: { filter: "Pearl" } },
+      { text: "Metal", url: "/resources", query: { filter: "Metal" } },
+      { text: "Element", url: "/resources", query: { filter: "Element" } },
+      {
+        text: "PreciousStone",
+        url: "/resources",
+        query: { filter: "PreciousStone" },
+      },
+      {
+        text: "SemiPreciousStone",
+        url: "/resources",
+        query: { filter: "SemiPreciousStone" },
+      },
+    ],
+    icon: "mdi-diamond-stone",
+    active: false,
   },
   {
     link: { text: "Products", url: "/products" },
+    children: [
+      { text: "All Products", url: "/products" },
+      { text: "Create Product", url: "/products/add" },
+    ],
+    icon: "mdi-package-variant",
+    active: false,
   },
   {
     link: { text: "Sales", url: "/sales" },
+    children: [
+      { text: "All Sales", url: "/sales" },
+      { text: "New Sale", url: "/sales/add" },
+    ],
+    icon: "mdi-cart-outline",
+    active: false,
   },
   {
     link: { text: "Organizations", url: "/organizations" },
+    children: [
+      { text: "All Organizations", url: "/organizations" },
+      { text: "New Organization", url: "/organizations/add" },
+    ],
+    icon: "mdi-domain",
+    active: false,
+  },
+  {
+    link: { text: "Profile", url: "/profile" },
+    children: [
+      { text: "Details", url: "/profile" },
+      { text: "Logout", action: logoutHandler },
+    ],
+    icon: "mdi-account",
+    active: false,
   },
 ];
 
-const profileDropdown = {
-  isMenuDropdown: true,
-  link: {
-    text: "Profile",
-    url: "/profile",
-    dropdown: [
-      { clickHandler: navToProfile, text: "Details" },
-      { clickHandler: logoutHandler, text: "Logout" },
-    ],
-  },
-};
-
-const hamburgerMenuPages = ref([
-  ...mainMenuPages,
-  {
-    link: {
-      text: "Profile",
-      url: "/profile",
-    },
-  },
-  {
-    clickHandler: logoutHandler,
-    link: { text: "Logout", url: "/logout" },
-  },
-]);
-
-const defaultMenuPages = ref([...mainMenuPages, profileDropdown]);
-
+const navBarButtons = ref(mainMenuPages);
 </script>
 
 <style>
