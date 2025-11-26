@@ -4,20 +4,33 @@
       {{ pageTitle }}
     </div>
 
-    <v-sheet width="300" class="mx-auto">
+    <v-sheet width="470" class="mx-auto">
       <v-select
         v-model="selected"
         :items="options"
         label="Select resource type"
-        :disabled="isEditState || isDuplicateState"
+        :disabled="isEditState || isDuplicateState || route.query.clazz"
       ></v-select>
-
       <v-form @submit.prevent="handleSubmit" ref="form">
         <Pearl v-if="selected === 'Pearl'" />
         <Metal v-if="selected === 'Metal'" />
         <PreciousStone v-if="selected === 'PreciousStone'" />
         <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
         <Element v-if="selected === 'Element'" />
+
+        <div class="d-flex justify-center" v-if="selected">
+          <v-text-field
+            v-model="sku"
+            label="Stock Keeping Unit"
+            max-width="300"
+            required
+            clearable
+          ></v-text-field>
+
+          <div class="d-flex justify-center mt-3 ml-5">
+            <v-btn color="primary" @click="generateSku"> Generate </v-btn>
+          </div>
+        </div>
 
         <div v-if="selected" class="d-flex flex-column">
           <form-buttons @reset-form="resetForm" />
@@ -46,12 +59,15 @@ const route = useRoute();
 const router = useRouter();
 const options = ref([
   "Pearl",
-  "Metal",
-  "Element",
-  "PreciousStone",
-  "SemiPreciousStone",
+  // "Metal",
+  // "Element",
+  // "PreciousStone",
+  // "SemiPreciousStone",
 ]);
-const pageTitle = computed(() => route.meta.title);
+const pageTitle = computed(() =>
+  route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
+);
+
 const resourceDetails = computed(
   () => store.getters["resources/getResourceDetails"]
 );
@@ -61,8 +77,34 @@ const isEditState = computed(() => route.path.startsWith("/resources/edit"));
 const isDuplicateState = computed(() =>
   route.path.startsWith("/resources/duplicate")
 );
+const allowedValueDetail = computed(
+  () => store.getters["allowedValues/getAllowedValueDetails"]
+);
 
 const form = ref(null);
+
+const sku = ref("");
+
+const fieldOrder = {
+  Pearl: [
+    "clazz",
+    "quantityType",
+    "type",
+    "quality",
+    "shape",
+    "shapeSpecification",
+    "color",
+    "colorHue",
+    "size",
+  ],
+};
+
+const generateSku = () => {
+  sku.value = fieldOrder[selected.value]
+    .map((key) => allowedValueDetail.value[key]?.sku)
+    .filter((s) => s && s !== "")
+    .join(".");
+};
 
 const loadResourceDetails = () => {
   if (isEditState.value || isDuplicateState.value) {
@@ -71,13 +113,30 @@ const loadResourceDetails = () => {
     );
     store.dispatch("resources/setResourceDetails", resourceDetails.value);
     selected.value = resourceDetails.value.clazz;
+    sku.value = resourceDetails.value.sku;
+  }
+};
+
+const resetForm = () => {
+  if (form.value) {
+    form.value.reset();
+    form.value.resetValidation();
   }
 };
 
 watch(
-  () => route.path,
+  () => route.fullPath,
   () => {
-    if (route.path.startsWith("/resources/add")) {
+    store.dispatch("allowedValues/clearAllowedValueDetails");
+    if (!isEditState.value && !isDuplicateState.value) sku.value = "";
+    if (!!route.query.clazz) {
+      selected.value = route.query.clazz;
+      store.dispatch("resources/setResourceDetails", { clazz: selected.value });
+    }
+    if (
+      route.path.startsWith("/resources/add") &&
+      !!route.query.clazz == false
+    ) {
       selected.value = "";
     } else loadResourceDetails();
   },
@@ -90,13 +149,6 @@ watch(selected, (newValue) => {
   }
 });
 
-const resetForm = () => {
-  if (form.value) {
-    form.value.reset();
-    form.value.resetValidation();
-  }
-};
-
 const handleSubmit = async () => {
   const { valid } = await form.value.validate();
   if (valid) {
@@ -107,10 +159,18 @@ const handleSubmit = async () => {
     }
   }
 };
-
 const allowedFieldsByType = {
   Metal: ["type", "quantityType", "purity", "color", "plating"],
-  Pearl: ["type", "quantityType", "quality", "color", "shape"],
+  Pearl: [
+    "type",
+    "quantityType",
+    "quality",
+    "color",
+    "shape",
+    "shapeSpecification",
+    "colorHue",
+    "size",
+  ],
   PreciousStone: ["color", "cut", "clarity", "quantityType", "shape"],
   SemiPreciousStone: ["color", "cut", "clarity", "quantityType", "shape"],
   Element: ["quantityType"],
@@ -122,12 +182,18 @@ const editResource = async () => {
     await addNewAllowedValuesIfNeeded(
       store,
       selected.value,
-      resourceDetails.value,
+      allowedValueDetail.value,
       fields
     );
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
-    router.push({ path: "/resources", query: { filter: selected.value } });
+    router.push({
+      path: "/resources",
+      query: {
+        clazz: selected.value,
+        quantityType: resourceDetails.value.quantityType,
+      },
+    });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
@@ -135,16 +201,26 @@ const editResource = async () => {
 
 const createResource = async () => {
   try {
+    console.log(sku.value);
     const fields = allowedFieldsByType[selected.value] || [];
     await addNewAllowedValuesIfNeeded(
       store,
       selected.value,
-      resourceDetails.value,
+      allowedValueDetail.value,
       fields
     );
-    await store.dispatch("resources/createResource", resourceDetails.value);
+    await store.dispatch("resources/createResource", {
+      ...resourceDetails.value,
+      sku: sku.value,
+    });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
-    router.push({ path: "/resources", query: { filter: selected.value } });
+    router.push({
+      path: "/resources",
+      query: {
+        clazz: selected.value,
+        quantityType: resourceDetails.value.quantityType,
+      },
+    });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

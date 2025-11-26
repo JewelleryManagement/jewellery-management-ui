@@ -20,9 +20,10 @@ const filterColumnsByKey = (state, keys) => {
     state.tableColumnAdd,
   ];
 
-  const filteredColumns = state.tableColumns.filter((column) =>
-    keys.includes(column.key)
-  );
+  const filteredColumns = keys
+    .map((key) => state.tableColumns.find((col) => col.key === key))
+    .filter(Boolean);
+
   const result = [
     ...additionalColumnsLeft,
     ...filteredColumns,
@@ -52,6 +53,9 @@ export default {
       { key: "pricePerQuantity", title: "Price per quantity" },
       { key: "note", title: "Note" },
       { key: "description", title: "Description" },
+      { key: "shapeSpecification", title: "Shape Specifications" },
+      { key: "colorHue", title: "Color Hue" },
+      { key: "sku", title: "Sku" },
     ],
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
@@ -155,16 +159,18 @@ export default {
     ],
     getColumnsForPearl: (state) =>
       filterColumnsByKey(state, [
-        "quantity",
         "clazz",
-        "type",
-        "size",
-        "quality",
         "quantityType",
-        "color",
+        "type",
+        "quality",
         "shape",
+        "shapeSpecification",
+        "color",
+        "colorHue",
+        "size",
         "pricePerQuantity",
         "note",
+        "sku",
       ]),
     getColumnsForPreciousStone: (state) =>
       filterColumnsByKey(state, [

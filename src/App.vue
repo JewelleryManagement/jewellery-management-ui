@@ -88,25 +88,152 @@ const mainMenuPages = [
     active: false,
   },
   {
-    link: { text: "Resources", url: "/resources" },
+    link: { text: "All Resources", url: "/resources" },
     children: [
       { text: "Add Resource", url: "/resources/add" },
       { text: "All", url: "/resources" },
-      { text: "Pearl", url: "/resources", query: { filter: "Pearl" } },
-      { text: "Metal", url: "/resources", query: { filter: "Metal" } },
-      { text: "Element", url: "/resources", query: { filter: "Element" } },
-      {
-        text: "PreciousStone",
-        url: "/resources",
-        query: { filter: "PreciousStone" },
-      },
-      {
-        text: "SemiPreciousStone",
-        url: "/resources",
-        query: { filter: "SemiPreciousStone" },
-      },
+      // { text: "Pearl", url: "/resources", query: { filter: "Pearl" } },
+      // { text: "Metal", url: "/resources", query: { filter: "Metal" } },
+      // { text: "Element", url: "/resources", query: { filter: "Element" } },
+      // {
+      //   text: "PreciousStone",
+      //   url: "/resources",
+      //   query: { filter: "PreciousStone" },
+      // },
+      // {
+      //   text: "SemiPreciousStone",
+      //   url: "/resources",
+      //   query: { filter: "SemiPreciousStone" },
+      // },
     ],
     icon: "mdi-diamond-stone",
+    active: false,
+  },
+  {
+    link: { text: "Pearls", url: "/resources" },
+    children: [
+      {
+        text: "Add Pearl",
+        url: "/resources/add",
+        query: { clazz: "Pearl" },
+      },
+      {
+        text: "Strand",
+        url: "/resources",
+        query: { clazz: "Pearl", quantityType: "Strand" },
+      },
+      {
+        text: "Piece",
+        url: "/resources",
+        query: { clazz: "Pearl", quantityType: "Piece" },
+      },
+    ],
+    icon: "mdi-alpha-p-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Diamond", url: "/resources" },
+    children: [
+      {
+        text: "Natural",
+        url: "/resources",
+        query: { clazz: "Diamond", quantityType: "Natural" },
+      },
+      {
+        text: "Lab Grown",
+        url: "/resources",
+        query: { clazz: "Diamond", quantityType: "LabGrown" },
+      },
+      {
+        text: "Natural Melee",
+        url: "/resources",
+        query: { clazz: "Diamond", quantityType: "NaturalMelee" },
+      },
+      {
+        text: "Lab Grown Melee",
+        url: "/resources",
+        query: { clazz: "Diamond", quantityType: "LabGrownMelee" },
+      },
+    ],
+    icon: "mdi-alpha-d-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Colored Stone", url: "/resources" },
+    children: [
+      {
+        text: "Piece",
+        url: "/resources",
+        query: { clazz: "ColoredStone", quantityType: "Piece" },
+      },
+      {
+        text: "Melee",
+        url: "/resources",
+        query: { clazz: "ColoredStone", quantityType: "Melee" },
+      },
+    ],
+    icon: "mdi-alpha-c-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Semi Precious", url: "/resources" },
+    children: [
+      {
+        text: "Strand",
+        url: "/resources",
+        query: { clazz: "SemiPrecious", quantityType: "Strand" },
+      },
+      {
+        text: "Piece",
+        url: "/resources",
+        query: { clazz: "SemiPrecious", quantityType: "Piece" },
+      },
+    ],
+    icon: "mdi-alpha-s-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Metals", url: "/resources" },
+    children: [
+      {
+        text: "Gold",
+        url: "/resources",
+        query: { clazz: "Metals", quantityType: "Gold" },
+      },
+      {
+        text: "Silver",
+        url: "/resources",
+        query: { clazz: "Metals", quantityType: "Silver" },
+      },
+      {
+        text: "Platinum",
+        url: "/resources",
+        query: { clazz: "Metals", quantityType: "Platinum" },
+      },
+      {
+        text: "Other",
+        url: "/resources",
+        query: { clazz: "Metals", quantityType: "Other" },
+      },
+    ],
+    icon: "mdi-alpha-m-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Clasp and Components", url: "/resources" },
+    children: [
+      {
+        text: "Pre-made",
+        url: "/resources",
+        query: { clazz: "ClaspAndComponents", quantityType: "Pre-made" },
+      },
+      {
+        text: "Crafted",
+        url: "/resources",
+        query: { clazz: "ClaspAndComponents", quantityType: "Crafted" },
+      },
+    ],
+    icon: "mdi-closed-caption-outline",
     active: false,
   },
   {

@@ -9,7 +9,7 @@
           v-model="orgObject.name"
           :counter="35"
           label="Name"
-          :rules="useTextFieldRules()"
+          :rules="smallFieldRules"
           required
         ></v-text-field>
 
@@ -39,10 +39,13 @@
 import {
   useTextFieldRules,
   useTextAreaFieldRules,
+  useInputValidate,
 } from "../../utils/validation-rules.js";
 import { ref, reactive, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+
+const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
@@ -70,7 +73,9 @@ const isFormValid = async () => {
 const postOrg = async (data) => {
   try {
     await store.dispatch("organizations/postOrg", data);
-    snackbarProvider.showSuccessSnackbar("Successfully created an organization!");
+    snackbarProvider.showSuccessSnackbar(
+      "Successfully created an organization!"
+    );
     router.push("/organizations");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
@@ -79,6 +84,6 @@ const postOrg = async (data) => {
 
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
-  await postOrg(orgObject)
+  await postOrg(orgObject);
 };
-</script>   
+</script>

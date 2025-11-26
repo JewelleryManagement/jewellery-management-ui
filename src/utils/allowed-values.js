@@ -5,22 +5,26 @@ export async function addNewAllowedValuesIfNeeded(
   fields
 ) {
   for (const fieldName of fields) {
-    const value = formData[fieldName];
+    const fieldValue = formData[fieldName];
     const allowed = store.getters["allowedValues/getAllowedValues"](
       resourceClazz,
       fieldName
     );
     if (
-      typeof value === "string" &&
-      value.trim() !== "" &&
+      fieldValue &&
+      typeof fieldValue.value === "string" &&
+      fieldValue.value.trim() !== "" &&
       !allowed.some(
-        (v) => v.trim().toLowerCase() === value.trim().toLowerCase()
+        (item) =>
+          item.value.trim().toLowerCase() ===
+            fieldValue.value.trim().toLowerCase() &&
+          item.sku.trim().toLowerCase() === fieldValue.sku.trim().toLowerCase()
       )
     ) {
       await store.dispatch("allowedValues/addAllowedValue", {
         resourceClazz,
         fieldName,
-        value: value.trim(),
+        fieldValue,
       });
     }
   }

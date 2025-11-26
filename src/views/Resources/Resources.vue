@@ -2,9 +2,9 @@
   <div class="my-12">
     <v-container class="text-center text-h4 font-weight-bold">
       {{
-        selectedResourceType === "All"
+        selectedResourceClazz === "All"
           ? "All resources table"
-          : `${selectedResourceType}'s resources table`
+          : `${selectedResourceQuantityType} ${selectedResourceClazz}s table`
       }}
     </v-container>
     <div class="d-flex justify-space-between">
@@ -16,7 +16,7 @@
         </template>
         <v-list>
           <v-list-item
-            v-for="resourceType in resourceTypes"
+            v-for="resourceType in currentResourceTypes"
             :key="resourceType"
             :value="resourceType"
             @click="filterResourcesByType(resourceType)"
@@ -28,7 +28,8 @@
     </div>
 
     <resource-table
-      :selectedResourceType="selectedResourceType"
+      :selectedResourceClazz="selectedResourceClazz"
+      :selectedResourceQuantityType="selectedResourceQuantityType"
     ></resource-table>
   </div>
 </template>
@@ -42,23 +43,30 @@ const route = useRoute();
 const router = useRouter();
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
-const selectedResourceType = computed(() => route.query.filter || "All");
+const selectedResourceClazz = computed(() => route.query.clazz || "All");
+const selectedResourceQuantityType = computed(
+  () => route.query.quantityType || ""
+);
 
-const resourceTypes = ref([
-  "All",
-  "Pearl",
-  "Metal",
-  "Element",
-  "PreciousStone",
-  "SemiPreciousStone",
-]);
+const resourceTypes = ref({
+  Pearl: ["Strand", "Piece"],
+  Diamond: ["Natural", "LabGrown", "NaturalMelee", "LabGrownMelee"],
+  ColoredStone: ["Piece", "Melee"],
+  SemiPrecious: ["Strand", "Piece"],
+  Metals: ["Gold", "Silver", "Platinum", "Other"],
+  ClaspAndComponents: ["Pre-made", "Crafted"],
+});
+
+const currentResourceTypes = computed(() => {
+  return resourceTypes.value[selectedResourceClazz.value] || [];
+});
 
 const filterResourcesByType = (title) => {
-  selectedResourceType.value = title;
+  selectedResourceQuantityType.value = title;
   router.replace({
     query: {
       ...route.query,
-      filter: title,
+      quantityType: title,
     },
   });
 };

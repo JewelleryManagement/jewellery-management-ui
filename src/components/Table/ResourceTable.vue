@@ -45,13 +45,18 @@ import { useStore } from "vuex";
 import EditButton from "@/components/Button/EditButton.vue";
 
 const props = defineProps({
-  selectedResourceType: String,
+  selectedResourceClazz: String,
+  selectedResourceQuantityType: String,
 });
-const internalSortChoice = ref(props.selectedResourceType);
+const internalClazzChoice = computed(() => props.selectedResourceClazz);
+const internalQuantityTypeChoice = computed(
+  () => props.selectedResourceQuantityType
+);
+
 watch(
-  () => props.selectedResourceType,
+  () => props.selectedResourceClazz,
   (newSortChoice) => {
-    internalSortChoice.value = newSortChoice;
+    internalClazzChoice.value = newSortChoice;
   }
 );
 const store = useStore();
@@ -67,15 +72,19 @@ const columnGettersMap = {
 };
 
 const selectedTableColumns = computed(() => {
-  const getterName = columnGettersMap[internalSortChoice.value];
+  const getterName = columnGettersMap[internalClazzChoice.value];
   return store.getters[getterName ? getterName : "resources/getColumns"];
 });
 
 const filteredResources = computed(() => {
-  if (internalSortChoice.value === "All") {
+  if (internalClazzChoice.value === "All") {
     return resources.value;
   } else {
-    return resources.value.filter((x) => x.clazz === internalSortChoice.value);
+    return resources.value.filter(
+      (x) =>
+        x.clazz === internalClazzChoice.value &&
+        x.quantityType === internalQuantityTypeChoice.value
+    );
   }
 });
 

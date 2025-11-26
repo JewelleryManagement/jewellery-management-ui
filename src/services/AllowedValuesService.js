@@ -7,13 +7,18 @@ const AllowedValuesService = {
     return axios.get(ALLOWED_VALUES_URL, { params });
   },
 
-  add({ resourceClazz, fieldName, value }) {
-    return axios.post(ALLOWED_VALUES_URL, { resourceClazz, fieldName, value });
+  add({ resourceClazz, fieldName, value, sku }) {
+    return axios.post(ALLOWED_VALUES_URL, {
+      resourceClazz,
+      fieldName,
+      value,
+      sku,
+    });
   },
 
-  delete({ resourceClazz, fieldName, value }) {
+  delete({ resourceClazz, fieldName, value, sku }) {
     return axios.delete(ALLOWED_VALUES_URL, {
-      data: { resourceClazz, fieldName, value },
+      data: { resourceClazz, fieldName, value, sku },
     });
   },
 };
