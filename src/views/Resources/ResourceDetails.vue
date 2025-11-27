@@ -61,8 +61,8 @@ const options = ref([
   "Pearl",
   // "Metal",
   // "Element",
-  // "PreciousStone",
-  // "SemiPreciousStone",
+  "PreciousStone",
+  //"SemiPreciousStone",
 ]);
 const pageTitle = computed(() =>
   route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
@@ -96,6 +96,20 @@ const fieldOrder = {
     "color",
     "colorHue",
     "size",
+  ],
+
+  PreciousStone: [
+    "clazz",
+    "type",
+    "shape",
+    "carat",
+    "color",
+    "clarity",
+    "cut",
+    "polish",
+    "symmetry",
+    "fluorescence",
+    "certificate",
   ],
 };
 
@@ -147,6 +161,7 @@ watch(selected, (newValue) => {
   if (!isEditState.value && !isDuplicateState.value) {
     store.dispatch("resources/setResourceDetails", { clazz: newValue });
   }
+  store.dispatch("allowedValues/clearAllowedValueDetails");
 });
 
 const handleSubmit = async () => {
@@ -171,7 +186,19 @@ const allowedFieldsByType = {
     "colorHue",
     "size",
   ],
-  PreciousStone: ["color", "cut", "clarity", "quantityType", "shape"],
+  PreciousStone: [
+    "color",
+    "cut",
+    "clarity",
+    "quantityType",
+    "shape",
+    "type",
+    "carat",
+    "polish",
+    "symmetry",
+    "fluorescence",
+    "certificate",
+  ],
   SemiPreciousStone: ["color", "cut", "clarity", "quantityType", "shape"],
   Element: ["quantityType"],
 };
@@ -201,7 +228,6 @@ const editResource = async () => {
 
 const createResource = async () => {
   try {
-    console.log(sku.value);
     const fields = allowedFieldsByType[selected.value] || [];
     await addNewAllowedValuesIfNeeded(
       store,
@@ -214,11 +240,18 @@ const createResource = async () => {
       sku: sku.value,
     });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
+
+    const quantityType = ref("");
+    if (selected.value === "PreciousStone") {
+      quantityType.value = resourceDetails.value.type;
+    } else {
+      quantityType.value = resourceDetails.value.quantityType;
+    }
     router.push({
       path: "/resources",
       query: {
         clazz: selected.value,
-        quantityType: resourceDetails.value.quantityType,
+        quantityType: quantityType.value,
       },
     });
   } catch (error) {

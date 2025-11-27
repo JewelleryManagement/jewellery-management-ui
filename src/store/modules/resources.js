@@ -56,6 +56,10 @@ export default {
       { key: "shapeSpecification", title: "Shape Specifications" },
       { key: "colorHue", title: "Color Hue" },
       { key: "sku", title: "Sku" },
+      { key: "polish", title: "Polish" },
+      { key: "symmetry", title: "Symmetry" },
+      { key: "fluorescence", title: "Fluorescence" },
+      { key: "certificate", title: "Certificate" },
     ],
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
@@ -89,6 +93,9 @@ export default {
     setResourceDetails(state, payload) {
       state.resourceDetails = payload;
     },
+    setResourceDetailsField(state, { key, value }) {
+      state.resourceDetails[key] = value;
+    },
     updateResource(state, updatedResource) {
       const index = state.resources.findIndex(
         (resource) => resource.id === updatedResource.id
@@ -115,6 +122,9 @@ export default {
     },
     setResourceDetails({ commit }, data) {
       commit("setResourceDetails", data);
+    },
+    setResourceDetailsField({ commit }, { key, value }) {
+      commit("setResourceDetailsField", { key, value });
     },
     setResourceForm({ commit }, data) {
       commit("setResourcForm", data);
@@ -174,17 +184,23 @@ export default {
       ]),
     getColumnsForPreciousStone: (state) =>
       filterColumnsByKey(state, [
-        "quantity",
         "clazz",
         "quantityType",
-        "size",
-        "color",
+        "type",
         "shape",
+        "size",
         "carat",
-        "cut",
+        "color",
+        "colorHue",
         "clarity",
+        "cut",
+        "polish",
+        "symmety",
+        "fluorescence",
         "pricePerQuantity",
+        "certificate",
         "note",
+        "sku",
       ]),
     getColumnsForSemiPreciousStone: (state) =>
       filterColumnsByKey(state, [

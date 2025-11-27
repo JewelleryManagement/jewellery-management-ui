@@ -83,7 +83,8 @@ const filteredResources = computed(() => {
     return resources.value.filter(
       (x) =>
         x.clazz === internalClazzChoice.value &&
-        x.quantityType === internalQuantityTypeChoice.value
+        (x.quantityType === internalQuantityTypeChoice.value ||
+          x.type?.replace(/\s+/g, "") === internalQuantityTypeChoice.value)
     );
   }
 });

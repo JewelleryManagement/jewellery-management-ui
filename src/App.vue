@@ -135,24 +135,29 @@ const mainMenuPages = [
     link: { text: "Diamond", url: "/resources" },
     children: [
       {
+        text: "Add Diamond",
+        url: "/resources/add",
+        query: { clazz: "PreciousStone" },
+      },
+      {
         text: "Natural",
         url: "/resources",
-        query: { clazz: "Diamond", quantityType: "Natural" },
+        query: { clazz: "PreciousStone", quantityType: "Natural" },
       },
       {
         text: "Lab Grown",
         url: "/resources",
-        query: { clazz: "Diamond", quantityType: "LabGrown" },
+        query: { clazz: "PreciousStone", quantityType: "LabGrown" },
       },
       {
         text: "Natural Melee",
         url: "/resources",
-        query: { clazz: "Diamond", quantityType: "NaturalMelee" },
+        query: { clazz: "PreciousStone", quantityType: "NaturalMelee" },
       },
       {
         text: "Lab Grown Melee",
         url: "/resources",
-        query: { clazz: "Diamond", quantityType: "LabGrownMelee" },
+        query: { clazz: "PreciousStone", quantityType: "LabGrownMelee" },
       },
     ],
     icon: "mdi-alpha-d-box-outline",

@@ -129,11 +129,6 @@ const initialAllowedValueDetails = {
 
 const setInitialAllowedValueDetails = () => {
   updateAllowedValueDetail("clazz", initialAllowedValueDetails.clazz);
-
-  updateAllowedValueDetail(
-    "quantityType",
-    initialAllowedValueDetails[formData.value.quantityType]
-  );
 };
 
 const updateAllowedValueDetail = (key, value) => {
@@ -191,11 +186,14 @@ const fetchAllowedValuesOptions = async () => {
 watch(
   () => formData.value.quantityType,
   (newVal) => {
-    updateAllowedValueDetail(
-      "quantityType",
-      initialAllowedValueDetails[newVal]
-    );
-  }
+    if (newVal) {
+      updateAllowedValueDetail(
+        "quantityType",
+        initialAllowedValueDetails[newVal]
+      );
+    }
+  },
+  { immediate: true }
 );
 
 watch(
@@ -205,6 +203,8 @@ watch(
   },
   { immediate: true }
 );
+
+console.log(allowedValueDetail.value);
 
 onMounted(fetchAllowedValuesOptions);
 </script>

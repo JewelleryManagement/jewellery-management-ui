@@ -3,13 +3,13 @@
     <v-combobox
       :model-value="modelValue"
       @update:model-value="onValueChange"
-      :items="items.map((o) => o.value)"
+      :items="displayItems ? items.map((o) => o.value) : []"
       :label="label"
       :rules="rules"
       :disabled="isFetched"
       clearable
-      style="max-width: 300px"
-      class="me-4"
+      :style="displaySku ? 'max-width: 300px' : ''"
+      :class="displaySku ? 'me-4' : ''"
     >
       <template #item="{ item, props }">
         <v-list-item v-bind="props">
@@ -39,6 +39,7 @@
     </v-dialog>
 
     <v-text-field
+      v-if="displaySku"
       :model-value="sku"
       @update:model-value="onSkuChange"
       label="SKU"
@@ -60,9 +61,17 @@ const props = defineProps({
     type: Object,
     default: () => ({ value: "", sku: "" }),
   },
+  displaySku: {
+    type: Boolean,
+    default: true,
+  },
   items: {
     type: Array,
-    required: true,
+    default: () => [],
+  },
+  displayItems: {
+    type: Boolean,
+    default: true,
   },
   label: String,
   rules: Array,
@@ -81,7 +90,7 @@ const sku = ref("");
 const isSkuLocked = ref(true);
 
 const onValueChange = (val) => {
-  const found = props.items.find((item) => item.value === val);
+  const found = props.items.find((item) => item.value === String(val));
 
   if (found) {
     sku.value = found?.sku;
@@ -97,7 +106,7 @@ const onValueChange = (val) => {
 
 const onSkuChange = (val) => {
   sku.value = val;
-  updateAllowedValueDetails(val);
+  updateAllowedValueDetails(props.modelValue);
 };
 
 const updateModelValue = (val) => {
@@ -114,9 +123,11 @@ const updateAllowedValueDetails = (val) => {
 const emit = defineEmits(["update:modelValue", "update:allowedValueDetails"]);
 
 watch(
-  () => props.modelValue,
-  () => {
-    onValueChange(props.modelValue);
+  [() => props.modelValue, () => props.items],
+  ([newModelValue]) => {
+    if (newModelValue) {
+      onValueChange(newModelValue);
+    }
   },
   { immediate: true }
 );
