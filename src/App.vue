@@ -137,27 +137,27 @@ const mainMenuPages = [
       {
         text: "Add Diamond",
         url: "/resources/add",
-        query: { clazz: "PreciousStone" },
+        query: { clazz: "Diamond" },
       },
       {
         text: "Natural",
         url: "/resources",
-        query: { clazz: "PreciousStone", quantityType: "Natural" },
+        query: { clazz: "Diamond", quantityType: "Natural" },
       },
       {
         text: "Lab Grown",
         url: "/resources",
-        query: { clazz: "PreciousStone", quantityType: "LabGrown" },
+        query: { clazz: "Diamond", quantityType: "LabGrown" },
       },
       {
         text: "Natural Melee",
         url: "/resources",
-        query: { clazz: "PreciousStone", quantityType: "NaturalMelee" },
+        query: { clazz: "Diamond", quantityType: "NaturalMelee" },
       },
       {
         text: "Lab Grown Melee",
         url: "/resources",
-        query: { clazz: "PreciousStone", quantityType: "LabGrownMelee" },
+        query: { clazz: "Diamond", quantityType: "LabGrownMelee" },
       },
     ],
     icon: "mdi-alpha-d-box-outline",

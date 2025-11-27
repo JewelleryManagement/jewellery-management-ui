@@ -67,7 +67,7 @@ const columnGettersMap = {
   Element: "resources/getColumnsForElement",
   Pearl: "resources/getColumnsForPearl",
   Metal: "resources/getColumnsForMetal",
-  PreciousStone: "resources/getColumnsForPreciousStone",
+  Diamond: "resources/getColumnsForDiamond",
   SemiPreciousStone: "resources/getColumnsForSemiPreciousStone",
 };
 

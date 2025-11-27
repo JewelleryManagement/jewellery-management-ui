@@ -14,7 +14,7 @@
       <v-form @submit.prevent="handleSubmit" ref="form">
         <Pearl v-if="selected === 'Pearl'" />
         <Metal v-if="selected === 'Metal'" />
-        <PreciousStone v-if="selected === 'PreciousStone'" />
+        <Diamond v-if="selected === 'Diamond'" />
         <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
         <Element v-if="selected === 'Element'" />
 
@@ -44,7 +44,7 @@
 import { ref, computed, watch, inject } from "vue";
 import Pearl from "@/components/Form/Pearl.vue";
 import Metal from "@/components/Form/Metal.vue";
-import PreciousStone from "@/components/Form/PreciousStone.vue";
+import Diamond from "@/components/Form/Diamond.vue";
 import Element from "@/components/Form/Element.vue";
 import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -61,7 +61,7 @@ const options = ref([
   "Pearl",
   // "Metal",
   // "Element",
-  "PreciousStone",
+  "Diamond",
   //"SemiPreciousStone",
 ]);
 const pageTitle = computed(() =>
@@ -98,7 +98,7 @@ const fieldOrder = {
     "size",
   ],
 
-  PreciousStone: [
+  Diamond: [
     "clazz",
     "type",
     "shape",
@@ -186,7 +186,7 @@ const allowedFieldsByType = {
     "colorHue",
     "size",
   ],
-  PreciousStone: [
+  Diamond: [
     "color",
     "cut",
     "clarity",
@@ -240,10 +240,9 @@ const createResource = async () => {
       sku: sku.value,
     });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
-
     const quantityType = ref("");
-    if (selected.value === "PreciousStone") {
-      quantityType.value = resourceDetails.value.type;
+    if (selected.value === "Diamond") {
+      quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
       quantityType.value = resourceDetails.value.quantityType;
     }

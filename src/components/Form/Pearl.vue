@@ -204,8 +204,6 @@ watch(
   { immediate: true }
 );
 
-console.log(allowedValueDetail.value);
-
 onMounted(fetchAllowedValuesOptions);
 </script>
 <style scoped></style>

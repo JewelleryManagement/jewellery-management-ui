@@ -224,7 +224,7 @@ const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const resourceClazz = computed(() => formData.value?.clazz || "PreciousStone");
+const resourceClazz = computed(() => formData.value?.clazz || "Diamond");
 
 const typeOptions = ["Natural", "Lab Grown"];
 const shapeOptions = computed(() =>

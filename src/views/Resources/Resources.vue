@@ -50,7 +50,7 @@ const selectedResourceQuantityType = computed(
 
 const resourceTypes = ref({
   Pearl: ["Strand", "Piece"],
-  PreciousStone: ["Natural", "LabGrown", "NaturalMelee", "LabGrownMelee"],
+  Diamond: ["Natural", "LabGrown", "NaturalMelee", "LabGrownMelee"],
   ColoredStone: ["Piece", "Melee"],
   SemiPrecious: ["Strand", "Piece"],
   Metals: ["Gold", "Silver", "Platinum", "Other"],

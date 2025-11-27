@@ -182,7 +182,7 @@ export default {
         "note",
         "sku",
       ]),
-    getColumnsForPreciousStone: (state) =>
+    getColumnsForDiamond: (state) =>
       filterColumnsByKey(state, [
         "clazz",
         "quantityType",
@@ -202,7 +202,7 @@ export default {
         "note",
         "sku",
       ]),
-    getColumnsForSemiPreciousStone: (state) =>
+    getColumnsForSemiDiamond: (state) =>
       filterColumnsByKey(state, [
         "quantity",
         "clazz",
