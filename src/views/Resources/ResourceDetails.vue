@@ -62,7 +62,7 @@ const options = ref([
   // "Metal",
   // "Element",
   "Diamond",
-  //"SemiPreciousStone",
+  "SemiPreciousStone",
 ]);
 const pageTitle = computed(() =>
   route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
@@ -111,6 +111,17 @@ const fieldOrder = {
     "fluorescence",
     "certificate",
   ],
+
+  SemiPreciousStone: [
+    "clazz",
+    "quantityType",
+    "type",
+    "shape",
+    "size",
+    "color",
+    "clarity",
+    "cut",
+  ],
 };
 
 const generateSku = () => {
@@ -135,6 +146,7 @@ const resetForm = () => {
   if (form.value) {
     form.value.reset();
     form.value.resetValidation();
+    store.dispatch("allowedValues/clearAllowedValueDetails");
   }
 };
 
@@ -188,6 +200,7 @@ const allowedFieldsByType = {
   ],
   Diamond: [
     "color",
+    "colorHue",
     "cut",
     "clarity",
     "quantityType",
@@ -199,7 +212,7 @@ const allowedFieldsByType = {
     "fluorescence",
     "certificate",
   ],
-  SemiPreciousStone: ["color", "cut", "clarity", "quantityType", "shape"],
+  SemiPreciousStone: ["shape", "size", "color", "clarity", "cut"],
   Element: ["quantityType"],
 };
 
@@ -214,11 +227,20 @@ const editResource = async () => {
     );
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
+    const quantityType = ref("");
+    if (
+      selected.value === "Diamond" ||
+      selected.value === "SemiPreciousStone"
+    ) {
+      quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
+    } else {
+      quantityType.value = resourceDetails.value.quantityType;
+    }
     router.push({
       path: "/resources",
       query: {
         clazz: selected.value,
-        quantityType: resourceDetails.value.quantityType,
+        quantityType: quantityType.value,
       },
     });
   } catch (error) {
@@ -228,6 +250,8 @@ const editResource = async () => {
 
 const createResource = async () => {
   try {
+    console.log(resourceDetails.value);
+    console.log(allowedValueDetail.value);
     const fields = allowedFieldsByType[selected.value] || [];
     await addNewAllowedValuesIfNeeded(
       store,
@@ -241,7 +265,10 @@ const createResource = async () => {
     });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
     const quantityType = ref("");
-    if (selected.value === "Diamond") {
+    if (
+      selected.value === "Diamond" ||
+      selected.value === "SemiPreciousStone"
+    ) {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
       quantityType.value = resourceDetails.value.quantityType;

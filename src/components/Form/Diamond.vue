@@ -73,6 +73,7 @@
 
   <AllowedValueComboBox
     v-model="formData.colorHue"
+    v-model:allowed-value-details="allowedValueDetail.colorHue"
     :display-sku="false"
     :items="colorHueOptions"
     label="Color Hue"
@@ -86,7 +87,6 @@
     v-model="formData.clarity"
     v-model:allowed-value-details="allowedValueDetail.clarity"
     :items="clarityOptions"
-    :display-items="false"
     label="Clarity"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
@@ -188,7 +188,7 @@ const allowedValueDetail = computed(
 
 const initialAllowedValueDetails = {
   clazz: { value: "diamond", sku: "D" },
-  quantityType: "Weight",
+  quantityType: "Piece",
   Natural: { value: "Natural", sku: "Nat" },
   LabGrown: { value: "Lab Grown", sku: "Lab" },
 };
@@ -293,7 +293,7 @@ watch(
 );
 
 watch(
-  () => route.fullPath,
+  [() => route.fullPath, () => formData.value.quantityType],
   () => {
     setInitialValues();
   },

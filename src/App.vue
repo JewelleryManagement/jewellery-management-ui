@@ -149,18 +149,30 @@ const mainMenuPages = [
         url: "/resources",
         query: { clazz: "Diamond", quantityType: "LabGrown" },
       },
+    ],
+    icon: "mdi-alpha-d-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Diamond Melee", url: "/resources" },
+    children: [
+      {
+        text: "Add Diamond Melee",
+        url: "/resources/add",
+        query: { clazz: "SemiPreciousStone" },
+      },
       {
         text: "Natural Melee",
         url: "/resources",
-        query: { clazz: "Diamond", quantityType: "NaturalMelee" },
+        query: { clazz: "SemiPreciousStone", quantityType: "Natural" },
       },
       {
         text: "Lab Grown Melee",
         url: "/resources",
-        query: { clazz: "Diamond", quantityType: "LabGrownMelee" },
+        query: { clazz: "SemiPreciousStone", quantityType: "LabGrown" },
       },
     ],
-    icon: "mdi-alpha-d-box-outline",
+    icon: "mdi-alpha-d-box",
     active: false,
   },
   {
