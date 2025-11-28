@@ -108,7 +108,7 @@ const allowedValueDetail = computed(
 );
 
 const initialAllowedValueDetails = {
-  clazz: { value: "semiPreciousStone", sku: "D" },
+  clazz: { value: "DiamondMelee", sku: "D" },
   quantityType: { value: "Piece", sku: "M" },
   Natural: { value: "Natural", sku: "Nat" },
   LabGrown: { value: "Lab Grown", sku: "Lab" },
@@ -149,9 +149,7 @@ const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const resourceClazz = computed(
-  () => formData.value?.clazz || "SemiPreciousStone"
-);
+const resourceClazz = computed(() => formData.value?.clazz || "DiamondMelee");
 
 const typeOptions = ["Natural", "Lab Grown"];
 const shapeOptions = computed(() =>

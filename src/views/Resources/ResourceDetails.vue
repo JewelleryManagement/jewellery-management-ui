@@ -15,7 +15,7 @@
         <Pearl v-if="selected === 'Pearl'" />
         <Metal v-if="selected === 'Metal'" />
         <Diamond v-if="selected === 'Diamond'" />
-        <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
+        <DiamondMelee v-if="selected === 'DiamondMelee'" />
         <Element v-if="selected === 'Element'" />
 
         <div class="d-flex justify-center" v-if="selected">
@@ -46,7 +46,7 @@ import Pearl from "@/components/Form/Pearl.vue";
 import Metal from "@/components/Form/Metal.vue";
 import Diamond from "@/components/Form/Diamond.vue";
 import Element from "@/components/Form/Element.vue";
-import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
+import DiamondMelee from "@/components/Form/DiamondMelee.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
@@ -62,7 +62,7 @@ const options = ref([
   // "Metal",
   // "Element",
   "Diamond",
-  "SemiPreciousStone",
+  "DiamondMelee",
 ]);
 const pageTitle = computed(() =>
   route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
@@ -112,7 +112,7 @@ const fieldOrder = {
     "certificate",
   ],
 
-  SemiPreciousStone: [
+  DiamondMelee: [
     "clazz",
     "quantityType",
     "type",
@@ -212,7 +212,7 @@ const allowedFieldsByType = {
     "fluorescence",
     "certificate",
   ],
-  SemiPreciousStone: ["shape", "size", "color", "clarity", "cut"],
+  DiamondMelee: ["shape", "size", "color", "clarity", "cut"],
   Element: ["quantityType"],
 };
 
@@ -228,10 +228,7 @@ const editResource = async () => {
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
     const quantityType = ref("");
-    if (
-      selected.value === "Diamond" ||
-      selected.value === "SemiPreciousStone"
-    ) {
+    if (selected.value === "Diamond" || selected.value === "DiamondMelee") {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
       quantityType.value = resourceDetails.value.quantityType;
@@ -265,10 +262,7 @@ const createResource = async () => {
     });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
     const quantityType = ref("");
-    if (
-      selected.value === "Diamond" ||
-      selected.value === "SemiPreciousStone"
-    ) {
+    if (selected.value === "Diamond" || selected.value === "DiamondMelee") {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
       quantityType.value = resourceDetails.value.quantityType;

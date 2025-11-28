@@ -52,7 +52,7 @@ const resourceTypes = ref({
   Pearl: ["Strand", "Piece"],
   Diamond: ["Natural", "LabGrown"],
   ColoredStone: ["Piece", "Melee"],
-  SemiPreciousStone: ["Natural", "LabGrown"],
+  DiamondMelee: ["Natural", "LabGrown"],
   Metals: ["Gold", "Silver", "Platinum", "Other"],
   ClaspAndComponents: ["Pre-made", "Crafted"],
 });

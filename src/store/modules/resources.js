@@ -202,7 +202,7 @@ export default {
         "note",
         "sku",
       ]),
-    getColumnsForSemiPreciousStone: (state) =>
+    getColumnsForDiamondMelee: (state) =>
       filterColumnsByKey(state, [
         "clazz",
         "quantityType",

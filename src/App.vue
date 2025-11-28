@@ -159,17 +159,17 @@ const mainMenuPages = [
       {
         text: "Add Diamond Melee",
         url: "/resources/add",
-        query: { clazz: "SemiPreciousStone" },
+        query: { clazz: "DiamondMelee" },
       },
       {
         text: "Natural Melee",
         url: "/resources",
-        query: { clazz: "SemiPreciousStone", quantityType: "Natural" },
+        query: { clazz: "DiamondMelee", quantityType: "Natural" },
       },
       {
         text: "Lab Grown Melee",
         url: "/resources",
-        query: { clazz: "SemiPreciousStone", quantityType: "LabGrown" },
+        query: { clazz: "DiamondMelee", quantityType: "LabGrown" },
       },
     ],
     icon: "mdi-alpha-d-box",
