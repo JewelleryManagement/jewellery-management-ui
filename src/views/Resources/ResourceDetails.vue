@@ -16,6 +16,7 @@
         <Metal v-if="selected === 'Metal'" />
         <Diamond v-if="selected === 'Diamond'" />
         <DiamondMelee v-if="selected === 'DiamondMelee'" />
+        <ColoredStone v-if="selected === 'ColoredStone'" />
         <Element v-if="selected === 'Element'" />
 
         <div class="d-flex justify-center" v-if="selected">
@@ -47,6 +48,7 @@ import Metal from "@/components/Form/Metal.vue";
 import Diamond from "@/components/Form/Diamond.vue";
 import Element from "@/components/Form/Element.vue";
 import DiamondMelee from "@/components/Form/DiamondMelee.vue";
+import ColoredStone from "@/components/Form/ColoredStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
@@ -63,6 +65,7 @@ const options = ref([
   // "Element",
   "Diamond",
   "DiamondMelee",
+  "ColoredStone",
 ]);
 const pageTitle = computed(() =>
   route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
@@ -121,6 +124,17 @@ const fieldOrder = {
     "color",
     "clarity",
     "cut",
+  ],
+
+  ColoredStone: [
+    "clazz",
+    "type",
+    "shape",
+    "carat",
+    "color",
+    "clarity",
+    "cut",
+    "certificate",
   ],
 };
 
@@ -213,6 +227,16 @@ const allowedFieldsByType = {
     "certificate",
   ],
   DiamondMelee: ["shape", "size", "color", "clarity", "cut"],
+  ColoredStone: [
+    "shape",
+    "carat",
+    "color",
+    "colorHue",
+    "clarity",
+    "cut",
+    "treatment",
+    "certificate",
+  ],
   Element: ["quantityType"],
 };
 
@@ -228,7 +252,11 @@ const editResource = async () => {
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
     const quantityType = ref("");
-    if (selected.value === "Diamond" || selected.value === "DiamondMelee") {
+    if (
+      selected.value === "Diamond" ||
+      selected.value === "DiamondMelee" ||
+      selected.value === "ColoredStone"
+    ) {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
       quantityType.value = resourceDetails.value.quantityType;
@@ -262,7 +290,11 @@ const createResource = async () => {
     });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
     const quantityType = ref("");
-    if (selected.value === "Diamond" || selected.value === "DiamondMelee") {
+    if (
+      selected.value === "Diamond" ||
+      selected.value === "DiamondMelee" ||
+      selected.value === "ColoredStone"
+    ) {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
       quantityType.value = resourceDetails.value.quantityType;

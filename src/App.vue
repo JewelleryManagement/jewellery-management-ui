@@ -179,14 +179,24 @@ const mainMenuPages = [
     link: { text: "Colored Stone", url: "/resources" },
     children: [
       {
-        text: "Piece",
-        url: "/resources",
-        query: { clazz: "ColoredStone", quantityType: "Piece" },
+        text: "Add Colored Stone",
+        url: "/resources/add",
+        query: { clazz: "ColoredStone" },
       },
       {
-        text: "Melee",
+        text: "Sapphire",
         url: "/resources",
-        query: { clazz: "ColoredStone", quantityType: "Melee" },
+        query: { clazz: "ColoredStone", quantityType: "Sapphire" },
+      },
+      {
+        text: "Ruby",
+        url: "/resources",
+        query: { clazz: "ColoredStone", quantityType: "Ruby" },
+      },
+      {
+        text: "Emerald",
+        url: "/resources",
+        query: { clazz: "ColoredStone", quantityType: "Emerald" },
       },
     ],
     icon: "mdi-alpha-c-box-outline",

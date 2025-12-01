@@ -69,6 +69,7 @@ const columnGettersMap = {
   Metal: "resources/getColumnsForMetal",
   Diamond: "resources/getColumnsForDiamond",
   DiamondMelee: "resources/getColumnsForDiamondMelee",
+  ColoredStone: "resources/getColumnsForColoredStone",
 };
 
 const selectedTableColumns = computed(() => {
