@@ -51,8 +51,9 @@ const selectedResourceQuantityType = computed(
 const resourceTypes = ref({
   Pearl: ["Strand", "Piece"],
   Diamond: ["Natural", "LabGrown"],
-  ColoredStone: ["Piece", "Melee"],
+  ColoredStone: ["Sapphire", "Ruby", "Emerald"],
   DiamondMelee: ["Natural", "LabGrown"],
+  ColoredStoneMelee: ["Sapphire", "Ruby", "Emerald"],
   Metals: ["Gold", "Silver", "Platinum", "Other"],
   ClaspAndComponents: ["Pre-made", "Crafted"],
 });

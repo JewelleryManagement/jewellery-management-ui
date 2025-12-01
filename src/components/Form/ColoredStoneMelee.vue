@@ -24,41 +24,23 @@
     :is-fetched="isFetching"
   />
 
-  <v-text-field
-    v-model="formData.dimensionX"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="Length"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.dimensionY"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="Width"
-    required
-  ></v-text-field>
-
-  <v-text-field
-    v-model="formData.dimensionZ"
-    :counter="10"
-    :rules="numberFieldRules"
-    label="Depth"
-    required
-  ></v-text-field>
-
   <AllowedValueComboBox
-    v-model="formData.carat"
-    v-model:allowed-value-details="allowedValueDetail.carat"
-    :items="caratOptions"
-    :display-items="false"
-    label="Carat"
-    :rules="numberFieldRules"
+    v-model="formData.size"
+    v-model:allowed-value-details="allowedValueDetail.size"
+    :items="sizeOptions"
+    label="Size"
+    :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
-    field-name="carat"
+    field-name="size"
     :is-fetched="isFetching"
   />
+
+  <v-text-field
+    v-model="formData.carat"
+    :rules="numberFieldRules"
+    label="Carat"
+    required
+  ></v-text-field>
 
   <AllowedValueComboBox
     v-model="formData.color"
@@ -74,10 +56,9 @@
   <AllowedValueComboBox
     v-model="formData.colorHue"
     v-model:allowed-value-details="allowedValueDetail.colorHue"
-    :display-sku="false"
     :items="colorHueOptions"
     label="Color Hue"
-    :rules="useTextFieldRules()"
+    :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="colorHue"
     :is-fetched="isFetching"
@@ -124,18 +105,6 @@
     required
   ></v-text-field>
 
-  <AllowedValueComboBox
-    v-model="formData.certificate"
-    v-model:allowed-value-details="allowedValueDetail.certificate"
-    :items="certificateOptions"
-    :display-items="false"
-    label="Certificate"
-    :rules="useTextFieldLargeRules()"
-    :resource-clazz="resourceClazz"
-    field-name="certificate"
-    :is-fetched="isFetching"
-  />
-
   <v-textarea
     v-model="formData.note"
     :counter="100"
@@ -166,8 +135,8 @@ const allowedValueDetail = computed(
 );
 
 const initialAllowedValueDetails = {
-  clazz: { value: "coloredStone", sku: "CS" },
-  quantityType: "Piece",
+  clazz: { value: "ColoredStone", sku: "CS" },
+  quantityType: { value: "Piece", sku: "M" },
   Sapphire: { value: "Sapphire", sku: "Sp" },
   Ruby: { value: "Ruby", sku: "Ru" },
   Emerald: { value: "Emerald", sku: "Em" },
@@ -183,12 +152,16 @@ const setInitialValues = () => {
 const setInitialResourceDetails = () => {
   updateResourceDetails(
     "quantityType",
-    initialAllowedValueDetails.quantityType
+    initialAllowedValueDetails.quantityType.value
   );
 };
 
 const setInitialAllowedValueDetails = () => {
   updateAllowedValueDetail("clazz", initialAllowedValueDetails.clazz);
+  updateAllowedValueDetail(
+    "quantityType",
+    initialAllowedValueDetails.quantityType
+  );
 };
 
 const updateResourceDetails = (key, value) =>
@@ -204,20 +177,18 @@ const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const resourceClazz = computed(() => formData.value?.clazz || "Diamond");
+const resourceClazz = computed(() => formData.value?.clazz || "DiamondMelee");
 
 const typeOptions = ["Sapphire", "Ruby", "Emerald"];
 const shapeOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "shape")
 );
-const caratOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "carat")
+const sizeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "size")
 );
-
 const colorOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "color")
 );
-
 const colorHueOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "colorHue")
 );
@@ -225,14 +196,10 @@ const clarityOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "clarity")
 );
 const cutOptions = computed(() => getAllowedValue(store, resourceClazz, "cut"));
-
 const treatmentOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "treatment")
 );
 
-const certificateOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "certificate")
-);
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
@@ -242,10 +209,6 @@ const fetchAllowedValuesOptions = async () => {
     "clarity",
     "quantityType",
     "shape",
-    "colorHue",
-    "treatment",
-    "certificate",
-    "carat",
   ]);
 
   isFetching.value = false;

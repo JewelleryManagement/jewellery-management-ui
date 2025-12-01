@@ -236,6 +236,23 @@ export default {
         "note",
         "sku",
       ]),
+    getColumnsForColoredStoneMelee: (state) =>
+      filterColumnsByKey(state, [
+        "clazz",
+        "quantityType",
+        "type",
+        "shape",
+        "size",
+        "carat",
+        "color",
+        "colorHue",
+        "clarity",
+        "cut",
+        "treatment",
+        "pricePerQuantity",
+        "note",
+        "sku",
+      ]),
     getColumnsForElement: (state) =>
       filterColumnsByKey(state, [
         "quantity",

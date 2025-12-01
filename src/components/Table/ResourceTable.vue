@@ -43,7 +43,9 @@
 import { ref, computed, watch } from "vue";
 import { useStore } from "vuex";
 import EditButton from "@/components/Button/EditButton.vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const props = defineProps({
   selectedResourceClazz: String,
   selectedResourceQuantityType: String,
@@ -70,6 +72,7 @@ const columnGettersMap = {
   Diamond: "resources/getColumnsForDiamond",
   DiamondMelee: "resources/getColumnsForDiamondMelee",
   ColoredStone: "resources/getColumnsForColoredStone",
+  ColoredStoneMelee: "resources/getColumnsForColoredStoneMelee",
 };
 
 const selectedTableColumns = computed(() => {

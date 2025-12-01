@@ -203,6 +203,33 @@ const mainMenuPages = [
     active: false,
   },
   {
+    link: { text: "Colored Stone Melee", url: "/resources" },
+    children: [
+      {
+        text: "Add Colored Stone Melee",
+        url: "/resources/add",
+        query: { clazz: "ColoredStoneMelee" },
+      },
+      {
+        text: "Sapphire",
+        url: "/resources",
+        query: { clazz: "ColoredStoneMelee", quantityType: "Sapphire" },
+      },
+      {
+        text: "Ruby",
+        url: "/resources",
+        query: { clazz: "ColoredStoneMelee", quantityType: "Ruby" },
+      },
+      {
+        text: "Emerald",
+        url: "/resources",
+        query: { clazz: "ColoredStoneMelee", quantityType: "Emerald" },
+      },
+    ],
+    icon: "mdi-alpha-c-box",
+    active: false,
+  },
+  {
     link: { text: "Semi Precious", url: "/resources" },
     children: [
       {

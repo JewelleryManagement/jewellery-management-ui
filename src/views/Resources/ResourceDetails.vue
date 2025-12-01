@@ -17,6 +17,7 @@
         <Diamond v-if="selected === 'Diamond'" />
         <DiamondMelee v-if="selected === 'DiamondMelee'" />
         <ColoredStone v-if="selected === 'ColoredStone'" />
+        <ColoredStoneMelee v-if="selected === 'ColoredStoneMelee'" />
         <Element v-if="selected === 'Element'" />
 
         <div class="d-flex justify-center" v-if="selected">
@@ -49,6 +50,7 @@ import Diamond from "@/components/Form/Diamond.vue";
 import Element from "@/components/Form/Element.vue";
 import DiamondMelee from "@/components/Form/DiamondMelee.vue";
 import ColoredStone from "@/components/Form/ColoredStone.vue";
+import ColoredStoneMelee from "@/components/Form/ColoredStoneMelee.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
@@ -66,6 +68,7 @@ const options = ref([
   "Diamond",
   "DiamondMelee",
   "ColoredStone",
+  "ColoredStoneMelee",
 ]);
 const pageTitle = computed(() =>
   route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
@@ -135,6 +138,17 @@ const fieldOrder = {
     "clarity",
     "cut",
     "certificate",
+  ],
+  ColoredStoneMelee: [
+    "clazz",
+    "quantityType",
+    "type",
+    "shape",
+    "size",
+    "color",
+    "colorHue",
+    "clarity",
+    "cut",
   ],
 };
 
@@ -237,6 +251,7 @@ const allowedFieldsByType = {
     "treatment",
     "certificate",
   ],
+  ColoredStoneMelee: ["shape", "size", "color", "colorHue", "clarity", "cut"],
   Element: ["quantityType"],
 };
 
@@ -255,7 +270,8 @@ const editResource = async () => {
     if (
       selected.value === "Diamond" ||
       selected.value === "DiamondMelee" ||
-      selected.value === "ColoredStone"
+      selected.value === "ColoredStone" ||
+      selected.value === "ColoredStoneMelee"
     ) {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
@@ -293,7 +309,8 @@ const createResource = async () => {
     if (
       selected.value === "Diamond" ||
       selected.value === "DiamondMelee" ||
-      selected.value === "ColoredStone"
+      selected.value === "ColoredStone" ||
+      selected.value === "ColoredStoneMelee"
     ) {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
