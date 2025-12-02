@@ -252,27 +252,32 @@ const mainMenuPages = [
     active: false,
   },
   {
-    link: { text: "Metals", url: "/resources" },
+    link: { text: "Metal", url: "/resources" },
     children: [
+      {
+        text: "Add Metal",
+        url: "/resources/add",
+        query: { clazz: "Metal" },
+      },
       {
         text: "Gold",
         url: "/resources",
-        query: { clazz: "Metals", quantityType: "Gold" },
+        query: { clazz: "Metal", quantityType: "Gold" },
       },
       {
         text: "Silver",
         url: "/resources",
-        query: { clazz: "Metals", quantityType: "Silver" },
+        query: { clazz: "Metal", quantityType: "Silver" },
       },
       {
         text: "Platinum",
         url: "/resources",
-        query: { clazz: "Metals", quantityType: "Platinum" },
+        query: { clazz: "Metal", quantityType: "Platinum" },
       },
       {
         text: "Other",
         url: "/resources",
-        query: { clazz: "Metals", quantityType: "Other" },
+        query: { clazz: "Metal", quantityType: "Other" },
       },
     ],
     icon: "mdi-alpha-m-box-outline",

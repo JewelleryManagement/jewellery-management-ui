@@ -65,7 +65,7 @@ const route = useRoute();
 const router = useRouter();
 const options = ref([
   "Pearl",
-  // "Metal",
+  "Metal",
   // "Element",
   "Diamond",
   "DiamondMelee",
@@ -165,6 +165,8 @@ const fieldOrder = {
     "colorHue",
     "size",
   ],
+
+  Metal: ["clazz", "type", "color", "purity"],
 };
 
 const generateSku = () => {
@@ -230,7 +232,7 @@ const handleSubmit = async () => {
   }
 };
 const allowedFieldsByType = {
-  Metal: ["type", "quantityType", "purity", "color", "plating"],
+  Metal: ["color", "purity"],
   Pearl: [
     "type",
     "quantityType",
@@ -295,7 +297,8 @@ const editResource = async () => {
       selected.value === "Diamond" ||
       selected.value === "DiamondMelee" ||
       selected.value === "ColoredStone" ||
-      selected.value === "ColoredStoneMelee"
+      selected.value === "ColoredStoneMelee" ||
+      selected.value === "Metal"
     ) {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {
@@ -334,7 +337,8 @@ const createResource = async () => {
       selected.value === "Diamond" ||
       selected.value === "DiamondMelee" ||
       selected.value === "ColoredStone" ||
-      selected.value === "ColoredStoneMelee"
+      selected.value === "ColoredStoneMelee" ||
+      selected.value === "Metal"
     ) {
       quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
     } else {

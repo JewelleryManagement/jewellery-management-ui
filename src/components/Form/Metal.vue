@@ -1,36 +1,21 @@
 <template>
-  <AllowedValueComboBox
+  <v-text-field
+    v-model="formData.quantityType"
+    label="Quantity Type"
+    readonly
+  />
+
+  <v-select
     v-model="formData.type"
     :items="typeOptions"
     label="Type"
-    :rules="smallFieldRules"
-    :resource-clazz="resourceClazz"
-    field-name="type"
-    :is-fetched="isFetching"
-  />
-
-  <AllowedValueComboBox
-    v-model="formData.quantityType"
-    :items="quantityTypeOptions"
-    label="Quantity Type"
-    :rules="smallFieldRules"
-    :resource-clazz="resourceClazz"
-    field-name="quantityType"
-    :is-fetched="isFetching"
-  />
-
-  <AllowedValueComboBox
-    v-model="formData.purity"
-    :items="purityOptions"
-    label="Purity"
-    :rules="numberFieldRules"
-    :resource-clazz="resourceClazz"
-    field-name="purity"
-    :is-fetched="isFetching"
+    :rules="useInputValidate()"
+    clearable
   />
 
   <AllowedValueComboBox
     v-model="formData.color"
+    v-model:allowed-value-details="allowedValueDetail.color"
     :items="colorOptions"
     label="Color"
     :rules="smallFieldRules"
@@ -40,12 +25,13 @@
   />
 
   <AllowedValueComboBox
-    v-model="formData.plating"
-    :items="platingOptions"
-    label="Plating"
-    :rules="smallFieldRules"
+    v-model="formData.purity"
+    v-model:allowed-value-details="allowedValueDetail.purity"
+    :items="purityOptions"
+    label="Purity"
+    :rules="numberFieldRules"
     :resource-clazz="resourceClazz"
-    field-name="plating"
+    field-name="purity"
     :is-fetched="isFetching"
   />
 
@@ -67,39 +53,73 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useStore } from "vuex";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import {
   useTextFieldRules,
   useNumberFieldRules,
   useTextFieldLargeRules,
+  useInputValidate,
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const store = useStore();
 const formData = computed(() => store.getters["resources/getResourceDetails"]);
+const allowedValueDetail = computed(
+  () => store.getters["allowedValues/getAllowedValueDetails"]
+);
+
+const initialAllowedValueDetails = {
+  clazz: { value: "Metal", sku: "M" },
+  quantityType: "Weight ",
+  Gold: { value: "Gold", sku: "G" },
+  Silver: { value: "Silver", sku: "S" },
+  Platinum: { value: "Platinum", sku: "P" },
+  Other: { value: "Other", sku: "O" },
+};
+
+const setInitialValues = () => {
+  if (!formData.value.quantityType) {
+    setInitialResourceDetails();
+  }
+  setInitialAllowedValueDetails();
+};
+
+const setInitialResourceDetails = () => {
+  updateResourceDetails(
+    "quantityType",
+    initialAllowedValueDetails.quantityType
+  );
+};
+
+const setInitialAllowedValueDetails = () => {
+  updateAllowedValueDetail("clazz", initialAllowedValueDetails.clazz);
+};
+
+const updateResourceDetails = (key, value) =>
+  store.dispatch("resources/setResourceDetailsField", { key, value });
+
+const updateAllowedValueDetail = (key, value) => {
+  store.dispatch("allowedValues/setAllowedValueDetail", {
+    [key]: value,
+  });
+};
 
 const resourceClazz = computed(() => {
   const result = formData.clazz || "Metal";
   return result;
 });
 
-const smallFieldRules = useTextFieldRules();
+const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const typeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "type")
-);
-const quantityTypeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quantityType")
-);
+const typeOptions = ["Gold ", "Silver", "Platinum", "Other"];
 const colorOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "color")
-);
-const platingOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "plating")
 );
 const purityOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "purity")
@@ -117,6 +137,28 @@ const fetchAllowedValuesOptions = async () => {
 
   isFetching.value = false;
 };
+
+watch(
+  () => formData.value.type,
+  (newVal) => {
+    if (newVal) {
+      const normalizedValue = newVal.replace(/\s+/g, "");
+      updateAllowedValueDetail(
+        "type",
+        initialAllowedValueDetails[normalizedValue]
+      );
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  [() => route.fullPath, () => formData.value.quantityType],
+  () => {
+    setInitialValues();
+  },
+  { immediate: true }
+);
 
 onMounted(fetchAllowedValuesOptions);
 </script>

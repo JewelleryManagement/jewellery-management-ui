@@ -279,15 +279,14 @@ export default {
       ]),
     getColumnsForMetal: (state) =>
       filterColumnsByKey(state, [
-        "quantity",
         "clazz",
-        "type",
         "quantityType",
-        "purity",
+        "type",
         "color",
-        "plating",
+        "purity",
         "pricePerQuantity",
         "note",
+        "sku",
       ]),
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
