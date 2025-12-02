@@ -10,6 +10,7 @@
 
   <AllowedValueComboBox
     v-model="formData.quantityType"
+    v-model:allowed-value-details="allowedValueDetail.quantityType"
     :items="quantityTypeOptions"
     label="Quantity Type"
     :rules="smallInputRules"
@@ -37,7 +38,7 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import {
   useTextFieldRules,
@@ -46,9 +47,28 @@ import {
   useNumberFieldRules,
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const store = useStore();
 const formData = computed(() => store.getters["resources/getResourceDetails"]);
+const allowedValueDetail = computed(
+  () => store.getters["allowedValues/getAllowedValueDetails"]
+);
+
+const initialAllowedValueDetails = {
+  clazz: { value: "Element", sku: "E" },
+};
+
+const setInitialAllowedValueDetails = () => {
+  updateAllowedValueDetail("clazz", initialAllowedValueDetails.clazz);
+};
+
+const updateAllowedValueDetail = (key, value) => {
+  store.dispatch("allowedValues/setAllowedValueDetail", {
+    [key]: value,
+  });
+};
 
 const resourceClazz = computed(() => formData.value?.clazz || "Element");
 
@@ -72,6 +92,14 @@ const fetchAllowedValuesOptions = async () => {
 
   isFetching.value = false;
 };
+
+watch(
+  () => route.fullPath,
+  () => {
+    setInitialAllowedValueDetails();
+  },
+  { immediate: true }
+);
 
 onMounted(fetchAllowedValuesOptions);
 </script>

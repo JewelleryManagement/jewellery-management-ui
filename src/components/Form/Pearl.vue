@@ -122,7 +122,7 @@ const allowedValueDetail = computed(
 );
 
 const initialAllowedValueDetails = {
-  clazz: { value: "pearl", sku: "P" },
+  clazz: { value: "Pearl", sku: "P" },
   Strand: { value: "Strand", sku: "S" },
   Piece: { value: "Piece", sku: "P" },
 };
@@ -197,7 +197,7 @@ watch(
 );
 
 watch(
-  () => route.fullPath,
+  [() => route.fullPath, () => formData.value.quantityType],
   () => {
     setInitialAllowedValueDetails();
   },

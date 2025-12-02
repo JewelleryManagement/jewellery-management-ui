@@ -48,12 +48,8 @@ import { useRoute } from "vue-router";
 const route = useRoute();
 const props = defineProps({
   selectedResourceClazz: String,
-  selectedResourceQuantityType: String,
 });
 const internalClazzChoice = computed(() => props.selectedResourceClazz);
-const internalQuantityTypeChoice = computed(
-  () => props.selectedResourceQuantityType
-);
 
 watch(
   () => props.selectedResourceClazz,
@@ -85,11 +81,10 @@ const filteredResources = computed(() => {
   if (internalClazzChoice.value === "All") {
     return resources.value;
   } else {
-    return resources.value.filter(
-      (x) =>
-        x.clazz === internalClazzChoice.value &&
-        (x.quantityType === internalQuantityTypeChoice.value ||
-          x.type?.replace(/\s+/g, "") === internalQuantityTypeChoice.value)
+    return resources.value.filter((r) =>
+      Object.keys(route.query).every(
+        (key) => !(key in r) || r[key] === route.query[key]
+      )
     );
   }
 });

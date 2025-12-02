@@ -66,7 +66,7 @@ const router = useRouter();
 const options = ref([
   "Pearl",
   "Metal",
-  // "Element",
+  "Element",
   "Diamond",
   "DiamondMelee",
   "ColoredStone",
@@ -167,6 +167,8 @@ const fieldOrder = {
   ],
 
   Metal: ["clazz", "type", "color", "purity"],
+
+  Element: ["clazz", "quantityType"],
 };
 
 const generateSku = () => {
@@ -281,6 +283,28 @@ const allowedFieldsByType = {
   Element: ["quantityType"],
 };
 
+const getQuery = () => {
+  return (
+    store.getters["resources/getResourceQuery"](
+      selected.value,
+      resourceDetails.value.type.replace(/\s+/g, "")
+    ) ||
+    store.getters["resources/getResourceQuery"](
+      selected.value,
+      resourceDetails.value.quantityType.replace(/\s+/g, "")
+    )
+  );
+};
+
+const navigateToResourcePage = () => {
+  const query =
+    selected.value === "Element" ? { clazz: "Element" } : getQuery();
+  router.push({
+    path: "/resources",
+    query: query,
+  });
+};
+
 const editResource = async () => {
   try {
     const fields = allowedFieldsByType[selected.value] || [];
@@ -292,25 +316,7 @@ const editResource = async () => {
     );
     await store.dispatch("resources/updateResource", resourceDetails.value);
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
-    const quantityType = ref("");
-    if (
-      selected.value === "Diamond" ||
-      selected.value === "DiamondMelee" ||
-      selected.value === "ColoredStone" ||
-      selected.value === "ColoredStoneMelee" ||
-      selected.value === "Metal"
-    ) {
-      quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
-    } else {
-      quantityType.value = resourceDetails.value.quantityType;
-    }
-    router.push({
-      path: "/resources",
-      query: {
-        clazz: selected.value,
-        quantityType: quantityType.value,
-      },
-    });
+    navigateToResourcePage();
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
@@ -332,25 +338,7 @@ const createResource = async () => {
       sku: sku.value,
     });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
-    const quantityType = ref("");
-    if (
-      selected.value === "Diamond" ||
-      selected.value === "DiamondMelee" ||
-      selected.value === "ColoredStone" ||
-      selected.value === "ColoredStoneMelee" ||
-      selected.value === "Metal"
-    ) {
-      quantityType.value = resourceDetails.value.type.replace(/\s+/g, "");
-    } else {
-      quantityType.value = resourceDetails.value.quantityType;
-    }
-    router.push({
-      path: "/resources",
-      query: {
-        clazz: selected.value,
-        quantityType: quantityType.value,
-      },
-    });
+    navigateToResourcePage();
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

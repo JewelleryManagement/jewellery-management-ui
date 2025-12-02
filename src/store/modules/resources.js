@@ -62,6 +62,36 @@ export default {
       { key: "certificate", title: "Certificate" },
       { key: "treatment", title: "Treatment" },
     ],
+    resourceQueries: {
+      Pearl: {
+        Piece: { clazz: "Pearl", quantityType: "Piece" },
+        Strand: { clazz: "Pearl", quantityType: "Strand" },
+      },
+      Diamond: {
+        Natural: { clazz: "Diamond", type: "Natural" },
+        LabGrown: { clazz: "Diamond", type: "Lab Grown" },
+      },
+      DiamondMelee: {
+        Natural: { clazz: "DiamondMelee", type: "Natural" },
+        LabGrown: { clazz: "DiamondMelee", type: "Lab Grown" },
+      },
+      ColoredStone: {
+        Piece: { clazz: "ColoredStone", quantityType: "Piece" },
+      },
+      ColoredStoneMelee: {
+        Piece: { clazz: "ColoredStoneMelee", type: "Piece" },
+      },
+      SemiPreciousStone: {
+        Strand: { clazz: "SemiPreciousStone", quantityType: "Strand" },
+        Piece: { clazz: "SemiPreciousStone", quantityType: "Piece" },
+      },
+      Metal: {
+        Gold: { clazz: "Metal", type: "Gold" },
+        Silver: { clazz: "Metal", type: "Silver" },
+        Platinum: { clazz: "Metal", type: "Platinum" },
+        Other: { clazz: "Metal", type: "Other" },
+      },
+    },
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
     tableColumnEdit: { key: "edit", title: "", slot: "edit" },
@@ -270,12 +300,12 @@ export default {
       ]),
     getColumnsForElement: (state) =>
       filterColumnsByKey(state, [
-        "quantity",
         "clazz",
         "description",
         "quantityType",
         "pricePerQuantity",
         "note",
+        "sku",
       ]),
     getColumnsForMetal: (state) =>
       filterColumnsByKey(state, [
@@ -291,5 +321,7 @@ export default {
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
     getResourceDetails: (state) => state.resourceDetails,
+    getResourceQuery: (state) => (clazz, type) =>
+      state.resourceQueries[clazz]?.[type] ?? null,
   },
 };

@@ -4,32 +4,27 @@
       {{
         selectedResourceClazz === "All"
           ? "All resources table"
-          : `${selectedResourceQuantityType} ${selectedResourceClazz}s table`
+          : `${selectedButton || ""} ${selectedResourceClazz}s table`
       }}
     </v-container>
     <div class="d-flex justify-space-between">
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <table-button :props="props" :variant="'outlined'"
-            >Resource Type</table-button
-          >
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="resourceType in currentResourceTypes"
-            :key="resourceType"
-            :value="resourceType"
-            @click="filterResourcesByType(resourceType)"
-            >{{ resourceType }}
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <div class="d-flex flex-wrap ga-2 ml-4">
+        <v-btn
+          v-for="resourceType in currentResourceTypes"
+          :key="resourceType"
+          color="red"
+          rounded="xs"
+          :variant="selectedButton === resourceType ? 'flat' : 'outlined'"
+          @click="filterResourcesByType(resourceType)"
+        >
+          {{ resourceType }}
+        </v-btn>
+      </div>
       <table-button path="/resources/add">Add resource</table-button>
     </div>
 
     <resource-table
       :selectedResourceClazz="selectedResourceClazz"
-      :selectedResourceQuantityType="selectedResourceQuantityType"
     ></resource-table>
   </div>
 </template>
@@ -44,18 +39,18 @@ const router = useRouter();
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const selectedResourceClazz = computed(() => route.query.clazz || "All");
-const selectedResourceQuantityType = computed(
-  () => route.query.quantityType || ""
-);
+const selectedButton = computed(() => {
+  return route.query.quantityType || route.query.type;
+});
 
 const resourceTypes = ref({
   Pearl: ["Strand", "Piece"],
-  Diamond: ["Natural", "LabGrown"],
-  ColoredStone: ["Sapphire", "Ruby", "Emerald"],
-  DiamondMelee: ["Natural", "LabGrown"],
-  ColoredStoneMelee: ["Sapphire", "Ruby", "Emerald"],
+  Diamond: ["Natural", "Lab Grown"],
+  ColoredStone: ["Piece"],
+  DiamondMelee: ["Natural", "Lab Grown"],
+  ColoredStoneMelee: ["Piece"],
   SemiPreciousStone: ["Strand", "Piece"],
-  Metals: ["Gold", "Silver", "Platinum", "Other"],
+  Metal: ["Gold", "Silver", "Platinum", "Other"],
   ClaspAndComponents: ["Pre-made", "Crafted"],
 });
 
@@ -64,12 +59,13 @@ const currentResourceTypes = computed(() => {
 });
 
 const filterResourcesByType = (title) => {
-  selectedResourceQuantityType.value = title;
+  selectedButton.value = title;
+  const query = store.getters["resources/getResourceQuery"](
+    selectedResourceClazz.value,
+    title.replace(/\s+/g, "")
+  );
   router.replace({
-    query: {
-      ...route.query,
-      quantityType: title,
-    },
+    query: query,
   });
 };
 
