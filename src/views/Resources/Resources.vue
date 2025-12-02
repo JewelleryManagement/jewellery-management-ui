@@ -54,6 +54,7 @@ const resourceTypes = ref({
   ColoredStone: ["Sapphire", "Ruby", "Emerald"],
   DiamondMelee: ["Natural", "LabGrown"],
   ColoredStoneMelee: ["Sapphire", "Ruby", "Emerald"],
+  SemiPreciousStone: ["Strand", "Piece"],
   Metals: ["Gold", "Silver", "Platinum", "Other"],
   ClaspAndComponents: ["Pre-made", "Crafted"],
 });

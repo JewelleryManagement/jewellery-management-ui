@@ -253,6 +253,21 @@ export default {
         "note",
         "sku",
       ]),
+    getColumnsForSemiPreciousStone: (state) =>
+      filterColumnsByKey(state, [
+        "clazz",
+        "quantityType",
+        "type",
+        "quality",
+        "shape",
+        "shapeSpecification",
+        "color",
+        "colorHue",
+        "size",
+        "pricePerQuantity",
+        "note",
+        "sku",
+      ]),
     getColumnsForElement: (state) =>
       filterColumnsByKey(state, [
         "quantity",

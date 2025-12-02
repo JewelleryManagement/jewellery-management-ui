@@ -18,6 +18,7 @@
         <DiamondMelee v-if="selected === 'DiamondMelee'" />
         <ColoredStone v-if="selected === 'ColoredStone'" />
         <ColoredStoneMelee v-if="selected === 'ColoredStoneMelee'" />
+        <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
         <Element v-if="selected === 'Element'" />
 
         <div class="d-flex justify-center" v-if="selected">
@@ -51,6 +52,7 @@ import Element from "@/components/Form/Element.vue";
 import DiamondMelee from "@/components/Form/DiamondMelee.vue";
 import ColoredStone from "@/components/Form/ColoredStone.vue";
 import ColoredStoneMelee from "@/components/Form/ColoredStoneMelee.vue";
+import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
@@ -69,6 +71,7 @@ const options = ref([
   "DiamondMelee",
   "ColoredStone",
   "ColoredStoneMelee",
+  "SemiPreciousStone",
 ]);
 const pageTitle = computed(() =>
   route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
@@ -149,6 +152,18 @@ const fieldOrder = {
     "colorHue",
     "clarity",
     "cut",
+  ],
+
+  SemiPreciousStone: [
+    "clazz",
+    "quantityType",
+    "type",
+    "quality",
+    "shape",
+    "shapeSpecification",
+    "color",
+    "colorHue",
+    "size",
   ],
 };
 
@@ -252,6 +267,15 @@ const allowedFieldsByType = {
     "certificate",
   ],
   ColoredStoneMelee: ["shape", "size", "color", "colorHue", "clarity", "cut"],
+  SemiPreciousStone: [
+    "type",
+    "quality",
+    "shape",
+    "shapeSpecification",
+    "color",
+    "colorHue",
+    "size",
+  ],
   Element: ["quantityType"],
 };
 

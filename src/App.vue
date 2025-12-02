@@ -233,14 +233,19 @@ const mainMenuPages = [
     link: { text: "Semi Precious", url: "/resources" },
     children: [
       {
+        text: "Add Semi Precious Stone",
+        url: "/resources/add",
+        query: { clazz: "SemiPreciousStone" },
+      },
+      {
         text: "Strand",
         url: "/resources",
-        query: { clazz: "SemiPrecious", quantityType: "Strand" },
+        query: { clazz: "SemiPreciousStone", quantityType: "Strand" },
       },
       {
         text: "Piece",
         url: "/resources",
-        query: { clazz: "SemiPrecious", quantityType: "Piece" },
+        query: { clazz: "SemiPreciousStone", quantityType: "Piece" },
       },
     ],
     icon: "mdi-alpha-s-box-outline",

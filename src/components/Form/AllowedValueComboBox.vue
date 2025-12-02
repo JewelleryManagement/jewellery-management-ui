@@ -127,7 +127,7 @@ watch(
   ([newModelValue]) => {
     if (newModelValue) {
       onValueChange(newModelValue);
-    }
+    } else sku.value = "";
   },
   { immediate: true }
 );
