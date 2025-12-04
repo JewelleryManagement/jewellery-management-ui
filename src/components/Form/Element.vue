@@ -16,7 +16,7 @@
     :rules="smallInputRules"
     :resource-clazz="resourceClazz"
     field-name="quantityType"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -77,14 +77,10 @@ const largeFieldRules = useTextFieldLargeRules();
 const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
 
-const quantityTypeOptions = computed(
-  () =>
-    (quantityTypeOptions.value = getAllowedValue(
-      store,
-      resourceClazz,
-      "quantityType"
-    ))
+const quantityTypeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quantityType")
 );
+
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
@@ -93,6 +89,8 @@ const fetchAllowedValuesOptions = async () => {
   isFetching.value = false;
 };
 
+// When fullPath changes, reinitialize allowed value details
+// immediate: true - execute on first render
 watch(
   () => route.fullPath,
   () => {

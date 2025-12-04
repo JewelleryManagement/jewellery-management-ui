@@ -68,7 +68,6 @@ const actions = {
     try {
       const params = { resourceClazz, fieldName };
       const { data } = await AllowedValuesService.get(params);
-      // Map to array of value strings only
       const values = Array.isArray(data)
         ? data.map((item) => ({
             value: item.value,

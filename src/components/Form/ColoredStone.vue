@@ -21,7 +21,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="shape"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -57,7 +57,7 @@
     :rules="numberFieldRules"
     :resource-clazz="resourceClazz"
     field-name="carat"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -68,7 +68,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="color"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -80,7 +80,7 @@
     :rules="useTextFieldRules()"
     :resource-clazz="resourceClazz"
     field-name="colorHue"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -91,7 +91,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="clarity"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -102,7 +102,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="cut"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -114,7 +114,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="treatment"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -133,7 +133,7 @@
     :rules="useTextFieldLargeRules()"
     :resource-clazz="resourceClazz"
     field-name="certificate"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-textarea
@@ -217,7 +217,6 @@ const caratOptions = computed(() =>
 const colorOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "color")
 );
-
 const colorHueOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "colorHue")
 );
@@ -225,11 +224,9 @@ const clarityOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "clarity")
 );
 const cutOptions = computed(() => getAllowedValue(store, resourceClazz, "cut"));
-
 const treatmentOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "treatment")
 );
-
 const certificateOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "certificate")
 );
@@ -237,34 +234,34 @@ const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
   await fetchAllowedValues(store, resourceClazz, [
-    "color",
-    "cut",
-    "clarity",
-    "quantityType",
     "shape",
+    "carat",
+    "color",
     "colorHue",
+    "clarity",
+    "cut",
     "treatment",
     "certificate",
-    "carat",
   ]);
 
   isFetching.value = false;
 };
 
+// When type changes, update the store with the new allowed value (e.g. { type: "Sapphire", sku: "Sp" })
+// immediate: true - execute on first render
 watch(
   () => formData.value.type,
-  (newVal) => {
-    if (newVal) {
-      const normalizedValue = newVal.replace(/\s+/g, "");
-      updateAllowedValueDetail(
-        "type",
-        initialAllowedValueDetails[normalizedValue]
-      );
+  (newValue) => {
+    if (newValue) {
+      updateAllowedValueDetail("type", initialAllowedValueDetails[newValue]);
     }
   },
   { immediate: true }
 );
 
+// When fullPath changes, reinitialize allowed value details and quantityType
+// When quantityType changes, reinitialize allowed value details (e.g. after a reset)
+// immediate: true - execute on first render
 watch(
   [() => route.fullPath, () => formData.value.quantityType],
   () => {

@@ -21,7 +21,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="color"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -32,7 +32,7 @@
     :rules="numberFieldRules"
     :resource-clazz="resourceClazz"
     field-name="purity"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -117,7 +117,7 @@ const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const typeOptions = ["Gold ", "Silver", "Platinum", "Other"];
+const typeOptions = ["Gold", "Silver", "Platinum", "Other"];
 const colorOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "color")
 );
@@ -127,31 +127,26 @@ const purityOptions = computed(() =>
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
-  await fetchAllowedValues(store, resourceClazz, [
-    "type",
-    "quantityType",
-    "color",
-    "plating",
-    "purity",
-  ]);
+  await fetchAllowedValues(store, resourceClazz, ["color", "purity"]);
 
   isFetching.value = false;
 };
 
+// When quantityType changes, update the store with the new allowed value (e.g. { type: "Gold", sku: "G" })
+// immediate: true - execute on first render
 watch(
   () => formData.value.type,
-  (newVal) => {
-    if (newVal) {
-      const normalizedValue = newVal.replace(/\s+/g, "");
-      updateAllowedValueDetail(
-        "type",
-        initialAllowedValueDetails[normalizedValue]
-      );
+  (newValue) => {
+    if (newValue) {
+      updateAllowedValueDetail("type", initialAllowedValueDetails[newValue]);
     }
   },
   { immediate: true }
 );
 
+// When fullPath changes, reinitialize allowed value details and quantityType
+// When quantityType changes, reinitialize allowed value details (e.g. after a reset)
+// immediate: true - execute on first render
 watch(
   [() => route.fullPath, () => formData.value.quantityType],
   () => {

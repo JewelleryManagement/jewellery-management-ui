@@ -151,12 +151,12 @@ const mainMenuPages = [
       {
         text: "Natural Melee",
         url: "/resources",
-        query: { clazz: "DiamondMelee", quantityType: "Natural" },
+        query: { clazz: "DiamondMelee", type: "Natural" },
       },
       {
         text: "Lab Grown Melee",
         url: "/resources",
-        query: { clazz: "DiamondMelee", quantityType: "LabGrown" },
+        query: { clazz: "DiamondMelee", type: "LabGrown" },
       },
     ],
     icon: "mdi-alpha-d-box",
@@ -264,7 +264,7 @@ const mainMenuPages = [
         query: { clazz: "Element" },
       },
     ],
-    icon: "mdi-closed-caption-outline",
+    icon: "mdi-alpha-e-box-outline",
     active: false,
   },
   {

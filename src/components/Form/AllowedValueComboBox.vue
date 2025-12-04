@@ -6,7 +6,7 @@
       :items="displayItems ? items.map((o) => o.value) : []"
       :label="label"
       :rules="rules"
-      :disabled="isFetched"
+      :disabled="isFetching"
       clearable
       :style="displaySku ? 'max-width: 300px' : ''"
       :class="displaySku ? 'me-4' : ''"
@@ -44,7 +44,7 @@
       @update:model-value="onSkuChange"
       label="SKU"
       :rules="applySkuRules()"
-      :disabled="isFetched || isSkuLocked || !props.modelValue"
+      :disabled="isFetching || isSkuLocked || !props.modelValue"
       clearable
       style="max-width: 160px"
     />
@@ -83,7 +83,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  isFetched: Boolean,
+  isFetching: Boolean,
 });
 
 const sku = ref("");
@@ -122,8 +122,11 @@ const updateAllowedValueDetails = (val) => {
 
 const emit = defineEmits(["update:modelValue", "update:allowedValueDetails"]);
 
+// Reinitialize allowed value state whenever modelValue or isFetching change.
+// This handles cases like form resets or loading existing data (edit mode),
+// ensuring modelValue and related SKU fields stay in sync.
 watch(
-  [() => props.modelValue, () => props.items],
+  [() => props.modelValue, () => props.isFetching],
   ([newModelValue]) => {
     if (newModelValue) {
       onValueChange(newModelValue);

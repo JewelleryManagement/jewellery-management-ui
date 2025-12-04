@@ -56,6 +56,7 @@ export default {
       { key: "shapeSpecification", title: "Shape Specifications" },
       { key: "colorHue", title: "Color Hue" },
       { key: "sku", title: "Sku" },
+      { key: "clarity", title: "Clarity" },
       { key: "polish", title: "Polish" },
       { key: "symmetry", title: "Symmetry" },
       { key: "fluorescence", title: "Fluorescence" },
@@ -69,17 +70,17 @@ export default {
       },
       Diamond: {
         Natural: { clazz: "Diamond", type: "Natural" },
-        LabGrown: { clazz: "Diamond", type: "Lab Grown" },
+        "Lab Grown": { clazz: "Diamond", type: "Lab Grown" },
       },
       DiamondMelee: {
         Natural: { clazz: "DiamondMelee", type: "Natural" },
-        LabGrown: { clazz: "DiamondMelee", type: "Lab Grown" },
+        "Lab Grown": { clazz: "DiamondMelee", type: "Lab Grown" },
       },
       ColoredStone: {
         Piece: { clazz: "ColoredStone", quantityType: "Piece" },
       },
       ColoredStoneMelee: {
-        Piece: { clazz: "ColoredStoneMelee", type: "Piece" },
+        Piece: { clazz: "ColoredStoneMelee", quantityType: "Piece" },
       },
       SemiPreciousStone: {
         Strand: { clazz: "SemiPreciousStone", quantityType: "Strand" },
@@ -91,6 +92,30 @@ export default {
         Platinum: { clazz: "Metal", type: "Platinum" },
         Other: { clazz: "Metal", type: "Other" },
       },
+    },
+    titles: {
+      Pearl: {
+        title: "Pearl",
+      },
+      Diamond: {
+        title: "Diamond",
+      },
+      DiamondMelee: {
+        title: "Diamond Melee",
+      },
+      ColoredStone: {
+        title: "Colored Stone",
+      },
+      ColoredStoneMelee: {
+        title: "Colored Stone Melee",
+      },
+      SemiPreciousStone: {
+        title: "Semi Precious Stone",
+      },
+      Metal: {
+        title: "Metal",
+      },
+      Element: { title: "Element" },
     },
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnDelete: { key: "delete", title: "", slot: "delete" },
@@ -226,7 +251,7 @@ export default {
         "clarity",
         "cut",
         "polish",
-        "symmety",
+        "symmetry",
         "fluorescence",
         "pricePerQuantity",
         "certificate",
@@ -323,5 +348,8 @@ export default {
     getResourceDetails: (state) => state.resourceDetails,
     getResourceQuery: (state) => (clazz, type) =>
       state.resourceQueries[clazz]?.[type] ?? null,
+    getTitle: (state) => (key) => {
+      return state.titles[key]?.title || null;
+    },
   },
 };

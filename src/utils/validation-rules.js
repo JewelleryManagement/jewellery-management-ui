@@ -17,11 +17,11 @@ export function useTextFieldRules() {
 }
 export function useTextFieldLargeRules() {
   return [
-    (v) => !!v || `Input field is required`,
     (v) => {
       if (typeof v === "object" && v !== null && "value" in v) {
         return v.value.length <= 50 || "Input must be less than 50 characters";
       }
+      if (v == null || v === "") return true;
       return (v && v.length <= 50) || "Input must be less than 50 characters";
     },
   ];

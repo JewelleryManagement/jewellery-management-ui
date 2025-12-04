@@ -15,7 +15,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="type"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -26,7 +26,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="quality"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -38,7 +38,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="shape"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -49,7 +49,7 @@
     :rules="useTextFieldRules()"
     :resource-clazz="resourceClazz"
     field-name="shapeSpecification"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -60,7 +60,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="color"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -71,7 +71,7 @@
     :rules="useTextFieldRules()"
     :resource-clazz="resourceClazz"
     field-name="colorHue"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -82,7 +82,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="Size"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -131,6 +131,15 @@ const setInitialAllowedValueDetails = () => {
   updateAllowedValueDetail("clazz", initialAllowedValueDetails.clazz);
 };
 
+const updateQuantityTypeOnChange = (newValue) => {
+  if (newValue) {
+    updateAllowedValueDetail(
+      "quantityType",
+      initialAllowedValueDetails[newValue]
+    );
+  }
+};
+
 const updateAllowedValueDetail = (key, value) => {
   store.dispatch("allowedValues/setAllowedValueDetail", {
     [key]: value,
@@ -143,24 +152,24 @@ const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
+const quantityTypeOptions = ["Strand", "Piece"];
 const typeOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "type")
 );
 const qualityOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "quality")
 );
-const quantityTypeOptions = ["Strand", "Piece"];
-const colorOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "color")
-);
-const colorHueOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "colorHue")
-);
 const shapeOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "shape")
 );
 const shapeSpecificationOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "shapeSpecification")
+);
+const colorOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "color")
+);
+const colorHueOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "colorHue")
 );
 const sizeOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "size")
@@ -172,10 +181,9 @@ const fetchAllowedValuesOptions = async () => {
   await fetchAllowedValues(store, resourceClazz, [
     "type",
     "quality",
-    "quantityType",
-    "color",
     "shape",
     "shapeSpecification",
+    "color",
     "colorHue",
     "size",
   ]);
@@ -183,19 +191,19 @@ const fetchAllowedValuesOptions = async () => {
   isFetching.value = false;
 };
 
+// When quantityType changes, update the store with the new allowed value (e.g. { quantityType: "Piece", sku: "P" })
+// immediate: true - execute on first render
 watch(
   () => formData.value.quantityType,
-  (newVal) => {
-    if (newVal) {
-      updateAllowedValueDetail(
-        "quantityType",
-        initialAllowedValueDetails[newVal]
-      );
-    }
+  (newValue) => {
+    updateQuantityTypeOnChange(newValue);
   },
   { immediate: true }
 );
 
+// When fullPath changes, reinitialize allowed value details
+// When quantityType changes, reinitialize allowed value details (e.g. after a reset)
+// immediate: true - execute on first render
 watch(
   [() => route.fullPath, () => formData.value.quantityType],
   () => {

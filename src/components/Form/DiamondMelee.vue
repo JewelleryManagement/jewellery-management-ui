@@ -21,7 +21,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="shape"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -32,7 +32,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="size"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -50,7 +50,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="color"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -61,7 +61,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="clarity"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -72,7 +72,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="cut"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -115,7 +115,7 @@ const initialAllowedValueDetails = {
   clazz: { value: "DiamondMelee", sku: "D" },
   quantityType: { value: "Piece", sku: "M" },
   Natural: { value: "Natural", sku: "Nat" },
-  LabGrown: { value: "Lab Grown", sku: "Lab" },
+  "Lab Grown": { value: "Lab Grown", sku: "Lab" },
 };
 
 const setInitialValues = () => {
@@ -174,30 +174,31 @@ const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
   await fetchAllowedValues(store, resourceClazz, [
-    "color",
-    "cut",
-    "clarity",
-    "quantityType",
     "shape",
+    "size",
+    "color",
+    "clarity",
+    "cut",
   ]);
 
   isFetching.value = false;
 };
 
+// When type changes, update the store with the new allowed value (e.g. { type: "Natural", sku: "N" })
+// immediate: true - execute on first render
 watch(
   () => formData.value.type,
-  (newVal) => {
-    if (newVal) {
-      const normalizedValue = newVal.replace(/\s+/g, "");
-      updateAllowedValueDetail(
-        "type",
-        initialAllowedValueDetails[normalizedValue]
-      );
+  (newValue) => {
+    if (newValue) {
+      updateAllowedValueDetail("type", initialAllowedValueDetails[newValue]);
     }
   },
   { immediate: true }
 );
 
+// When fullPath changes, reinitialize allowed value details and quantityType
+// When quantityType changes, reinitialize allowed value details (e.g. after a reset)
+// immediate: true - execute on first render
 watch(
   [() => route.fullPath, () => formData.value.quantityType],
   () => {

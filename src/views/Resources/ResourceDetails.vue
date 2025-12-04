@@ -26,6 +26,7 @@
             v-model="sku"
             label="Stock Keeping Unit"
             max-width="300"
+            :rules="largeFieldRules"
             required
             clearable
           ></v-text-field>
@@ -56,6 +57,12 @@ import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
+import {
+  useTextFieldLargeRules,
+  useInputValidate,
+} from "@/utils/validation-rules";
+
+const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
 const props = defineProps({
   id: String,
@@ -74,7 +81,7 @@ const options = ref([
   "SemiPreciousStone",
 ]);
 const pageTitle = computed(() =>
-  route.query.clazz ? `Add ${route.query.clazz}` : route.meta.title
+  store.getters["resources/getTitle"](selected.value)
 );
 
 const resourceDetails = computed(
@@ -94,86 +101,23 @@ const form = ref(null);
 
 const sku = ref("");
 
-const fieldOrder = {
-  Pearl: [
-    "clazz",
-    "quantityType",
-    "type",
-    "quality",
-    "shape",
-    "shapeSpecification",
-    "color",
-    "colorHue",
-    "size",
-  ],
-
-  Diamond: [
-    "clazz",
-    "type",
-    "shape",
-    "carat",
-    "color",
-    "clarity",
-    "cut",
-    "polish",
-    "symmetry",
-    "fluorescence",
-    "certificate",
-  ],
-
-  DiamondMelee: [
-    "clazz",
-    "quantityType",
-    "type",
-    "shape",
-    "size",
-    "color",
-    "clarity",
-    "cut",
-  ],
-
-  ColoredStone: [
-    "clazz",
-    "type",
-    "shape",
-    "carat",
-    "color",
-    "clarity",
-    "cut",
-    "certificate",
-  ],
-  ColoredStoneMelee: [
-    "clazz",
-    "quantityType",
-    "type",
-    "shape",
-    "size",
-    "color",
-    "colorHue",
-    "clarity",
-    "cut",
-  ],
-
-  SemiPreciousStone: [
-    "clazz",
-    "quantityType",
-    "type",
-    "quality",
-    "shape",
-    "shapeSpecification",
-    "color",
-    "colorHue",
-    "size",
-  ],
-
-  Metal: ["clazz", "type", "color", "purity"],
-
-  Element: ["clazz", "quantityType"],
+const columnGettersMap = {
+  Element: "resources/getColumnsForElement",
+  Pearl: "resources/getColumnsForPearl",
+  Metal: "resources/getColumnsForMetal",
+  Diamond: "resources/getColumnsForDiamond",
+  DiamondMelee: "resources/getColumnsForDiamondMelee",
+  ColoredStone: "resources/getColumnsForColoredStone",
+  ColoredStoneMelee: "resources/getColumnsForColoredStoneMelee",
+  SemiPreciousStone: "resources/getColumnsForSemiPreciousStone",
 };
 
 const generateSku = () => {
-  sku.value = fieldOrder[selected.value]
-    .map((key) => allowedValueDetail.value[key]?.sku)
+  const getterName = columnGettersMap[selected.value];
+  const order = store.getters[getterName || "resources/getColumns"];
+
+  sku.value = order
+    .map((col) => allowedValueDetail.value[col.key]?.sku)
     .filter((s) => s && s !== "")
     .join(".");
 };
@@ -197,30 +141,52 @@ const resetForm = () => {
   }
 };
 
+const clearAllowedValueDetails = () => {
+  store.dispatch("allowedValues/clearAllowedValueDetails");
+};
+
+const clearResourceDetails = (clazz) => {
+  store.dispatch("resources/setResourceDetails", { clazz: clazz });
+};
+
+const handleRouteChange = () => {
+  clearAllowedValueDetails();
+
+  if (!isEditState.value && !isDuplicateState.value) {
+    sku.value = "";
+  }
+
+  if (route.query.clazz) {
+    selected.value = route.query.clazz;
+    clearResourceDetails(selected.value);
+  }
+
+  if (route.path.startsWith("/resources/add") && !route.query.clazz) {
+    selected.value = "";
+  } else {
+    loadResourceDetails();
+  }
+};
+
+// Handle all route fullPath changes: reset state and process clazz logic.
 watch(
   () => route.fullPath,
   () => {
-    store.dispatch("allowedValues/clearAllowedValueDetails");
-    if (!isEditState.value && !isDuplicateState.value) sku.value = "";
-    if (!!route.query.clazz) {
-      selected.value = route.query.clazz;
-      store.dispatch("resources/setResourceDetails", { clazz: selected.value });
-    }
-    if (
-      route.path.startsWith("/resources/add") &&
-      !!route.query.clazz == false
-    ) {
-      selected.value = "";
-    } else loadResourceDetails();
+    handleRouteChange();
   },
   { immediate: true }
 );
 
-watch(selected, (newValue) => {
+const clearState = (newValue) => {
   if (!isEditState.value && !isDuplicateState.value) {
-    store.dispatch("resources/setResourceDetails", { clazz: newValue });
+    clearResourceDetails(newValue);
   }
-  store.dispatch("allowedValues/clearAllowedValueDetails");
+  clearAllowedValueDetails;
+};
+
+//when selected changes, clear ResourceDetails and AllowedValueDetails state
+watch(selected, (newValue) => {
+  clearState(newValue);
 });
 
 const handleSubmit = async () => {
@@ -233,65 +199,16 @@ const handleSubmit = async () => {
     }
   }
 };
-const allowedFieldsByType = {
-  Metal: ["color", "purity"],
-  Pearl: [
-    "type",
-    "quantityType",
-    "quality",
-    "color",
-    "shape",
-    "shapeSpecification",
-    "colorHue",
-    "size",
-  ],
-  Diamond: [
-    "color",
-    "colorHue",
-    "cut",
-    "clarity",
-    "quantityType",
-    "shape",
-    "type",
-    "carat",
-    "polish",
-    "symmetry",
-    "fluorescence",
-    "certificate",
-  ],
-  DiamondMelee: ["shape", "size", "color", "clarity", "cut"],
-  ColoredStone: [
-    "shape",
-    "carat",
-    "color",
-    "colorHue",
-    "clarity",
-    "cut",
-    "treatment",
-    "certificate",
-  ],
-  ColoredStoneMelee: ["shape", "size", "color", "colorHue", "clarity", "cut"],
-  SemiPreciousStone: [
-    "type",
-    "quality",
-    "shape",
-    "shapeSpecification",
-    "color",
-    "colorHue",
-    "size",
-  ],
-  Element: ["quantityType"],
-};
 
 const getQuery = () => {
   return (
     store.getters["resources/getResourceQuery"](
       selected.value,
-      resourceDetails.value.type.replace(/\s+/g, "")
+      resourceDetails.value.type
     ) ||
     store.getters["resources/getResourceQuery"](
       selected.value,
-      resourceDetails.value.quantityType.replace(/\s+/g, "")
+      resourceDetails.value.quantityType
     )
   );
 };
@@ -307,14 +224,15 @@ const navigateToResourcePage = () => {
 
 const editResource = async () => {
   try {
-    const fields = allowedFieldsByType[selected.value] || [];
     await addNewAllowedValuesIfNeeded(
       store,
       selected.value,
-      allowedValueDetail.value,
-      fields
+      allowedValueDetail.value
     );
-    await store.dispatch("resources/updateResource", resourceDetails.value);
+    await store.dispatch("resources/updateResource", {
+      ...resourceDetails.value,
+      sku: sku.value,
+    });
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
     navigateToResourcePage();
   } catch (error) {
@@ -324,14 +242,10 @@ const editResource = async () => {
 
 const createResource = async () => {
   try {
-    console.log(resourceDetails.value);
-    console.log(allowedValueDetail.value);
-    const fields = allowedFieldsByType[selected.value] || [];
     await addNewAllowedValuesIfNeeded(
       store,
       selected.value,
-      allowedValueDetail.value,
-      fields
+      allowedValueDetail.value
     );
     await store.dispatch("resources/createResource", {
       ...resourceDetails.value,

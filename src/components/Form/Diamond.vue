@@ -21,7 +21,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="shape"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -57,7 +57,7 @@
     :rules="numberFieldRules"
     :resource-clazz="resourceClazz"
     field-name="carat"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -68,7 +68,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="color"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -80,7 +80,7 @@
     :rules="useTextFieldRules()"
     :resource-clazz="resourceClazz"
     field-name="colorHue"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -91,7 +91,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="clarity"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -102,7 +102,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="cut"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -113,7 +113,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="polish"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -124,7 +124,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="symmetry"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -135,7 +135,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="fluorescence"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -154,7 +154,7 @@
     :rules="useTextFieldLargeRules()"
     :resource-clazz="resourceClazz"
     field-name="certificate"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-textarea
@@ -190,7 +190,7 @@ const initialAllowedValueDetails = {
   clazz: { value: "diamond", sku: "D" },
   quantityType: "Piece",
   Natural: { value: "Natural", sku: "Nat" },
-  LabGrown: { value: "Lab Grown", sku: "Lab" },
+  "Lab Grown": { value: "Lab Grown", sku: "Lab" },
 };
 
 const setInitialValues = () => {
@@ -262,36 +262,36 @@ const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
   await fetchAllowedValues(store, resourceClazz, [
-    "color",
-    "cut",
-    "clarity",
-    "quantityType",
     "shape",
+    "carat",
+    "color",
     "colorHue",
+    "clarity",
+    "cut",
     "polish",
     "symmetry",
     "fluorescence",
     "certificate",
-    "carat",
   ]);
 
   isFetching.value = false;
 };
 
+// When type changes, update the store with the new allowed value (e.g. { type: "Natural", sku: "N" })
+// immediate: true - execute on first render
 watch(
   () => formData.value.type,
-  (newVal) => {
-    if (newVal) {
-      const normalizedValue = newVal.replace(/\s+/g, "");
-      updateAllowedValueDetail(
-        "type",
-        initialAllowedValueDetails[normalizedValue]
-      );
+  (newValue) => {
+    if (newValue) {
+      updateAllowedValueDetail("type", initialAllowedValueDetails[newValue]);
     }
   },
   { immediate: true }
 );
 
+// When fullPath changes, reinitialize allowed value details and quantityType
+// When quantityType changes, reinitialize allowed value details (e.g. after a reset)
+// immediate: true - execute on first render
 watch(
   [() => route.fullPath, () => formData.value.quantityType],
   () => {

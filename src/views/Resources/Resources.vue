@@ -4,7 +4,7 @@
       {{
         selectedResourceClazz === "All"
           ? "All resources table"
-          : `${selectedButton || ""} ${selectedResourceClazz}s table`
+          : `${selectedButton || ""} ${title}s table`
       }}
     </v-container>
     <div class="d-flex justify-space-between">
@@ -20,7 +20,9 @@
           {{ resourceType }}
         </v-btn>
       </div>
-      <table-button path="/resources/add">Add resource</table-button>
+      <table-button :path="`/resources/add?clazz=${selectedResourceClazz}`"
+        >Add {{ title }}</table-button
+      >
     </div>
 
     <resource-table
@@ -51,18 +53,21 @@ const resourceTypes = ref({
   ColoredStoneMelee: ["Piece"],
   SemiPreciousStone: ["Strand", "Piece"],
   Metal: ["Gold", "Silver", "Platinum", "Other"],
-  ClaspAndComponents: ["Pre-made", "Crafted"],
 });
+
+const title = computed(() =>
+  store.getters["resources/getTitle"](selectedResourceClazz.value)
+);
 
 const currentResourceTypes = computed(() => {
   return resourceTypes.value[selectedResourceClazz.value] || [];
 });
 
-const filterResourcesByType = (title) => {
-  selectedButton.value = title;
+const filterResourcesByType = (resourceType) => {
+  selectedButton.value = resourceType;
   const query = store.getters["resources/getResourceQuery"](
     selectedResourceClazz.value,
-    title.replace(/\s+/g, "")
+    resourceType
   );
   router.replace({
     query: query,

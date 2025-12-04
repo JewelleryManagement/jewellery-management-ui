@@ -21,7 +21,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="shape"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -32,7 +32,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="size"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -50,7 +50,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="color"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -58,10 +58,10 @@
     v-model:allowed-value-details="allowedValueDetail.colorHue"
     :items="colorHueOptions"
     label="Color Hue"
-    :rules="smallFieldRules"
+    :rules="useTextFieldRules()"
     :resource-clazz="resourceClazz"
     field-name="colorHue"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -72,7 +72,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="clarity"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -83,7 +83,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="cut"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -95,7 +95,7 @@
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="treatment"
-    :is-fetched="isFetching"
+    :is-fetching="isFetching"
   />
 
   <v-text-field
@@ -204,30 +204,33 @@ const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
   await fetchAllowedValues(store, resourceClazz, [
-    "color",
-    "cut",
-    "clarity",
-    "quantityType",
     "shape",
+    "size",
+    "color",
+    "colorHue",
+    "clarity",
+    "cut",
+    "treatment",
   ]);
 
   isFetching.value = false;
 };
 
+// When type changes, update the store with the new allowed value (e.g. { type: "Sapphire", sku: "Sp" })
+// immediate: true - execute on first render
 watch(
   () => formData.value.type,
-  (newVal) => {
-    if (newVal) {
-      const normalizedValue = newVal.replace(/\s+/g, "");
-      updateAllowedValueDetail(
-        "type",
-        initialAllowedValueDetails[normalizedValue]
-      );
+  (newValue) => {
+    if (newValue) {
+      updateAllowedValueDetail("type", initialAllowedValueDetails[newValue]);
     }
   },
   { immediate: true }
 );
 
+// When fullPath changes, reinitialize allowed value details and quantityType
+// When quantityType changes, reinitialize allowed value details (e.g. after a reset)
+// immediate: true - execute on first render
 watch(
   [() => route.fullPath, () => formData.value.quantityType],
   () => {

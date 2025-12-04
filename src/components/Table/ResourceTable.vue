@@ -51,6 +51,7 @@ const props = defineProps({
 });
 const internalClazzChoice = computed(() => props.selectedResourceClazz);
 
+// When props.selectedResourceClazz changes, initialize newSortChoice for table columns
 watch(
   () => props.selectedResourceClazz,
   (newSortChoice) => {
