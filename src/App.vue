@@ -97,7 +97,7 @@ const mainMenuPages = [
     active: false,
   },
   {
-    link: { text: "Pearls", url: "/resources" },
+    link: { text: "Pearl", url: "/resources" },
     children: [
       {
         text: "Add Pearl",
@@ -197,7 +197,7 @@ const mainMenuPages = [
     active: false,
   },
   {
-    link: { text: "Semi Precious", url: "/resources" },
+    link: { text: "Semi Precious Stone", url: "/resources" },
     children: [
       {
         text: "Add Semi Precious Stone",

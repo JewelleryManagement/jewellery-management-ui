@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { navigateViaNavbar } from "tests/utils/functions";
+import { resourceTypesData } from "tests/utils/resourceTypes";
 
 const wait = (seconds) => {
   return new Promise((resolve) => {
@@ -15,67 +16,37 @@ const login = async (page) => {
   await wait(3);
 };
 
-const navigateToResourcePage = async (page) => {
-  await navigateViaNavbar(page, expect, {
-    navParentButtonText: "Resources",
-    expectedUrl: "/home",
-    navChildButtonText: "All",
-    expectedNewUrl: "/resources",
-    expectedHeader: "All resources table",
-  });
-};
-
-const resourceTypes = [
-  { label: "All", tableText: "All resources table" },
-  { label: "Pearl", tableText: "Pearl's resources table" },
-  { label: "Metal", tableText: "Metal's resources table" },
-  { label: "Element", tableText: "Element's resources table" },
-  { label: "PreciousStone", tableText: "PreciousStone's resources table" },
-  {
-    label: "SemiPreciousStone",
-    tableText: "SemiPreciousStone's resources table",
-  },
-];
-
-const filterResourceTable = async (page, resourceTypeBtn) => {
-  for (const { label, tableText } of resourceTypes) {
-    await resourceTypeBtn.click();
-    await page
-      .locator(".v-overlay__content")
-      .getByText(label, { exact: true })
-      .click();
-    await expect(page.getByText(tableText)).toBeVisible();
-  }
-};
-
 test.beforeEach(async ({ page }) => {
   await login(page);
-  await navigateToResourcePage(page);
 });
 
 test.afterEach(async ({ page }) => {
   await page.close();
 });
 
-test("FIlter button and its menu is visible ", async ({ page }) => {
-  await expect(
-    page.getByRole("button", { name: "Resource Type" })
-  ).toBeVisible();
+for (const {
+  type,
+  button,
+  childButton,
+  filter,
+  filterValue,
+  filterButtonValues,
+} of resourceTypesData) {
+  test(`${type} filter buttons are visible `, async ({ page }) => {
+    if (type === "Element") return;
+    await navigateViaNavbar(page, expect, {
+      navParentButtonText: button,
+      expectedUrl: "/home",
+      navChildButtonText: childButton,
+      expectedNewUrl: `/resources?clazz=${type}&${filter}=${filterValue}`,
+      expectedHeader: `${filterValue} ${button}s  table`,
+    });
 
-  await page.getByRole("button", { name: "Resource Type" }).click();
-
-  for (const resourceType of resourceTypes) {
-    await expect(
-      page.locator("div").filter({ hasText: resourceType.label }).first()
-    ).toBeVisible();
-  }
-});
-
-test("Clicking fast on filter button works ", async ({ page }) => {
-  const resourceTypeBtn = page.getByRole("button", { name: "Resource Type" });
-  await expect(resourceTypeBtn).toBeVisible();
-
-  await filterResourceTable(page, resourceTypeBtn);
-  await filterResourceTable(page, resourceTypeBtn);
-  await filterResourceTable(page, resourceTypeBtn);
-});
+    for (const filterButton of filterButtonValues) {
+      await page.locator(".v-btn", { hasText: filterButton }).click();
+      await expect(
+        page.getByText(`${filterButton} ${button}s  table`)
+      ).toBeVisible();
+    }
+  });
+}

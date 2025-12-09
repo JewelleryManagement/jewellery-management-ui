@@ -34,14 +34,19 @@ export const navigateViaNavbar = async (
   await drawer.getByText(navParentButtonText, { exact: true }).click();
   await expect(page).toHaveURL(expectedUrl);
   await expect(
-    drawer.getByText(navChildButtonText, { exact: true })
+    drawer.getByRole("group").getByText(navChildButtonText, { exact: true })
   ).toBeVisible();
   await wait(1);
 
-  await drawer.getByText(navChildButtonText, { exact: true }).click();
+  await drawer
+    .getByRole("group")
+    .getByText(navChildButtonText, { exact: true })
+    .click();
   await expect(page).toHaveURL(expectedNewUrl);
-  wait(1);
-  await expect(page.getByText(expectedHeader, { exact: true })).toBeVisible();
+  await wait(1);
+  await expect(
+    page.locator(".v-main").getByText(expectedHeader, { exact: true })
+  ).toBeVisible();
   await wait(1);
 };
 

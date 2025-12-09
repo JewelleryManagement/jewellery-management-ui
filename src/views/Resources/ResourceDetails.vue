@@ -1,7 +1,7 @@
 <template>
   <v-container class="my-12" fluid>
     <div class="mx-auto text-center mb-6 text-h5">
-      {{ pageTitle }}
+      {{ `Add ${pageTitle}` }}
     </div>
 
     <v-sheet width="470" class="mx-auto">
@@ -80,8 +80,8 @@ const options = ref([
   "ColoredStoneMelee",
   "SemiPreciousStone",
 ]);
-const pageTitle = computed(() =>
-  store.getters["resources/getTitle"](selected.value)
+const pageTitle = computed(
+  () => store.getters["resources/getTitle"](selected.value) || "Resource"
 );
 
 const resourceDetails = computed(
