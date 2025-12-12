@@ -27,6 +27,16 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref, provide, computed } from "vue";
+import {
+  PEARL_CLAZZ,
+  DIAMOND_CLAZZ,
+  DIAMON_MELEE_CLAZZ,
+  COLORED_STONE_CLAZZ,
+  COLORED_STONE_MELEE_CLAZZ,
+  SEMI_PRECIOUS_STONE_CLAZZ,
+  METAL_CLAZZ,
+  ELEMENT_CLAZZ,
+} from "./utils/clazzConstants";
 
 import NavBar from "./components/Nav/NavBar.vue";
 import SnackBar from "./components/Popup/SnackBar.vue";
@@ -72,7 +82,27 @@ const logoutHandler = () => {
   router.push("/login");
 };
 
-const mainMenuPages = [
+const useResourceButtons = (clazz) => {
+  const queries = computed(
+    () => store.getters["resources/getAllResourceQueries"](clazz) || {}
+  );
+
+  return computed(() =>
+    Object.entries(queries.value).map(([value, obj]) => {
+      const fieldName = Object.keys(obj).find(
+        (objField) => objField !== "clazz"
+      );
+
+      return {
+        text: value,
+        url: "/resources",
+        query: { clazz, [fieldName]: value },
+      };
+    })
+  );
+};
+
+const mainMenuPages = computed(() => [
   {
     link: { text: "Home", url: "/" },
     icon: "mdi-home",
@@ -88,25 +118,116 @@ const mainMenuPages = [
     active: false,
   },
   {
-    link: { text: "Resources", url: "/resources" },
+    link: { text: "All Resources", url: "/resources" },
     children: [
       { text: "Add Resource", url: "/resources/add" },
       { text: "All", url: "/resources" },
-      { text: "Pearl", url: "/resources", query: { filter: "Pearl" } },
-      { text: "Metal", url: "/resources", query: { filter: "Metal" } },
-      { text: "Element", url: "/resources", query: { filter: "Element" } },
-      {
-        text: "PreciousStone",
-        url: "/resources",
-        query: { filter: "PreciousStone" },
-      },
-      {
-        text: "SemiPreciousStone",
-        url: "/resources",
-        query: { filter: "SemiPreciousStone" },
-      },
     ],
     icon: "mdi-diamond-stone",
+    active: false,
+  },
+  {
+    link: { text: "Pearl", url: "/resources" },
+    children: [
+      {
+        text: "Add Pearl",
+        url: "/resources/add",
+        query: { clazz: PEARL_CLAZZ },
+      },
+      ...useResourceButtons(PEARL_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-p-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Diamond", url: "/resources" },
+    children: [
+      {
+        text: "Add Diamond",
+        url: "/resources/add",
+        query: { clazz: DIAMOND_CLAZZ },
+      },
+      ...useResourceButtons(DIAMOND_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-d-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Diamond Melee", url: "/resources" },
+    children: [
+      {
+        text: "Add Diamond Melee",
+        url: "/resources/add",
+        query: { clazz: DIAMON_MELEE_CLAZZ },
+      },
+      ...useResourceButtons(DIAMON_MELEE_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-d-box",
+    active: false,
+  },
+  {
+    link: { text: "Colored Stone", url: "/resources" },
+    children: [
+      {
+        text: "Add Colored Stone",
+        url: "/resources/add",
+        query: { clazz: COLORED_STONE_CLAZZ },
+      },
+      ...useResourceButtons(COLORED_STONE_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-c-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Colored Stone Melee", url: "/resources" },
+    children: [
+      {
+        text: "Add Colored Stone Melee",
+        url: "/resources/add",
+        query: { clazz: COLORED_STONE_MELEE_CLAZZ },
+      },
+      ...useResourceButtons(COLORED_STONE_MELEE_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-c-box",
+    active: false,
+  },
+  {
+    link: { text: "Semi Precious Stone", url: "/resources" },
+    children: [
+      {
+        text: "Add Semi Precious Stone",
+        url: "/resources/add",
+        query: { clazz: SEMI_PRECIOUS_STONE_CLAZZ },
+      },
+      ...useResourceButtons(SEMI_PRECIOUS_STONE_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-s-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Metal", url: "/resources" },
+    children: [
+      {
+        text: "Add Metal",
+        url: "/resources/add",
+        query: { clazz: METAL_CLAZZ },
+      },
+      ...useResourceButtons(METAL_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-m-box-outline",
+    active: false,
+  },
+  {
+    link: { text: "Element", url: "/resources" },
+    children: [
+      {
+        text: "Add Element",
+        url: "/resources/add",
+        query: { clazz: ELEMENT_CLAZZ },
+      },
+      ...useResourceButtons(ELEMENT_CLAZZ).value,
+    ],
+    icon: "mdi-alpha-e-box-outline",
     active: false,
   },
   {
@@ -145,7 +266,7 @@ const mainMenuPages = [
     icon: "mdi-account",
     active: false,
   },
-];
+]);
 
 const navBarButtons = ref(mainMenuPages);
 </script>

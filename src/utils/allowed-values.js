@@ -1,32 +1,41 @@
 export async function addNewAllowedValuesIfNeeded(
   store,
   resourceClazz,
-  formData,
-  fields
+  formData
 ) {
+  const fields =
+    store.getters["allowedValues/getAllowedFieldsByType"](resourceClazz);
+
   for (const fieldName of fields) {
-    const value = formData[fieldName];
+    const fieldValue = formData[fieldName];
     const allowed = store.getters["allowedValues/getAllowedValues"](
       resourceClazz,
       fieldName
     );
     if (
-      typeof value === "string" &&
-      value.trim() !== "" &&
+      fieldValue &&
+      typeof fieldValue.value === "string" &&
+      fieldValue.value.trim() !== "" &&
       !allowed.some(
-        (v) => v.trim().toLowerCase() === value.trim().toLowerCase()
+        (item) =>
+          item.value.trim().toLowerCase() ===
+            fieldValue.value.trim().toLowerCase() &&
+          item.sku.trim().toLowerCase() === fieldValue.sku.trim().toLowerCase()
       )
     ) {
       await store.dispatch("allowedValues/addAllowedValue", {
         resourceClazz,
         fieldName,
-        value: value.trim(),
+        fieldValue,
       });
     }
   }
 }
 
-export const fetchAllowedValues = async (store, resourceClazz, fields) => {
+export const fetchAllowedValues = async (store, resourceClazz) => {
+  const fields = store.getters["allowedValues/getAllowedFieldsByType"](
+    resourceClazz.value
+  );
   await Promise.all(
     fields.map((fieldName) =>
       store.dispatch("allowedValues/fetchAllowedValues", {

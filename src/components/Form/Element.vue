@@ -8,14 +8,10 @@
     required
   ></v-textarea>
 
-  <AllowedValueComboBox
+  <v-text-field
     v-model="formData.quantityType"
-    :items="quantityTypeOptions"
     label="Quantity Type"
-    :rules="smallInputRules"
-    :resource-clazz="resourceClazz"
-    field-name="quantityType"
-    :is-fetched="isFetching"
+    readonly
   />
 
   <v-text-field
@@ -37,41 +33,85 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, onMounted, ref } from "vue";
-import AllowedValueComboBox from "./AllowedValueComboBox.vue";
+import { computed, onMounted, ref, watch } from "vue";
 import {
-  useTextFieldRules,
   useTextAreaFieldRules,
   useTextFieldLargeRules,
   useNumberFieldRules,
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const store = useStore();
 const formData = computed(() => store.getters["resources/getResourceDetails"]);
 
-const resourceClazz = computed(() => formData.value?.clazz || "Element");
+const setInitialValues = () => {
+  if (!formData.value.quantityType) {
+    setInitialResourceDetails();
+  }
+  setInitialAllowedValueDetails();
+};
 
-const smallInputRules = useTextFieldRules();
+const setInitialResourceDetails = () => {
+  const quantityTypeValue = quantityTypeOptions.value[0]?.value;
+
+  if (quantityTypeValue) {
+    updateResourceDetails("quantityType", quantityTypeValue);
+  }
+};
+
+const setInitialAllowedValueDetails = () => {
+  updateAllowedValueDetail("clazz", clazzOptions.value[0]);
+  updateAllowedValueDetail("quantityType", quantityTypeOptions.value[0]);
+};
+
+const updateResourceDetails = (key, value) =>
+  store.dispatch("resources/setResourceDetailsField", { key, value });
+
+const updateAllowedValueDetail = (key, value) => {
+  store.dispatch("allowedValues/setAllowedValueDetail", {
+    [key]: value,
+  });
+};
+
+const resourceClazz = computed(() => formData.value?.clazz);
+
 const largeFieldRules = useTextFieldLargeRules();
 const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
 
-const quantityTypeOptions = computed(
-  () =>
-    (quantityTypeOptions.value = getAllowedValue(
-      store,
-      resourceClazz,
-      "quantityType"
-    ))
+const clazzOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "clazz")
 );
+const quantityTypeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quantityType")
+);
+
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
-  await fetchAllowedValues(store, resourceClazz, ["quantityType"]);
-
+  await fetchAllowedValues(store, resourceClazz);
   isFetching.value = false;
+
+  setInitialValues();
 };
+
+const resetForm = computed(
+  () => store.getters["allowedValues/getAllowedValueReset"]
+);
+
+// When fullPath changes, reinitialize allowed value details
+// When resetForm changes, reinitialize allowed value details (e.g. after a reset)
+// immediate: true - execute on first render
+watch(
+  [() => route.fullPath, () => resetForm.value],
+  () => {
+    setInitialValues();
+    store.dispatch("allowedValues/setAllowedValueReset", false);
+  },
+  { immediate: true }
+);
 
 onMounted(fetchAllowedValuesOptions);
 </script>

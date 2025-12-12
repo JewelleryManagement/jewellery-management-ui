@@ -14,6 +14,14 @@
     :items="filteredResources"
     :search="search"
   >
+    <template #item.size="{ item }">
+      {{
+        item.size ||
+        [item.dimensionX, item.dimensionY, item.dimensionZ]
+          .filter(Boolean)
+          .join("x")
+      }}
+    </template>
     <template v-slot:item.delete="{ item }">
       <v-icon color="red" @click="onDelete(item.id)">mdi-delete</v-icon>
     </template>
@@ -43,15 +51,19 @@
 import { ref, computed, watch } from "vue";
 import { useStore } from "vuex";
 import EditButton from "@/components/Button/EditButton.vue";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const props = defineProps({
-  selectedResourceType: String,
+  selectedResourceClazz: String,
 });
-const internalSortChoice = ref(props.selectedResourceType);
+const internalClazzChoice = computed(() => props.selectedResourceClazz);
+
+// When props.selectedResourceClazz changes, initialize newSortChoice for table columns
 watch(
-  () => props.selectedResourceType,
+  () => props.selectedResourceClazz,
   (newSortChoice) => {
-    internalSortChoice.value = newSortChoice;
+    internalClazzChoice.value = newSortChoice;
   }
 );
 const store = useStore();
@@ -62,20 +74,27 @@ const columnGettersMap = {
   Element: "resources/getColumnsForElement",
   Pearl: "resources/getColumnsForPearl",
   Metal: "resources/getColumnsForMetal",
-  PreciousStone: "resources/getColumnsForPreciousStone",
+  Diamond: "resources/getColumnsForDiamond",
+  DiamondMelee: "resources/getColumnsForDiamondMelee",
+  ColoredStone: "resources/getColumnsForColoredStone",
+  ColoredStoneMelee: "resources/getColumnsForColoredStoneMelee",
   SemiPreciousStone: "resources/getColumnsForSemiPreciousStone",
 };
 
 const selectedTableColumns = computed(() => {
-  const getterName = columnGettersMap[internalSortChoice.value];
+  const getterName = columnGettersMap[internalClazzChoice.value];
   return store.getters[getterName ? getterName : "resources/getColumns"];
 });
 
 const filteredResources = computed(() => {
-  if (internalSortChoice.value === "All") {
+  if (internalClazzChoice.value === "All") {
     return resources.value;
   } else {
-    return resources.value.filter((x) => x.clazz === internalSortChoice.value);
+    return resources.value.filter((r) =>
+      Object.keys(route.query).every(
+        (key) => !(key in r) || r[key] === route.query[key]
+      )
+    );
   }
 });
 

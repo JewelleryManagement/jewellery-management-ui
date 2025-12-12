@@ -28,13 +28,18 @@ export const selectDate = async (page, expect) => {
   const { calendarBtn } = myContext;
 
   const today = new Date();
-  const day = today.getDate().toString().padStart(2, "0");
+  const day = today.getDate().toString();
   const month = (today.getMonth() + 1).toString().padStart(2, "0");
   const year = today.getFullYear();
   await calendarBtn.click();
-  await page.getByRole("button", { name: new RegExp(day.toString()) }).click();
+  await page
+    .locator(".v-btn")
+    .filter({
+      hasText: new RegExp(`^${day}$`),
+    })
+    .click();
   await expect(
-    page.getByText(`Selected date: ${day}/${month}/${year}`)
+    page.getByText(`Selected date: ${day.padStart(2, "0")}/${month}/${year}`)
   ).toBeVisible();
 };
 
