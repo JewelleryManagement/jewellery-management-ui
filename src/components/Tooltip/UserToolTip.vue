@@ -1,6 +1,6 @@
 <template>
   <router-link v-if="props.user" :to="`/users/${props.user.id}`">
-    {{ props.user.firstName }}<slot></slot>
+    {{ props.user.firstName }}
     <v-tooltip activator="parent" location="top">
       <div>First Name: {{ props.user.firstName }}</div>
       <div>Last Name: {{ props.user.lastName }}</div>

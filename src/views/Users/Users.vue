@@ -1,19 +1,16 @@
 <template>
-  <v-container class="my-12" fluid>
-    <base-card>
-      <users-table title="Users table">
-        <template v-slot:item.edit="{ item }">
-          <router-link :to="`/users/edit/${item.id}`" @click.stop>
-            <v-icon color="green">mdi-pencil</v-icon>
-          </router-link>
-        </template>
-      </users-table>
-    </base-card>
-  </v-container>
+  <div class="my-12">
+    <users-table title="Users table">
+      <template v-slot:item.edit="{ item }">
+        <EditButton :routerPath="`/users/edit/${item.id}`" />
+      </template>
+    </users-table>
+  </div>
 </template>
 <script setup>
 import { inject, onMounted } from "vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
+import EditButton from "@/components/Button/EditButton.vue";
 import { useStore } from "vuex";
 
 const store = useStore();

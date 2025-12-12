@@ -18,6 +18,7 @@ import {
   PartOfProduct,
   TableButton,
   ReturnProductButton,
+  ReturnResourceButton,
   ProductsContentDialog,
   OrgTable,
 } from "@/components";
@@ -34,6 +35,7 @@ app.component("part-of-product", PartOfProduct);
 app.component("disassembly-button", DisassemblyButton);
 app.component("org-resource-form", OrganizationResourceForm);
 app.component("return-product-button", ReturnProductButton);
+app.component("return-resource-button", ReturnResourceButton);
 app.component("product-transfer-button", ProductTransferButton);
 app.component("resource-content-dialog", ResourceContentDialog);
 app.component("products-content-dialog", ProductsContentDialog);

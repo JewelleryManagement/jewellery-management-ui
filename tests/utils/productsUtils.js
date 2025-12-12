@@ -20,7 +20,6 @@ export const createGlobalVariables = async (page) => {
   myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
 };
 
-
 export const fillProductForm = async (
   page,
   catalogName,
@@ -28,25 +27,37 @@ export const fillProductForm = async (
   authors,
   barcode
 ) => {
-  const { catalogNameButton, descriptionButton, authorsComboBox, barcodeButton } = myContext;
+  const {
+    catalogNameButton,
+    descriptionButton,
+    authorsComboBox,
+    barcodeButton,
+  } = myContext;
+
+  const input = page.locator(".v-select input");
+
+  if (!(await input.isDisabled())) {
+    await page.locator(".v-field__input").first().click();
+    await page.getByRole("option").first().click();
+  }
 
   await catalogNameButton.fill(catalogName);
   await descriptionButton.fill(description);
   await authorsComboBox.click();
   for (const author of authors) {
     await page
-      .locator("div")
-      .filter({ hasText: new RegExp(`^${author}$`) })
-      .first()
+      .locator(".v-overlay__content .v-list:visible")
+      .getByText(author, { exact: true })
       .click();
   }
   await barcodeButton.fill(barcode);
 };
 
-
 export const fillTableCellAndPress = async (page, numRows, cellIndex, key) => {
   for (let i = 1; i <= numRows; i++) {
-    const cell = page.locator(`tr:nth-child(${i}) > td:nth-child(${cellIndex})`).first();
+    const cell = page
+      .locator(`tr:nth-child(${i}) > td:nth-child(${cellIndex})`)
+      .first();
     await cell.click();
     await cell.press("Backspace");
     await cell.press(key);

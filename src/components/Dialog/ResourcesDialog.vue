@@ -78,7 +78,6 @@ const [currentInputQuantities, savedQuantitiesInProduct] = [
   ref(props.inputResources || []),
   ref([]),
 ];
-
 const tableColumns = [
   computed(() => store.state.resources.tableColumnAddQuantity).value,
   computed(() => store.state.resources.tableColumnQuantity).value,
@@ -145,8 +144,9 @@ const saveTableValues = () => {
     currentInputFields.forEach(([resourceId, quantity]) => {
       let currentResourcePrice =
         Number(
-          props.availableResources.find((resource) => resource.id === resourceId)
-            .pricePerQuantity
+          props.availableResources.find(
+            (resource) => resource.id === resourceId
+          ).pricePerQuantity
         ) * Number(quantity);
 
       savedQuantitiesInProduct.value.push({

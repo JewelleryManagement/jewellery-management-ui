@@ -7,6 +7,9 @@ import {
   postResourceToOrg,
   removeResourceFromOrg,
   postResourceTranferToOrg,
+  postUserToOrg,
+  putUserToOrg,
+  removeUserFromOrg
 } from "@/services/HttpClientService";
 
 export default {
@@ -18,6 +21,20 @@ export default {
       { key: "name", title: "Name" },
       { key: "address", title: "Address" },
       { key: "note", title: "Note" },
+    ],
+    userPermissions: [
+      "DESTROY_ORGANIZATION",
+      "MANAGE_USERS",
+      "ADD_RESOURCE_QUANTITY",
+      "REMOVE_RESOURCE_QUANTITY",
+      "CREATE_PRODUCT",
+      "EDIT_PRODUCT",
+      "DISASSEMBLE_PRODUCT",
+      "TRANSFER_PRODUCT",
+      "CREATE_SALE",
+      "RETURN_RESOURCE",
+      "RETURN_PRODUCT",
+      "TRANSFER_RESOURCE",
     ],
   },
   mutations: {
@@ -49,11 +66,24 @@ export default {
     async transferResourceFromOrg({ commit }, data) {
       await postResourceTranferToOrg(data);
     },
+    async addUserToOrg({commit}, data) {
+      const { requestBody, orgId } = data;
+      return await postUserToOrg(orgId, requestBody)
+    },
+    async editUserInOrg({commit}, data) {
+      const { userId, orgId, requestBody } = data;
+      return await putUserToOrg(orgId, userId, requestBody)
+    },
+    async removeUser({commit}, data) {
+      const { userId, orgId } = data;
+      return await removeUserFromOrg(orgId, userId)
+    }
   },
   getters: {
     getOrgs: (state) => {
       if (state.organizations) return state.organizations;
     },
     getColumns: (state) => [...state.tableColumns],
+    getUserPermissions: (state) => state.userPermissions,
   },
 };

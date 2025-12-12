@@ -91,7 +91,7 @@ import {
   useInputValidate,
 } from "@/utils/validation-rules";
 import { ref, onMounted } from "vue";
-const smallFieldRules = useTextFieldRules();
+const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const emailRules = useEmailValidationRule();
 const passwordRules = usePasswordFieldRules();
 const inputRules = useInputValidate();

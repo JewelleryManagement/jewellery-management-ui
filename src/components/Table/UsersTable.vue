@@ -4,7 +4,7 @@
       <h1>{{ title }}</h1>
     </div>
     <div class="d-flex justify-end">
-      <table-button path="/users/create">Create user</table-button>
+      <table-button :path="headBtnPath">{{headBtnName}}</table-button>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -18,7 +18,7 @@
     </v-card-title>
     <v-data-table
       :headers="tableColumns"
-      :items="allUsers"
+      :items="tableUsers"
       :search="search"
       @click:row="rowClickHandler"
       hover
@@ -32,16 +32,38 @@
 
 <script setup>
 import { navigateToItemDetails } from "@/utils/row-click-handler";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-const { title } = defineProps({ title: String });
+const props = defineProps({
+  title: String,
+  users: Array,
+  columns: Array,
+  headBtnPath: String,
+  headBtnName: String
+});
 const store = useStore();
 const search = ref("");
 const router = useRouter();
+const headBtnPath = ref(props.headBtnPath ?? '/users/create')
+const headBtnName = ref(props.headBtnName ?? 'Create user')
+const allUsers = computed(() => store.getters["users/getAllUsers"]);
+const tableUsers = computed(() =>
+  props.users?.length > 0 ? props.users : allUsers.value
+);
+const defaultColumnsWithEdit = computed(
+  () => store.getters["users/getTableColumnsWithEdit"]
+);
+const tableColumns = computed(() =>
+  props.columns ? props.columns : defaultColumnsWithEdit.value
+);
 
-const allUsers = computed(() => store.getters["users/allUsers"]);
-const tableColumns = computed(() => store.getters["users/getTableColumnsWithEdit"]);
+watch(
+  () => props.users,
+  (newUsers) => {
+    tableUsers.value = newUsers;
+  }
+);
 
 const rowClickHandler = (user) => {
   navigateToItemDetails(router, user, "users");

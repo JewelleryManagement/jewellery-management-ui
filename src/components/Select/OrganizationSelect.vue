@@ -15,7 +15,7 @@
 <script setup>
 import { orgsPropsFormatter } from "@/utils/data-formatter";
 import { validateOrgs } from "../../utils/validation-rules";
-import { defineProps, defineEmits, ref, watch } from "vue";
+import { ref, watch } from "vue";
 
 const props = defineProps({
   items: {

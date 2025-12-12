@@ -33,7 +33,7 @@
             <base-card v-if="isResourceTableVisible">
               <resource-availability-table
                 :tableColumns="tableColumnsResources"
-                :resourceItem="purchasedResources"
+                :resources="purchasedResources"
                 :name="`${user.firstName + ' ' + user.lastName}`"
               ></resource-availability-table>
             </base-card>

@@ -1,8 +1,11 @@
 <template>
-  <base-card>
+  <div>
     <sales-table>
       <template v-slot:item.seller="{ item }">
-        <user-tool-tip :user="item.seller" @click.stop />
+        <organization-tool-tip
+          :organization="item.organizationSeller"
+          @click.stop
+        />
       </template>
 
       <template v-slot:item.buyer="{ item }">
@@ -10,27 +13,39 @@
       </template>
 
       <template v-slot:item.products="{ item }">
-        <v-icon @click="openDialog(item.products)" @click.stop
+        <v-icon @click="openProductsDialog(item.products)" @click.stop
           >mdi-cube-outline</v-icon
         >
       </template>
+      <template v-slot:item.resources="{ item }">
+        <v-icon @click="openResouresDialog(item.resources)" @click.stop
+          >mdi-cube</v-icon
+        >
+      </template>
     </sales-table>
+    <resource-content-dialog
+      v-if="isResourceDialogOpen"
+      v-model="isResourceDialogOpen"
+      :data="resourceDialogData"
+      @close-dialog="closeResourcesDialog()"
+    ></resource-content-dialog>
     <products-content-dialog
       v-if="isProductsDialogOpen"
       v-model="isProductsDialogOpen"
       :data="productsDialogData"
-      @close-dialog="closeDialog('products')"
+      @close-dialog="closeProductsDialog()"
     >
     </products-content-dialog>
-  </base-card>
+  </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import SalesTable from "@/components/Table/SalesTable.vue";
 const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
+const [isResourceDialogOpen, resourceDialogData] = [ref(false), ref({})];
 
-const openDialog = (products) => {
+const openProductsDialog = (products) => {
   productsDialogData.value = {
     productsContent: products.map((product) => ({
       ...product,
@@ -39,7 +54,19 @@ const openDialog = (products) => {
   isProductsDialogOpen.value = true;
 };
 
-const closeDialog = () => {
+const openResouresDialog = (resources) => {
+  resourceDialogData.value = {
+    resourcesContent: resources.map((resourcesSale) => ({
+      ...resourcesSale.resourceAndQuantity,
+    })),
+  };
+  isResourceDialogOpen.value = true;
+};
+
+const closeProductsDialog = () => {
   isProductsDialogOpen.value = false;
+};
+const closeResourcesDialog = () => {
+  isResourceDialogOpen.value = false;
 };
 </script>

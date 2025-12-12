@@ -37,7 +37,6 @@ const props = defineProps({
   allResources: { Object },
 });
 
-
 const currentResourcePrice = computed(() =>
   props.resources.value.reduce(
     (total, resource) => total + Number(resource.currentResourcePrice),
