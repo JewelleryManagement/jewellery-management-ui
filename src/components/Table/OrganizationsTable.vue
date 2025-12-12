@@ -1,5 +1,5 @@
 <template>
-  <v-card class="elevation-12">
+  <div class="my-12">
     <div class="text-center">
       <h1>Organizations table</h1>
     </div>
@@ -28,7 +28,7 @@
         <slot :name="slot" v-bind="scope || {}" />
       </template>
     </v-data-table>
-  </v-card>
+  </div>
 </template>
 
 <script setup>
@@ -49,10 +49,9 @@ try {
 }
 
 const tableColumns = computed(() => store.getters["organizations/getColumns"]);
-const organizations = computed(() => store.getters["organizations/getOrgs"])
+const organizations = computed(() => store.getters["organizations/getOrgs"]);
 
 const rowClickHandler = (organization) => {
   navigateToItemDetails(router, organization, "organizations");
 };
-
 </script>

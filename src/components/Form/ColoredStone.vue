@@ -1,17 +1,15 @@
 <template>
-  <AllowedValueSelect
+  <v-text-field
     v-model="formData.quantityType"
-    v-model:allowed-value-details="allowedValueDetail.quantityType"
-    :stored-allowed-values="quantityTypeOptions"
     label="Quantity Type"
-    :rules="smallFieldRules"
+    readonly
   />
 
   <AllowedValueComboBox
     v-model="formData.type"
     v-model:allowed-value-details="allowedValueDetail.type"
-    :storedAllowedValues="typeOptions"
     label="Type"
+    :storedAllowedValues="typeOptions"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="type"
@@ -19,36 +17,49 @@
   />
 
   <AllowedValueComboBox
-    v-model="formData.quality"
-    v-model:allowed-value-details="allowedValueDetail.quality"
-    :storedAllowedValues="qualityOptions"
-    label="Quality"
-    :rules="smallFieldRules"
-    :resource-clazz="resourceClazz"
-    field-name="quality"
-    :is-fetching="isFetching"
-  />
-
-  <AllowedValueComboBox
     v-model="formData.shape"
     v-model:allowed-value-details="allowedValueDetail.shape"
-    :storedAllowedValues="shapeOptions"
     label="Shape"
-    :required="true"
+    :storedAllowedValues="shapeOptions"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
     field-name="shape"
     :is-fetching="isFetching"
   />
 
+  <v-text-field
+    v-model="formData.dimensionX"
+    :counter="10"
+    :rules="numberFieldRules"
+    label="Length"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.dimensionY"
+    :counter="10"
+    :rules="numberFieldRules"
+    label="Width"
+    required
+  ></v-text-field>
+
+  <v-text-field
+    v-model="formData.dimensionZ"
+    :counter="10"
+    :rules="numberFieldRules"
+    label="Depth"
+    required
+  ></v-text-field>
+
   <AllowedValueComboBox
-    v-model="formData.shapeSpecification"
-    v-model:allowed-value-details="allowedValueDetail.shapeSpecification"
-    :storedAllowedValues="shapeSpecificationOptions"
-    label="Shape Specification"
-    :rules="smallFieldRules"
+    v-model="formData.carat"
+    v-model:allowed-value-details="allowedValueDetail.carat"
+    :storedAllowedValues="caratOptions"
+    :display-storedAllowedValues="false"
+    label="Carat"
+    :rules="numberFieldRules"
     :resource-clazz="resourceClazz"
-    field-name="shapeSpecification"
+    field-name="carat"
     :is-fetching="isFetching"
   />
 
@@ -66,6 +77,7 @@
   <AllowedValueComboBox
     v-model="formData.colorHue"
     v-model:allowed-value-details="allowedValueDetail.colorHue"
+    :display-sku="false"
     :storedAllowedValues="colorHueOptions"
     label="Color Hue"
     :rules="useTextFieldRules()"
@@ -75,22 +87,57 @@
   />
 
   <AllowedValueComboBox
-    v-model="formData.size"
-    v-model:allowed-value-details="allowedValueDetail.size"
-    :storedAllowedValues="sizeOptions"
-    label="Size"
+    v-model="formData.clarity"
+    v-model:allowed-value-details="allowedValueDetail.clarity"
+    :storedAllowedValues="clarityOptions"
+    label="Clarity"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
-    field-name="Size"
+    field-name="clarity"
+    :is-fetching="isFetching"
+  />
+
+  <AllowedValueComboBox
+    v-model="formData.cut"
+    v-model:allowed-value-details="allowedValueDetail.cut"
+    :storedAllowedValues="cutOptions"
+    label="Cut"
+    :rules="smallFieldRules"
+    :resource-clazz="resourceClazz"
+    field-name="cut"
+    :is-fetching="isFetching"
+  />
+
+  <AllowedValueComboBox
+    v-model="formData.treatment"
+    v-model:allowed-value-details="allowedValueDetail.treatment"
+    :display-sku="false"
+    :storedAllowedValues="treatmentOptions"
+    label="Treatment"
+    :rules="smallFieldRules"
+    :resource-clazz="resourceClazz"
+    field-name="treatment"
     :is-fetching="isFetching"
   />
 
   <v-text-field
     v-model="formData.pricePerQuantity"
     :rules="numberFieldRules"
-    label="Price per quantity"
+    label="Price Per Unit"
     required
   ></v-text-field>
+
+  <AllowedValueComboBox
+    v-model="formData.certificate"
+    v-model:allowed-value-details="allowedValueDetail.certificate"
+    :storedAllowedValues="certificateOptions"
+    :display-storedAllowedValues="false"
+    label="Certificate"
+    :rules="useTextFieldLargeRules()"
+    :resource-clazz="resourceClazz"
+    field-name="certificate"
+    :is-fetching="isFetching"
+  />
 
   <v-textarea
     v-model="formData.note"
@@ -105,7 +152,6 @@
 import { useStore } from "vuex";
 import { computed, onMounted, ref, watch } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
-import AllowedValueSelect from "./AllowedValueSelect.vue";
 import {
   useTextFieldRules,
   useNumberFieldRules,
@@ -122,9 +168,27 @@ const allowedValueDetail = computed(
   () => store.getters["allowedValues/getAllowedValueDetails"]
 );
 
+const setInitialValues = () => {
+  if (!formData.value.quantityType) {
+    setInitialResourceDetails();
+  }
+  setInitialAllowedValueDetails();
+};
+
+const setInitialResourceDetails = () => {
+  const quantityTypeValue = quantityTypeOptions.value[0]?.value;
+
+  if (quantityTypeValue) {
+    updateResourceDetails("quantityType", quantityTypeValue);
+  }
+};
+
 const setInitialAllowedValueDetails = () => {
   updateAllowedValueDetail("clazz", clazzOptions.value[0]);
 };
+
+const updateResourceDetails = (key, value) =>
+  store.dispatch("resources/setResourceDetailsField", { key, value });
 
 const updateAllowedValueDetail = (key, value) => {
   store.dispatch("allowedValues/setAllowedValueDetail", {
@@ -132,11 +196,11 @@ const updateAllowedValueDetail = (key, value) => {
   });
 };
 
-const resourceClazz = computed(() => formData.value?.clazz);
-
 const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
+
+const resourceClazz = computed(() => formData.value?.clazz);
 
 const clazzOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "clazz")
@@ -147,45 +211,49 @@ const quantityTypeOptions = computed(() =>
 const typeOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "type")
 );
-const qualityOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quality")
-);
 const shapeOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "shape")
 );
-const shapeSpecificationOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "shapeSpecification")
+const caratOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "carat")
 );
+
 const colorOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "color")
 );
 const colorHueOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "colorHue")
 );
-const sizeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "size")
+const clarityOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "clarity")
 );
-
+const cutOptions = computed(() => getAllowedValue(store, resourceClazz, "cut"));
+const treatmentOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "treatment")
+);
+const certificateOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "certificate")
+);
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
   await fetchAllowedValues(store, resourceClazz);
   isFetching.value = false;
 
-  setInitialAllowedValueDetails();
+  setInitialValues();
 };
 
 const resetForm = computed(
   () => store.getters["allowedValues/getAllowedValueReset"]
 );
 
-// When fullPath changes, reinitialize allowed value details
+// When fullPath changes, reinitialize allowed value details and quantityType
 // When resetForm changes, reinitialize allowed value details (e.g. after a reset)
 // immediate: true - execute on first render
 watch(
   [() => route.fullPath, () => resetForm.value],
   () => {
-    setInitialAllowedValueDetails();
+    setInitialValues();
     store.dispatch("allowedValues/setAllowedValueReset", false);
   },
   { immediate: true }

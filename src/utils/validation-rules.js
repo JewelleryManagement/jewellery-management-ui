@@ -4,22 +4,24 @@ export function useInputValidate() {
 
 export function useTextFieldRules() {
   return [
-    (v) => !!v || `Input field is required`,
     (v) => {
-      if (typeof v === 'object' && v !== null && 'value' in v) {
+      if (typeof v === "object" && v !== null && "value" in v) {
         return v.value.length <= 35 || "Input must be less than 35 characters";
       }
-      return (v && v.length <= 35) || "Input must be less than 35 characters";
+      if (v == null || v === "") return true;
+      return (
+        v === "" || v.length <= 35 || "Input must be less than 35 characters"
+      );
     },
   ];
 }
 export function useTextFieldLargeRules() {
   return [
-    (v) => !!v || `Input field is required`,
     (v) => {
-      if (typeof v === 'object' && v !== null && 'value' in v) {
+      if (typeof v === "object" && v !== null && "value" in v) {
         return v.value.length <= 50 || "Input must be less than 50 characters";
       }
+      if (v == null || v === "") return true;
       return (v && v.length <= 50) || "Input must be less than 50 characters";
     },
   ];
@@ -28,13 +30,14 @@ export function useTextFieldLargeRules() {
 export function useNumberFieldRules() {
   return [
     (v) => {
-      if (typeof v === 'object' && v !== null && 'value' in v) {
+      if (typeof v === "object" && v !== null && "value" in v) {
         return !!v.value || `Input field is required`;
       }
       return !!v || `Input field is required`;
     },
     (v) => {
-      const val = (typeof v === 'object' && v !== null && 'value' in v) ? v.value : v;
+      const val =
+        typeof v === "object" && v !== null && "value" in v ? v.value : v;
       return (val && val > 0) || "Input must be a number larger than 0";
     },
   ];
@@ -43,13 +46,14 @@ export function useNumberFieldRules() {
 export function useAllNumberFieldRules() {
   return [
     (v) => {
-      if (typeof v === 'object' && v !== null && 'value' in v) {
+      if (typeof v === "object" && v !== null && "value" in v) {
         return !!v.value || `Input field is required`;
       }
       return !!v || `Input field is required`;
     },
     (v) => {
-      const val = (typeof v === 'object' && v !== null && 'value' in v) ? v.value : v;
+      const val =
+        typeof v === "object" && v !== null && "value" in v ? v.value : v;
       return !isNaN(parseFloat(val)) || "Input must be a valid number";
     },
   ];
@@ -59,8 +63,10 @@ export function useTextAreaFieldRules() {
   return [
     (v) => !!v || `Input field is required`,
     (v) => {
-      if (typeof v === 'object' && v !== null && 'value' in v) {
-        return v.value.length <= 100 || "Input must be less than 100 characters";
+      if (typeof v === "object" && v !== null && "value" in v) {
+        return (
+          v.value.length <= 100 || "Input must be less than 100 characters"
+        );
       }
       return (v && v.length <= 100) || "Input must be less than 100 characters";
     },
@@ -69,7 +75,7 @@ export function useTextAreaFieldRules() {
 
 export function useDiscountFieldRules() {
   return [
-    (v) => v !== undefined && v !== '' || "Input field is required",
+    (v) => (v !== undefined && v !== "") || "Input field is required",
     (v) => v === undefined || v >= 0 || "Discount should be 0 or above!",
     (v) => v === undefined || v <= 100 || "Discount should be 100 or below!",
   ];

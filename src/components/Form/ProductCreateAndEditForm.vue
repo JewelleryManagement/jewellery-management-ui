@@ -10,7 +10,7 @@
       <v-text-field
         v-model="props.productInfo.catalogNumber"
         label="Catalog name"
-        :rules="useTextFieldLargeRules()"
+        :rules="largeFieldRules"
         required
       ></v-text-field>
 
@@ -136,6 +136,7 @@ import {
   useTextAreaFieldRules,
   validateAuthors,
   useBarCodeValidationRules,
+  useInputValidate,
 } from "@/utils/validation-rules";
 import { useRoute, useRouter } from "vue-router";
 import { userPropsFormatter } from "@/utils/data-formatter";
@@ -144,6 +145,8 @@ const props = defineProps({
   productInfo: Object,
   submitReqFunction: Function,
 });
+
+const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
 const snackbarProvider = inject("snackbarProvider");
 const router = useRouter();

@@ -12,8 +12,48 @@ export const appLogin = async (page) => {
   await wait(3);
 };
 
-export const navigateToPage = async (page, expect, name) => {
-  const thePage = name.charAt(0).toUpperCase() + name.slice(1);
-  await page.getByRole("link", { name: thePage }).click();
-  await expect(page).toHaveURL(`/${name}`);
+export const navigateViaNavbar = async (
+  page,
+  expect,
+  {
+    navParentButtonText,
+    expectedUrl,
+    navChildButtonText,
+    expectedNewUrl,
+    expectedHeader,
+  }
+) => {
+  const drawer = page.locator(".v-navigation-drawer");
+
+  await drawer.hover();
+  await expect(
+    drawer.getByText(navParentButtonText, { exact: true })
+  ).toBeVisible();
+  await wait(1);
+
+  await drawer.getByText(navParentButtonText, { exact: true }).click();
+  await expect(page).toHaveURL(expectedUrl);
+  await expect(
+    drawer.getByRole("group").getByText(navChildButtonText, { exact: true })
+  ).toBeVisible();
+  await wait(1);
+
+  await drawer
+    .getByRole("group")
+    .getByText(navChildButtonText, { exact: true })
+    .click();
+  await expect(page).toHaveURL(expectedNewUrl);
+  await wait(1);
+  await expect(
+    page.locator(".v-main").getByText(expectedHeader, { exact: true })
+  ).toBeVisible();
+  await wait(1);
 };
+
+export function requiredField(page, labelText) {
+  return page
+    .locator(".v-input", {
+      hasText: labelText,
+    })
+    .locator(".v-messages__message", { hasText: "Input field is required" });
+}
