@@ -6,22 +6,22 @@
 
     <v-sheet width="470" class="mx-auto">
       <v-select
-        v-model="selected"
+        v-model="selectedClazz"
         :items="options"
         label="Select resource type"
         :disabled="isEditState || isDuplicateState || route.query.clazz"
       ></v-select>
       <v-form @submit.prevent="handleSubmit" ref="form">
-        <Pearl v-if="selected === 'Pearl'" />
-        <Metal v-if="selected === 'Metal'" />
-        <Diamond v-if="selected === 'Diamond'" />
-        <DiamondMelee v-if="selected === 'DiamondMelee'" />
-        <ColoredStone v-if="selected === 'ColoredStone'" />
-        <ColoredStoneMelee v-if="selected === 'ColoredStoneMelee'" />
-        <SemiPreciousStone v-if="selected === 'SemiPreciousStone'" />
-        <Element v-if="selected === 'Element'" />
+        <Pearl v-if="selectedClazz === PEARL_CLAZZ" />
+        <Diamond v-if="selectedClazz === DIAMOND_CLAZZ" />
+        <DiamondMelee v-if="selectedClazz === DIAMON_MELEE_CLAZZ" />
+        <ColoredStone v-if="selectedClazz === COLORED_STONE_CLAZZ" />
+        <ColoredStoneMelee v-if="selectedClazz === COLORED_STONE_MELEE_CLAZZ" />
+        <SemiPreciousStone v-if="selectedClazz === SEMI_PRECIOUS_STONE_CLAZZ" />
+        <Metal v-if="selectedClazz === METAL_CLAZZ" />
+        <Element v-if="selectedClazz === ELEMENT_CLAZZ" />
 
-        <div class="d-flex justify-center" v-if="selected">
+        <div class="d-flex justify-center" v-if="selectedClazz">
           <v-text-field
             v-model="sku"
             label="Stock Keeping Unit"
@@ -36,7 +36,7 @@
           </div>
         </div>
 
-        <div v-if="selected" class="d-flex flex-column">
+        <div v-if="selectedClazz" class="d-flex flex-column">
           <form-buttons @reset-form="resetForm" />
         </div>
       </v-form>
@@ -61,6 +61,16 @@ import {
   useTextFieldLargeRules,
   useInputValidate,
 } from "@/utils/validation-rules";
+import {
+  PEARL_CLAZZ,
+  DIAMOND_CLAZZ,
+  DIAMON_MELEE_CLAZZ,
+  COLORED_STONE_CLAZZ,
+  COLORED_STONE_MELEE_CLAZZ,
+  SEMI_PRECIOUS_STONE_CLAZZ,
+  METAL_CLAZZ,
+  ELEMENT_CLAZZ,
+} from "@/utils/clazzConstants";
 
 const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
@@ -71,24 +81,24 @@ const store = useStore();
 const route = useRoute();
 const router = useRouter();
 const options = ref([
-  "Pearl",
-  "Metal",
-  "Element",
-  "Diamond",
-  "DiamondMelee",
-  "ColoredStone",
-  "ColoredStoneMelee",
-  "SemiPreciousStone",
+  PEARL_CLAZZ,
+  DIAMOND_CLAZZ,
+  DIAMON_MELEE_CLAZZ,
+  COLORED_STONE_CLAZZ,
+  COLORED_STONE_MELEE_CLAZZ,
+  SEMI_PRECIOUS_STONE_CLAZZ,
+  METAL_CLAZZ,
+  ELEMENT_CLAZZ,
 ]);
 const pageTitle = computed(
-  () => store.getters["resources/getTitle"](selected.value) || "Resource"
+  () => store.getters["resources/getTitle"](selectedClazz.value) || "Resource"
 );
 
 const resourceDetails = computed(
   () => store.getters["resources/getResourceDetails"]
 );
 const snackbarProvider = inject("snackbarProvider");
-const selected = ref("");
+const selectedClazz = ref("");
 const isEditState = computed(() => route.path.startsWith("/resources/edit"));
 const isDuplicateState = computed(() =>
   route.path.startsWith("/resources/duplicate")
@@ -113,7 +123,7 @@ const columnGettersMap = {
 };
 
 const generateSku = () => {
-  const getterName = columnGettersMap[selected.value];
+  const getterName = columnGettersMap[selectedClazz.value];
   const order = store.getters[getterName || "resources/getColumns"];
 
   sku.value = order
@@ -128,7 +138,7 @@ const loadResourceDetails = () => {
       store.getters["resources/getResourceById"](props.id)
     );
     store.dispatch("resources/setResourceDetails", resourceDetails.value);
-    selected.value = resourceDetails.value.clazz;
+    selectedClazz.value = resourceDetails.value.clazz;
     sku.value = resourceDetails.value.sku;
   }
 };
@@ -137,7 +147,8 @@ const resetForm = () => {
   if (form.value) {
     form.value.reset();
     form.value.resetValidation();
-    store.dispatch("allowedValues/clearAllowedValueDetails");
+    clearAllowedValueDetails();
+    store.dispatch("allowedValues/setAllowedValueReset", true);
   }
 };
 
@@ -157,12 +168,12 @@ const handleRouteChange = () => {
   }
 
   if (route.query.clazz) {
-    selected.value = route.query.clazz;
-    clearResourceDetails(selected.value);
+    selectedClazz.value = route.query.clazz;
+    clearResourceDetails(selectedClazz.value);
   }
 
   if (route.path.startsWith("/resources/add") && !route.query.clazz) {
-    selected.value = "";
+    selectedClazz.value = "";
   } else {
     loadResourceDetails();
   }
@@ -184,8 +195,8 @@ const clearState = (newValue) => {
   clearAllowedValueDetails;
 };
 
-//when selected changes, clear ResourceDetails and AllowedValueDetails state
-watch(selected, (newValue) => {
+//when selectedClazz changes, clear ResourceDetails and AllowedValueDetails state
+watch(selectedClazz, (newValue) => {
   clearState(newValue);
 });
 
@@ -201,21 +212,15 @@ const handleSubmit = async () => {
 };
 
 const getQuery = () => {
-  return (
-    store.getters["resources/getResourceQuery"](
-      selected.value,
-      resourceDetails.value.type
-    ) ||
-    store.getters["resources/getResourceQuery"](
-      selected.value,
-      resourceDetails.value.quantityType
-    )
-  );
+  return store.getters["resources/getResourceQuery"]({
+    clazz: selectedClazz.value,
+    type: resourceDetails.value.type,
+    quantityType: resourceDetails.value.quantityType,
+  });
 };
 
 const navigateToResourcePage = () => {
-  const query =
-    selected.value === "Element" ? { clazz: "Element" } : getQuery();
+  const query = getQuery();
   router.push({
     path: "/resources",
     query: query,
@@ -226,7 +231,7 @@ const editResource = async () => {
   try {
     await addNewAllowedValuesIfNeeded(
       store,
-      selected.value,
+      selectedClazz.value,
       allowedValueDetail.value
     );
     await store.dispatch("resources/updateResource", {
@@ -244,7 +249,7 @@ const createResource = async () => {
   try {
     await addNewAllowedValuesIfNeeded(
       store,
-      selected.value,
+      selectedClazz.value,
       allowedValueDetail.value
     );
     await store.dispatch("resources/createResource", {

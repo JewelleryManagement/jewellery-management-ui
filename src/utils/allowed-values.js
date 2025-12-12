@@ -1,59 +1,11 @@
-const allowedFieldsByType = {
-  Metal: ["color", "purity"],
-  Pearl: [
-    "type",
-    "quantityType",
-    "quality",
-    "color",
-    "shape",
-    "shapeSpecification",
-    "colorHue",
-    "size",
-  ],
-  Diamond: [
-    "color",
-    "colorHue",
-    "cut",
-    "clarity",
-    "quantityType",
-    "shape",
-    "type",
-    "carat",
-    "polish",
-    "symmetry",
-    "fluorescence",
-    "certificate",
-  ],
-  DiamondMelee: ["shape", "size", "color", "clarity", "cut"],
-  ColoredStone: [
-    "shape",
-    "carat",
-    "color",
-    "colorHue",
-    "clarity",
-    "cut",
-    "treatment",
-    "certificate",
-  ],
-  ColoredStoneMelee: ["shape", "size", "color", "colorHue", "clarity", "cut"],
-  SemiPreciousStone: [
-    "type",
-    "quality",
-    "shape",
-    "shapeSpecification",
-    "color",
-    "colorHue",
-    "size",
-  ],
-  Element: ["quantityType"],
-};
-
 export async function addNewAllowedValuesIfNeeded(
   store,
   resourceClazz,
   formData
 ) {
-  const fields = allowedFieldsByType[resourceClazz];
+  const fields =
+    store.getters["allowedValues/getAllowedFieldsByType"](resourceClazz);
+
   for (const fieldName of fields) {
     const fieldValue = formData[fieldName];
     const allowed = store.getters["allowedValues/getAllowedValues"](
@@ -80,7 +32,10 @@ export async function addNewAllowedValuesIfNeeded(
   }
 }
 
-export const fetchAllowedValues = async (store, resourceClazz, fields) => {
+export const fetchAllowedValues = async (store, resourceClazz) => {
+  const fields = store.getters["allowedValues/getAllowedFieldsByType"](
+    resourceClazz.value
+  );
   await Promise.all(
     fields.map((fieldName) =>
       store.dispatch("allowedValues/fetchAllowedValues", {

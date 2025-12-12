@@ -2,6 +2,16 @@ import {
   getRandomNumberAsString,
   getRandomString,
 } from "./getRandomNumberOrString";
+import {
+  PEARL_CLAZZ,
+  DIAMOND_CLAZZ,
+  DIAMON_MELEE_CLAZZ,
+  COLORED_STONE_CLAZZ,
+  COLORED_STONE_MELEE_CLAZZ,
+  SEMI_PRECIOUS_STONE_CLAZZ,
+  METAL_CLAZZ,
+  ELEMENT_CLAZZ,
+} from "@/utils/clazzConstants";
 
 export const pearlFormFields = [
   {
@@ -317,12 +327,6 @@ export const elementFormFields = [
     required: true,
   },
   {
-    label: "Quantity Type",
-    value: getRandomString(4),
-    sku: getRandomString(2),
-    required: false,
-  },
-  {
     label: "Price per quantity",
     value: getRandomNumberAsString(),
     required: true,
@@ -332,7 +336,7 @@ export const elementFormFields = [
 
 export const resourceTypesData = [
   {
-    type: "Pearl",
+    type: PEARL_CLAZZ,
     pageTitle: "Add Pearl",
     selectFieldLabel: "Quantity Type",
     selectFieldValue: "Strand",
@@ -345,7 +349,7 @@ export const resourceTypesData = [
     filterButtonValues: ["STRAND", "PIECE"],
   },
   {
-    type: "Diamond",
+    type: DIAMOND_CLAZZ,
     pageTitle: "Add Diamond",
     selectFieldLabel: "Type",
     selectFieldValue: "Natural",
@@ -358,20 +362,20 @@ export const resourceTypesData = [
     filterButtonValues: ["NATURAL", "LAB GROWN"],
   },
   {
-    type: "DiamondMelee",
+    type: DIAMON_MELEE_CLAZZ,
     pageTitle: "Add Diamond Melee",
     selectFieldLabel: "Type",
     selectFieldValue: "Natural",
     fields: diamondMeleeFormFields,
     initialSku: "D.M.Nat.",
     button: "Diamond Melee",
-    childButton: "Natural Melee",
+    childButton: "Natural",
     filter: "type",
     filterValue: "Natural",
     filterButtonValues: ["NATURAL", "LAB GROWN"],
   },
   {
-    type: "ColoredStone",
+    type: COLORED_STONE_CLAZZ,
     pageTitle: "Add Colored Stone",
     selectFieldLabel: "Type",
     selectFieldValue: "Sapphire",
@@ -384,7 +388,7 @@ export const resourceTypesData = [
     filterButtonValues: ["PIECE"],
   },
   {
-    type: "ColoredStoneMelee",
+    type: COLORED_STONE_MELEE_CLAZZ,
     pageTitle: "Add Colored Stone Melee",
     selectFieldLabel: "Type",
     selectFieldValue: "Sapphire",
@@ -397,7 +401,7 @@ export const resourceTypesData = [
     filterButtonValues: ["PIECE"],
   },
   {
-    type: "SemiPreciousStone",
+    type: SEMI_PRECIOUS_STONE_CLAZZ,
     pageTitle: "Add Semi Precious Stone",
     selectFieldLabel: "Quantity Type",
     selectFieldValue: "Strand",
@@ -410,7 +414,7 @@ export const resourceTypesData = [
     filterButtonValues: ["STRAND", "PIECE"],
   },
   {
-    type: "Metal",
+    type: METAL_CLAZZ,
     pageTitle: "Add Metal",
     selectFieldLabel: "Type",
     selectFieldValue: "Gold",
@@ -423,11 +427,11 @@ export const resourceTypesData = [
     filterButtonValues: ["GOLD", "SILVER", "PLATINUM", "OTHER"],
   },
   {
-    type: "Element",
+    type: ELEMENT_CLAZZ,
     pageTitle: "Add Element",
     fields: elementFormFields,
-    initialSku: "E.",
+    initialSku: "E.P",
     button: "Element",
-    childButton: "All Elements",
+    childButton: "Piece",
   },
 ];

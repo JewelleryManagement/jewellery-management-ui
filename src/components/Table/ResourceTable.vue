@@ -14,6 +14,14 @@
     :items="filteredResources"
     :search="search"
   >
+    <template #item.size="{ item }">
+      {{
+        item.size ||
+        [item.dimensionX, item.dimensionY, item.dimensionZ]
+          .filter(Boolean)
+          .join("x")
+      }}
+    </template>
     <template v-slot:item.delete="{ item }">
       <v-icon color="red" @click="onDelete(item.id)">mdi-delete</v-icon>
     </template>

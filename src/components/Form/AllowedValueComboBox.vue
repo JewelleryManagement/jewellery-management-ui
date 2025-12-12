@@ -3,7 +3,11 @@
     <v-combobox
       :model-value="modelValue"
       @update:model-value="onValueChange"
-      :items="displayItems ? items.map((o) => o.value) : []"
+      :items="
+        displayStoredAllowedValues
+          ? storedAllowedValues.map((o) => o.value)
+          : []
+      "
       :label="label"
       :rules="rules"
       :disabled="isFetching"
@@ -65,11 +69,11 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  items: {
+  storedAllowedValues: {
     type: Array,
     default: () => [],
   },
-  displayItems: {
+  displayStoredAllowedValues: {
     type: Boolean,
     default: true,
   },
@@ -90,7 +94,9 @@ const sku = ref("");
 const isSkuLocked = ref(true);
 
 const onValueChange = (val) => {
-  const found = props.items.find((item) => item.value === String(val));
+  const found = props.storedAllowedValues.find(
+    (item) => item.value === String(val)
+  );
 
   if (found) {
     sku.value = found?.sku;
@@ -144,8 +150,10 @@ const store = useStore();
 const deleteDialog = ref(false);
 const valueToDelete = ref("");
 
-function confirmDelete(value) {
-  valueToDelete.value = props.items.find((v) => v.value === value.value);
+function confirmDelete(selected) {
+  valueToDelete.value = props.storedAllowedValues.find(
+    (stored) => stored.value === selected.value
+  );
   deleteDialog.value = true;
 }
 

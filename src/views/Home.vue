@@ -19,6 +19,7 @@ onBeforeMount(async () => {
       store.dispatch("users/fetchUsers"),
       store.dispatch("resources/fetchResources"),
       store.dispatch("products/fetchProducts"),
+      store.dispatch("resources/buildResourcesQueries"),
     ]);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch globally!");

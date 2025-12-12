@@ -4,6 +4,82 @@ const state = {
   // Structure: { [resourceClazz]: { [fieldName]: [values] } }
   allowedValues: {},
   allowedValueDetails: {},
+  allowedFieldsByType: {
+    Metal: ["clazz", "quantityType", "type", "color", "purity"],
+    Pearl: [
+      "clazz",
+      "quantityType",
+      "type",
+      "quality",
+      "shape",
+      "shapeSpecification",
+      "color",
+      "colorHue",
+      "size",
+    ],
+    Diamond: [
+      "clazz",
+      "quantityType",
+      "type",
+      "shape",
+      "carat",
+      "color",
+      "colorHue",
+      "clarity",
+      "cut",
+      "polish",
+      "symmetry",
+      "fluorescence",
+      "certificate",
+    ],
+    DiamondMelee: [
+      "clazz",
+      "quantityType",
+      "type",
+      "shape",
+      "size",
+      "color",
+      "clarity",
+      "cut",
+    ],
+    ColoredStone: [
+      "clazz",
+      "quantityType",
+      "type",
+      "shape",
+      "carat",
+      "color",
+      "colorHue",
+      "clarity",
+      "cut",
+      "treatment",
+      "certificate",
+    ],
+    ColoredStoneMelee: [
+      "clazz",
+      "quantityType",
+      "type",
+      "shape",
+      "size",
+      "color",
+      "colorHue",
+      "clarity",
+      "cut",
+    ],
+    SemiPreciousStone: [
+      "clazz",
+      "quantityType",
+      "type",
+      "quality",
+      "shape",
+      "shapeSpecification",
+      "color",
+      "colorHue",
+      "size",
+    ],
+    Element: ["clazz", "quantityType"],
+  },
+  allowedValuesReset: false,
   loading: false,
   error: null,
 };
@@ -14,6 +90,11 @@ const getters = {
   },
 
   getAllowedValueDetails: (state) => state.allowedValueDetails,
+
+  getAllowedValueReset: (state) => state.allowedValuesReset,
+
+  getAllowedFieldsByType: (state) => (resourceClazz) =>
+    state.allowedFieldsByType[resourceClazz],
 };
 
 const mutations = {
@@ -44,6 +125,9 @@ const mutations = {
         resourceClazz
       ][fieldName].filter((v) => v !== fieldValue);
     }
+  },
+  SET_ALLOWED_VALUE_RESET(state, reset) {
+    state.allowedValuesReset = reset;
   },
   SET_LOADING(state, loading) {
     state.loading = loading;
@@ -107,6 +191,9 @@ const actions = {
     } catch (error) {
       // Optionally handle error
     }
+  },
+  setAllowedValueReset({ commit }, reset) {
+    commit("SET_ALLOWED_VALUE_RESET", reset);
   },
   setAllowedValueDetail({ commit }, newObj) {
     commit("SET_ALLOWED_VALUE_DETAIL", newObj);

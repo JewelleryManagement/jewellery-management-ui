@@ -27,6 +27,16 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref, provide, computed } from "vue";
+import {
+  PEARL_CLAZZ,
+  DIAMOND_CLAZZ,
+  DIAMON_MELEE_CLAZZ,
+  COLORED_STONE_CLAZZ,
+  COLORED_STONE_MELEE_CLAZZ,
+  SEMI_PRECIOUS_STONE_CLAZZ,
+  METAL_CLAZZ,
+  ELEMENT_CLAZZ,
+} from "./utils/clazzConstants";
 
 import NavBar from "./components/Nav/NavBar.vue";
 import SnackBar from "./components/Popup/SnackBar.vue";
@@ -72,7 +82,27 @@ const logoutHandler = () => {
   router.push("/login");
 };
 
-const mainMenuPages = [
+const useResourceButtons = (clazz) => {
+  const queries = computed(
+    () => store.getters["resources/getAllResourceQueries"](clazz) || {}
+  );
+
+  return computed(() =>
+    Object.entries(queries.value).map(([value, obj]) => {
+      const fieldName = Object.keys(obj).find(
+        (objField) => objField !== "clazz"
+      );
+
+      return {
+        text: value,
+        url: "/resources",
+        query: { clazz, [fieldName]: value },
+      };
+    })
+  );
+};
+
+const mainMenuPages = computed(() => [
   {
     link: { text: "Home", url: "/" },
     icon: "mdi-home",
@@ -102,18 +132,9 @@ const mainMenuPages = [
       {
         text: "Add Pearl",
         url: "/resources/add",
-        query: { clazz: "Pearl" },
+        query: { clazz: PEARL_CLAZZ },
       },
-      {
-        text: "Strand",
-        url: "/resources",
-        query: { clazz: "Pearl", quantityType: "Strand" },
-      },
-      {
-        text: "Piece",
-        url: "/resources",
-        query: { clazz: "Pearl", quantityType: "Piece" },
-      },
+      ...useResourceButtons(PEARL_CLAZZ).value,
     ],
     icon: "mdi-alpha-p-box-outline",
     active: false,
@@ -124,18 +145,9 @@ const mainMenuPages = [
       {
         text: "Add Diamond",
         url: "/resources/add",
-        query: { clazz: "Diamond" },
+        query: { clazz: DIAMOND_CLAZZ },
       },
-      {
-        text: "Natural",
-        url: "/resources",
-        query: { clazz: "Diamond", type: "Natural" },
-      },
-      {
-        text: "Lab Grown",
-        url: "/resources",
-        query: { clazz: "Diamond", type: "Lab Grown" },
-      },
+      ...useResourceButtons(DIAMOND_CLAZZ).value,
     ],
     icon: "mdi-alpha-d-box-outline",
     active: false,
@@ -146,18 +158,9 @@ const mainMenuPages = [
       {
         text: "Add Diamond Melee",
         url: "/resources/add",
-        query: { clazz: "DiamondMelee" },
+        query: { clazz: DIAMON_MELEE_CLAZZ },
       },
-      {
-        text: "Natural Melee",
-        url: "/resources",
-        query: { clazz: "DiamondMelee", type: "Natural" },
-      },
-      {
-        text: "Lab Grown Melee",
-        url: "/resources",
-        query: { clazz: "DiamondMelee", type: "LabGrown" },
-      },
+      ...useResourceButtons(DIAMON_MELEE_CLAZZ).value,
     ],
     icon: "mdi-alpha-d-box",
     active: false,
@@ -168,13 +171,9 @@ const mainMenuPages = [
       {
         text: "Add Colored Stone",
         url: "/resources/add",
-        query: { clazz: "ColoredStone" },
+        query: { clazz: COLORED_STONE_CLAZZ },
       },
-      {
-        text: "Piece",
-        url: "/resources",
-        query: { clazz: "ColoredStone", quantityType: "Piece" },
-      },
+      ...useResourceButtons(COLORED_STONE_CLAZZ).value,
     ],
     icon: "mdi-alpha-c-box-outline",
     active: false,
@@ -185,13 +184,9 @@ const mainMenuPages = [
       {
         text: "Add Colored Stone Melee",
         url: "/resources/add",
-        query: { clazz: "ColoredStoneMelee" },
+        query: { clazz: COLORED_STONE_MELEE_CLAZZ },
       },
-      {
-        text: "Piece",
-        url: "/resources",
-        query: { clazz: "ColoredStoneMelee", quantityType: "Piece" },
-      },
+      ...useResourceButtons(COLORED_STONE_MELEE_CLAZZ).value,
     ],
     icon: "mdi-alpha-c-box",
     active: false,
@@ -202,18 +197,9 @@ const mainMenuPages = [
       {
         text: "Add Semi Precious Stone",
         url: "/resources/add",
-        query: { clazz: "SemiPreciousStone" },
+        query: { clazz: SEMI_PRECIOUS_STONE_CLAZZ },
       },
-      {
-        text: "Strand",
-        url: "/resources",
-        query: { clazz: "SemiPreciousStone", quantityType: "Strand" },
-      },
-      {
-        text: "Piece",
-        url: "/resources",
-        query: { clazz: "SemiPreciousStone", quantityType: "Piece" },
-      },
+      ...useResourceButtons(SEMI_PRECIOUS_STONE_CLAZZ).value,
     ],
     icon: "mdi-alpha-s-box-outline",
     active: false,
@@ -224,28 +210,9 @@ const mainMenuPages = [
       {
         text: "Add Metal",
         url: "/resources/add",
-        query: { clazz: "Metal" },
+        query: { clazz: METAL_CLAZZ },
       },
-      {
-        text: "Gold",
-        url: "/resources",
-        query: { clazz: "Metal", type: "Gold" },
-      },
-      {
-        text: "Silver",
-        url: "/resources",
-        query: { clazz: "Metal", type: "Silver" },
-      },
-      {
-        text: "Platinum",
-        url: "/resources",
-        query: { clazz: "Metal", type: "Platinum" },
-      },
-      {
-        text: "Other",
-        url: "/resources",
-        query: { clazz: "Metal", type: "Other" },
-      },
+      ...useResourceButtons(METAL_CLAZZ).value,
     ],
     icon: "mdi-alpha-m-box-outline",
     active: false,
@@ -256,13 +223,9 @@ const mainMenuPages = [
       {
         text: "Add Element",
         url: "/resources/add",
-        query: { clazz: "Element" },
+        query: { clazz: ELEMENT_CLAZZ },
       },
-      {
-        text: "All Elements",
-        url: "/resources",
-        query: { clazz: "Element" },
-      },
+      ...useResourceButtons(ELEMENT_CLAZZ).value,
     ],
     icon: "mdi-alpha-e-box-outline",
     active: false,
@@ -303,7 +266,7 @@ const mainMenuPages = [
     icon: "mdi-account",
     active: false,
   },
-];
+]);
 
 const navBarButtons = ref(mainMenuPages);
 </script>

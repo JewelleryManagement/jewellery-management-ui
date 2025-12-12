@@ -9,6 +9,17 @@ import {
   fetchAvailabilityResourceById,
   fetchQuantityByResourceId,
 } from "@/services/HttpClientService.js";
+import AllowedValuesService from "@/services/AllowedValuesService";
+import {
+  PEARL_CLAZZ,
+  DIAMOND_CLAZZ,
+  DIAMON_MELEE_CLAZZ,
+  COLORED_STONE_CLAZZ,
+  COLORED_STONE_MELEE_CLAZZ,
+  SEMI_PRECIOUS_STONE_CLAZZ,
+  METAL_CLAZZ,
+  ELEMENT_CLAZZ,
+} from "@/utils/clazzConstants";
 
 const filterColumnsByKey = (state, keys) => {
   const additionalColumnsLeft = [state.tableColumnQuantity];
@@ -63,36 +74,28 @@ export default {
       { key: "certificate", title: "Certificate" },
       { key: "treatment", title: "Treatment" },
     ],
-    resourceQueries: {
-      Pearl: {
-        Piece: { clazz: "Pearl", quantityType: "Piece" },
-        Strand: { clazz: "Pearl", quantityType: "Strand" },
-      },
-      Diamond: {
-        Natural: { clazz: "Diamond", type: "Natural" },
-        "Lab Grown": { clazz: "Diamond", type: "Lab Grown" },
-      },
-      DiamondMelee: {
-        Natural: { clazz: "DiamondMelee", type: "Natural" },
-        "Lab Grown": { clazz: "DiamondMelee", type: "Lab Grown" },
-      },
+    allowedValueParams: {
+      Pearl: { resourceClazz: PEARL_CLAZZ, fieldName: "quantityType" },
+      Diamond: { resourceClazz: DIAMOND_CLAZZ, fieldName: "type" },
+      DiamondMelee: { resourceClazz: DIAMON_MELEE_CLAZZ, fieldName: "type" },
       ColoredStone: {
-        Piece: { clazz: "ColoredStone", quantityType: "Piece" },
+        resourceClazz: COLORED_STONE_CLAZZ,
+        fieldName: "quantityType",
       },
       ColoredStoneMelee: {
-        Piece: { clazz: "ColoredStoneMelee", quantityType: "Piece" },
+        resourceClazz: COLORED_STONE_MELEE_CLAZZ,
+        fieldName: "quantityType",
       },
       SemiPreciousStone: {
-        Strand: { clazz: "SemiPreciousStone", quantityType: "Strand" },
-        Piece: { clazz: "SemiPreciousStone", quantityType: "Piece" },
+        resourceClazz: SEMI_PRECIOUS_STONE_CLAZZ,
+        fieldName: "quantityType",
       },
-      Metal: {
-        Gold: { clazz: "Metal", type: "Gold" },
-        Silver: { clazz: "Metal", type: "Silver" },
-        Platinum: { clazz: "Metal", type: "Platinum" },
-        Other: { clazz: "Metal", type: "Other" },
-      },
+      Metal: { resourceClazz: METAL_CLAZZ, fieldName: "type" },
+      Element: { resourceClazz: ELEMENT_CLAZZ, fieldName: "quantityType" },
     },
+
+    resourcesQueries: {},
+
     titles: {
       Pearl: {
         title: "Pearl",
@@ -158,6 +161,9 @@ export default {
       );
       if (index !== -1) state.resources[index] = updatedResource;
     },
+    setResourcesQueries(state, payload) {
+      state.resourcesQueries = payload;
+    },
   },
   actions: {
     async fetchResources({ commit }) {
@@ -200,6 +206,36 @@ export default {
     },
     async fetchQuantityByResourceId({ commit }, resourceId) {
       return await fetchQuantityByResourceId(resourceId);
+    },
+    async buildResourcesQueries({ state, commit }) {
+      const allowedValueParams = state.allowedValueParams;
+
+      const responses = await Promise.all(
+        Object.values(allowedValueParams).map((param) =>
+          AllowedValuesService.get(param)
+        )
+      );
+
+      const allowedValuesLists = responses.map((response) => response.data);
+
+      const queriesByResourceClass = {};
+
+      for (const allowedValues of allowedValuesLists) {
+        for (const allowedValue of allowedValues) {
+          const { resourceClazz, fieldName, value } = allowedValue;
+
+          if (!queriesByResourceClass[resourceClazz]) {
+            queriesByResourceClass[resourceClazz] = {};
+          }
+
+          queriesByResourceClass[resourceClazz][value] = {
+            clazz: resourceClazz,
+            [fieldName]: value,
+          };
+        }
+      }
+
+      commit("setResourcesQueries", queriesByResourceClass);
     },
   },
   getters: {
@@ -346,10 +382,26 @@ export default {
     getResourceById: (state) => (id) =>
       state.resources.find((resource) => resource.id === id),
     getResourceDetails: (state) => state.resourceDetails,
-    getResourceQuery: (state) => (clazz, type) =>
-      state.resourceQueries[clazz]?.[type] ?? null,
+    getResourceQuery:
+      (state) =>
+      ({ clazz, type, quantityType }) => {
+        return (
+          state.resourcesQueries[clazz]?.[type] ??
+          state.resourcesQueries[clazz]?.[quantityType] ??
+          null
+        );
+      },
+    getAllResourceQueries: (state) => (resourceClazz) =>
+      state.resourcesQueries[resourceClazz],
     getTitle: (state) => (key) => {
       return state.titles[key]?.title || null;
     },
+    resourceFilterButtons: (state) =>
+      Object.fromEntries(
+        Object.entries(state.resourcesQueries).map(([clazz, entries]) => [
+          clazz,
+          Object.keys(entries),
+        ])
+      ),
   },
 };

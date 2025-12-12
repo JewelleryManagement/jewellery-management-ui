@@ -45,30 +45,24 @@ const selectedButton = computed(() => {
   return route.query.quantityType || route.query.type;
 });
 
-const resourceTypes = ref({
-  Pearl: ["Strand", "Piece"],
-  Diamond: ["Natural", "Lab Grown"],
-  ColoredStone: ["Piece"],
-  DiamondMelee: ["Natural", "Lab Grown"],
-  ColoredStoneMelee: ["Piece"],
-  SemiPreciousStone: ["Strand", "Piece"],
-  Metal: ["Gold", "Silver", "Platinum", "Other"],
-});
+const resourceTypes = store.getters["resources/resourceFilterButtons"];
 
 const title = computed(() =>
   store.getters["resources/getTitle"](selectedResourceClazz.value)
 );
 
 const currentResourceTypes = computed(() => {
-  return resourceTypes.value[selectedResourceClazz.value] || [];
+  return resourceTypes[selectedResourceClazz.value] || [];
 });
 
 const filterResourcesByType = (resourceType) => {
   selectedButton.value = resourceType;
-  const query = store.getters["resources/getResourceQuery"](
-    selectedResourceClazz.value,
-    resourceType
-  );
+  const query = store.getters["resources/getResourceQuery"]({
+    clazz: selectedResourceClazz.value,
+    type: resourceType,
+    quantityType: resourceType,
+  });
+
   router.replace({
     query: query,
   });

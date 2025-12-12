@@ -1,16 +1,16 @@
 <template>
-  <v-select
+  <AllowedValueSelect
     v-model="formData.quantityType"
-    :items="quantityTypeOptions"
+    v-model:allowed-value-details="allowedValueDetail.quantityType"
+    :stored-allowed-values="quantityTypeOptions"
     label="Quantity Type"
     :rules="smallFieldRules"
-    clearable
   />
 
   <AllowedValueComboBox
     v-model="formData.type"
     v-model:allowed-value-details="allowedValueDetail.type"
-    :items="typeOptions"
+    :storedAllowedValues="typeOptions"
     label="Type"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
@@ -21,7 +21,7 @@
   <AllowedValueComboBox
     v-model="formData.quality"
     v-model:allowed-value-details="allowedValueDetail.quality"
-    :items="qualityOptions"
+    :storedAllowedValues="qualityOptions"
     label="Quality"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
@@ -32,7 +32,7 @@
   <AllowedValueComboBox
     v-model="formData.shape"
     v-model:allowed-value-details="allowedValueDetail.shape"
-    :items="shapeOptions"
+    :storedAllowedValues="shapeOptions"
     label="Shape"
     :required="true"
     :rules="smallFieldRules"
@@ -44,7 +44,7 @@
   <AllowedValueComboBox
     v-model="formData.shapeSpecification"
     v-model:allowed-value-details="allowedValueDetail.shapeSpecification"
-    :items="shapeSpecificationOptions"
+    :storedAllowedValues="shapeSpecificationOptions"
     label="Shape Specification"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
@@ -55,7 +55,7 @@
   <AllowedValueComboBox
     v-model="formData.color"
     v-model:allowed-value-details="allowedValueDetail.color"
-    :items="colorOptions"
+    :storedAllowedValues="colorOptions"
     label="Color"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
@@ -66,7 +66,7 @@
   <AllowedValueComboBox
     v-model="formData.colorHue"
     v-model:allowed-value-details="allowedValueDetail.colorHue"
-    :items="colorHueOptions"
+    :storedAllowedValues="colorHueOptions"
     label="Color Hue"
     :rules="useTextFieldRules()"
     :resource-clazz="resourceClazz"
@@ -77,7 +77,7 @@
   <AllowedValueComboBox
     v-model="formData.size"
     v-model:allowed-value-details="allowedValueDetail.size"
-    :items="sizeOptions"
+    :storedAllowedValues="sizeOptions"
     label="Size"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
@@ -105,6 +105,7 @@
 import { useStore } from "vuex";
 import { computed, onMounted, ref, watch } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
+import AllowedValueSelect from "./AllowedValueSelect.vue";
 import {
   useTextFieldRules,
   useNumberFieldRules,
@@ -121,23 +122,8 @@ const allowedValueDetail = computed(
   () => store.getters["allowedValues/getAllowedValueDetails"]
 );
 
-const initialAllowedValueDetails = {
-  clazz: { value: "SemiPreciousStone", sku: "SP" },
-  Strand: { value: "Strand", sku: "S" },
-  Piece: { value: "Piece", sku: "P" },
-};
-
 const setInitialAllowedValueDetails = () => {
-  updateAllowedValueDetail("clazz", initialAllowedValueDetails.clazz);
-};
-
-const updateQuantityTypeOnChange = (newValue) => {
-  if (newValue) {
-    updateAllowedValueDetail(
-      "quantityType",
-      initialAllowedValueDetails[newValue]
-    );
-  }
+  updateAllowedValueDetail("clazz", clazzOptions.value[0]);
 };
 
 const updateAllowedValueDetail = (key, value) => {
@@ -146,13 +132,18 @@ const updateAllowedValueDetail = (key, value) => {
   });
 };
 
-const resourceClazz = computed(() => formData.value?.clazz || "Pearl");
+const resourceClazz = computed(() => formData.value?.clazz);
 
 const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
-const quantityTypeOptions = ["Strand", "Piece"];
+const clazzOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "clazz")
+);
+const quantityTypeOptions = computed(() =>
+  getAllowedValue(store, resourceClazz, "quantityType")
+);
 const typeOptions = computed(() =>
   getAllowedValue(store, resourceClazz, "type")
 );
@@ -178,36 +169,24 @@ const sizeOptions = computed(() =>
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
-  await fetchAllowedValues(store, resourceClazz, [
-    "type",
-    "quality",
-    "shape",
-    "shapeSpecification",
-    "color",
-    "colorHue",
-    "size",
-  ]);
-
+  await fetchAllowedValues(store, resourceClazz);
   isFetching.value = false;
+
+  setInitialAllowedValueDetails();
 };
 
-// When quantityType changes, update the store with the new allowed value (e.g. { quantityType: "Piece", sku: "P" })
-// immediate: true - execute on first render
-watch(
-  () => formData.value.quantityType,
-  (newValue) => {
-    updateQuantityTypeOnChange(newValue);
-  },
-  { immediate: true }
+const resetForm = computed(
+  () => store.getters["allowedValues/getAllowedValueReset"]
 );
 
 // When fullPath changes, reinitialize allowed value details
-// When quantityType changes, reinitialize allowed value details (e.g. after a reset)
+// When resetForm changes, reinitialize allowed value details (e.g. after a reset)
 // immediate: true - execute on first render
 watch(
-  () => route.fullPath,
+  [() => route.fullPath, () => resetForm.value],
   () => {
     setInitialAllowedValueDetails();
+    store.dispatch("allowedValues/setAllowedValueReset", false);
   },
   { immediate: true }
 );
