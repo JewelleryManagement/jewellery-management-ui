@@ -5,12 +5,15 @@
     readonly
   />
 
-  <AllowedValueSelect
+  <AllowedValueComboBox
     v-model="formData.type"
     v-model:allowed-value-details="allowedValueDetail.type"
-    :stored-allowed-values="typeOptions"
     label="Type"
-    :rules="useInputValidate()"
+    :storedAllowedValues="typeOptions"
+    :rules="smallFieldRules"
+    :resource-clazz="resourceClazz"
+    field-name="type"
+    :is-fetching="isFetching"
   />
 
   <AllowedValueComboBox
@@ -149,7 +152,6 @@
 import { useStore } from "vuex";
 import { computed, onMounted, ref, watch } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
-import AllowedValueSelect from "./AllowedValueSelect.vue";
 import {
   useTextFieldRules,
   useNumberFieldRules,

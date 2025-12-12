@@ -165,6 +165,12 @@ export const diamondMeleeFormFields = [
 
 export const coloredStoneFormFields = [
   {
+    label: "Type",
+    value: getRandomString(4),
+    sku: getRandomString(2),
+    required: true,
+  },
+  {
     label: "Shape",
     value: getRandomString(4),
     sku: getRandomString(2),
@@ -210,6 +216,12 @@ export const coloredStoneFormFields = [
 ];
 
 export const coloredStoneMeleeFormFields = [
+  {
+    label: "Type",
+    value: getRandomString(4),
+    sku: getRandomString(2),
+    required: true,
+  },
   {
     label: "Shape",
     value: getRandomString(4),
@@ -377,10 +389,8 @@ export const resourceTypesData = [
   {
     type: COLORED_STONE_CLAZZ,
     pageTitle: "Add Colored Stone",
-    selectFieldLabel: "Type",
-    selectFieldValue: "Sapphire",
     fields: coloredStoneFormFields,
-    initialSku: "CS.Sp.",
+    initialSku: "CS.",
     button: "Colored Stone",
     childButton: "Piece",
     filter: "quantityType",
@@ -390,10 +400,8 @@ export const resourceTypesData = [
   {
     type: COLORED_STONE_MELEE_CLAZZ,
     pageTitle: "Add Colored Stone Melee",
-    selectFieldLabel: "Type",
-    selectFieldValue: "Sapphire",
     fields: coloredStoneMeleeFormFields,
-    initialSku: "CS.M.Sp.",
+    initialSku: "CS.M.",
     button: "Colored Stone Melee",
     childButton: "Piece",
     filter: "quantityType",
