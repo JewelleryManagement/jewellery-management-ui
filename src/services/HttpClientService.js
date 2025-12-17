@@ -90,6 +90,10 @@ export async function getUserOrganizationsByPermission(permission) {
   return await fetchData(`/organizations/by-permission/${permission}`);
 }
 
+export async function getAllEvents() {
+  return await fetchData("/system-events");
+}
+
 // POSTS REQUESTS
 async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {
@@ -133,7 +137,6 @@ export async function postResourceToOrg(orgData) {
 export async function postUserToOrg(orgId, requestBody) {
   return await postData(`/organizations/${orgId}/users`, requestBody);
 }
-
 
 export async function postResourceTranferToOrg(orgData) {
   return await postData(
@@ -185,9 +188,7 @@ export async function removeResourceFromOrg(
 }
 
 export async function removeUserFromOrg(orgId, userId) {
-  return await removeData(
-    `/organizations/${orgId}/users/${userId}`
-  );
+  return await removeData(`/organizations/${orgId}/users/${userId}`);
 }
 
 // PUT REQUEST
@@ -220,9 +221,14 @@ export async function productReturn(productId) {
 }
 
 export async function resourceReturn(saleId, resourceId) {
-  return await updateData(`/organizations/sales/${saleId}/return-resource/${resourceId}`);
+  return await updateData(
+    `/organizations/sales/${saleId}/return-resource/${resourceId}`
+  );
 }
 
 export async function putUserToOrg(orgId, userId, permissions) {
-  return await updateData(`/organizations/${orgId}/users/${userId}`, permissions);
+  return await updateData(
+    `/organizations/${orgId}/users/${userId}`,
+    permissions
+  );
 }
