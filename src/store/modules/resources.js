@@ -7,7 +7,6 @@ import {
   updateResource,
   removeResourceQuantity,
   fetchAvailabilityResourceById,
-  fetchQuantityByResourceId,
 } from "@/services/HttpClientService.js";
 import AllowedValuesService from "@/services/AllowedValuesService";
 import {
@@ -203,9 +202,6 @@ export default {
     },
     async fetchAvailabilityResourceById({ commit }, resourceId) {
       return await fetchAvailabilityResourceById(resourceId);
-    },
-    async fetchQuantityByResourceId({ commit }, resourceId) {
-      return await fetchQuantityByResourceId(resourceId);
     },
     async buildResourcesQueries({ state, commit }) {
       const allowedValueParams = state.allowedValueParams;
