@@ -2,7 +2,6 @@ import { reactive } from "vue";
 import {
   fetchResources,
   postResources,
-  postResourceAvailabilityTransfer,
   removeResource,
   updateResource,
   removeResourceQuantity,
@@ -189,9 +188,6 @@ export default {
     },
     setResourceForm({ commit }, data) {
       commit("setResourcForm", data);
-    },
-    async resourceAvailabilityTransfer({ commit }, data) {
-      await postResourceAvailabilityTransfer(data);
     },
     async updateResource({ commit }, { id, ...resourceWithoutId }) {
       const updatedResource = await updateResource(id, resourceWithoutId);

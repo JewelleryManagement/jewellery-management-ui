@@ -73,9 +73,6 @@ export default {
       const res = await fetchPurchasedResourcePerUser(userId);
       commit("setPurchasedResources", res);
     },
-    async postResourcesToUser({ commit }, data) {
-      await postResourceAvailability(data);
-    },
   },
   getters: {
     getOrganizationColumns: (state) => [

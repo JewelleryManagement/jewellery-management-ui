@@ -98,14 +98,6 @@ export async function postResources(data) {
   return await postData("/resources", data);
 }
 
-export async function postResourceAvailability(data) {
-  return await postData("/resources/availability", data);
-}
-
-export async function postResourceAvailabilityTransfer(data) {
-  return await postData("/resources/availability/transfer", data);
-}
-
 export async function postProduct(data) {
   return await postData("/organizations/products", data);
 }
