@@ -151,12 +151,6 @@ export async function removeResource(id) {
   return await removeData(`/resources/${id}`);
 }
 
-export async function removeResourceQuantity(userId, resourceId, quantity) {
-  return await removeData(
-    `/resources/availability/${userId}/${resourceId}/${quantity}`
-  );
-}
-
 export async function disassmebleProduct(productId) {
   return await removeData(`/organizations/products/${productId}`);
 }

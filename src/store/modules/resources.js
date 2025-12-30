@@ -4,7 +4,6 @@ import {
   postResources,
   removeResource,
   updateResource,
-  removeResourceQuantity,
   fetchAvailabilityResourceById,
 } from "@/services/HttpClientService.js";
 import AllowedValuesService from "@/services/AllowedValuesService";
@@ -192,9 +191,6 @@ export default {
     async updateResource({ commit }, { id, ...resourceWithoutId }) {
       const updatedResource = await updateResource(id, resourceWithoutId);
       commit("updateResource", updatedResource);
-    },
-    async removeQuantityFromResource({ commit }, data) {
-      await removeResourceQuantity(data.userId, data.resourceId, data.quantity);
     },
     async fetchAvailabilityResourceById({ commit }, resourceId) {
       return await fetchAvailabilityResourceById(resourceId);
