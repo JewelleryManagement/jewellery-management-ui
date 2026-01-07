@@ -22,10 +22,6 @@ export async function fetchResources() {
   return await fetchData("/resources/quantity");
 }
 
-export async function fetchResourcePerUser(userId) {
-  return await fetchData(`/resources/availability/${userId}`);
-}
-
 export async function fetchPurchasedResourcePerUser(userId) {
   return await fetchData(`/resources/availability/purchased/${userId}`);
 }
