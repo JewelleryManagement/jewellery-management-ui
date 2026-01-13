@@ -6,9 +6,14 @@
     :size="isMediumScreen() ? 'x-small' : 'default'"
     >Product Return</v-btn
   >
-  <v-btn variant="plain" @click.stop="submitReturn" v-else-if="isSalesPage">
-    <v-icon size="25">mdi-cart-remove</v-icon>
-  </v-btn>
+
+  <ActionButton
+    v-else-if="isSalesPage"
+    icon="mdi-cart-remove"
+    name="Return"
+    color="red"
+    @click.stop="submitReturn"
+  />
 </template>
 
 <script setup>
@@ -16,6 +21,7 @@ import { isMediumScreen } from "@/utils/display";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { inject } from "vue";
+import ActionButton from "./ActionButton.vue";
 const store = useStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
@@ -37,7 +43,7 @@ const submitSaleReturn = async () => {
   try {
     await store.dispatch("sales/returnProduct", currentProductId);
     snackbarProvider.showSuccessSnackbar("Product has been returned from sale");
-    isSalesPage ? router.push('/sales') : router.push('/products')
+    isSalesPage ? router.push("/sales") : router.push("/products");
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

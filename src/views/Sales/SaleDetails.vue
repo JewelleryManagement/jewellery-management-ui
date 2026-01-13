@@ -50,6 +50,9 @@
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import SaleCard from "@/components/Sale/SaleCard.vue";
+import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
+import ReturnResourceButton from "@/components/Button/ReturnResourceButton.vue";
+import ReturnProductButton from "@/components/Button/ReturnProductButton.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";

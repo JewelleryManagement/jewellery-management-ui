@@ -17,6 +17,8 @@
         hide-details
       ></v-text-field>
     </v-card-title>
+
+    <!-- TODO: Extract -->
     <v-data-table
       :headers="tableColumns"
       :items="organizations"

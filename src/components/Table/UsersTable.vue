@@ -4,7 +4,7 @@
       <h1>{{ title }}</h1>
     </div>
     <div class="d-flex justify-end">
-      <table-button :path="headBtnPath">{{headBtnName}}</table-button>
+      <table-button :path="headBtnPath">{{ headBtnName }}</table-button>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -16,6 +16,8 @@
         hide-details
       ></v-text-field>
     </v-card-title>
+
+    <!-- TODO: Extract -->
     <v-data-table
       :headers="tableColumns"
       :items="tableUsers"
@@ -40,13 +42,13 @@ const props = defineProps({
   users: Array,
   columns: Array,
   headBtnPath: String,
-  headBtnName: String
+  headBtnName: String,
 });
 const store = useStore();
 const search = ref("");
 const router = useRouter();
-const headBtnPath = ref(props.headBtnPath ?? '/users/create')
-const headBtnName = ref(props.headBtnName ?? 'Create user')
+const headBtnPath = ref(props.headBtnPath ?? "/users/create");
+const headBtnName = ref(props.headBtnName ?? "Create user");
 const allUsers = computed(() => store.getters["users/getAllUsers"]);
 const tableUsers = computed(() =>
   props.users?.length > 0 ? props.users : allUsers.value

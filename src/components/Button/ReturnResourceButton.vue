@@ -1,21 +1,17 @@
 <template>
-  <v-btn
-    v-if="!isSalesPage"
-    color="#673AB7"
-    @click.stop="submitReturn"
-    :size="isMediumScreen() ? 'x-small' : 'default'"
-    >Resource Return</v-btn
-  >
-  <v-btn variant="plain" @click.stop="submitReturn" v-else-if="isSalesPage">
-    <v-icon size="25">mdi-cart-remove</v-icon>
-  </v-btn>
+  <ActionButton
+    icon="mdi-cart-remove"
+    name="Return"
+    color="red"
+    @click="submitReturn"
+  />
 </template>
-  
-  <script setup>
-import { isMediumScreen } from "@/utils/display";
+
+<script setup>
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { inject } from "vue";
+import ActionButton from "./ActionButton.vue";
 const store = useStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
@@ -24,7 +20,6 @@ const props = defineProps({
   currentResourceInfo: Object,
   saleToReturnFrom: Object,
 });
-const currentResourceId = props.currentResourceInfo.id;
 const submitReturn = () => {
   const confirm = window.confirm(
     "Are you sure that you would like to return this resource?"
@@ -50,4 +45,3 @@ const submitSaleReturn = async () => {
   }
 };
 </script>
-  

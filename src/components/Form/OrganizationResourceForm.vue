@@ -37,7 +37,7 @@ import { useStore } from "vuex";
 import { ref, computed, onMounted } from "vue";
 import { useNumberFieldRules } from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
-import OrganizationSelect from "@/components/Select/OrganizationSelect.vue"; 
+import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 
 const emits = defineEmits(["handle-submit"]);
 const form = ref(null);
@@ -46,10 +46,10 @@ const route = useRoute();
 const pageTitle = ref(route.meta.title);
 const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
-const selectedOrg = ref({});
 const quantity = ref("");
 const dealPrice = ref("");
 const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
+const selectedOrg = ref(allOrgsByUser.value.at(0));
 const isRouteTransfer = route.path.includes("/transfer");
 const isRouteRemove = route.path.includes("/remove");
 
@@ -61,7 +61,7 @@ onMounted(() => {
 
 const updateSelectedOrg = (newOrg) => {
   if (newOrg) {
-   selectedOrg.value = newOrg
+    selectedOrg.value = newOrg;
   }
 };
 
@@ -70,7 +70,9 @@ const handleSubmit = async () => {
   if (!valid) return;
 
   const data = {
-    organizationId: isRouteRemove ? selectedOrg.value[0].id : selectedOrg.value.id,
+    organizationId: isRouteRemove
+      ? selectedOrg.value[0].id
+      : selectedOrg.value.id,
     userId: selectedUser.value.id,
     quantity: quantity.value,
     dealPrice: Number(dealPrice.value).toFixed(2),
@@ -88,13 +90,17 @@ const resetForm = () => {
 
 const removeCurrentOrgFromList = () => {
   const organizationId = route.params.organizationId;
-  const indexToRemove = allOrgsByUser.value.findIndex((x) => x.id === organizationId);
+  const indexToRemove = allOrgsByUser.value.findIndex(
+    (x) => x.id === organizationId
+  );
   if (indexToRemove !== -1) {
     allOrgsByUser.value.splice(indexToRemove, 1);
   }
 };
 
 const setCurrentOrgInTheList = () => {
-  selectedOrg.value = allOrgsByUser.value.filter((x) => x.id === route.params.organizationId);
+  selectedOrg.value = allOrgsByUser.value.filter(
+    (x) => x.id === route.params.organizationId
+  );
 };
 </script>

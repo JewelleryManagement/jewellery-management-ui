@@ -12,6 +12,7 @@ import { ref, inject, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
+import { getQuery } from "@/components/Form/ResourceUtil";
 const { resourceId } = defineProps({
   resourceId: String,
 });
@@ -41,9 +42,10 @@ const postAddQuantity = async (data) => {
   try {
     await store.dispatch("organizations/postResourceToOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
+    const query = getQuery(resourceAvailability.value.resource, store);
     router.push({
       path: "/resources",
-      query: { filter: resourceAvailability.value.resource.clazz },
+      query: query,
     });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);

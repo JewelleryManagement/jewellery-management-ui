@@ -28,26 +28,40 @@
       :resources="organizationResources"
       :name="organization.name"
     >
-      <template v-slot:item.remove="{ item }">
-        <router-link
-          :to="{
-            name: 'Remove-Quantity',
-            params: { resourceId: item?.id, quantity: item.quantity },
-          }"
-        >
-          <v-icon color="blue">mdi-minus</v-icon>
-        </router-link>
+      <template v-slot:item.pricePerQuantity="{ item }">
+        €{{ item.pricePerQuantity?.toFixed(2) }}
       </template>
 
-      <template v-slot:item.transfer="{ item }">
-        <router-link
-          :to="{
-            name: 'Transfer-Quantity',
-            params: { resourceId: item?.id, quantity: item.quantity },
-          }"
-        >
-          <v-icon color="#607D8B">mdi-swap-horizontal</v-icon>
-        </router-link>
+      <template v-slot:item.actions="{ item }">
+        <div class="d-flex align-center ga-2" @click.stop>
+          <ActionButton
+            icon="mdi-minus"
+            name="Remove Quantity"
+            color="red"
+            :routerPath="{
+              name: 'Remove-Quantity',
+              params: {
+                organizationId: orgId,
+                resourceId: item?.id,
+                quantity: item.quantity,
+              },
+            }"
+          />
+
+          <ActionButton
+            icon="mdi-swap-horizontal"
+            name="Transfer"
+            color="blue"
+            :routerPath="{
+              name: 'Transfer-Quantity',
+              params: {
+                organizationId: orgId,
+                resourceId: item?.id,
+                quantity: item.quantity,
+              },
+            }"
+          />
+        </div>
       </template>
     </resource-availability-table>
 
@@ -70,19 +84,18 @@
         </user-tool-tip>
       </template>
 
-      <template v-slot:item.disassembly="{ item }">
-        <disassembly-button
-          :item="item"
-          @disassembled-product="updateOrganizationDetails"
-          @click.stop
-        ></disassembly-button>
-      </template>
+      <template v-slot:item.actions="{ item }">
+        <div class="d-flex align-center ga-2" @click.stop>
+          <disassembly-button
+            :item="item"
+            @disassembled-product="updateOrganizationDetails"
+          ></disassembly-button>
 
-      <template v-slot:item.transfer="{ item }">
-        <product-transfer-button
-          :product="item"
-          @transferred-product="updateOrganizationDetails"
-        />
+          <product-transfer-button
+            :product="item"
+            @transferred-product="updateOrganizationDetails"
+          />
+        </div>
       </template>
     </products-table>
 
@@ -97,18 +110,25 @@
       <template v-slot:item.permissions="{ item }">
         <PermissionsTooltip :permissions="item.permissions" />
       </template>
-      <template v-slot:item.edit="{ item }">
-        <EditButton
-          :routerPath="{
-            name: 'Edit-user-in-Organization',
-            params: { organizationId: orgId, userId: item.id },
-          }"
-        />
-      </template>
-      <template v-slot:item.delete="{ item }">
-        <v-icon color="red" @click.stop @click="onDelete(item.id)"
-          >mdi-delete</v-icon
-        >
+      <template v-slot:item.actions="{ item }">
+        <div class="d-flex align-center ga-2" @click.stop>
+          <ActionButton
+            icon="mdi-pencil"
+            name="Edit"
+            color="green"
+            :routerPath="{
+              name: 'Edit-user-in-Organization',
+              params: { organizationId: orgId, userId: item.id },
+            }"
+          />
+
+          <ActionButton
+            icon="mdi-delete"
+            name="Delete"
+            color="red"
+            @click="onDelete(item.id)"
+          />
+        </div>
       </template>
     </users-table>
   </div>
@@ -117,11 +137,12 @@
 <script setup>
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
-import EditButton from "@/components/Button/EditButton.vue";
+import ActionButton from "@/components/Button/ActionButton.vue";
 import PermissionsTooltip from "@/components/Tooltip/PermissionsTooltip.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import OrganizationCard from "@/components/Card/OrganizationCard.vue";
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
+import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -140,10 +161,9 @@ const orgUsersColumns = computed(
 const organization = ref({});
 const orgProducts = ref([]);
 const orgMembers = ref([]);
-const disassemblyColumns = computed(() => [
-  store.state.products.tableColumnDisassembly,
-  store.state.products.tableColumnTransfer,
-]);
+const disassemblyColumns = computed(
+  () => store.getters["products/getActionsColumn"]
+);
 const orgId = route.params.organizationId;
 const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`);
 onMounted(async () => {

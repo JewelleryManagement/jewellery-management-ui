@@ -7,7 +7,10 @@
         <v-icon color="pink">mdi-diamond</v-icon>
       </v-card-title>
 
-      <v-card-subtitle v-for="item in organizationsAndQuantities" :key="item.id">
+      <v-card-subtitle
+        v-for="item in organizationsAndQuantities"
+        :key="item.id"
+      >
         Organization: {{ item.owner.name }} - Quantity: {{ item.quantity }}
       </v-card-subtitle>
 
@@ -31,11 +34,16 @@ const formatResource = (jsonObj) => {
   let output = "";
 
   for (const column of allTable) {
-    const key = column.key;
-    const title = column.title;
+    const { key, title } = column;
 
     if (jsonObj.hasOwnProperty(key)) {
-      output += `<p>${title}: ${jsonObj[key]}</p>`;
+      let value = jsonObj[key];
+
+      if (key === "pricePerQuantity") {
+        value = `€${Number(value).toFixed(2)}`;
+      }
+
+      output += `<p>${title}: ${value}</p>`;
     }
   }
 
@@ -44,8 +52,8 @@ const formatResource = (jsonObj) => {
 
 const resource = resourceAvailability.resource;
 const formattedResource = formatResource(resourceAvailability.resource);
-const organizationsAndQuantities = resourceAvailability.organizationsAndQuantities;
+const organizationsAndQuantities =
+  resourceAvailability.organizationsAndQuantities;
 </script>
-
 
 <style scoped></style>

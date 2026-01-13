@@ -13,6 +13,9 @@
     :headers="selectedTableColumns"
     :items="filteredResources"
     :search="search"
+    :items-per-page="50"
+    @click:row="rowClickHandler"
+    hover
   >
     <template #item.size="{ item }">
       {{
@@ -22,27 +25,47 @@
           .join("x")
       }}
     </template>
-    <template v-slot:item.delete="{ item }">
-      <v-icon color="red" @click="onDelete(item.id)">mdi-delete</v-icon>
+    <template v-slot:item.pricePerQuantity="{ item }">
+      €{{ item.pricePerQuantity?.toFixed(2) }}
     </template>
-    <template v-slot:item.edit="{ item }">
-      <EditButton
-        :routerPath="{ name: 'Edit-Resource', params: { id: item.id } }"
-      />
+
+    <template v-slot:item.totalPrice="{ item }">
+      €{{ (item.pricePerQuantity * item.quantity).toFixed(2) }}
     </template>
-    <template v-slot:item.duplicate="{ item }">
-      <router-link
-        :to="{ name: 'Duplicate-Resource', params: { id: item.id } }"
-      >
-        <v-icon color="indigo"> mdi-content-duplicate </v-icon>
-      </router-link>
-    </template>
-    <template v-slot:item.add="{ item }">
-      <router-link
-        :to="{ name: 'Add-Quantity', params: { resourceId: item.id } }"
-      >
-        <v-icon color="blue">mdi-plus</v-icon>
-      </router-link>
+
+    <template v-slot:item.actions="{ item }">
+      <div class="d-flex align-center ga-2" @click.stop>
+        <ActionButton
+          icon="mdi-delete"
+          name="Delete"
+          color="red"
+          @click="onDelete(item.id)"
+        />
+
+        <ActionButton
+          icon="mdi-pencil"
+          name="Edit"
+          color="green"
+          :routerPath="{ name: 'Edit-Resource', params: { id: item.id } }"
+        />
+
+        <ActionButton
+          icon="mdi-content-duplicate"
+          name="Duplicate"
+          color="indigo"
+          :routerPath="{ name: 'Duplicate-Resource', params: { id: item.id } }"
+        />
+
+        <ActionButton
+          icon="mdi-plus"
+          name="Add Quantity"
+          color="blue"
+          :routerPath="{
+            name: 'Add-Quantity',
+            params: { resourceId: item.id },
+          }"
+        />
+      </div>
     </template>
   </v-data-table>
 </template>
@@ -50,10 +73,11 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import { useStore } from "vuex";
-import EditButton from "@/components/Button/EditButton.vue";
-import { useRoute } from "vue-router";
+import ActionButton from "@/components/Button/ActionButton.vue";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 const props = defineProps({
   selectedResourceClazz: String,
 });
@@ -106,6 +130,15 @@ const onDelete = async (id) => {
   );
   if (confirmation) await store.dispatch("resources/removeResource", id);
 };
-</script>
 
-<style scoped></style>
+const rowClickHandler = (row, item) => {
+  const resourceId = item.internalItem.key;
+
+  router.push({
+    name: "Resource Details",
+    params: {
+      id: resourceId,
+    },
+  });
+};
+</script>

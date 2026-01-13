@@ -113,6 +113,7 @@ import {
   useInputValidate,
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
+import { setInitialType } from "./ResourceUtil";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -173,6 +174,7 @@ const fetchAllowedValuesOptions = async () => {
   isFetching.value = false;
 
   setInitialAllowedValueDetails();
+  setInitialType(resourceClazz.value, store, route);
 };
 
 const resetForm = computed(

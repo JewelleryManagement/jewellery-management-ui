@@ -2,7 +2,12 @@
   <div class="my-12">
     <users-table title="Users table">
       <template v-slot:item.edit="{ item }">
-        <EditButton :routerPath="`/users/edit/${item.id}`" />
+        <ActionButton
+          icon="mdi-pencil"
+          name="Edit"
+          color="green"
+          :routerPath="`/users/edit/${item.id}`"
+        />
       </template>
     </users-table>
   </div>
@@ -10,7 +15,7 @@
 <script setup>
 import { inject, onMounted } from "vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
-import EditButton from "@/components/Button/EditButton.vue";
+import ActionButton from "@/components/Button/ActionButton.vue";
 import { useStore } from "vuex";
 
 const store = useStore();

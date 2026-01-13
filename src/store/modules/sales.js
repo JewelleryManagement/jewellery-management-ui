@@ -1,11 +1,16 @@
-import { fetchSales, postSale, productReturn, resourceReturn } from "@/services/HttpClientService";
+import {
+  fetchSales,
+  postSale,
+  productReturn,
+  resourceReturn,
+} from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
   state: {
     sales: [],
     tableColumns: [
-      { key: "id", title: "Id", align: ' d-none'  },
+      { key: "id", title: "Id", align: " d-none" },
       { key: "seller", title: "Seller" },
       { key: "buyer", title: "Buyer" },
       { key: "resources", title: "Resources", align: "center" },
@@ -23,7 +28,7 @@ export default {
     setSales(state, sales) {
       state.sales = sales.map((product) => ({
         ...product,
-        totalPrice: `€${product.totalPrice}`,
+        totalPrice: `€${(+product.totalPrice).toFixed(2)}`,
         totalDiscount: `${(+product.totalDiscount).toFixed(2)}%`,
         totalDiscountedPrice: `€${(+product.totalDiscountedPrice).toFixed(2)}`,
       }));
@@ -41,7 +46,6 @@ export default {
       await productReturn(productId);
     },
     async returnResource({ commit }, args) {
-
       await resourceReturn(args.saleId, args.resourceId);
     },
   },
@@ -53,7 +57,7 @@ export default {
       state.tableColumnPrice,
       state.tableColumnDiscount,
       ...rootState.resources.tableColumns,
-      state.tableColumnReturn
+      state.tableColumnReturn,
     ],
     getSaleById: (state) => (saleId) => {
       return state.sales.find((sale) => sale.id === saleId);
