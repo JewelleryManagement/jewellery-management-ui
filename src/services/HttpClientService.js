@@ -32,10 +32,6 @@ export async function fetchAvailabilityResourceById(resourceId) {
   );
 }
 
-export async function fetchProducts(orgId) {
-  return await fetchData(`organizations/${orgId}/products`);
-}
-
 export async function fetchOrgs() {
   return await fetchData("/organizations");
 }
@@ -53,7 +49,7 @@ export async function fetchProductsByOwner(ownerId) {
 }
 
 export async function fetchProductsByOrganization(ownerId) {
-  return await fetchData(`/organizations/${ownerId}/products`);
+  return await fetchData(`/products/organizations/${ownerId}`);
 }
 
 export async function fetchUsersByOrganization(orgId) {
@@ -65,7 +61,7 @@ export async function fetchUsers() {
 }
 
 export async function fetchSales() {
-  return await fetchData("/organizations/sales");
+  return await fetchData("/sales");
 }
 
 export async function getUserOrganizations() {
@@ -95,14 +91,14 @@ export async function postResources(data) {
 }
 
 export async function postProduct(data) {
-  return await postData("/organizations/products", data);
+  return await postData("products", data);
 }
 
 export async function postUserLogin(user) {
   return await postData("/login", user);
 }
 export async function postSale(data) {
-  return await postData("/organizations/sales", data);
+  return await postData("/sales", data);
 }
 export async function postUser(userData) {
   return await postData("/users", userData);
@@ -148,7 +144,7 @@ export async function removeResource(id) {
 }
 
 export async function disassmebleProduct(productId) {
-  return await removeData(`/organizations/products/${productId}`);
+  return await removeData(`/products/${productId}`);
 }
 
 export async function removeResourceFromOrg(
@@ -177,7 +173,7 @@ export async function updateResource(id, data) {
 }
 
 export async function updateProduct(id, data) {
-  return await updateData(`/organizations/products/${id}`, data);
+  return await updateData(`/products/${id}`, data);
 }
 
 export async function updateUser(id, userData) {
@@ -185,19 +181,15 @@ export async function updateUser(id, userData) {
 }
 
 export async function transferProduct(productId, recipientId) {
-  return await updateData(
-    `/organizations/products/${productId}/transfer/${recipientId}`
-  );
+  return await updateData(`/products/${productId}/transfer/${recipientId}`);
 }
 
 export async function productReturn(productId) {
-  return await updateData(`/organizations/sales/return-product/${productId}`);
+  return await updateData(`/sales/return-product/${productId}`);
 }
 
 export async function resourceReturn(saleId, resourceId) {
-  return await updateData(
-    `/organizations/sales/${saleId}/return-resource/${resourceId}`
-  );
+  return await updateData(`/sales/${saleId}/return-resource/${resourceId}`);
 }
 
 export async function putUserToOrg(orgId, userId, permissions) {
