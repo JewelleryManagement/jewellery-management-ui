@@ -49,7 +49,7 @@ export async function fetchProductsByOwner(ownerId) {
 }
 
 export async function fetchProductsByOrganization(ownerId) {
-  return await fetchData(`/products/organizations/${ownerId}`);
+  return await fetchData(`/organizations/${ownerId}/products`);
 }
 
 export async function fetchUsersByOrganization(orgId) {
