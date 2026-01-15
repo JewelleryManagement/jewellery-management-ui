@@ -1,5 +1,4 @@
 import {
-  fetchProducts,
   postProduct,
   fetchProductsByOwner,
   fetchProductsByOrganization,
@@ -76,21 +75,23 @@ export default {
   actions: {
     async fetchProducts({ dispatch, rootGetters, commit }) {
       let orgs = rootGetters["organizations/getOrgs"];
-      if (!orgs || orgs.length == 0){
+      if (!orgs || orgs.length == 0) {
         await dispatch("organizations/fetchOrgs", null, { root: true });
         orgs = rootGetters["organizations/getOrgs"];
       }
-      let allProducts = []
-      await Promise.all(orgs.map(async org => {
-        let orgProductsResponse = await fetchProducts(org.id)
-        let orgProducts = orgProductsResponse.products
-        orgProducts.forEach(product => {
-          allProducts.push({
-            ...product,
-            organization: org
-          })
+      let allProducts = [];
+      await Promise.all(
+        orgs.map(async (org) => {
+          let orgProductsResponse = await fetchProductsByOrganization(org.id);
+          let orgProducts = orgProductsResponse.products;
+          orgProducts.forEach((product) => {
+            allProducts.push({
+              ...product,
+              organization: org,
+            });
+          });
         })
-      }))
+      );
       commit("setProducts", allProducts);
     },
     async createProduct({ commit }, product) {

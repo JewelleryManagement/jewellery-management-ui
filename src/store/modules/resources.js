@@ -2,12 +2,9 @@ import { reactive } from "vue";
 import {
   fetchResources,
   postResources,
-  postResourceAvailabilityTransfer,
   removeResource,
   updateResource,
-  removeResourceQuantity,
   fetchAvailabilityResourceById,
-  fetchQuantityByResourceId,
 } from "@/services/HttpClientService.js";
 import AllowedValuesService from "@/services/AllowedValuesService";
 import {
@@ -191,21 +188,12 @@ export default {
     setResourceForm({ commit }, data) {
       commit("setResourcForm", data);
     },
-    async resourceAvailabilityTransfer({ commit }, data) {
-      await postResourceAvailabilityTransfer(data);
-    },
     async updateResource({ commit }, { id, ...resourceWithoutId }) {
       const updatedResource = await updateResource(id, resourceWithoutId);
       commit("updateResource", updatedResource);
     },
-    async removeQuantityFromResource({ commit }, data) {
-      await removeResourceQuantity(data.userId, data.resourceId, data.quantity);
-    },
     async fetchAvailabilityResourceById({ commit }, resourceId) {
       return await fetchAvailabilityResourceById(resourceId);
-    },
-    async fetchQuantityByResourceId({ commit }, resourceId) {
-      return await fetchQuantityByResourceId(resourceId);
     },
     async buildResourcesQueries({ state, commit }) {
       const allowedValueParams = state.allowedValueParams;

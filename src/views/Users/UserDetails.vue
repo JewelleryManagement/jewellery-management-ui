@@ -6,7 +6,7 @@
           <suspense>
             <user-card
               :user="user"
-              :resourcesAndQuantities="resourceItemResources"
+              :resourcesAndQuantities="purchasedResources"
             ></user-card>
           </suspense>
 
@@ -96,14 +96,6 @@ const userProducts = computed(
   () => store.getters["products/getCurrentUserProducts"] ?? []
 );
 
-async function fetchResourcesForUser() {
-  try {
-    await store.dispatch("users/fetchResourcesForUser", userId);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
-  }
-}
-
 async function fetchPurhasedResourcePerUser() {
   try {
     await store.dispatch("users/fetchPurchasedResourcesPerUser", userId);
@@ -120,13 +112,11 @@ async function fetchProductsForUser() {
   }
 }
 
-await fetchResourcesForUser();
 await fetchPurhasedResourcePerUser();
 await fetchProductsForUser();
 
-const tableColumnsResources = computed(() => store.getters["users/getTableColumnsWithQuantity"]);
-const resourceItemResources = computed(
-  () => store.getters["users/getUserResources"]
+const tableColumnsResources = computed(
+  () => store.getters["users/getTableColumnsWithQuantity"]
 );
 const purchasedResources = computed(
   () => store.getters["users/getPurchasedResources"]
