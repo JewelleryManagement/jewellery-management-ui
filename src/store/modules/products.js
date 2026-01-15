@@ -1,5 +1,4 @@
 import {
-  fetchProducts,
   postProduct,
   fetchProductsByOwner,
   fetchProductsByOrganization,
@@ -73,7 +72,7 @@ export default {
       let allProducts = [];
       await Promise.all(
         orgs.map(async (org) => {
-          let orgProductsResponse = await fetchProducts(org.id);
+          let orgProductsResponse = await fetchProductsByOrganization(org.id);
           let orgProducts = orgProductsResponse.products;
           orgProducts.forEach((product) => {
             allProducts.push({
