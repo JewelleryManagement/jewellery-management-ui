@@ -68,11 +68,11 @@ export default {
       state.tableColumnPermissions,
       state.tableActions,
     ],
-    getTableColumnsWithEdit: (state) => {
+    getTableColumnsWithActions: (state) => {
       return [
         ...state.baseColumns,
         ...state.additionalColumns,
-        state.tableColumnEdit,
+        state.tableActions,
       ];
     },
     getTableColumnsWithQuantity: (state, getters, rootState, rootGetters) => {

@@ -27,7 +27,7 @@ test.beforeEach(async ({ page }) => {
     expectedUrl: "/home",
     navChildButtonText: "All Organizations",
     expectedNewUrl: "/organizations",
-    expectedHeader: "Organizations table",
+    expectedHeader: "Organizations Table",
   });
 
   myContext.table = page
@@ -90,7 +90,7 @@ test("'Go Back' button", async ({ page }) => {
   await expect(myContext.resourceTableBtn).toBeVisible();
   await myContext.resourceTableBtn.click();
   await expect(
-    page.getByRole("heading", { name: "resource table" })
+    page.getByRole("heading", { name: "resource table" }),
   ).toBeVisible();
 });
 

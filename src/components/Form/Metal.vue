@@ -65,13 +65,13 @@ import {
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 import { useRoute } from "vue-router";
-import { setInitialType } from "./ResourceUtil";
+import { setInitialType } from "../../utils/resource-util";
 
 const route = useRoute();
 const store = useStore();
 const formData = computed(() => store.getters["resources/getResourceDetails"]);
 const allowedValueDetail = computed(
-  () => store.getters["allowedValues/getAllowedValueDetails"]
+  () => store.getters["allowedValues/getAllowedValueDetails"],
 );
 
 const setInitialValues = () => {
@@ -109,19 +109,19 @@ const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
 const clazzOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "clazz")
+  getAllowedValue(store, resourceClazz, "clazz"),
 );
 const quantityTypeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quantityType")
+  getAllowedValue(store, resourceClazz, "quantityType"),
 );
 const typeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "type")
+  getAllowedValue(store, resourceClazz, "type"),
 );
 const colorOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "color")
+  getAllowedValue(store, resourceClazz, "color"),
 );
 const purityOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "purity")
+  getAllowedValue(store, resourceClazz, "purity"),
 );
 const isFetching = ref(true);
 
@@ -134,7 +134,7 @@ const fetchAllowedValuesOptions = async () => {
 };
 
 const resetForm = computed(
-  () => store.getters["allowedValues/getAllowedValueReset"]
+  () => store.getters["allowedValues/getAllowedValueReset"],
 );
 
 // When fullPath changes, reinitialize allowed value details and quantityType
@@ -146,7 +146,7 @@ watch(
     setInitialValues();
     store.dispatch("allowedValues/setAllowedValueReset", false);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(fetchAllowedValuesOptions);

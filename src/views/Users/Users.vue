@@ -1,12 +1,13 @@
 <template>
   <div class="my-12">
     <users-table title="Users table">
-      <template v-slot:item.edit="{ item }">
+      <template v-slot:item.actions="{ item }">
         <ActionButton
           icon="mdi-pencil"
           name="Edit"
           color="green"
           :routerPath="`/users/edit/${item.id}`"
+          @click.stop
         />
       </template>
     </users-table>

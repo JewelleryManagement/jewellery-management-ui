@@ -19,9 +19,21 @@
       :headers="tableColumns"
       :items="allProducts"
       :search="search"
-      @click:row="rowClickHandler"
+      @click:row="navigateToItemPage"
       hover
     >
+      <template v-slot:item.authors="{ item }">
+        <user-tool-tip
+          :user="author"
+          v-for="(author, index) in item.authors"
+          :key="item.id"
+          @click.stop
+        >
+          <template v-if="index < item.authors.length - 1"
+            >&comma;&nbsp;</template
+          >
+        </user-tool-tip>
+      </template>
       <template v-slot:item.partOfSale="{ item }">
         <part-of-product
           :partOfProduct="item.partOfSale"
@@ -43,15 +55,23 @@
       </template>
 
       <template v-slot:item.resourceContent="{ item }">
-        <v-icon @click="openDialog(item, 'resources')" @click.stop
-          >mdi-cube</v-icon
-        >
+        <ActionButton
+          icon="mdi-cube"
+          name="Resource Content"
+          color="black"
+          @click="openDialog(item, 'resources')"
+          @click.stop
+        />
       </template>
 
       <template v-slot:item.productsContent="{ item }">
-        <v-icon @click="openDialog(item, 'products')" @click.stop
-          >mdi-cube-outline</v-icon
-        >
+        <ActionButton
+          icon="mdi-cube-outline"
+          name="Products Content"
+          color="black"
+          @click="openDialog(item, 'products')"
+          @click.stop
+        />
       </template>
 
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -81,6 +101,9 @@ import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, toRefs } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
+import ActionButton from "../Button/ActionButton.vue";
+import ResourceContentDialog from "../Dialog/ResourceContentDialog.vue";
+import ProductsContentDialog from "../Dialog/ProductsContentDialog.vue";
 const router = useRouter();
 const props = defineProps({
   products: Array,
@@ -107,7 +130,7 @@ const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 const search = ref("");
 
 const allProducts = computed(
-  () => products.value ?? store.getters["products/allProducts"]
+  () => products.value ?? store.getters["products/allProducts"],
 );
 
 const openDialog = (item, content) => {
@@ -127,8 +150,10 @@ const closeDialog = (content) => {
     isProductsDialogOpen.value = false;
   }
 };
-const rowClickHandler = (product) => {
-  navigateToItemDetails(router, product, "products");
+const navigateToItemPage = (row, item) => {
+  const productId = item.internalItem.key;
+
+  navigateToItemDetails(router, "Product Details", "productId", productId);
 };
 </script>
 

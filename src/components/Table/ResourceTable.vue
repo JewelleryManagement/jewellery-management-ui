@@ -14,7 +14,7 @@
     :items="filteredResources"
     :search="search"
     :items-per-page="50"
-    @click:row="rowClickHandler"
+    @click:row="navigateToItemPage"
     hover
   >
     <template #item.size="{ item }">
@@ -75,6 +75,8 @@ import { ref, computed, watch } from "vue";
 import { useStore } from "vuex";
 import ActionButton from "@/components/Button/ActionButton.vue";
 import { useRoute, useRouter } from "vue-router";
+import { deleteResource } from "@/utils/resource-util";
+import { navigateToItemDetails } from "@/utils/row-click-handler";
 
 const route = useRoute();
 const router = useRouter();
@@ -88,7 +90,7 @@ watch(
   () => props.selectedResourceClazz,
   (newSortChoice) => {
     internalClazzChoice.value = newSortChoice;
-  }
+  },
 );
 const store = useStore();
 const resources = computed(() => store.getters["resources/allResources"]);
@@ -116,8 +118,8 @@ const filteredResources = computed(() => {
   } else {
     return resources.value.filter((r) =>
       Object.keys(route.query).every(
-        (key) => !(key in r) || r[key] === route.query[key]
-      )
+        (key) => !(key in r) || r[key] === route.query[key],
+      ),
     );
   }
 });
@@ -125,20 +127,12 @@ const filteredResources = computed(() => {
 const search = ref("");
 
 const onDelete = async (id) => {
-  const confirmation = window.confirm(
-    "Are you sure that you would like to delete this item?"
-  );
-  if (confirmation) await store.dispatch("resources/removeResource", id);
+  deleteResource(store, id);
 };
 
-const rowClickHandler = (row, item) => {
+const navigateToItemPage = (row, item) => {
   const resourceId = item.internalItem.key;
 
-  router.push({
-    name: "Resource Details",
-    params: {
-      id: resourceId,
-    },
-  });
+  navigateToItemDetails(router, "Resource Details", "id", resourceId);
 };
 </script>

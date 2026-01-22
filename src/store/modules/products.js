@@ -7,6 +7,7 @@ import {
   postPicture,
   fetchPicture,
   updateProduct,
+  getAllProductsByResource,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -53,6 +54,10 @@ export default {
       title: "",
       align: "center",
     },
+    tableColumnResourceQuantity: {
+      key: "quantity",
+      title: "Quantity",
+    },
   },
   mutations: {
     setProducts(state, products) {
@@ -80,7 +85,7 @@ export default {
               organization: org,
             });
           });
-        })
+        }),
       );
       commit("setProducts", allProducts);
     },
@@ -116,6 +121,9 @@ export default {
         return null;
       }
     },
+    async getAllProductsByResource({ commit }, resourceId) {
+      return await getAllProductsByResource(resourceId);
+    },
   },
   getters: {
     allProducts: (state) => {
@@ -144,5 +152,6 @@ export default {
       state.tableActions,
     ],
     getActionsColumn: (state) => [state.tableActions],
+    getResourceQuantityColumn: (state) => [state.tableColumnResourceQuantity],
   },
 };

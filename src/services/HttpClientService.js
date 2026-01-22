@@ -78,6 +78,14 @@ export async function getUserOrganizationsByPermission(permission) {
   return await fetchData(`/organizations/by-permission/${permission}`);
 }
 
+export async function getAllSalesByResource(resourceId) {
+  return await fetchData(`/sales/resource/${resourceId}`);
+}
+
+export async function getAllProductsByResource(resourceId) {
+  return await fetchData(`/products/resource/${resourceId}`);
+}
+
 // POSTS REQUESTS
 async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {

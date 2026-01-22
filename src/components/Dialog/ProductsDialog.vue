@@ -15,19 +15,6 @@
             :additionalColumnsLeft="addColumn"
             :additionalColumnsRight="userColumn"
           >
-            <template v-slot:item.authors="{ item }">
-              <user-tool-tip
-                :user="author"
-                v-for="(author, index) in item.authors"
-                :key="item.id"
-                @click.stop
-              >
-                <template v-if="index < item.authors.length - 1"
-                  >&comma;&nbsp;</template
-                >
-              </user-tool-tip>
-            </template>
-
             <template v-slot:item.add="{ item }">
               <v-icon color="blue" @click="addProductById(item)" @click.stop>{{
                 btnIcon[item.id] || ICON_ADD
@@ -103,7 +90,7 @@ const props = defineProps({
   inputProducts: Array,
   clearTable: Boolean,
   currentProductId: String,
-  availableProducts: Array
+  availableProducts: Array,
 });
 
 const ICON_ADD = ref("mdi-plus");
@@ -119,7 +106,7 @@ watch(
   () => props.clearTable,
   async (newId, oldId) => {
     clearTableValues();
-  }
+  },
 );
 
 onMounted(async () => {
@@ -163,7 +150,7 @@ const closeOuterDialog = () => {
 
 const addProductById = (product) => {
   const selectedProductIndex = temporarySelectedProducts.value.findIndex(
-    (existingProduct) => existingProduct.id === product.id
+    (existingProduct) => existingProduct.id === product.id,
   );
   if (selectedProductIndex == -1) {
     temporarySelectedProducts.value.push(product);

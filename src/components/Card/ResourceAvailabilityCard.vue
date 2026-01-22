@@ -1,35 +1,63 @@
 <template>
   <v-container>
-    <v-card class="mx-auto text-center" width="600">
+    <v-card class="mx-auto text-center" width="600" elevation="6">
       <v-card-title>
         <v-icon color="pink">mdi-diamond</v-icon>
         {{ resource.clazz }}
         <v-icon color="pink">mdi-diamond</v-icon>
       </v-card-title>
 
-      <v-card-subtitle
-        v-for="item in organizationsAndQuantities"
-        :key="item.id"
-      >
-        Organization: {{ item.owner.name }} - Quantity: {{ item.quantity }}
-      </v-card-subtitle>
-
       <v-card-text>
         <div v-html="formattedResource"></div>
       </v-card-text>
+
+      <div
+        v-if="isDetailsPage"
+        class="pa-4 d-flex flex-wrap justify-space-between ga-3"
+      >
+        <text-button color="red" text="Delete" @click="onDelete()" />
+
+        <text-button
+          color="green"
+          text="Edit"
+          :path="{ name: 'Edit-Resource', params: { id: resource.id } }"
+        />
+
+        <text-button
+          color="indigo"
+          text="Duplicate"
+          :path="{ name: 'Duplicate-Resource', params: { id: resource.id } }"
+        />
+
+        <text-button
+          color="blue"
+          text="Add Quantity"
+          :path="{ name: 'Add-Quantity', params: { resourceId: resource.id } }"
+        />
+      </div>
     </v-card>
   </v-container>
 </template>
 
 <script setup>
 import { useStore } from "vuex";
+import { useRoute, useRouter } from "vue-router";
+import { computed } from "vue";
+import TextButton from "../Button/TextButton.vue";
+import { deleteResource } from "@/utils/resource-util";
+import { getQuery } from "@/utils/resource-util";
 
 const { resourceAvailability } = defineProps({
   resourceAvailability: Object,
 });
 
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+
+const isDetailsPage = computed(() => route.path.startsWith("/resources"));
+
 const formatResource = (jsonObj) => {
-  const store = useStore();
   const allTable = store.getters["resources/getTableColumns"];
   let output = "";
 
@@ -52,8 +80,14 @@ const formatResource = (jsonObj) => {
 
 const resource = resourceAvailability.resource;
 const formattedResource = formatResource(resourceAvailability.resource);
-const organizationsAndQuantities =
-  resourceAvailability.organizationsAndQuantities;
+
+const onDelete = async () => {
+  const deleted = await deleteResource(store, resource.id);
+  if (!deleted) return;
+
+  const query = getQuery(resource, store);
+  router.push({ path: "/resources", query: query });
+};
 </script>
 
 <style scoped></style>
