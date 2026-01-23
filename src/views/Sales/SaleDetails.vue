@@ -1,48 +1,37 @@
 <template>
   <v-container fluid>
     <sale-card :current-sale="currentSale" />
-    <base-card>
-      <resource-availability-table
-        :tableColumns="tableColumnsResources"
-        :resources="saleResources"
-        name="Current sale"
-      >
-        <template v-slot:item.return="{ item }">
-          <return-resource-button
-            :currentResourceInfo="item"
-            :saleToReturnFrom="currentSale"
-          />
-        </template>
-      </resource-availability-table>
-    </base-card>
-    <base-card>
-      <products-table
-        :products="saleProducts"
-        :additionalColumnsRight="productsTableAdditionalColumns"
-        title="Products in the current sale"
-      >
-        <template v-slot:item.authors="{ item }">
-          <user-tool-tip
-            :user="author"
-            v-for="(author, index) in item.authors"
-            :key="item.id"
-            @click.stop
-          >
-            <template v-if="index < item.authors.length - 1"
-              >&comma;&nbsp;</template
-            >
-          </user-tool-tip>
-        </template>
 
-        <template v-slot:item.owner="{ item }">
-          <user-tool-tip :user="item.owner" @click.stop />
-        </template>
+    <ToggleTableButtons v-model="selectedButton" :buttons="buttons" />
 
-        <template v-slot:item.return="{ item }">
-          <return-product-button :currentProductInfo="item" />
-        </template>
-      </products-table>
-    </base-card>
+    <resource-availability-table
+      v-if="selectedButton === buttons[0].label"
+      :tableColumns="tableColumnsResources"
+      :resources="saleResources"
+      name="Current sale"
+    >
+      <template v-slot:item.return="{ item }">
+        <return-resource-button
+          :currentResourceInfo="item"
+          :saleToReturnFrom="currentSale"
+        />
+      </template>
+    </resource-availability-table>
+
+    <products-table
+      v-if="selectedButton === buttons[1].label"
+      :products="saleProducts"
+      :additionalColumnsRight="productsTableAdditionalColumns"
+      title="Products in the current sale"
+    >
+      <template v-slot:item.owner="{ item }">
+        <user-tool-tip :user="item.owner" @click.stop />
+      </template>
+
+      <template v-slot:item.return="{ item }">
+        <return-product-button :currentProductInfo="item" />
+      </template>
+    </products-table>
   </v-container>
 </template>
 
@@ -53,6 +42,7 @@ import SaleCard from "@/components/Sale/SaleCard.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import ReturnResourceButton from "@/components/Button/ReturnResourceButton.vue";
 import ReturnProductButton from "@/components/Button/ReturnProductButton.vue";
+import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -62,7 +52,7 @@ const route = useRoute();
 const saleId = route.params.saleId;
 
 const tableColumnsResources = computed(
-  () => store.getters["sales/getResourceColumns"]
+  () => store.getters["sales/getResourceColumns"],
 );
 
 const currentSale = computed(() => store.getters["sales/getSaleById"](saleId));
@@ -74,13 +64,20 @@ const saleResources = ref(
       ...saleResource.resourceAndQuantity.resource,
       quantity: saleResource.resourceAndQuantity.quantity,
     };
-  })
+  }),
 );
 const productsTableAdditionalColumns = computed(() => [
   store.state.products.tableColumnOrganization,
   store.state.products.tableColumnOwner,
   store.state.sales.tableColumnReturn,
 ]);
+
+const selectedButton = ref(null);
+
+const buttons = [
+  { label: "Resources", icon: "mdi-diamond-stone" },
+  { label: "Products", icon: "mdi-package-variant" },
+];
 </script>
 
 <style lang="scss" scoped></style>

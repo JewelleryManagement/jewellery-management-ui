@@ -71,7 +71,7 @@ import {
   METAL_CLAZZ,
   ELEMENT_CLAZZ,
 } from "@/utils/clazzConstants";
-import { getQuery } from "@/components/Form/ResourceUtil";
+import { getQuery } from "@/utils/resource-util";
 
 const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
@@ -92,20 +92,20 @@ const options = ref([
   ELEMENT_CLAZZ,
 ]);
 const pageTitle = computed(
-  () => store.getters["resources/getTitle"](selectedClazz.value) || "Resource"
+  () => store.getters["resources/getTitle"](selectedClazz.value) || "Resource",
 );
 
 const resourceDetails = computed(
-  () => store.getters["resources/getResourceDetails"]
+  () => store.getters["resources/getResourceDetails"],
 );
 const snackbarProvider = inject("snackbarProvider");
 const selectedClazz = ref("");
 const isEditState = computed(() => route.path.startsWith("/resources/edit"));
 const isDuplicateState = computed(() =>
-  route.path.startsWith("/resources/duplicate")
+  route.path.startsWith("/resources/duplicate"),
 );
 const allowedValueDetail = computed(
-  () => store.getters["allowedValues/getAllowedValueDetails"]
+  () => store.getters["allowedValues/getAllowedValueDetails"],
 );
 
 const actionTitle = computed(() => {
@@ -122,7 +122,7 @@ const sku = ref("");
 
 const generateSku = () => {
   const order = store.getters["allowedValues/getAllowedFieldsByType"](
-    selectedClazz.value
+    selectedClazz.value,
   );
 
   sku.value = order
@@ -134,7 +134,7 @@ const generateSku = () => {
 const loadResourceDetails = () => {
   if (isEditState.value || isDuplicateState.value) {
     const resourceDetails = computed(() =>
-      store.getters["resources/getResourceById"](props.id)
+      store.getters["resources/getResourceById"](props.id),
     );
     store.dispatch("resources/setResourceDetails", resourceDetails.value);
     selectedClazz.value = resourceDetails.value.clazz;
@@ -184,7 +184,7 @@ watch(
   () => {
     handleRouteChange();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const clearState = (newValue) => {
@@ -230,7 +230,7 @@ const editResource = async () => {
     await addNewAllowedValuesIfNeeded(
       store,
       selectedClazz.value,
-      allowedValueDetail.value
+      allowedValueDetail.value,
     );
     await store.dispatch("resources/updateResource", {
       ...resourceDetails.value,
@@ -248,7 +248,7 @@ const createResource = async () => {
     await addNewAllowedValuesIfNeeded(
       store,
       selectedClazz.value,
-      allowedValueDetail.value
+      allowedValueDetail.value,
     );
     const result = await store.dispatch("resources/createResource", {
       ...resourceDetails.value,

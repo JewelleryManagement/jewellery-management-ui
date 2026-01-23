@@ -16,3 +16,15 @@ export const getQuery = (resource, store) => {
     quantityType: resource.quantityType,
   });
 };
+
+export const confirmDeleteResource = async (store, id) => {
+  const confirmation = window.confirm(
+    "Are you sure that you would like to delete this item?",
+  );
+
+  if (confirmation) {
+    await store.dispatch("resources/removeResource", id);
+    return true;
+  }
+  return false;
+};

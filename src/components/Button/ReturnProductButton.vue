@@ -7,7 +7,7 @@
     >Product Return</v-btn
   >
 
-  <ActionButton
+  <IconButton
     v-else-if="isSalesPage"
     icon="mdi-cart-remove"
     name="Return"
@@ -21,7 +21,7 @@ import { isMediumScreen } from "@/utils/display";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { inject } from "vue";
-import ActionButton from "./ActionButton.vue";
+import IconButton from "./IconButton.vue";
 const store = useStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
@@ -31,7 +31,7 @@ const isPartOfProduct = props.currentProductInfo.partOfSale;
 const currentProductId = props.currentProductInfo.id;
 const submitReturn = () => {
   const confirm = window.confirm(
-    "Are you sure that you would like to return this product?"
+    "Are you sure that you would like to return this product?",
   );
 
   if (!confirm) return;

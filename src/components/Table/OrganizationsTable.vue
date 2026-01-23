@@ -1,10 +1,10 @@
 <template>
   <div class="my-12">
     <div class="text-center">
-      <h1>Organizations table</h1>
+      <h1>{{ name }}</h1>
     </div>
 
-    <div class="d-flex justify-end">
+    <div v-if="isOrganizationsPage" class="d-flex justify-end">
       <table-button path="/organizations/add">New Organization</table-button>
     </div>
     <v-card-title>
@@ -18,12 +18,11 @@
       ></v-text-field>
     </v-card-title>
 
-    <!-- TODO: Extract -->
     <v-data-table
-      :headers="tableColumns"
-      :items="organizations"
+      :headers="headers"
+      :items="items"
       :search="search"
-      @click:row="rowClickHandler"
+      @click:row="navigateToItemPage"
       hover
     >
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -35,25 +34,29 @@
 
 <script setup>
 import { navigateToItemDetails } from "../../utils/row-click-handler.js";
-import { ref, computed, inject } from "vue";
-import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { ref, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+const props = defineProps({
+  headers: Array,
+  items: Array,
+  tableTitle: String,
+  name: String,
+});
+const route = useRoute();
 const router = useRouter();
-const snackbarProvider = inject("snackbarProvider");
+
+const isOrganizationsPage = computed(() => route.path === "/organizations");
 
 const search = ref("");
-const store = useStore();
 
-try {
-  await store.dispatch("organizations/fetchOrgs");
-} catch (error) {
-  snackbarProvider.showErrorSnackbar("Couldn't fetch the organizations!");
-}
+const navigateToItemPage = (row, item) => {
+  const organizationId = item.internalItem.key;
 
-const tableColumns = computed(() => store.getters["organizations/getColumns"]);
-const organizations = computed(() => store.getters["organizations/getOrgs"]);
-
-const rowClickHandler = (organization) => {
-  navigateToItemDetails(router, organization, "organizations");
+  navigateToItemDetails(
+    router,
+    "Organization Details",
+    "organizationId",
+    organizationId,
+  );
 };
 </script>

@@ -17,12 +17,11 @@
       ></v-text-field>
     </v-card-title>
 
-    <!-- TODO: Extract -->
     <v-data-table
       :headers="tableColumns"
       :items="tableUsers"
       :search="search"
-      @click:row="rowClickHandler"
+      @click:row="navigateToItemPage"
       hover
     >
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -51,23 +50,25 @@ const headBtnPath = ref(props.headBtnPath ?? "/users/create");
 const headBtnName = ref(props.headBtnName ?? "Create user");
 const allUsers = computed(() => store.getters["users/getAllUsers"]);
 const tableUsers = computed(() =>
-  props.users?.length > 0 ? props.users : allUsers.value
+  props.users?.length > 0 ? props.users : allUsers.value,
 );
 const defaultColumnsWithEdit = computed(
-  () => store.getters["users/getTableColumnsWithEdit"]
+  () => store.getters["users/getTableColumnsWithActions"],
 );
 const tableColumns = computed(() =>
-  props.columns ? props.columns : defaultColumnsWithEdit.value
+  props.columns ? props.columns : defaultColumnsWithEdit.value,
 );
 
 watch(
   () => props.users,
   (newUsers) => {
     tableUsers.value = newUsers;
-  }
+  },
 );
 
-const rowClickHandler = (user) => {
-  navigateToItemDetails(router, user, "users");
+const navigateToItemPage = (row, item) => {
+  const userId = item.internalItem.key;
+
+  navigateToItemDetails(router, "Users Details", "id", userId);
 };
 </script>

@@ -6,7 +6,7 @@
           <suspense>
             <user-card
               :user="user"
-              :resourcesAndQuantities="resourceItemResources"
+              :resourcesAndQuantities="purchasedResources"
             ></user-card>
           </suspense>
 
@@ -47,18 +47,6 @@
                   user.firstName + ' ' + user.lastName
                 }'s products table`"
               >
-                <template v-slot:item.authors="{ item }">
-                  <user-tool-tip
-                    :user="author"
-                    v-for="(author, index) in item.authors"
-                    :key="item.id"
-                    @click.stop
-                  >
-                    <template v-if="index < item.authors.length - 1"
-                      >&comma;&nbsp;</template
-                    >
-                  </user-tool-tip>
-                </template>
               </products-table>
             </base-card>
           </transition>
@@ -85,7 +73,7 @@ const route = useRoute();
 const router = useRouter();
 watch(
   () => route.fullPath,
-  () => router.go(route.fullPath)
+  () => router.go(route.fullPath),
 );
 
 const { id } = defineProps(["id"]);
@@ -93,16 +81,8 @@ const userId = id;
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const userProducts = computed(
-  () => store.getters["products/getCurrentUserProducts"] ?? []
+  () => store.getters["products/getCurrentUserProducts"] ?? [],
 );
-
-async function fetchResourcesForUser() {
-  try {
-    await store.dispatch("users/fetchResourcesForUser", userId);
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
-  }
-}
 
 async function fetchPurhasedResourcePerUser() {
   try {
@@ -120,16 +100,14 @@ async function fetchProductsForUser() {
   }
 }
 
-await fetchResourcesForUser();
 await fetchPurhasedResourcePerUser();
 await fetchProductsForUser();
 
-const tableColumnsResources = computed(() => store.getters["users/getTableColumnsWithQuantity"]);
-const resourceItemResources = computed(
-  () => store.getters["users/getUserResources"]
+const tableColumnsResources = computed(
+  () => store.getters["users/getTableColumnsWithQuantity"],
 );
 const purchasedResources = computed(
-  () => store.getters["users/getPurchasedResources"]
+  () => store.getters["users/getPurchasedResources"],
 );
 const user = computed(() => store.getters["users/getUserById"](userId)).value;
 </script>

@@ -1,5 +1,4 @@
 import {
-  fetchProducts,
   postProduct,
   fetchProductsByOwner,
   fetchProductsByOrganization,
@@ -8,6 +7,7 @@ import {
   postPicture,
   fetchPicture,
   updateProduct,
+  getAllProductsByResource,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -54,6 +54,10 @@ export default {
       title: "",
       align: "center",
     },
+    tableColumnResourceQuantity: {
+      key: "quantity",
+      title: "Quantity",
+    },
   },
   mutations: {
     setProducts(state, products) {
@@ -73,7 +77,7 @@ export default {
       let allProducts = [];
       await Promise.all(
         orgs.map(async (org) => {
-          let orgProductsResponse = await fetchProducts(org.id);
+          let orgProductsResponse = await fetchProductsByOrganization(org.id);
           let orgProducts = orgProductsResponse.products;
           orgProducts.forEach((product) => {
             allProducts.push({
@@ -81,7 +85,7 @@ export default {
               organization: org,
             });
           });
-        })
+        }),
       );
       commit("setProducts", allProducts);
     },
@@ -117,6 +121,9 @@ export default {
         return null;
       }
     },
+    async getAllProductsByResource({ commit }, resourceId) {
+      return await getAllProductsByResource(resourceId);
+    },
   },
   getters: {
     allProducts: (state) => {
@@ -145,5 +152,6 @@ export default {
       state.tableActions,
     ],
     getActionsColumn: (state) => [state.tableActions],
+    getResourceQuantityColumn: (state) => [state.tableColumnResourceQuantity],
   },
 };

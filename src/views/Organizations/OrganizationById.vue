@@ -2,25 +2,7 @@
   <div class="my-12">
     <organization-card :organization="organization"></organization-card>
 
-    <div class="my-12 d-flex flex-wrap justify-center">
-      <v-btn
-        v-for="button in buttons"
-        :key="button.label"
-        :prepend-icon="button.icon"
-        :class="isMediumAndDownScreen() ? 'mx-2 my-2 ' : 'mx-15'"
-        :size="isMediumAndDownScreen() ? 'small' : 'x-large'"
-        color="red"
-        rounded="xs"
-        :variant="selectedButton === button.label ? 'flat' : 'outlined'"
-        @click="
-          selectedButton === button.label
-            ? (selectedButton = null)
-            : (selectedButton = button.label)
-        "
-      >
-        {{ getButtonLabel(button.label) }}
-      </v-btn>
-    </div>
+    <ToggleTableButtons v-model="selectedButton" :buttons="buttons" />
 
     <resource-availability-table
       v-if="selectedButton === buttons[0].label"
@@ -34,7 +16,7 @@
 
       <template v-slot:item.actions="{ item }">
         <div class="d-flex align-center ga-2" @click.stop>
-          <ActionButton
+          <IconButton
             icon="mdi-minus"
             name="Remove Quantity"
             color="red"
@@ -48,7 +30,7 @@
             }"
           />
 
-          <ActionButton
+          <IconButton
             icon="mdi-swap-horizontal"
             name="Transfer"
             color="blue"
@@ -71,19 +53,6 @@
       :additionalColumnsRight="disassemblyColumns"
       :title="`${organization.name}'s products table`"
     >
-      <template v-slot:item.authors="{ item }">
-        <user-tool-tip
-          :user="author"
-          v-for="(author, index) in item.authors"
-          :key="item.id"
-          @click.stop
-        >
-          <template v-if="index < item.authors.length - 1"
-            >&comma;&nbsp;</template
-          >
-        </user-tool-tip>
-      </template>
-
       <template v-slot:item.actions="{ item }">
         <div class="d-flex align-center ga-2" @click.stop>
           <disassembly-button
@@ -112,7 +81,7 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <div class="d-flex align-center ga-2" @click.stop>
-          <ActionButton
+          <IconButton
             icon="mdi-pencil"
             name="Edit"
             color="green"
@@ -122,7 +91,7 @@
             }"
           />
 
-          <ActionButton
+          <IconButton
             icon="mdi-delete"
             name="Delete"
             color="red"
@@ -137,32 +106,31 @@
 <script setup>
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
-import ActionButton from "@/components/Button/ActionButton.vue";
+import IconButton from "@/components/Button/IconButton.vue";
 import PermissionsTooltip from "@/components/Tooltip/PermissionsTooltip.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import OrganizationCard from "@/components/Card/OrganizationCard.vue";
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
-import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
+import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-import { isMediumAndDownScreen } from "@/utils/display";
 
 const store = useStore();
 const route = useRoute();
 const snackbarProvider = inject("snackbarProvider");
 const organizationResources = ref([]);
 const tableColumnsResources = computed(
-  () => store.getters["resources/getAvailabilityUpdateColumns"]
+  () => store.getters["resources/getAvailabilityUpdateColumns"],
 );
 const orgUsersColumns = computed(
-  () => store.getters["users/getOrganizationColumns"]
+  () => store.getters["users/getOrganizationColumns"],
 );
 const organization = ref({});
 const orgProducts = ref([]);
 const orgMembers = ref([]);
 const disassemblyColumns = computed(
-  () => store.getters["products/getActionsColumn"]
+  () => store.getters["products/getActionsColumn"],
 );
 const orgId = route.params.organizationId;
 const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`);
@@ -174,7 +142,7 @@ const fetchResourcesForOrganization = async () => {
   try {
     const res = await store.dispatch(
       "organizations/fetchOrganizationResources",
-      orgId
+      orgId,
     );
     organization.value = res.owner;
     organizationResources.value = [];
@@ -186,7 +154,7 @@ const fetchResourcesForOrganization = async () => {
     }
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
-      "Couldn't fetch the organization details!"
+      "Couldn't fetch the organization details!",
     );
   }
 };
@@ -197,7 +165,7 @@ const fetchProductsForOrganization = async () => {
       .then((productsResponse) => productsResponse.products);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
-      "Could not fetch products for organization!"
+      "Could not fetch products for organization!",
     );
   }
 };
@@ -216,7 +184,7 @@ const fetchUsersForOrganization = async () => {
       });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
-      "Could not fetch products for organization!"
+      "Could not fetch products for organization!",
     );
   }
 };
@@ -228,7 +196,7 @@ const updateOrganizationDetails = async (productId) => {
 };
 const onDelete = async (userId) => {
   const confirmation = window.confirm(
-    "Are you sure that you would like to remove this user from organization?"
+    "Are you sure that you would like to remove this user from organization?",
   );
   if (confirmation) {
     await store.dispatch("organizations/removeUser", {
@@ -249,8 +217,4 @@ const buttons = [
     icon: "mdi-account-multiple",
   },
 ];
-
-const getButtonLabel = (label) => {
-  return label + (!isMediumAndDownScreen() ? " Table" : "");
-};
 </script>

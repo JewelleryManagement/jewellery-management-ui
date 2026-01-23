@@ -1,7 +1,5 @@
 import {
   fetchUsers,
-  fetchResourcePerUser,
-  postResourceAvailability,
   postUser,
   updateUser,
   fetchPurchasedResourcePerUser,
@@ -12,7 +10,6 @@ export default {
   namespaced: true,
   state: {
     users: [],
-    usersResources: [],
     purchasedResources: [],
     baseColumns: [
       { key: "id", title: "Id", align: " d-none" },
@@ -39,9 +36,6 @@ export default {
     setUsers(state, users) {
       state.users = users;
     },
-    setUsersResources(state, usersResources) {
-      state.usersResources = usersResources;
-    },
     setPurchasedResources(state, usersResources) {
       state.purchasedResources = usersResources;
     },
@@ -63,17 +57,9 @@ export default {
     async updateUser({ commit }, { userId, data }) {
       return await updateUser(userId, data);
     },
-    async fetchResourcesForUser({ commit }, userId) {
-      const res = await fetchResourcePerUser(userId);
-      commit("setUsersResources", res);
-      return res;
-    },
     async fetchPurchasedResourcesPerUser({ commit }, userId) {
       const res = await fetchPurchasedResourcePerUser(userId);
       commit("setPurchasedResources", res);
-    },
-    async postResourcesToUser({ commit }, data) {
-      await postResourceAvailability(data);
     },
   },
   getters: {
@@ -82,11 +68,11 @@ export default {
       state.tableColumnPermissions,
       state.tableActions,
     ],
-    getTableColumnsWithEdit: (state) => {
+    getTableColumnsWithActions: (state) => {
       return [
         ...state.baseColumns,
         ...state.additionalColumns,
-        state.tableColumnEdit,
+        state.tableActions,
       ];
     },
     getTableColumnsWithQuantity: (state, getters, rootState, rootGetters) => {

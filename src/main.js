@@ -20,11 +20,11 @@ import {
   ReturnProductButton,
   ReturnResourceButton,
   ProductsContentDialog,
-  OrgTable,
+  OrganizationsTable,
 } from "@/components";
 
 app.component("bar-code", BarCode);
-app.component("org-table", OrgTable);
+app.component("organizations-table", OrganizationsTable);
 app.component("base-card", BaseCard);
 app.component("form-buttons", FormButtons);
 app.component("table-button", TableButton);
