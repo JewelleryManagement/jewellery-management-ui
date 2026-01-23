@@ -1,5 +1,5 @@
 <template>
-  <ActionButton
+  <IconButton
     icon="mdi-cart-off"
     name="Disassemble"
     color="red"
@@ -11,7 +11,7 @@
 <script setup>
 import { useStore } from "vuex";
 import { inject } from "vue";
-import ActionButton from "./ActionButton.vue";
+import IconButton from "./IconButton.vue";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   item: Object,
@@ -23,7 +23,7 @@ const disassmebleProduct = async () => {
   const catalogNumber = props.item.catalogNumber;
   const productId = props.item.id;
   const confirmation = window.confirm(
-    `Are you sure that you would like to disassemble ${catalogNumber}?`
+    `Are you sure that you would like to disassemble ${catalogNumber}?`,
   );
 
   if (confirmation) await sendDisassembleRequest(productId);

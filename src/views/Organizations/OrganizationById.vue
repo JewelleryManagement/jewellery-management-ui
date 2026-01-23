@@ -16,7 +16,7 @@
 
       <template v-slot:item.actions="{ item }">
         <div class="d-flex align-center ga-2" @click.stop>
-          <ActionButton
+          <IconButton
             icon="mdi-minus"
             name="Remove Quantity"
             color="red"
@@ -30,7 +30,7 @@
             }"
           />
 
-          <ActionButton
+          <IconButton
             icon="mdi-swap-horizontal"
             name="Transfer"
             color="blue"
@@ -81,7 +81,7 @@
       </template>
       <template v-slot:item.actions="{ item }">
         <div class="d-flex align-center ga-2" @click.stop>
-          <ActionButton
+          <IconButton
             icon="mdi-pencil"
             name="Edit"
             color="green"
@@ -91,7 +91,7 @@
             }"
           />
 
-          <ActionButton
+          <IconButton
             icon="mdi-delete"
             name="Delete"
             color="red"
@@ -106,7 +106,7 @@
 <script setup>
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
-import ActionButton from "@/components/Button/ActionButton.vue";
+import IconButton from "@/components/Button/IconButton.vue";
 import PermissionsTooltip from "@/components/Tooltip/PermissionsTooltip.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import OrganizationCard from "@/components/Card/OrganizationCard.vue";

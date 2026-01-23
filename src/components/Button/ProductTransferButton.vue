@@ -1,5 +1,5 @@
 <template>
-  <ActionButton
+  <IconButton
     icon="mdi-swap-horizontal"
     name="Transfer"
     color="blue"
@@ -18,7 +18,7 @@
 <script setup>
 import ProductTransferDialog from "../Dialog/ProductTransferDialog.vue";
 import { ref } from "vue";
-import ActionButton from "./ActionButton.vue";
+import IconButton from "./IconButton.vue";
 
 const props = defineProps({
   product: Object,

@@ -17,7 +17,7 @@ export const getQuery = (resource, store) => {
   });
 };
 
-export const deleteResource = async (store, id) => {
+export const confirmDeleteResource = async (store, id) => {
   const confirmation = window.confirm(
     "Are you sure that you would like to delete this item?",
   );

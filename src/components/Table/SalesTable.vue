@@ -39,7 +39,7 @@
       </template>
 
       <template v-slot:item.products="{ item }">
-        <ActionButton
+        <IconButton
           icon="mdi-cube-outline"
           name="Products Content"
           color="black"
@@ -48,7 +48,7 @@
         />
       </template>
       <template v-slot:item.resources="{ item }">
-        <ActionButton
+        <IconButton
           icon="mdi-cube"
           name="Resource Content"
           color="black"
@@ -86,7 +86,7 @@
 <script setup>
 import OrganizationToolTip from "../Tooltip/OrganizationToolTip.vue";
 import UserToolTip from "../Tooltip/UserToolTip.vue";
-import ActionButton from "../Button/ActionButton.vue";
+import IconButton from "../Button/IconButton.vue";
 import ResourceContentDialog from "../Dialog/ResourceContentDialog.vue";
 import ProductsContentDialog from "../Dialog/ProductsContentDialog.vue";
 import TableButton from "../Button/TableButton.vue";

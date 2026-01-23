@@ -30,7 +30,7 @@
             @transferred-product="updateProductList"
           />
 
-          <ActionButton
+          <IconButton
             icon="mdi-pencil"
             name="Edit"
             color="green"
@@ -45,7 +45,7 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import ActionButton from "@/components/Button/ActionButton.vue";
+import IconButton from "@/components/Button/IconButton.vue";
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
 import ProductTransferButton from "@/components/Button/ProductTransferButton.vue";
 import OrganizationToolTip from "@/components/Tooltip/OrganizationToolTip.vue";

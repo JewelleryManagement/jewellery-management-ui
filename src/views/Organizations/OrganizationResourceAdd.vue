@@ -1,8 +1,8 @@
 <template>
   <v-container class="my-12" fluid>
-    <resource-availability-card
+    <resource-details-card
       :resourceAvailability="resourceAvailability"
-    ></resource-availability-card>
+    ></resource-details-card>
     <org-resource-form @handle-submit="handleSubmit"></org-resource-form>
 
     <organizations-table
@@ -22,7 +22,7 @@
 import { ref, inject, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
+import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
 import OrganizationsTable from "@/components/Table/OrganizationsTable.vue";
 import { getQuery } from "@/utils/resource-util";
 const { resourceId } = defineProps({

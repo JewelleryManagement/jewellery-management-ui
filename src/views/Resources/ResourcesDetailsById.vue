@@ -1,9 +1,9 @@
 <template>
   <div class="my-12">
     <v-container class="my-12" fluid>
-      <resource-availability-card
+      <resource-details-card
         :resourceAvailability="resourceAvailability"
-      ></resource-availability-card>
+      ></resource-details-card>
     </v-container>
 
     <ToggleTableButtons v-model="selectedButton" :buttons="buttons" />
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
+import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import SalesTable from "@/components/Table/SalesTable.vue";
 import OrganizationsTable from "@/components/Table/OrganizationsTable.vue";

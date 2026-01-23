@@ -55,7 +55,7 @@
       </template>
 
       <template v-slot:item.resourceContent="{ item }">
-        <ActionButton
+        <IconButton
           icon="mdi-cube"
           name="Resource Content"
           color="black"
@@ -65,7 +65,7 @@
       </template>
 
       <template v-slot:item.productsContent="{ item }">
-        <ActionButton
+        <IconButton
           icon="mdi-cube-outline"
           name="Products Content"
           color="black"
@@ -101,7 +101,7 @@ import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, toRefs } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import ActionButton from "../Button/ActionButton.vue";
+import IconButton from "../Button/IconButton.vue";
 import ResourceContentDialog from "../Dialog/ResourceContentDialog.vue";
 import ProductsContentDialog from "../Dialog/ProductsContentDialog.vue";
 const router = useRouter();

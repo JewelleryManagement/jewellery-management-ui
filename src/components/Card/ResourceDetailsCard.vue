@@ -44,7 +44,7 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import { computed } from "vue";
 import TextButton from "../Button/TextButton.vue";
-import { deleteResource } from "@/utils/resource-util";
+import { confirmDeleteResource } from "@/utils/resource-util";
 import { getQuery } from "@/utils/resource-util";
 
 const { resourceAvailability } = defineProps({
@@ -82,8 +82,8 @@ const resource = resourceAvailability.resource;
 const formattedResource = formatResource(resourceAvailability.resource);
 
 const onDelete = async () => {
-  const deleted = await deleteResource(store, resource.id);
-  if (!deleted) return;
+  const deleteConfirmation = await confirmDeleteResource(store, resource.id);
+  if (!deleteConfirmation) return;
 
   const query = getQuery(resource, store);
   router.push({ path: "/resources", query: query });
