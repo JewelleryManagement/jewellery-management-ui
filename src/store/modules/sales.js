@@ -1,11 +1,17 @@
-import { fetchSales, postSale, productReturn, resourceReturn } from "@/services/HttpClientService";
+import {
+  fetchSales,
+  postSale,
+  productReturn,
+  resourceReturn,
+  getAllSalesByResource,
+} from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
   state: {
     sales: [],
     tableColumns: [
-      { key: "id", title: "Id", align: ' d-none'  },
+      { key: "id", title: "Id", align: " d-none" },
       { key: "seller", title: "Seller" },
       { key: "buyer", title: "Buyer" },
       { key: "resources", title: "Resources", align: "center" },
@@ -18,15 +24,11 @@ export default {
     tableColumnPrice: { key: "salePrice", title: "Price" },
     tableColumnDiscount: { key: "discount", title: "Discount" },
     tableColumnReturn: { key: "return", title: "Return" },
+    tableColumnQuantity: { key: "quantity", title: "Quantity" },
   },
   mutations: {
     setSales(state, sales) {
-      state.sales = sales.map((product) => ({
-        ...product,
-        totalPrice: `€${product.totalPrice}`,
-        totalDiscount: `${(+product.totalDiscount).toFixed(2)}%`,
-        totalDiscountedPrice: `€${(+product.totalDiscountedPrice).toFixed(2)}`,
-      }));
+      state.sales = sales;
     },
   },
   actions: {
@@ -41,19 +43,25 @@ export default {
       await productReturn(productId);
     },
     async returnResource({ commit }, args) {
-
       await resourceReturn(args.saleId, args.resourceId);
+    },
+    async getAllSalesByResource({ commit }, resourceId) {
+      return await getAllSalesByResource(resourceId);
     },
   },
   getters: {
     getSales: (state) => state.sales,
     getColumns: (state) => [...state.tableColumns],
+    getAllColumnsWithQuantity: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
     getResourceColumns: (state, getters, rootState, rootGetters) => [
       rootState.resources.tableColumnQuantity,
       state.tableColumnPrice,
       state.tableColumnDiscount,
       ...rootState.resources.tableColumns,
-      state.tableColumnReturn
+      state.tableColumnReturn,
     ],
     getSaleById: (state) => (saleId) => {
       return state.sales.find((sale) => sale.id === saleId);

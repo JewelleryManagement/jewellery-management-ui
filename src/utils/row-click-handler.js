@@ -1,5 +1,8 @@
-export const navigateToItemDetails = (router, item, routePrefix) => {
-  const clickedRow = item.currentTarget;
-  const id = clickedRow.cells[0].innerText;
-  router.push(`/${routePrefix}/${id}`);
+export const navigateToItemDetails = (router, routeName, paramKey, id) => {
+  router.push({
+    name: routeName,
+    params: {
+      [paramKey]: id,
+    },
+  });
 };

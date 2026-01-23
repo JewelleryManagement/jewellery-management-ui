@@ -1,17 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { resourceTypesData } from "tests/utils/resourceTypes";
-import { appLogin, navigateViaNavbar, wait } from "tests/utils/functions";
-
-const selectResource = async (page, type, pageTitle) => {
-  await expect(page.locator(".v-select")).toBeVisible();
-  await page.locator(".v-select .v-field__input").click();
-  await expect(
-    page.getByRole("option", { name: `${type}`, exact: true })
-  ).toBeVisible();
-  await page.getByRole("option", { name: type, exact: true }).click();
-
-  await expect(page.locator(".v-main").getByText(pageTitle)).toBeVisible();
-};
+import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 
 const selectDropdownField = async (
   page,
@@ -56,10 +45,19 @@ const submitResource = async (page) => {
   await expect(
     await page.getByText("Successfully created resource!")
   ).toBeVisible();
-  const response = await page.waitForResponse((response) => response.request());
-  expect(response).toBeDefined();
-  expect(response.status()).toBe(200);
-  expect(response.ok()).toBeTruthy();
+};
+
+const fillAddQuantityFormAndSubmit = async (page, clazzName) => {
+  await expect(page.getByText("Add Quantity")).toBeVisible();
+  await expect(page.getByLabel("Quantity", { exact: true })).toBeVisible();
+  await page.getByLabel("Quantity", { exact: true }).fill("200");
+  await expect(page.getByLabel("Delivery Cost", { exact: true })).toBeVisible();
+  await page.getByLabel("Delivery Cost", { exact: true }).fill("50");
+  await page.getByRole("button", { name: "Submit" }).click();
+
+  await expect(
+    page.locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+  ).toBeVisible();
 };
 
 const generateFinalSkuString = (fields) => {
@@ -81,7 +79,7 @@ test("Access resources 'Add button' from navbar and its content ", async ({
   page,
 }) => {
   await navigateViaNavbar(page, expect, {
-    navParentButtonText: "All Resources",
+    navParentButtonText: "Resources",
     expectedUrl: "/home",
     navChildButtonText: "Add Resource",
     expectedNewUrl: "/resources/add",
@@ -90,14 +88,14 @@ test("Access resources 'Add button' from navbar and its content ", async ({
 
   await expect(page.locator(".v-select")).toBeVisible();
 
-  for (const { type } of resourceTypesData) {
+  for (const { clazz } of resourceTypesData) {
     await page.locator(".v-select .v-field__input").click();
     const menu = page.locator(".v-overlay__content .v-list");
     await menu.waitFor();
 
     await expect(
       menu.locator(".v-list-item-title", {
-        hasText: new RegExp(`^${type}$`),
+        hasText: new RegExp(`^${clazz}$`),
       })
     ).toBeVisible();
 
@@ -105,54 +103,76 @@ test("Access resources 'Add button' from navbar and its content ", async ({
   }
 });
 
-for (const { type, button, pageTitle } of resourceTypesData) {
-  test(`Access resources 'Add ${type}' from navbar and its content `, async ({
+for (const { clazz, clazzName, pageTitle } of resourceTypesData) {
+  test(`Access resources 'Add ${clazz}' from resource page and its content `, async ({
     page,
   }) => {
     await navigateViaNavbar(page, expect, {
-      navParentButtonText: button,
+      navParentButtonText: "Resources",
       expectedUrl: "/home",
-      navChildButtonText: `Add ${button}`,
-      expectedNewUrl: `/resources/add?clazz=${type}`,
+      navChildButtonText: `${clazzName}`,
+      expectedNewUrl: `/resources?clazz=${clazz}`,
       expectedHeader: pageTitle,
     });
+
+    await expect(
+      page.locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+    ).toBeVisible();
+    await page
+      .locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+      .click();
+    await expect(page.getByText(`Add ${clazzName}`)).toBeVisible();
   });
 }
 
-for (const { type, button, pageTitle } of resourceTypesData) {
-  test(`Access 'Add ${type}' from navbar and go back by pressing back button `, async ({
+for (const { clazz, clazzName, pageTitle } of resourceTypesData) {
+  test(`Access 'Add ${clazz}' from resource page and go back by pressing back button `, async ({
     page,
   }) => {
     await navigateViaNavbar(page, expect, {
-      navParentButtonText: button,
+      navParentButtonText: "Resources",
       expectedUrl: "/home",
-      navChildButtonText: `Add ${button}`,
-      expectedNewUrl: `/resources/add?clazz=${type}`,
+      navChildButtonText: `${clazzName}`,
+      expectedNewUrl: `/resources?clazz=${clazz}`,
       expectedHeader: pageTitle,
     });
 
+    await expect(
+      page.locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+    ).toBeVisible();
+    await page
+      .locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+      .click();
+
     await page.getByRole("button", { name: "BACK" }).click();
-    await expect(page).toHaveURL("/home");
+    await expect(page).toHaveURL(`/resources?clazz=${clazz}`);
   });
 }
 
 for (const {
-  type,
+  clazz,
   selectFieldLabel,
-  button,
+  clazzName,
   pageTitle,
   fields,
 } of resourceTypesData) {
-  test(`Create ${type} should fail when required fields are empty `, async ({
+  test(`Create ${clazz} should fail when required fields are empty `, async ({
     page,
   }) => {
     await navigateViaNavbar(page, expect, {
-      navParentButtonText: button,
+      navParentButtonText: "Resources",
       expectedUrl: "/home",
-      navChildButtonText: `Add ${button}`,
-      expectedNewUrl: `/resources/add?clazz=${type}`,
+      navChildButtonText: `${clazzName}`,
+      expectedNewUrl: `/resources?clazz=${clazz}`,
       expectedHeader: pageTitle,
     });
+
+    await expect(
+      page.locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+    ).toBeVisible();
+    await page
+      .locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+      .click();
 
     const errorMessage = "Input field is required";
 
@@ -199,22 +219,28 @@ for (const {
 }
 
 for (const {
-  type,
+  clazz,
   pageTitle,
   selectFieldLabel,
   selectFieldValue,
   fields,
+  clazzName,
 } of resourceTypesData) {
-  test(`Reset button should reset ${type} form`, async ({ page }) => {
+  test(`Reset button should reset ${clazz} form`, async ({ page }) => {
     await navigateViaNavbar(page, expect, {
-      navParentButtonText: "All Resources",
+      navParentButtonText: "Resources",
       expectedUrl: "/home",
-      navChildButtonText: "Add Resource",
-      expectedNewUrl: "/resources/add",
-      expectedHeader: "Add Resource",
+      navChildButtonText: `${clazzName}`,
+      expectedNewUrl: `/resources?clazz=${clazz}`,
+      expectedHeader: pageTitle,
     });
 
-    await selectResource(page, type, pageTitle);
+    await expect(
+      page.locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+    ).toBeVisible();
+    await page
+      .locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+      .click();
 
     await selectDropdownField(page, selectFieldLabel, selectFieldValue);
     await fillFields(page, fields);
@@ -247,27 +273,32 @@ for (const {
 }
 
 for (const {
-  type,
+  clazz,
   pageTitle,
   selectFieldLabel,
   selectFieldValue,
   fields,
-  button,
+  clazzName,
 } of resourceTypesData) {
-  test(`Create a resource type '${type}' with same Stock Keeping Unit should fail`, async ({
+  test(`Create a resource clazz '${clazz}' with same Stock Keeping Unit should fail`, async ({
     page,
   }) => {
-    const SKU = `${type} Test Sku`;
+    const SKU = `${clazz} Test Sku`;
 
     await navigateViaNavbar(page, expect, {
-      navParentButtonText: "All Resources",
+      navParentButtonText: "Resources",
       expectedUrl: "/home",
-      navChildButtonText: "Add Resource",
-      expectedNewUrl: "/resources/add",
-      expectedHeader: "Add Resource",
+      navChildButtonText: `${clazzName}`,
+      expectedNewUrl: `/resources?clazz=${clazz}`,
+      expectedHeader: pageTitle,
     });
 
-    await selectResource(page, type, pageTitle);
+    await expect(
+      page.locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+    ).toBeVisible();
+    await page
+      .locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+      .click();
 
     await selectDropdownField(page, selectFieldLabel, selectFieldValue);
     await fillFields(page, fields);
@@ -276,10 +307,10 @@ for (const {
 
     await submitResource(page);
 
-    wait(5);
+    await fillAddQuantityFormAndSubmit(page, clazzName);
 
     await page
-      .locator(".v-btn", { hasText: `ADD ${button.toUpperCase()}` })
+      .locator(".v-btn__content", { hasText: `Add ${clazzName}` })
       .click();
 
     await selectDropdownField(page, selectFieldLabel, selectFieldValue);
@@ -296,23 +327,29 @@ for (const {
 }
 
 for (const {
-  type,
+  clazz,
   pageTitle,
   selectFieldLabel,
   selectFieldValue,
   fields,
+  clazzName,
   initialSku,
 } of resourceTypesData) {
-  test(`Create a resource type '${type}'`, async ({ page }) => {
+  test(`Create a resource clazz '${clazz}'`, async ({ page }) => {
     await navigateViaNavbar(page, expect, {
-      navParentButtonText: "All Resources",
+      navParentButtonText: "Resources",
       expectedUrl: "/home",
-      navChildButtonText: "Add Resource",
-      expectedNewUrl: "/resources/add",
-      expectedHeader: "Add Resource",
+      navChildButtonText: `${clazzName}`,
+      expectedNewUrl: `/resources?clazz=${clazz}`,
+      expectedHeader: pageTitle,
     });
 
-    await selectResource(page, type, pageTitle);
+    await expect(
+      page.locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+    ).toBeVisible();
+    await page
+      .locator(".v-btn__content", { hasText: `Add ${clazzName}` })
+      .click();
 
     await selectDropdownField(page, selectFieldLabel, selectFieldValue);
     await fillFields(page, fields);
@@ -326,5 +363,7 @@ for (const {
     ).toHaveValue(sku);
 
     await submitResource(page);
+
+    await fillAddQuantityFormAndSubmit(page, clazzName);
   });
 }

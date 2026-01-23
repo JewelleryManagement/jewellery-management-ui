@@ -4,7 +4,7 @@
       <h1>{{ title }}</h1>
     </div>
     <div class="d-flex justify-end">
-      <table-button :path="headBtnPath">{{headBtnName}}</table-button>
+      <table-button :path="headBtnPath">{{ headBtnName }}</table-button>
     </div>
     <v-card-title>
       <v-spacer></v-spacer>
@@ -16,11 +16,12 @@
         hide-details
       ></v-text-field>
     </v-card-title>
+
     <v-data-table
       :headers="tableColumns"
       :items="tableUsers"
       :search="search"
-      @click:row="rowClickHandler"
+      @click:row="navigateToItemPage"
       hover
     >
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
@@ -40,32 +41,34 @@ const props = defineProps({
   users: Array,
   columns: Array,
   headBtnPath: String,
-  headBtnName: String
+  headBtnName: String,
 });
 const store = useStore();
 const search = ref("");
 const router = useRouter();
-const headBtnPath = ref(props.headBtnPath ?? '/users/create')
-const headBtnName = ref(props.headBtnName ?? 'Create user')
+const headBtnPath = ref(props.headBtnPath ?? "/users/create");
+const headBtnName = ref(props.headBtnName ?? "Create user");
 const allUsers = computed(() => store.getters["users/getAllUsers"]);
 const tableUsers = computed(() =>
-  props.users?.length > 0 ? props.users : allUsers.value
+  props.users?.length > 0 ? props.users : allUsers.value,
 );
 const defaultColumnsWithEdit = computed(
-  () => store.getters["users/getTableColumnsWithEdit"]
+  () => store.getters["users/getTableColumnsWithActions"],
 );
 const tableColumns = computed(() =>
-  props.columns ? props.columns : defaultColumnsWithEdit.value
+  props.columns ? props.columns : defaultColumnsWithEdit.value,
 );
 
 watch(
   () => props.users,
   (newUsers) => {
     tableUsers.value = newUsers;
-  }
+  },
 );
 
-const rowClickHandler = (user) => {
-  navigateToItemDetails(router, user, "users");
+const navigateToItemPage = (row, item) => {
+  const userId = item.internalItem.key;
+
+  navigateToItemDetails(router, "Users Details", "id", userId);
 };
 </script>

@@ -1,16 +1,17 @@
 <template>
-  <v-btn
-    variant="plain"
+  <IconButton
+    icon="mdi-cart-off"
+    name="Disassemble"
+    color="red"
     :disabled="!!props.item.contentOf || !!props.item.partOfSale"
     @click="disassmebleProduct"
-  >
-    <v-icon size="25">mdi-cart-off</v-icon>
-  </v-btn>
+  />
 </template>
 
 <script setup>
 import { useStore } from "vuex";
 import { inject } from "vue";
+import IconButton from "./IconButton.vue";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   item: Object,
@@ -22,7 +23,7 @@ const disassmebleProduct = async () => {
   const catalogNumber = props.item.catalogNumber;
   const productId = props.item.id;
   const confirmation = window.confirm(
-    `Are you sure that you would like to disassemble ${catalogNumber}?`
+    `Are you sure that you would like to disassemble ${catalogNumber}?`,
   );
 
   if (confirmation) await sendDisassembleRequest(productId);
@@ -39,3 +40,15 @@ async function sendDisassembleRequest(productId) {
   }
 }
 </script>
+<style scoped>
+.icon-only-btn {
+  min-width: unset;
+  width: auto;
+  height: auto;
+  padding: 0;
+}
+
+.action-icon:hover {
+  transform: scale(1.3);
+}
+</style>

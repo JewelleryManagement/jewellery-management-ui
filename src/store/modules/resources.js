@@ -21,12 +21,7 @@ import {
 const filterColumnsByKey = (state, keys) => {
   const additionalColumnsLeft = [state.tableColumnQuantity];
 
-  const additionalColumnsRight = [
-    state.tableColumnDelete,
-    state.tableColumnEdit,
-    state.tableColumnDuplicate,
-    state.tableColumnAdd,
-  ];
+  const additionalColumnsRight = [state.tableColumnActions];
 
   const filteredColumns = keys
     .map((key) => state.tableColumns.find((col) => col.key === key))
@@ -70,6 +65,7 @@ export default {
       { key: "fluorescence", title: "Fluorescence" },
       { key: "certificate", title: "Certificate" },
       { key: "treatment", title: "Treatment" },
+      { key: "totalPrice", title: "Total Price" },
     ],
     allowedValueParams: {
       Pearl: { resourceClazz: PEARL_CLAZZ, fieldName: "quantityType" },
@@ -118,16 +114,7 @@ export default {
       Element: { title: "Element" },
     },
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
-    tableColumnDelete: { key: "delete", title: "", slot: "delete" },
-    tableColumnEdit: { key: "edit", title: "", slot: "edit" },
-    tableColumnDuplicate: { key: "duplicate", title: "", slot: "duplicate" },
-    tableColumnAdd: { key: "add", title: "", slot: "add" },
-    tableColumnRemoveQuantity: { key: "remove", title: "", slot: "remove" },
-    tableColumnTransferQuantity: {
-      key: "transfer",
-      title: "",
-      slot: "transfer",
-    },
+    tableColumnActions: { key: "actions", title: "", slot: "actions" },
     tableColumnAddQuantity: {
       key: "addQuantity",
       title: "",
@@ -174,6 +161,7 @@ export default {
     async createResource({ commit }, formData) {
       const res = await postResources(formData);
       commit("createResource", res);
+      return res;
     },
     async removeResource({ commit }, id) {
       await removeResource(id);
@@ -236,21 +224,15 @@ export default {
     getColumns: (state) => [
       state.tableColumnQuantity,
       ...state.tableColumns,
-      state.tableColumnDelete,
-      state.tableColumnEdit,
-      state.tableColumnDuplicate,
-      state.tableColumnAdd,
+      state.tableColumnActions,
     ],
     getAvailabilityUpdateColumns: (state) => [
-      state.tableColumnRemoveQuantity,
-      state.tableColumnTransferQuantity,
+      state.tableColumnActions,
       state.tableColumnQuantity,
       ...state.tableColumns,
     ],
     getColumnsForPearl: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
-        "quantityType",
         "type",
         "quality",
         "shape",
@@ -260,12 +242,11 @@ export default {
         "size",
         "pricePerQuantity",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getColumnsForDiamond: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
-        "quantityType",
         "type",
         "shape",
         "size",
@@ -280,12 +261,11 @@ export default {
         "pricePerQuantity",
         "certificate",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getColumnsForDiamondMelee: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
-        "quantityType",
         "type",
         "shape",
         "size",
@@ -295,12 +275,11 @@ export default {
         "cut",
         "pricePerQuantity",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getColumnsForColoredStone: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
-        "quantityType",
         "type",
         "shape",
         "size",
@@ -313,12 +292,11 @@ export default {
         "pricePerQuantity",
         "certificate",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getColumnsForColoredStoneMelee: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
-        "quantityType",
         "type",
         "shape",
         "size",
@@ -330,12 +308,11 @@ export default {
         "treatment",
         "pricePerQuantity",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getColumnsForSemiPreciousStone: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
-        "quantityType",
         "type",
         "quality",
         "shape",
@@ -345,26 +322,25 @@ export default {
         "size",
         "pricePerQuantity",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getColumnsForElement: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
         "description",
-        "quantityType",
         "pricePerQuantity",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getColumnsForMetal: (state) =>
       filterColumnsByKey(state, [
-        "clazz",
-        "quantityType",
         "type",
         "color",
         "purity",
         "pricePerQuantity",
         "note",
+        "totalPrice",
         "sku",
       ]),
     getResourceById: (state) => (id) =>
@@ -379,8 +355,7 @@ export default {
           null
         );
       },
-    getAllResourceQueries: (state) => (resourceClazz) =>
-      state.resourcesQueries[resourceClazz],
+    getAllResourceQueries: (state) => state.resourcesQueries,
     getTitle: (state) => (key) => {
       return state.titles[key]?.title || null;
     },
@@ -391,5 +366,8 @@ export default {
           Object.keys(entries),
         ])
       ),
+    getParamsFieldName: (state) => (clazz) => {
+      return state.allowedValueParams[clazz].fieldName;
+    },
   },
 };

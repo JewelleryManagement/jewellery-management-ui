@@ -10,19 +10,6 @@
         </div>
       </template>
 
-      <template v-slot:item.authors="{ item }">
-        <user-tool-tip
-          :user="author"
-          v-for="(author, index) in item.authors"
-          :key="item.id"
-          @click.stop
-        >
-          <template v-if="index < item.authors.length - 1"
-            >&comma;&nbsp;</template
-          >
-        </user-tool-tip>
-      </template>
-
       <template v-slot:item.owner="{ item }">
         <user-tool-tip :user="item.owner" @click.stop />
       </template>
@@ -31,29 +18,26 @@
         <organization-tool-tip :organization="item.organization" @click.stop />
       </template>
 
-      <template v-slot:item.disassembly="{ item }">
-        <disassembly-button
-          :item="item"
-          @disassembled-product="updateProductList"
-          @click.stop
-        />
-      </template>
+      <template v-slot:item.actions="{ item }">
+        <div class="d-flex align-center ga-2" @click.stop>
+          <disassembly-button
+            :item="item"
+            @disassembled-product="updateProductList"
+          />
 
-      <template v-slot:item.transfer="{ item }">
-        <product-transfer-button
-          :product="item"
-          @transferred-product="updateProductList"
-        />
-      </template>
+          <product-transfer-button
+            :product="item"
+            @transferred-product="updateProductList"
+          />
 
-      <template v-slot:item.edit="{ item }">
-        <EditButton
-          v-if="!item.partOfSale"
-          :routerPath="`/products/edit/${item.id}`"
-        />
-        <v-btn v-else variant="plain" disabled>
-          <v-icon color="green">mdi-pencil</v-icon>
-        </v-btn>
+          <IconButton
+            icon="mdi-pencil"
+            name="Edit"
+            color="green"
+            :disabled="item.partOfSale"
+            :routerPath="`/products/edit/${item.id}`"
+          />
+        </div>
       </template>
     </products-table>
   </div>
@@ -61,18 +45,20 @@
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import EditButton from "@/components/Button/EditButton.vue";
+import IconButton from "@/components/Button/IconButton.vue";
+import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
+import ProductTransferButton from "@/components/Button/ProductTransferButton.vue";
+import OrganizationToolTip from "@/components/Tooltip/OrganizationToolTip.vue";
+import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
+import TableButton from "@/components/Button/TableButton.vue";
 import { onMounted, inject, computed } from "vue";
 import { useStore } from "vuex";
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
-const disassembleAndUserColumns = computed(() => [
-  store.state.products.tableColumnOwner,
-  store.state.products.tableColumnOrganization,
-  store.state.products.tableColumnDisassembly,
-  store.state.products.tableColumnTransfer,
-  store.state.products.tableColumnEdit,
-]);
+
+const disassembleAndUserColumns = computed(
+  () => store.getters["products/getDisassembleAndUserColumns"],
+);
 
 onMounted(async () => {
   try {

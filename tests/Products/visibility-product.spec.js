@@ -20,7 +20,7 @@ test("partOfProduct products should not have disassemble and transfer buttons en
   page,
 }) => {
   const classAttribute =
-    "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-plain";
+    "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-plain icon-only-btn";
 
   await page.getByRole("cell", { name: "Part of product" }).dblclick();
   await expect(page.locator("td:nth-child(8)").first()).toContainText("Yes");
@@ -43,7 +43,7 @@ test("Sold products should not have disassemble and transfer buttons enabled ", 
   page,
 }) => {
   const classAttribute =
-    "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-plain";
+    "v-btn v-btn--disabled v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-plain icon-only-btn";
 
   await page.getByRole("cell", { name: "Sold", exact: true }).dblclick();
   await expect(page.locator("td:nth-child(6)").first()).toContainText("Yes");

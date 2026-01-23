@@ -8,7 +8,18 @@ import organizationsModule from "./modules/organizations";
 import allowedValuesModule from "./modules/allowedValues";
 import VuexPersistence from "vuex-persist";
 
+const PERSIST_KEY = "vuex";
+const STORE_VERSION = 1;
+const VERSION_KEY = "store_version";
+
+const savedVersion = Number(localStorage.getItem(VERSION_KEY) || 0);
+if (savedVersion !== STORE_VERSION) {
+  localStorage.removeItem(PERSIST_KEY);
+  localStorage.setItem(VERSION_KEY, String(STORE_VERSION));
+}
+
 const vuexLocal = new VuexPersistence({
+  key: PERSIST_KEY,
   storage: window.localStorage,
 });
 

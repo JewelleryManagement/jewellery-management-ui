@@ -24,29 +24,25 @@ test.afterEach(async ({ page }) => {
   await page.close();
 });
 
-for (const {
-  type,
-  button,
-  childButton,
-  filter,
-  filterValue,
-  filterButtonValues,
-} of resourceTypesData) {
-  test(`${type} filter buttons are visible `, async ({ page }) => {
-    if (type === "Element") return;
+for (const { clazz, clazzName, filterButtonValues } of resourceTypesData) {
+  test(`${clazz} filter buttons are visible `, async ({ page }) => {
     await navigateViaNavbar(page, expect, {
-      navParentButtonText: button,
+      navParentButtonText: "Resources",
       expectedUrl: "/home",
-      navChildButtonText: childButton,
-      expectedNewUrl: `/resources?clazz=${type}&${filter}=${filterValue}`,
-      expectedHeader: `${filterValue} ${button}s  table`,
+      navChildButtonText: clazzName,
+      expectedNewUrl: `/resources?clazz=${clazz}`,
+      expectedHeader: `All ${clazzName}s table`,
     });
 
-    for (const filterButton of filterButtonValues) {
-      await page.locator(".v-btn", { hasText: filterButton }).click();
-      await expect(
-        page.getByText(`${filterButton} ${button}s  table`)
-      ).toBeVisible();
+    if (filterButtonValues) {
+      for (const filterButton of filterButtonValues) {
+        await page.locator(".v-btn", { hasText: filterButton }).click();
+        await expect(
+          page.getByText(`${filterButton} ${clazzName}s table`)
+        ).toBeVisible();
+      }
+    } else {
+      await expect(page.getByText(`All ${clazzName}s table`)).toBeVisible();
     }
   });
 }

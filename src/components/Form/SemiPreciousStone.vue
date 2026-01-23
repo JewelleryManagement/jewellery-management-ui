@@ -114,12 +114,13 @@ import {
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 import { useRoute } from "vue-router";
+import { setInitialType } from "../../utils/resource-util";
 
 const route = useRoute();
 const store = useStore();
 const formData = computed(() => store.getters["resources/getResourceDetails"]);
 const allowedValueDetail = computed(
-  () => store.getters["allowedValues/getAllowedValueDetails"]
+  () => store.getters["allowedValues/getAllowedValueDetails"],
 );
 
 const setInitialAllowedValueDetails = () => {
@@ -139,31 +140,31 @@ const largeFieldRules = useTextFieldLargeRules();
 const numberFieldRules = useNumberFieldRules();
 
 const clazzOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "clazz")
+  getAllowedValue(store, resourceClazz, "clazz"),
 );
 const quantityTypeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quantityType")
+  getAllowedValue(store, resourceClazz, "quantityType"),
 );
 const typeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "type")
+  getAllowedValue(store, resourceClazz, "type"),
 );
 const qualityOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quality")
+  getAllowedValue(store, resourceClazz, "quality"),
 );
 const shapeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "shape")
+  getAllowedValue(store, resourceClazz, "shape"),
 );
 const shapeSpecificationOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "shapeSpecification")
+  getAllowedValue(store, resourceClazz, "shapeSpecification"),
 );
 const colorOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "color")
+  getAllowedValue(store, resourceClazz, "color"),
 );
 const colorHueOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "colorHue")
+  getAllowedValue(store, resourceClazz, "colorHue"),
 );
 const sizeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "size")
+  getAllowedValue(store, resourceClazz, "size"),
 );
 
 const isFetching = ref(true);
@@ -173,10 +174,11 @@ const fetchAllowedValuesOptions = async () => {
   isFetching.value = false;
 
   setInitialAllowedValueDetails();
+  setInitialType(resourceClazz.value, store, route);
 };
 
 const resetForm = computed(
-  () => store.getters["allowedValues/getAllowedValueReset"]
+  () => store.getters["allowedValues/getAllowedValueReset"],
 );
 
 // When fullPath changes, reinitialize allowed value details
@@ -188,7 +190,7 @@ watch(
     setInitialAllowedValueDetails();
     store.dispatch("allowedValues/setAllowedValueReset", false);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(fetchAllowedValuesOptions);

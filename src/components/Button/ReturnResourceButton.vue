@@ -1,21 +1,17 @@
 <template>
-  <v-btn
-    v-if="!isSalesPage"
-    color="#673AB7"
-    @click.stop="submitReturn"
-    :size="isMediumScreen() ? 'x-small' : 'default'"
-    >Resource Return</v-btn
-  >
-  <v-btn variant="plain" @click.stop="submitReturn" v-else-if="isSalesPage">
-    <v-icon size="25">mdi-cart-remove</v-icon>
-  </v-btn>
+  <IconButton
+    icon="mdi-cart-remove"
+    name="Return"
+    color="red"
+    @click="submitReturn"
+  />
 </template>
-  
-  <script setup>
-import { isMediumScreen } from "@/utils/display";
+
+<script setup>
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { inject } from "vue";
+import IconButton from "./IconButton.vue";
 const store = useStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
@@ -24,10 +20,9 @@ const props = defineProps({
   currentResourceInfo: Object,
   saleToReturnFrom: Object,
 });
-const currentResourceId = props.currentResourceInfo.id;
 const submitReturn = () => {
   const confirm = window.confirm(
-    "Are you sure that you would like to return this resource?"
+    "Are you sure that you would like to return this resource?",
   );
 
   if (!confirm) return;
@@ -42,7 +37,7 @@ const submitSaleReturn = async () => {
       resourceId: props.currentResourceInfo.id,
     });
     snackbarProvider.showSuccessSnackbar(
-      "Resource has been returned from sale"
+      "Resource has been returned from sale",
     );
     isSalesPage ? router.push("/sales") : router.push("/resources");
   } catch (error) {
@@ -50,4 +45,3 @@ const submitSaleReturn = async () => {
   }
 };
 </script>
-  

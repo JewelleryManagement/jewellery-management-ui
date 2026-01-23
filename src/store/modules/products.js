@@ -7,6 +7,7 @@ import {
   postPicture,
   fetchPicture,
   updateProduct,
+  getAllProductsByResource,
 } from "@/services/HttpClientService.js";
 
 export default {
@@ -48,20 +49,14 @@ export default {
       slot: "productsContent",
       align: "center",
     },
-    tableColumnDisassembly: {
-      key: "disassembly",
-      title: "Disassembly",
+    tableActions: {
+      key: "actions",
+      title: "",
       align: "center",
     },
-    tableColumnTransfer: {
-      key: "transfer",
-      title: "Transfer",
-      align: "center",
-    },
-    tableColumnEdit: {
-      key: "edit",
-      title: "Edit",
-      align: "center",
+    tableColumnResourceQuantity: {
+      key: "quantity",
+      title: "Quantity",
     },
   },
   mutations: {
@@ -90,7 +85,7 @@ export default {
               organization: org,
             });
           });
-        })
+        }),
       );
       commit("setProducts", allProducts);
     },
@@ -126,6 +121,9 @@ export default {
         return null;
       }
     },
+    async getAllProductsByResource({ commit }, resourceId) {
+      return await getAllProductsByResource(resourceId);
+    },
   },
   getters: {
     allProducts: (state) => {
@@ -148,5 +146,12 @@ export default {
       state.tableColumnResourcesContent,
       state.tableColumnProductsContent,
     ],
+    getDisassembleAndUserColumns: (state) => [
+      state.tableColumnOwner,
+      state.tableColumnOrganization,
+      state.tableActions,
+    ],
+    getActionsColumn: (state) => [state.tableActions],
+    getResourceQuantityColumn: (state) => [state.tableColumnResourceQuantity],
   },
 };

@@ -20,9 +20,14 @@
           {{ resourceType }}
         </v-btn>
       </div>
-      <table-button :path="`/resources/add?clazz=${selectedResourceClazz}`"
-        >Add {{ title }}</table-button
+      <table-button
+        :to="{
+          path: '/resources/add',
+          query: $route.query,
+        }"
       >
+        Add {{ title }}
+      </table-button>
     </div>
 
     <resource-table
@@ -42,7 +47,7 @@ const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 const selectedResourceClazz = computed(() => route.query.clazz || "All");
 const selectedButton = computed(() => {
-  return route.query.quantityType || route.query.type;
+  return route.query.quantityType || route.query.type || "All";
 });
 
 const resourceTypes = store.getters["resources/resourceFilterButtons"];
@@ -52,7 +57,8 @@ const title = computed(() =>
 );
 
 const currentResourceTypes = computed(() => {
-  return resourceTypes[selectedResourceClazz.value] || [];
+  const types = resourceTypes[selectedResourceClazz.value] || [];
+  return types.length > 1 ? ["All", ...types] : [];
 });
 
 const filterResourcesByType = (resourceType) => {
@@ -64,7 +70,8 @@ const filterResourcesByType = (resourceType) => {
   });
 
   router.replace({
-    query: query,
+    query:
+      resourceType === "All" ? { clazz: selectedResourceClazz.value } : query,
   });
 };
 

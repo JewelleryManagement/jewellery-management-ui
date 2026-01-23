@@ -1,12 +1,11 @@
 <template>
-  <v-btn
+  <IconButton
+    icon="mdi-swap-horizontal"
+    name="Transfer"
+    color="blue"
     :disabled="!!props.product.partOfSale || !!props.product.contentOf"
-    variant="plain"
     @click="openDialog"
-    @click.stop
-  >
-    <v-icon color="#607D8B" size="25">mdi-swap-horizontal</v-icon>
-  </v-btn>
+  />
 
   <product-transfer-dialog
     v-if="isProductTransferDialogOpen"
@@ -19,6 +18,7 @@
 <script setup>
 import ProductTransferDialog from "../Dialog/ProductTransferDialog.vue";
 import { ref } from "vue";
+import IconButton from "./IconButton.vue";
 
 const props = defineProps({
   product: Object,

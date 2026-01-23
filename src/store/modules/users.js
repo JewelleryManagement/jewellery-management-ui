@@ -25,8 +25,7 @@ export default {
       { key: "note", title: "Note" },
       { key: "role", title: "Role" },
     ],
-    tableColumnEdit: { key: "edit", title: "Edit", slot: "edit" },
-    tableColumnDelete: { key: "delete", title: "Delete", slot: "delete" },
+    tableActions: { key: "actions", title: "", slot: "actions" },
     tableColumnPermissions: {
       key: "permissions",
       title: "Permissions",
@@ -67,14 +66,13 @@ export default {
     getOrganizationColumns: (state) => [
       ...state.baseColumns,
       state.tableColumnPermissions,
-      state.tableColumnEdit,
-      state.tableColumnDelete,
+      state.tableActions,
     ],
-    getTableColumnsWithEdit: (state) => {
+    getTableColumnsWithActions: (state) => {
       return [
         ...state.baseColumns,
         ...state.additionalColumns,
-        state.tableColumnEdit,
+        state.tableActions,
       ];
     },
     getTableColumnsWithQuantity: (state, getters, rootState, rootGetters) => {

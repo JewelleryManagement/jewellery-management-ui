@@ -49,6 +49,12 @@ const routes = [
     meta: { title: "Resources page", requiresAuth: true },
   },
   {
+    path: "/resources/:id",
+    name: "Resource Details",
+    component: () => import("../views/Resources/ResourcesDetailsById.vue"),
+    meta: { title: "Resource page", requiresAuth: true },
+  },
+  {
     path: "/resources/add",
     name: "Add Resources",
     component: () => import("../views/Resources/ResourceDetails.vue"),

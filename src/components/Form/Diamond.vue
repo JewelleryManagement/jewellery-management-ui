@@ -179,12 +179,13 @@ import {
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 import { useRoute } from "vue-router";
+import { setInitialType } from "../../utils/resource-util";
 
 const route = useRoute();
 const store = useStore();
 const formData = computed(() => store.getters["resources/getResourceDetails"]);
 const allowedValueDetail = computed(
-  () => store.getters["allowedValues/getAllowedValueDetails"]
+  () => store.getters["allowedValues/getAllowedValueDetails"],
 );
 
 const setInitialValues = () => {
@@ -222,44 +223,44 @@ const numberFieldRules = useNumberFieldRules();
 const resourceClazz = computed(() => formData.value?.clazz);
 
 const clazzOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "clazz")
+  getAllowedValue(store, resourceClazz, "clazz"),
 );
 const quantityTypeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quantityType")
+  getAllowedValue(store, resourceClazz, "quantityType"),
 );
 const typeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "type")
+  getAllowedValue(store, resourceClazz, "type"),
 );
 const shapeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "shape")
+  getAllowedValue(store, resourceClazz, "shape"),
 );
 const caratOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "carat")
+  getAllowedValue(store, resourceClazz, "carat"),
 );
 
 const colorOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "color")
+  getAllowedValue(store, resourceClazz, "color"),
 );
 
 const colorHueOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "colorHue")
+  getAllowedValue(store, resourceClazz, "colorHue"),
 );
 const clarityOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "clarity")
+  getAllowedValue(store, resourceClazz, "clarity"),
 );
 const cutOptions = computed(() => getAllowedValue(store, resourceClazz, "cut"));
 
 const polishOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "polish")
+  getAllowedValue(store, resourceClazz, "polish"),
 );
 const symmetryOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "symmetry")
+  getAllowedValue(store, resourceClazz, "symmetry"),
 );
 const fluorescenceOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "fluorescence")
+  getAllowedValue(store, resourceClazz, "fluorescence"),
 );
 const certificateOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "certificate")
+  getAllowedValue(store, resourceClazz, "certificate"),
 );
 const isFetching = ref(true);
 
@@ -268,10 +269,11 @@ const fetchAllowedValuesOptions = async () => {
   isFetching.value = false;
 
   setInitialValues();
+  setInitialType(resourceClazz.value, store, route);
 };
 
 const resetForm = computed(
-  () => store.getters["allowedValues/getAllowedValueReset"]
+  () => store.getters["allowedValues/getAllowedValueReset"],
 );
 
 // When fullPath changes, reinitialize allowed value details and quantityType
@@ -283,7 +285,7 @@ watch(
     setInitialValues();
     store.dispatch("allowedValues/setAllowedValueReset", false);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(fetchAllowedValuesOptions);

@@ -1,7 +1,7 @@
 <template>
   <v-container class="my-12" fluid>
     <div class="mx-auto text-center mb-6 text-h5">
-      {{ `Add ${pageTitle}` }}
+      {{ fullTitle }}
     </div>
 
     <v-sheet width="470" class="mx-auto">
@@ -71,6 +71,7 @@ import {
   METAL_CLAZZ,
   ELEMENT_CLAZZ,
 } from "@/utils/clazzConstants";
+import { getQuery } from "@/utils/resource-util";
 
 const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
@@ -91,43 +92,41 @@ const options = ref([
   ELEMENT_CLAZZ,
 ]);
 const pageTitle = computed(
-  () => store.getters["resources/getTitle"](selectedClazz.value) || "Resource"
+  () => store.getters["resources/getTitle"](selectedClazz.value) || "Resource",
 );
 
 const resourceDetails = computed(
-  () => store.getters["resources/getResourceDetails"]
+  () => store.getters["resources/getResourceDetails"],
 );
 const snackbarProvider = inject("snackbarProvider");
 const selectedClazz = ref("");
 const isEditState = computed(() => route.path.startsWith("/resources/edit"));
 const isDuplicateState = computed(() =>
-  route.path.startsWith("/resources/duplicate")
+  route.path.startsWith("/resources/duplicate"),
 );
 const allowedValueDetail = computed(
-  () => store.getters["allowedValues/getAllowedValueDetails"]
+  () => store.getters["allowedValues/getAllowedValueDetails"],
 );
+
+const actionTitle = computed(() => {
+  if (isEditState.value) return "Edit";
+  if (isDuplicateState.value) return "Duplicate";
+  return "Add";
+});
+
+const fullTitle = computed(() => `${actionTitle.value} ${pageTitle.value}`);
 
 const form = ref(null);
 
 const sku = ref("");
 
-const columnGettersMap = {
-  Element: "resources/getColumnsForElement",
-  Pearl: "resources/getColumnsForPearl",
-  Metal: "resources/getColumnsForMetal",
-  Diamond: "resources/getColumnsForDiamond",
-  DiamondMelee: "resources/getColumnsForDiamondMelee",
-  ColoredStone: "resources/getColumnsForColoredStone",
-  ColoredStoneMelee: "resources/getColumnsForColoredStoneMelee",
-  SemiPreciousStone: "resources/getColumnsForSemiPreciousStone",
-};
-
 const generateSku = () => {
-  const getterName = columnGettersMap[selectedClazz.value];
-  const order = store.getters[getterName || "resources/getColumns"];
+  const order = store.getters["allowedValues/getAllowedFieldsByType"](
+    selectedClazz.value,
+  );
 
   sku.value = order
-    .map((col) => allowedValueDetail.value[col.key]?.sku)
+    .map((col) => allowedValueDetail.value[col]?.sku)
     .filter((s) => s && s !== "")
     .join(".");
 };
@@ -135,7 +134,7 @@ const generateSku = () => {
 const loadResourceDetails = () => {
   if (isEditState.value || isDuplicateState.value) {
     const resourceDetails = computed(() =>
-      store.getters["resources/getResourceById"](props.id)
+      store.getters["resources/getResourceById"](props.id),
     );
     store.dispatch("resources/setResourceDetails", resourceDetails.value);
     selectedClazz.value = resourceDetails.value.clazz;
@@ -185,7 +184,7 @@ watch(
   () => {
     handleRouteChange();
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const clearState = (newValue) => {
@@ -211,16 +210,15 @@ const handleSubmit = async () => {
   }
 };
 
-const getQuery = () => {
-  return store.getters["resources/getResourceQuery"]({
-    clazz: selectedClazz.value,
-    type: resourceDetails.value.type,
-    quantityType: resourceDetails.value.quantityType,
+const navigateToResourceQuantityPage = (result) => {
+  router.push({
+    name: "Add-Quantity",
+    params: { resourceId: result.id },
   });
 };
 
 const navigateToResourcePage = () => {
-  const query = getQuery();
+  const query = getQuery(resourceDetails.value, store);
   router.push({
     path: "/resources",
     query: query,
@@ -232,7 +230,7 @@ const editResource = async () => {
     await addNewAllowedValuesIfNeeded(
       store,
       selectedClazz.value,
-      allowedValueDetail.value
+      allowedValueDetail.value,
     );
     await store.dispatch("resources/updateResource", {
       ...resourceDetails.value,
@@ -250,14 +248,14 @@ const createResource = async () => {
     await addNewAllowedValuesIfNeeded(
       store,
       selectedClazz.value,
-      allowedValueDetail.value
+      allowedValueDetail.value,
     );
-    await store.dispatch("resources/createResource", {
+    const result = await store.dispatch("resources/createResource", {
       ...resourceDetails.value,
       sku: sku.value,
     });
     snackbarProvider.showSuccessSnackbar("Successfully created resource!");
-    navigateToResourcePage();
+    navigateToResourceQuantityPage(result);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }

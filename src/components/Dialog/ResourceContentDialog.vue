@@ -23,6 +23,13 @@
           :items="tableData"
           :search="search"
         >
+          <template v-slot:item.pricePerQuantity="{ item }">
+            €{{ item.pricePerQuantity?.toFixed(2) }}
+          </template>
+
+          <template v-slot:item.totalPrice="{ item }">
+            €{{ (item.pricePerQuantity * item.quantity).toFixed(2) }}
+          </template>
         </v-data-table>
 
         <v-card-actions class="justify-end">

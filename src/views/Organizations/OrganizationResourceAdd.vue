@@ -1,17 +1,30 @@
 <template>
   <v-container class="my-12" fluid>
-    <resource-availability-card
+    <resource-details-card
       :resourceAvailability="resourceAvailability"
-    ></resource-availability-card>
+    ></resource-details-card>
     <org-resource-form @handle-submit="handleSubmit"></org-resource-form>
+
+    <organizations-table
+      v-if="organizations?.length"
+      :headers="organizationsTableColumns"
+      :items="organizations"
+      name="Organizations Owning The Resource Table"
+    >
+      <template v-slot:item.quantity="{ item }">
+        {{ getOrganizationQuantity(item) }}
+      </template>
+    </organizations-table>
   </v-container>
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from "vue";
+import { ref, inject, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
+import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
+import OrganizationsTable from "@/components/Table/OrganizationsTable.vue";
+import { getQuery } from "@/utils/resource-util";
 const { resourceId } = defineProps({
   resourceId: String,
 });
@@ -22,7 +35,7 @@ const router = useRouter();
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
   "resources/fetchAvailabilityResourceById",
-  resourceId
+  resourceId,
 );
 
 onMounted(async () => {
@@ -41,9 +54,10 @@ const postAddQuantity = async (data) => {
   try {
     await store.dispatch("organizations/postResourceToOrg", data);
     snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
+    const query = getQuery(resourceAvailability.value.resource, store);
     router.push({
       path: "/resources",
-      query: { filter: resourceAvailability.value.resource.clazz },
+      query: query,
     });
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
@@ -61,6 +75,21 @@ const handleSubmit = async (inputsData) => {
   };
 
   postAddQuantity(data);
+};
+
+const organizations = computed(() =>
+  resourceAvailability.value.organizationsAndQuantities.map((x) => x.owner),
+);
+const organizationsTableColumns = computed(
+  () => store.getters["organizations/getAllColumnsWithQuantityColumn"],
+);
+
+const getOrganizationQuantity = (item) => {
+  return (
+    resourceAvailability.value.organizationsAndQuantities.find(
+      (x) => x.owner?.id === item.id,
+    )?.quantity ?? 0
+  );
 };
 </script>
 

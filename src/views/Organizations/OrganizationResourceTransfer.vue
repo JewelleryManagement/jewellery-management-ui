@@ -1,8 +1,8 @@
 <template>
   <v-container class="my-12" fluid>
-    <resource-availability-card
+    <resource-details-card
       :resourceAvailability="resourceAvailability"
-    ></resource-availability-card>
+    ></resource-details-card>
     <org-resource-form @handle-submit="handleSubmit"></org-resource-form>
   </v-container>
 </template>
@@ -11,7 +11,7 @@
 import { ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import ResourceAvailabilityCard from "@/components/Card/ResourceAvailabilityCard.vue";
+import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
 
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
@@ -33,7 +33,7 @@ const fetchUserOrgs = async () => {
 const resourceAvailability = ref({});
 resourceAvailability.value = await store.dispatch(
   "resources/fetchAvailabilityResourceById",
-  resourceId
+  resourceId,
 );
 
 const postQuantityTransfer = async (data) => {

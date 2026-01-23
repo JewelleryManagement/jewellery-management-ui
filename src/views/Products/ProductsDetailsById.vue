@@ -56,14 +56,13 @@
 
         <div>
           <strong>Additional Price: </strong>
-          <span>€{{ (currentProductInfo.additionalPrice).toFixed(2) }}</span>
+          <span>€{{ currentProductInfo.additionalPrice.toFixed(2) }}</span>
         </div>
 
         <div>
           <strong>Sale Price: </strong>
-          <span>€{{ (currentProductInfo.salePrice).toFixed(2) }}</span>
+          <span>€{{ currentProductInfo.salePrice.toFixed(2) }}</span>
         </div>
-
 
         <bar-code :productionNumber="currentProductInfo.productionNumber" />
 
@@ -117,6 +116,7 @@
 
 <script setup>
 import { isMediumAndDownScreen, isMediumScreen } from "@/utils/display";
+import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue";
 import { onMounted } from "vue";
 import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
