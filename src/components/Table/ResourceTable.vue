@@ -82,6 +82,7 @@ const route = useRoute();
 const router = useRouter();
 const props = defineProps({
   selectedResourceClazz: String,
+  selectedFilterButton: String,
 });
 const internalClazzChoice = computed(() => props.selectedResourceClazz);
 
@@ -109,7 +110,9 @@ const columnGettersMap = {
 
 const selectedTableColumns = computed(() => {
   const getterName = columnGettersMap[internalClazzChoice.value];
-  return store.getters[getterName ? getterName : "resources/getColumns"];
+  return store.getters[getterName ? getterName : "resources/getColumns"](
+    props.selectedFilterButton == "All",
+  );
 });
 
 const filteredResources = computed(() => {

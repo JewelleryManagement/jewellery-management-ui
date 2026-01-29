@@ -18,7 +18,7 @@ import {
   ELEMENT_CLAZZ,
 } from "@/utils/clazzConstants";
 
-const filterColumnsByKey = (state, keys) => {
+const filterColumnsByKey = (state, additional, keys) => {
   const additionalColumnsLeft = [state.tableColumnQuantity];
 
   const additionalColumnsRight = [state.tableColumnActions];
@@ -27,8 +27,13 @@ const filterColumnsByKey = (state, keys) => {
     .map((key) => state.tableColumns.find((col) => col.key === key))
     .filter(Boolean);
 
+  const additionalColumns = additional
+    ? [state.tableColumnClazz, state.tableColumnQuantityType]
+    : [];
+
   const result = [
     ...additionalColumnsLeft,
+    ...additionalColumns,
     ...filteredColumns,
     ...additionalColumnsRight,
   ];
@@ -120,6 +125,8 @@ export default {
       title: "",
       slot: "addQuantity",
     },
+    tableColumnClazz: { key: "clazz", title: "Clazz" },
+    tableColumnQuantityType: { key: "quantityType", title: "Quantity Type" },
   }),
   mutations: {
     setResources(state, resources) {
@@ -130,7 +137,7 @@ export default {
     },
     removeResource(state, id) {
       state.resources = state.resources.filter(
-        (resource) => resource.id !== id
+        (resource) => resource.id !== id,
       );
     },
     setResourceDetails(state, payload) {
@@ -141,7 +148,7 @@ export default {
     },
     updateResource(state, updatedResource) {
       const index = state.resources.findIndex(
-        (resource) => resource.id === updatedResource.id
+        (resource) => resource.id === updatedResource.id,
       );
       if (index !== -1) state.resources[index] = updatedResource;
     },
@@ -168,7 +175,7 @@ export default {
       commit("removeResource", id);
     },
     setResourceDetails({ commit }, data) {
-      commit("setResourceDetails", data);
+      commit("setResourceDetails", structuredClone(data));
     },
     setResourceDetailsField({ commit }, { key, value }) {
       commit("setResourceDetailsField", { key, value });
@@ -188,8 +195,8 @@ export default {
 
       const responses = await Promise.all(
         Object.values(allowedValueParams).map((param) =>
-          AllowedValuesService.get(param)
-        )
+          AllowedValuesService.get(param),
+        ),
       );
 
       const allowedValuesLists = responses.map((response) => response.data);
@@ -231,8 +238,8 @@ export default {
       state.tableColumnQuantity,
       ...state.tableColumns,
     ],
-    getColumnsForPearl: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForPearl: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "type",
         "quality",
         "shape",
@@ -245,8 +252,8 @@ export default {
         "totalPrice",
         "sku",
       ]),
-    getColumnsForDiamond: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForDiamond: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "type",
         "shape",
         "size",
@@ -264,8 +271,8 @@ export default {
         "totalPrice",
         "sku",
       ]),
-    getColumnsForDiamondMelee: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForDiamondMelee: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "type",
         "shape",
         "size",
@@ -278,8 +285,8 @@ export default {
         "totalPrice",
         "sku",
       ]),
-    getColumnsForColoredStone: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForColoredStone: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "type",
         "shape",
         "size",
@@ -295,8 +302,8 @@ export default {
         "totalPrice",
         "sku",
       ]),
-    getColumnsForColoredStoneMelee: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForColoredStoneMelee: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "type",
         "shape",
         "size",
@@ -311,8 +318,8 @@ export default {
         "totalPrice",
         "sku",
       ]),
-    getColumnsForSemiPreciousStone: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForSemiPreciousStone: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "type",
         "quality",
         "shape",
@@ -325,16 +332,16 @@ export default {
         "totalPrice",
         "sku",
       ]),
-    getColumnsForElement: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForElement: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "description",
         "pricePerQuantity",
         "note",
         "totalPrice",
         "sku",
       ]),
-    getColumnsForMetal: (state) =>
-      filterColumnsByKey(state, [
+    getColumnsForMetal: (state) => (additional) =>
+      filterColumnsByKey(state, additional, [
         "type",
         "color",
         "purity",
@@ -364,10 +371,14 @@ export default {
         Object.entries(state.resourcesQueries).map(([clazz, entries]) => [
           clazz,
           Object.keys(entries),
-        ])
+        ]),
       ),
     getParamsFieldName: (state) => (clazz) => {
       return state.allowedValueParams[clazz].fieldName;
     },
+    getAdditionalResourceColumns: (state) => [
+      state.tableColumnClazz,
+      state.tableColumnQuantityType,
+    ],
   },
 };
