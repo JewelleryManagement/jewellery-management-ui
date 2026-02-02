@@ -32,12 +32,13 @@
 
     <resource-table
       :selectedResourceClazz="selectedResourceClazz"
+      :selectedFilterButton="selectedButton"
     ></resource-table>
   </div>
 </template>
 
 <script setup>
-import { onMounted, inject, ref, computed } from "vue";
+import { onMounted, inject, computed } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
@@ -53,7 +54,7 @@ const selectedButton = computed(() => {
 const resourceTypes = store.getters["resources/resourceFilterButtons"];
 
 const title = computed(() =>
-  store.getters["resources/getTitle"](selectedResourceClazz.value)
+  store.getters["resources/getTitle"](selectedResourceClazz.value),
 );
 
 const currentResourceTypes = computed(() => {

@@ -81,7 +81,7 @@
     label="Size"
     :rules="smallFieldRules"
     :resource-clazz="resourceClazz"
-    field-name="Size"
+    field-name="size"
     :is-fetching="isFetching"
   />
 

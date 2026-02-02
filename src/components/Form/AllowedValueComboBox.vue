@@ -18,13 +18,12 @@
       <template #item="{ item, props }">
         <v-list-item v-bind="props">
           <template #append>
-            <v-icon
-              size="25"
-              color="red-accent-4"
-              @click.stop="confirmDelete(item)"
-            >
-              mdi-delete
-            </v-icon>
+            <IconButton
+              icon="mdi-delete"
+              name="Delete"
+              color="red"
+              @click="confirmDelete(item)"
+            />
           </template>
         </v-list-item>
       </template>
@@ -58,6 +57,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useStore } from "vuex";
+import IconButton from "../Button/IconButton.vue";
 
 const props = defineProps({
   modelValue: [String, Number],
@@ -95,7 +95,7 @@ const isSkuLocked = ref(true);
 
 const onValueChange = (val) => {
   const found = props.storedAllowedValues.find(
-    (item) => item.value === String(val)
+    (item) => item.value === String(val),
   );
 
   if (found) {
@@ -138,7 +138,7 @@ watch(
       onValueChange(newModelValue);
     } else sku.value = "";
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 const applySkuRules = () => {
@@ -152,7 +152,7 @@ const valueToDelete = ref("");
 
 function confirmDelete(selected) {
   valueToDelete.value = props.storedAllowedValues.find(
-    (stored) => stored.value === selected.value
+    (stored) => stored.value === selected.value,
   );
   deleteDialog.value = true;
 }
