@@ -58,6 +58,14 @@ export default {
       key: "quantity",
       title: "Quantity",
     },
+    tableButtons: [
+      { label: "Resources", icon: "mdi-diamond-stone" },
+      { label: "Products", icon: "mdi-package-variant" },
+      {
+        label: "Events",
+        icon: "mdi-calendar",
+      },
+    ],
   },
   mutations: {
     setProducts(state, products) {
@@ -153,5 +161,6 @@ export default {
     ],
     getActionsColumn: (state) => [state.tableActions],
     getResourceQuantityColumn: (state) => [state.tableColumnResourceQuantity],
+    getTableButtons: (state) => state.tableButtons,
   },
 };

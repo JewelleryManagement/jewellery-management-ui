@@ -109,10 +109,16 @@ const columnGettersMap = {
 };
 
 const selectedTableColumns = computed(() => {
-  const getterName = columnGettersMap[internalClazzChoice.value];
-  return store.getters[getterName ? getterName : "resources/getColumns"](
-    props.selectedFilterButton == "All",
-  );
+  const getterName =
+    columnGettersMap[internalClazzChoice.value] || "resources/getColumns";
+
+  const getter = store.getters[getterName];
+
+  if (internalClazzChoice.value === "All") {
+    return getter;
+  }
+
+  return getter(props.selectedFilterButton === "All");
 });
 
 const filteredResources = computed(() => {

@@ -1,74 +1,48 @@
 <template>
-  <v-container>
+  <div class="my-12">
     <suspense>
-      <template #default>
-        <v-container>
-          <suspense>
-            <user-card
-              :user="user"
-              :resourcesAndQuantities="purchasedResources"
-            ></user-card>
-          </suspense>
-
-          <div class="d-flex justify-center mt-10">
-            <v-btn
-              color="red"
-              :size="isSmallScreen() ? 'small' : 'large'"
-              @click="() => (isResourceTableVisible = !isResourceTableVisible)"
-              >{{
-                isResourceTableVisible ? "Hide Resources" : "Show Resources"
-              }}</v-btn
-            >
-            <v-btn
-              color="green"
-              :size="isSmallScreen() ? 'small' : 'large'"
-              @click="() => (isProductsTableVisible = !isProductsTableVisible)"
-              >{{
-                isProductsTableVisible ? "Hide Products" : "Show Products"
-              }}</v-btn
-            >
-          </div>
-
-          <transition>
-            <base-card v-if="isResourceTableVisible">
-              <resource-availability-table
-                :tableColumns="tableColumnsResources"
-                :resources="purchasedResources"
-                :name="`${user.firstName + ' ' + user.lastName}`"
-              ></resource-availability-table>
-            </base-card>
-          </transition>
-
-          <transition>
-            <base-card v-if="isProductsTableVisible">
-              <products-table
-                :products="userProducts"
-                :title="`${
-                  user.firstName + ' ' + user.lastName
-                }'s products table`"
-              >
-              </products-table>
-            </base-card>
-          </transition>
-        </v-container>
-      </template>
-      <template #fallback>
-        <span>Loading...</span>
-      </template>
+      <user-card
+        :user="user"
+        :resourcesAndQuantities="purchasedResources"
+      ></user-card>
     </suspense>
-  </v-container>
+
+    <div class="d-flex justify-center mt-10">
+      <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
+    </div>
+
+    <resource-availability-table
+      v-if="selectedButton === tableButtons[0].label"
+      :tableColumns="tableColumnsResources"
+      :resources="purchasedResources"
+      :name="`${user.firstName + ' ' + user.lastName}`"
+    ></resource-availability-table>
+
+    <products-table
+      v-if="selectedButton === tableButtons[1].label"
+      :products="userProducts"
+      :title="`${user.firstName + ' ' + user.lastName}'s products table`"
+    >
+    </products-table>
+
+    <EventsTable
+      v-if="selectedButton === tableButtons[2].label"
+      :headers="eventHeaders"
+      :items="events"
+    >
+    </EventsTable>
+  </div>
 </template>
 
 <script setup>
 import { computed, inject, ref, watch } from "vue";
 import { useStore } from "vuex";
-import { isSmallScreen } from "@/utils/display";
 import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
-const isResourceTableVisible = ref(false);
-const isProductsTableVisible = ref(false);
+import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import EventsTable from "@/components/Table/EventsTable.vue";
 const route = useRoute();
 const router = useRouter();
 watch(
@@ -83,6 +57,14 @@ const snackbarProvider = inject("snackbarProvider");
 const userProducts = computed(
   () => store.getters["products/getCurrentUserProducts"] ?? [],
 );
+
+const selectedButton = ref("");
+
+const tableButtons = computed(() => store.getters["users/getTableButtons"]);
+
+const events = await store.dispatch("systemEvents/getEventsRelatedTo", userId);
+
+const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
 
 async function fetchPurhasedResourcePerUser() {
   try {

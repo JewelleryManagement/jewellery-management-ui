@@ -2,10 +2,10 @@
   <v-container fluid>
     <sale-card :current-sale="currentSale" />
 
-    <ToggleTableButtons v-model="selectedButton" :buttons="buttons" />
+    <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
     <resource-availability-table
-      v-if="selectedButton === buttons[0].label"
+      v-if="selectedButton === tableButtons[0].label"
       :tableColumns="tableColumnsResources"
       :resources="saleResources"
       name="Current sale"
@@ -19,7 +19,7 @@
     </resource-availability-table>
 
     <products-table
-      v-if="selectedButton === buttons[1].label"
+      v-if="selectedButton === tableButtons[1].label"
       :products="saleProducts"
       :additionalColumnsRight="productsTableAdditionalColumns"
       title="Products in the current sale"
@@ -32,6 +32,13 @@
         <return-product-button :currentProductInfo="item" />
       </template>
     </products-table>
+
+    <EventsTable
+      v-if="selectedButton === tableButtons[2].label"
+      :headers="eventHeaders"
+      :items="events"
+    >
+    </EventsTable>
   </v-container>
 </template>
 
@@ -43,6 +50,7 @@ import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import ReturnResourceButton from "@/components/Button/ReturnResourceButton.vue";
 import ReturnProductButton from "@/components/Button/ReturnProductButton.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import EventsTable from "@/components/Table/EventsTable.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -74,10 +82,11 @@ const productsTableAdditionalColumns = computed(() => [
 
 const selectedButton = ref(null);
 
-const buttons = [
-  { label: "Resources", icon: "mdi-diamond-stone" },
-  { label: "Products", icon: "mdi-package-variant" },
-];
+const tableButtons = computed(() => store.getters["sales/getTableButtons"]);
+
+const events = await store.dispatch("systemEvents/getEventsRelatedTo", saleId);
+
+const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
 </script>
 
 <style lang="scss" scoped></style>

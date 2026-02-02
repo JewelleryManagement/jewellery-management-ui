@@ -7,6 +7,7 @@ import salesModule from "./modules/sales";
 import organizationsModule from "./modules/organizations";
 import allowedValuesModule from "./modules/allowedValues";
 import VuexPersistence from "vuex-persist";
+import systemEventsModule from "./modules/systemEvents";
 
 const PERSIST_KEY = "vuex";
 const STORE_VERSION = 1;
@@ -32,6 +33,7 @@ const store = createStore({
     sales: salesModule,
     organizations: organizationsModule,
     allowedValues: allowedValuesModule,
+    systemEvents: systemEventsModule,
   },
   plugins: [vuexLocal.plugin],
 });

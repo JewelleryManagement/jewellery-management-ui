@@ -127,6 +127,18 @@ export default {
     },
     tableColumnClazz: { key: "clazz", title: "Clazz" },
     tableColumnQuantityType: { key: "quantityType", title: "Quantity Type" },
+    tableButtons: [
+      { label: "Sales", icon: "mdi-cart-outline" },
+      { label: "Products", icon: "mdi-package-variant" },
+      {
+        label: "Organizations",
+        icon: "mdi-diamond-stone",
+      },
+      {
+        label: "Events",
+        icon: "mdi-calendar",
+      },
+    ],
   }),
   mutations: {
     setResources(state, resources) {
@@ -380,5 +392,6 @@ export default {
       state.tableColumnClazz,
       state.tableColumnQuantityType,
     ],
+    getTableButtons: (state) => state.tableButtons,
   },
 };

@@ -6,10 +6,10 @@
       ></resource-details-card>
     </v-container>
 
-    <ToggleTableButtons v-model="selectedButton" :buttons="buttons" />
+    <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
     <sales-table
-      v-if="selectedButton === buttons[0].label"
+      v-if="selectedButton === tableButtons[0].label"
       :headers="salesTableColumns"
       :items="sales"
       tableTitle="Resource Sale Table"
@@ -20,7 +20,7 @@
     </sales-table>
 
     <products-table
-      v-if="selectedButton === buttons[1].label"
+      v-if="selectedButton === tableButtons[1].label"
       :products="products"
       :additionalColumnsLeft="resourceQuantityInProductColumn"
       title="Products Containing The Resource Table"
@@ -31,7 +31,7 @@
     </products-table>
 
     <organizations-table
-      v-if="selectedButton === buttons[2].label"
+      v-if="selectedButton === tableButtons[2].label"
       :headers="organizationsTableColumns"
       :items="organizations"
       name="Organizations Owning The Resource Table"
@@ -40,6 +40,13 @@
         {{ getOrganizationQuantity(item) }}
       </template>
     </organizations-table>
+
+    <EventsTable
+      v-if="selectedButton === tableButtons[3].label"
+      :headers="eventHeaders"
+      :items="events"
+    >
+    </EventsTable>
   </div>
 </template>
 
@@ -49,6 +56,7 @@ import ProductsTable from "@/components/Table/ProductsTable.vue";
 import SalesTable from "@/components/Table/SalesTable.vue";
 import OrganizationsTable from "@/components/Table/OrganizationsTable.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import EventsTable from "@/components/Table/EventsTable.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -84,14 +92,7 @@ const organizationsTableColumns = computed(
 
 const selectedButton = ref("");
 
-const buttons = [
-  { label: "Sales", icon: "mdi-cart-outline" },
-  { label: "Products", icon: "mdi-package-variant" },
-  {
-    label: "Organizations",
-    icon: "mdi-diamond-stone",
-  },
-];
+const tableButtons = computed(() => store.getters["resources/getTableButtons"]);
 
 const getQuantityInSale = (item) => {
   return (
@@ -115,4 +116,11 @@ const getOrganizationQuantity = (item) => {
     )?.quantity ?? 0
   );
 };
+
+const events = await store.dispatch(
+  "systemEvents/getEventsRelatedTo",
+  resourceId,
+);
+
+const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
 </script>
