@@ -216,8 +216,15 @@ export default {
       const queriesByResourceClass = {};
 
       for (const allowedValues of allowedValuesLists) {
-        for (const allowedValue of allowedValues) {
-          const { resourceClazz, fieldName, value } = allowedValue;
+        const isSingle = allowedValues.length === 1;
+
+        for (const { resourceClazz, fieldName, value } of allowedValues) {
+          if (isSingle) {
+            queriesByResourceClass[resourceClazz] = {
+              clazz: resourceClazz,
+            };
+            break;
+          }
 
           if (!queriesByResourceClass[resourceClazz]) {
             queriesByResourceClass[resourceClazz] = {};
@@ -367,13 +374,12 @@ export default {
     getResourceDetails: (state) => state.resourceDetails,
     getResourceQuery:
       (state) =>
-      ({ clazz, type, quantityType }) => {
-        return (
-          state.resourcesQueries[clazz]?.[type] ??
-          state.resourcesQueries[clazz]?.[quantityType] ??
-          null
-        );
-      },
+      ({ clazz, type, quantityType }) =>
+        state.resourcesQueries[clazz]?.[type] ??
+        state.resourcesQueries[clazz]?.[quantityType] ??
+        state.resourcesQueries[clazz] ??
+        null,
+
     getAllResourceQueries: (state) => state.resourcesQueries,
     getTitle: (state) => (key) => {
       return state.titles[key]?.title || null;
