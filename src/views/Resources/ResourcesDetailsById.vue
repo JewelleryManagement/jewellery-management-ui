@@ -9,7 +9,7 @@
     <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
     <sales-table
-      v-if="selectedButton === tableButtons[0].label"
+      v-if="selectedButton === 'Sales'"
       :headers="salesTableColumns"
       :items="sales"
       tableTitle="Resource Sale Table"
@@ -20,7 +20,7 @@
     </sales-table>
 
     <products-table
-      v-if="selectedButton === tableButtons[1].label"
+      v-if="selectedButton === 'Products'"
       :products="products"
       :additionalColumnsLeft="resourceQuantityInProductColumn"
       title="Products Containing The Resource Table"
@@ -31,7 +31,7 @@
     </products-table>
 
     <organizations-table
-      v-if="selectedButton === tableButtons[2].label"
+      v-if="selectedButton === 'Organizations'"
       :headers="organizationsTableColumns"
       :items="organizations"
       name="Organizations Owning The Resource Table"
@@ -42,7 +42,7 @@
     </organizations-table>
 
     <EventsTable
-      v-if="selectedButton === tableButtons[3].label"
+      v-if="selectedButton === 'Events'"
       :headers="eventHeaders"
       :items="events"
     >

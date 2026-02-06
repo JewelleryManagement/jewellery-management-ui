@@ -41,6 +41,20 @@ const filterColumnsByKey = (state, additional, keys) => {
   return result;
 };
 
+const setSingleQuery = (queries, resourceClazz) => {
+  queries[resourceClazz] = { clazz: resourceClazz };
+};
+
+const addValueQueries = (queries, resourceClazz, allowedValues) => {
+  queries[resourceClazz] ??= {};
+  for (const { fieldName, value } of allowedValues) {
+    queries[resourceClazz][value] = {
+      clazz: resourceClazz,
+      [fieldName]: value,
+    };
+  }
+};
+
 export default {
   namespaced: true,
   state: reactive({
@@ -216,24 +230,12 @@ export default {
       const queriesByResourceClass = {};
 
       for (const allowedValues of allowedValuesLists) {
-        const isSingle = allowedValues.length === 1;
+        const resourceClazz = allowedValues[0].resourceClazz;
 
-        for (const { resourceClazz, fieldName, value } of allowedValues) {
-          if (isSingle) {
-            queriesByResourceClass[resourceClazz] = {
-              clazz: resourceClazz,
-            };
-            break;
-          }
-
-          if (!queriesByResourceClass[resourceClazz]) {
-            queriesByResourceClass[resourceClazz] = {};
-          }
-
-          queriesByResourceClass[resourceClazz][value] = {
-            clazz: resourceClazz,
-            [fieldName]: value,
-          };
+        if (allowedValues.length === 1) {
+          setSingleQuery(queriesByResourceClass, resourceClazz);
+        } else {
+          addValueQueries(queriesByResourceClass, resourceClazz, allowedValues);
         }
       }
 

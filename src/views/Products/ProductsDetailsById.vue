@@ -84,21 +84,21 @@
     <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
     <resource-availability-table
-      v-if="selectedButton === tableButtons[0].label"
+      v-if="selectedButton === 'Resources'"
       :tableColumns="tableColumnsResources"
       :resources="getResourcesWithQuantity()"
       name="Resources Part Of Product"
     ></resource-availability-table>
 
     <products-table
-      v-if="selectedButton === tableButtons[1].label"
+      v-if="selectedButton === 'Products'"
       :products="currentProductInfo.productsContent"
       title="Products Part Of Product"
     >
     </products-table>
 
     <EventsTable
-      v-if="selectedButton === tableButtons[2].label"
+      v-if="selectedButton === 'Events'"
       :headers="eventHeaders"
       :items="events"
     >

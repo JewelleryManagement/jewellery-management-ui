@@ -12,21 +12,21 @@
     </div>
 
     <resource-availability-table
-      v-if="selectedButton === tableButtons[0].label"
+      v-if="selectedButton === 'Resources'"
       :tableColumns="tableColumnsResources"
       :resources="purchasedResources"
       :name="`${user.firstName + ' ' + user.lastName}`"
     ></resource-availability-table>
 
     <products-table
-      v-if="selectedButton === tableButtons[1].label"
+      v-if="selectedButton === 'Products'"
       :products="userProducts"
       :title="`${user.firstName + ' ' + user.lastName}'s products table`"
     >
     </products-table>
 
     <EventsTable
-      v-if="selectedButton === tableButtons[2].label"
+      v-if="selectedButton === 'Events'"
       :headers="eventHeaders"
       :items="events"
     >

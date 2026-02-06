@@ -5,7 +5,7 @@
     <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
     <resource-availability-table
-      v-if="selectedButton === tableButtons[0].label"
+      v-if="selectedButton === 'Resources'"
       :tableColumns="tableColumnsResources"
       :resources="saleResources"
       name="Current sale"
@@ -19,7 +19,7 @@
     </resource-availability-table>
 
     <products-table
-      v-if="selectedButton === tableButtons[1].label"
+      v-if="selectedButton === 'Products'"
       :products="saleProducts"
       :additionalColumnsRight="productsTableAdditionalColumns"
       title="Products in the current sale"
@@ -34,7 +34,7 @@
     </products-table>
 
     <EventsTable
-      v-if="selectedButton === tableButtons[2].label"
+      v-if="selectedButton === 'Events'"
       :headers="eventHeaders"
       :items="events"
     >

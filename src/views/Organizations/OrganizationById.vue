@@ -5,7 +5,7 @@
     <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
     <resource-availability-table
-      v-if="selectedButton === tableButtons[0].label"
+      v-if="selectedButton === 'Resources'"
       :tableColumns="tableColumnsResources"
       :resources="organizationResources"
       :name="organization.name"
@@ -48,7 +48,7 @@
     </resource-availability-table>
 
     <products-table
-      v-if="selectedButton === tableButtons[1].label"
+      v-if="selectedButton === 'Products'"
       :products="orgProducts"
       :additionalColumnsRight="disassemblyColumns"
       :title="`${organization.name}'s products table`"
@@ -69,7 +69,7 @@
     </products-table>
 
     <users-table
-      v-if="selectedButton === tableButtons[2].label"
+      v-if="selectedButton === 'Users'"
       title="Organization members"
       :users="orgMembers"
       :columns="orgUsersColumns"
@@ -102,7 +102,7 @@
     </users-table>
 
     <EventsTable
-      v-if="selectedButton === tableButtons[3].label"
+      v-if="selectedButton === 'Events'"
       :headers="eventHeaders"
       :items="events"
     >

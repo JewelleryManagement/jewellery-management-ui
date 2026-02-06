@@ -118,7 +118,7 @@ test("View resource events table", async ({ page }) => {
   await page.getByLabel("Quantity", { exact: true }).fill(String(22));
   await page.getByLabel("Delivery Cost", { exact: true }).fill(String(22));
   await page.locator(".v-btn__content", { hasText: "Submit" }).click();
-  await expect(page.getByText("Piece Elements table")).toBeVisible();
+  await expect(page.getByText("All Elements table")).toBeVisible();
 
   await expect(page.getByText("Test Description")).toBeVisible();
   await page.getByText("Test Description").click();
