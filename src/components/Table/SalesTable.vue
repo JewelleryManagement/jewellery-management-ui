@@ -61,7 +61,7 @@
         €{{ item.totalPrice?.toFixed(2) }}
       </template>
       <template v-slot:item.totalDiscount="{ item }">
-        €{{ item.totalDiscount?.toFixed(2) }}
+        %{{ item.totalDiscount?.toFixed(2) }}
       </template>
       <template v-slot:item.totalDiscountedPrice="{ item }">
         €{{ item.totalDiscountedPrice?.toFixed(2) }}

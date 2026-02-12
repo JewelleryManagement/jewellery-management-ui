@@ -69,7 +69,7 @@
     </products-table>
 
     <users-table
-      v-if="selectedButton === 'Users'"
+      v-if="selectedButton === 'Members'"
       title="Organization members"
       :users="orgMembers"
       :columns="orgUsersColumns"
