@@ -46,6 +46,8 @@ import { computed } from "vue";
 import TextButton from "../Button/TextButton.vue";
 import { confirmDeleteResource } from "@/utils/resource-util";
 import { getQuery } from "@/utils/resource-util";
+import { inject } from "vue";
+const snackbarProvider = inject("snackbarProvider");
 
 const { resourceAvailability } = defineProps({
   resourceAvailability: Object,
@@ -82,7 +84,11 @@ const resource = resourceAvailability.resource;
 const formattedResource = formatResource(resourceAvailability.resource);
 
 const onDelete = async () => {
-  const deleteConfirmation = await confirmDeleteResource(store, resource.id);
+  const deleteConfirmation = await confirmDeleteResource(
+    store,
+    resource.id,
+    snackbarProvider,
+  );
   if (!deleteConfirmation) return;
 
   const query = getQuery(resource, store);

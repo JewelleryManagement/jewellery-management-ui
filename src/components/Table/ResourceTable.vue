@@ -77,6 +77,8 @@ import IconButton from "@/components/Button/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import { confirmDeleteResource } from "@/utils/resource-util";
 import { navigateToItemDetails } from "@/utils/row-click-handler";
+import { inject } from "vue";
+const snackbarProvider = inject("snackbarProvider");
 
 const route = useRoute();
 const router = useRouter();
@@ -136,7 +138,7 @@ const filteredResources = computed(() => {
 const search = ref("");
 
 const onDelete = async (id) => {
-  confirmDeleteResource(store, id);
+  confirmDeleteResource(store, id, snackbarProvider);
 };
 
 const navigateToItemPage = (row, item) => {
