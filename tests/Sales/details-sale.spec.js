@@ -6,8 +6,8 @@ import {
   secondInputSelect,
   selectDate,
   selectResource,
-  myContext,
-  createGlobalVariables,
+  saleContext,
+  createSaleGlobalVariables,
 } from "tests/utils/salesUtils";
 
 test.beforeEach(async ({ page }) => {
@@ -19,11 +19,11 @@ test.beforeEach(async ({ page }) => {
     expectedNewUrl: "/sales",
     expectedHeader: "Sales table",
   });
-  createGlobalVariables(page);
+  createSaleGlobalVariables(page);
 });
 
 test("View sale events table", async ({ page }) => {
-  const { submitButton } = myContext;
+  const { submitButton } = saleContext;
 
   await expect(
     page.locator(".v-btn__content", { hasText: "NEW SALE" }),

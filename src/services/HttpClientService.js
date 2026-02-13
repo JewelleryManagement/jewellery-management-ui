@@ -90,6 +90,10 @@ export async function getAllEventsRelatedTo(id) {
   return await fetchData(`/system-events/related-to/${id}`);
 }
 
+export async function getSystemEvent(id) {
+  return await fetchData(`/system-events/${id}`);
+}
+
 // POSTS REQUESTS
 async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {

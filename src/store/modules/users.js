@@ -12,16 +12,16 @@ export default {
     users: [],
     purchasedResources: [],
     baseColumns: [
-      { key: "id", title: "Id", align: " d-none" },
+      { key: "id", title: "Id", align: "d-none" },
       { key: "firstName", title: "First Name" },
       { key: "lastName", title: "Last Name" },
       { key: "email", title: "Email" },
     ],
     additionalColumns: [
-      { key: "address", title: "Address", align: " d-none" },
-      { key: "phone", title: "Phone", align: " d-none" },
-      { key: "phone2", title: "Phone2", align: " d-none" },
-      { key: "birthDate", title: "Birth Date", align: " d-none" },
+      { key: "address", title: "Address" },
+      { key: "phone", title: "Phone" },
+      { key: "phone2", title: "Phone2" },
+      { key: "birthDate", title: "Birth Date" },
       { key: "note", title: "Note" },
       { key: "role", title: "Role" },
     ],
@@ -30,6 +30,16 @@ export default {
       key: "permissions",
       title: "Permissions",
       slot: "permissions",
+    },
+    tableColumnOrganizationPermissions: {
+      key: "organizationPermissions",
+      title: "Permissions",
+      slot: "organizationPermissions",
+    },
+    tableColumnOrganization: {
+      key: "organization",
+      title: "Organization",
+      slot: "organization",
     },
     tableButtons: [
       { label: "Resources", icon: "mdi-diamond-stone" },
@@ -83,6 +93,15 @@ export default {
         state.tableActions,
       ];
     },
+    getAllInformationColumns: (state) => [
+      ...state.baseColumns,
+      ...state.additionalColumns,
+    ],
+    getBaseColumnsWithPermmisions: (state) => [
+      ...state.baseColumns,
+      state.tableColumnOrganizationPermissions,
+      state.tableColumnOrganization,
+    ],
     getTableColumnsWithQuantity: (state, getters, rootState, rootGetters) => {
       return [
         rootState.resources.tableColumnQuantity,

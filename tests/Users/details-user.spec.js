@@ -32,6 +32,14 @@ test("View user events table", async ({ page }) => {
   await userContext.passwordLabel.fill(password);
   await userContext.submitButton.click();
 
+  await page
+    .locator(".v-data-table-footer__items-per-page .v-input__control")
+    .click();
+  await page
+    .locator(".v-overlay-container .v-list-item", {})
+    .filter({ hasText: "All" })
+    .click();
+
   await expect(page.getByText(email)).toBeVisible();
   await page.getByText(email).click();
   await expect(page.getByText("Events Table")).toBeVisible();

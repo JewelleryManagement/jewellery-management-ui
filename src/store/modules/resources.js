@@ -141,6 +141,10 @@ export default {
     },
     tableColumnClazz: { key: "clazz", title: "Clazz" },
     tableColumnQuantityType: { key: "quantityType", title: "Quantity Type" },
+    tableColmnOwner: { key: "owner", title: "Owner" },
+    tableColmnDealPrice: { key: "dealPrice", title: "Deal Price" },
+    tableColmnNewOwner: { key: "newOwner", title: "New Owner" },
+    tableColmnPreviousOwner: { key: "previousOwner", title: "Previous Owner" },
     tableButtons: [
       { label: "Sales", icon: "mdi-cart-outline" },
       { label: "Products", icon: "mdi-package-variant" },
@@ -401,5 +405,14 @@ export default {
       state.tableColumnQuantityType,
     ],
     getTableButtons: (state) => state.tableButtons,
+    getTableColumnOrganizationQuantity: (state) => [
+      state.tableColmnOwner,
+      state.tableColmnDealPrice,
+    ],
+    getTableColumnsOrganizationTransfer: (state) => [
+      state.tableColmnNewOwner,
+      state.tableColmnPreviousOwner,
+      state.tableColmnDealPrice,
+    ],
   },
 };

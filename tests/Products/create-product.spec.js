@@ -9,8 +9,8 @@ import {
   requiredField,
 } from "tests/utils/functions";
 import {
-  createGlobalVariables,
-  myContext,
+  createProductGlobalVariables,
+  productContext,
   fillProductForm,
   fillTableCellAndPress,
 } from "tests/utils/productsUtils";
@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
     expectedNewUrl: "/products/add",
     expectedHeader: "Create product",
   });
-  await createGlobalVariables(page);
+  await createProductGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -44,7 +44,7 @@ test("Acces a product creation page", async ({ page }) => {
     submitButton,
     resetButton,
     goBackButton,
-  } = myContext;
+  } = productContext;
 
   await expect(catalogNameButton).toBeVisible();
   await expect(descriptionButton).toBeVisible();
@@ -60,7 +60,7 @@ test("Acces a product creation page", async ({ page }) => {
 });
 
 test("Create a product with empty fields is unsuccessful", async ({ page }) => {
-  const { submitButton } = myContext;
+  const { submitButton } = productContext;
 
   await expect(submitButton).toBeVisible();
   await submitButton.click();
@@ -70,8 +70,8 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
   await expect(page.getByText("Please select at least 1 author")).toBeVisible();
   await expect(
     page.getByText(
-      "Input field is required, Input must be less than 100 characters"
-    )
+      "Input field is required, Input must be less than 100 characters",
+    ),
   ).toBeVisible();
 
   await fillProductForm(
@@ -80,17 +80,17 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
     "Description" + getRandomNumber(),
     ["root testroot@gmail.com"],
     getRandomNumberAsString(),
-    `asd${getRandomNumber()}asdf`
+    `asd${getRandomNumber()}asdf`,
   );
 
   await submitButton.click();
   await expect(
-    page.getByText("Please select at least 1 resource!")
+    page.getByText("Please select at least 1 resource!"),
   ).toBeVisible();
 });
 
 test("Create a product is successful", async ({ page }) => {
-  const { submitButton, additionalPrice } = myContext;
+  const { submitButton, additionalPrice } = productContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = ["root testroot@gmail.com"];
@@ -101,7 +101,7 @@ test("Create a product is successful", async ({ page }) => {
     productName,
     productDescription,
     authors,
-    barcode
+    barcode,
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
@@ -117,14 +117,14 @@ test("Create a product is successful", async ({ page }) => {
   await page.getByLabel("Search").fill(productName);
   await expect(page.getByRole("cell", { name: productName })).toBeVisible();
   await expect(
-    page.getByRole("cell", { name: productDescription })
+    page.getByRole("cell", { name: productDescription }),
   ).toBeVisible();
 });
 
 test("Create a product with a product is successful and negative additional price", async ({
   page,
 }) => {
-  const { submitButton, additionalPrice } = myContext;
+  const { submitButton, additionalPrice } = productContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = ["root testroot@gmail.com"];
@@ -135,7 +135,7 @@ test("Create a product with a product is successful and negative additional pric
     productName,
     productDescription,
     authors,
-    barcode
+    barcode,
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
@@ -150,7 +150,7 @@ test("Create a product with a product is successful and negative additional pric
   await page.getByLabel("Search").fill(productName);
   await expect(page.getByRole("cell", { name: productName })).toBeVisible();
   await expect(
-    page.getByRole("cell", { name: productDescription })
+    page.getByRole("cell", { name: productDescription }),
   ).toBeVisible();
 });
 
@@ -167,10 +167,10 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
     productName,
     productDescription,
     authors,
-    barcode
+    barcode,
   );
 
   await expect(
-    page.getByText("Only English letters and signs are allowed")
+    page.getByText("Only English letters and signs are allowed"),
   ).toBeVisible();
 });

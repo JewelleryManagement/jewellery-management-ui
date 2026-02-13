@@ -182,5 +182,7 @@ const events = await store.dispatch(
   currentProductId,
 );
 
-const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
+const eventHeaders = computed(
+  () => store.getters["systemEvents/getEventHeaders"],
+);
 </script>

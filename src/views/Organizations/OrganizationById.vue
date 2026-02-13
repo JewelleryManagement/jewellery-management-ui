@@ -223,5 +223,7 @@ const tableButtons = computed(
 
 const events = await store.dispatch("systemEvents/getEventsRelatedTo", orgId);
 
-const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
+const eventHeaders = computed(
+  () => store.getters["systemEvents/getEventHeaders"],
+);
 </script>

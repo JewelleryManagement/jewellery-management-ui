@@ -1,4 +1,7 @@
-import { getAllEventsRelatedTo } from "@/services/HttpClientService";
+import {
+  getAllEventsRelatedTo,
+  getSystemEvent,
+} from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
@@ -10,40 +13,130 @@ export default {
     ],
 
     eventTypes: {
-      USER_CREATE: "Create User",
-      USER_UPDATE: "Update User",
-      USER_DELETE: "Delete User",
-      RESOURCE_CREATE: "Create Resource",
-      RESOURCE_DELETE: "Delete Resource",
-      RESOURCE_UPDATE: "Update Resource",
-      ORGANIZATION_CREATE: "Create Organization",
-      ORGANIZATION_DELETE: "Delete Organization",
-      ORGANIZATION_USER_CREATE: "Create User In Organization",
-      ORGANIZATION_USER_DELETE: "Delete User In Organization",
-      ORGANIZATION_USER_UPDATE: "Update User In Organization",
-      ORGANIZATION_ADD_RESOURCE_QUANTITY:
-        "Add Resource Quantity To Organization",
-      ORGANIZATION_REMOVE_RESOURCE_QUANTITY:
-        "Remove Resource Quantity From Organization",
-      ORGANIZATION_PRODUCT_CREATE: "Create Products",
-      ORGANIZATION_PRODUCT_UPDATE: "Update Product",
-      ORGANIZATION_PRODUCT_DISASSEMBLY: "Disassemble Product",
-      ORGANIZATION_PRODUCT_TRANSFER: "Transfer Product",
-      ORGANIZATION_RESOURCE_TRANSFER: "Transfer Resource",
-      ORGANIZATION_CREATE_SALE: "Create Sale",
-      ORGANIZATION_SALE_RETURN_PRODUCT: "Return Product From Sale",
-      ORGANIZATION_SALE_RETURN_RESOURCE: "Return Resource From Sale",
+      USER_CREATE: {
+        title: "Create User",
+        entity: "User",
+        type: "Create",
+      },
+      USER_UPDATE: {
+        title: "Update User",
+        entity: "User",
+        type: "Update",
+      },
+      USER_DELETE: {
+        title: "Delete User",
+        entity: "User",
+        type: "Delete",
+      },
+      RESOURCE_CREATE: {
+        title: "Create Resource",
+        entity: "Resource",
+        type: "Create",
+      },
+      RESOURCE_DELETE: {
+        title: "Delete Resource",
+        entity: "Resource",
+        type: "Delete",
+      },
+      RESOURCE_UPDATE: {
+        title: "Update Resource",
+        entity: "Resource",
+        type: "Update",
+      },
+      ORGANIZATION_CREATE: {
+        title: "Create Organization",
+        entity: "Organization",
+        type: "Create",
+      },
+      ORGANIZATION_DELETE: {
+        title: "Delete Organization",
+        entity: "Organization",
+        type: "Delete",
+      },
+      ORGANIZATION_USER_CREATE: {
+        title: "Create User In Organization",
+        entity: "UserInOrganization",
+        type: "Create",
+      },
+      ORGANIZATION_USER_DELETE: {
+        title: "Delete User In Organization",
+        entity: "UserInOrganization",
+        type: "Delete",
+      },
+      ORGANIZATION_USER_UPDATE: {
+        title: "Update User In Organization",
+        entity: "UserInOrganization",
+        type: "Update",
+      },
+      ORGANIZATION_ADD_RESOURCE_QUANTITY: {
+        title: "Add Resource Quantity To Organization",
+        entity: "ResourceQuantity",
+        type: "Update",
+      },
+      ORGANIZATION_REMOVE_RESOURCE_QUANTITY: {
+        title: "Remove Resource Quantity From Organization",
+        entity: "ResourceQuantity",
+        type: "Update",
+      },
+      ORGANIZATION_PRODUCT_CREATE: {
+        title: "Create Products",
+        entity: "Product",
+        type: "Create",
+      },
+      ORGANIZATION_PRODUCT_UPDATE: {
+        title: "Update Product",
+        entity: "Product",
+        type: "Update",
+      },
+      ORGANIZATION_PRODUCT_DISASSEMBLY: {
+        title: "Disassemble Product",
+        entity: "Product",
+        type: "Delete",
+      },
+      ORGANIZATION_PRODUCT_TRANSFER: {
+        title: "Transfer Product",
+        entity: "Product",
+        type: "Update",
+      },
+      ORGANIZATION_RESOURCE_TRANSFER: {
+        title: "Transfer Resource",
+        entity: "ResourceTransfer",
+        type: "Create",
+      },
+      ORGANIZATION_CREATE_SALE: {
+        title: "Create Sale",
+        entity: "Sale",
+        type: "Create",
+      },
+      ORGANIZATION_SALE_RETURN_PRODUCT: {
+        title: "Return Product From Sale",
+        entity: "ReturnProduct",
+        type: "Update",
+      },
+      ORGANIZATION_SALE_RETURN_RESOURCE: {
+        title: "Return Resource From Sale",
+        entity: "ReturnResource",
+        type: "Update",
+      },
     },
+    eventTableButtons: [
+      { label: "Resources", icon: "mdi-diamond-stone" },
+      { label: "Products", icon: "mdi-package-variant" },
+    ],
   },
 
   getters: {
-    eventHeaders: (state) => state.eventHeaders,
-    eventTypes: (state) => state.eventTypes,
+    getEventHeaders: (state) => state.eventHeaders,
+    getEventTypes: (state) => state.eventTypes,
+    getEventTableButtons: (state) => state.eventTableButtons,
   },
 
   actions: {
     async getEventsRelatedTo({ commit }, id) {
       return getAllEventsRelatedTo(id);
+    },
+    async getSystemEvent({ commit }, id) {
+      return getSystemEvent(id);
     },
   },
 };

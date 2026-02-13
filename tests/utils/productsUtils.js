@@ -1,23 +1,29 @@
-export const myContext = {};
+export const productContext = {};
 
-export const createGlobalVariables = async (page) => {
-  myContext.catalogNameButton = page.getByLabel("Catalog name");
-  myContext.descriptionButton = page.getByLabel("Description of the product");
-  myContext.authorsComboBox = page
+export const createProductGlobalVariables = async (page) => {
+  productContext.catalogNameButton = page.getByLabel("Catalog name");
+  productContext.descriptionButton = page.getByLabel(
+    "Description of the product",
+  );
+  productContext.authorsComboBox = page
     .getByRole("combobox")
     .locator("div")
     .filter({ hasText: "AuthorsAuthors" })
     .locator("div");
-  myContext.additionalPrice = page.getByLabel("Additional price");
-  myContext.barcodeButton = page.getByLabel("Barcode...");
-  myContext.resourcesButton = page.getByRole("button", { name: "Resources" });
-  myContext.productsButton = page.getByRole("button", { name: "Products" });
-  myContext.selectPictureButton = page.getByLabel("Select picture", {
+  productContext.additionalPrice = page.getByLabel("Additional price");
+  productContext.barcodeButton = page.getByLabel("Barcode...");
+  productContext.resourcesButton = page.getByRole("button", {
+    name: "Resources",
+  });
+  productContext.productsButton = page.getByRole("button", {
+    name: "Products",
+  });
+  productContext.selectPictureButton = page.getByLabel("Select picture", {
     exact: true,
   });
-  myContext.submitButton = page.getByRole("button", { name: "Submit" });
-  myContext.resetButton = page.getByRole("button", { name: "Reset" });
-  myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
+  productContext.submitButton = page.getByRole("button", { name: "Submit" });
+  productContext.resetButton = page.getByRole("button", { name: "Reset" });
+  productContext.goBackButton = page.getByRole("button", { name: "Go Back" });
 };
 
 export const fillProductForm = async (
@@ -25,14 +31,14 @@ export const fillProductForm = async (
   catalogName,
   description,
   authors,
-  barcode
+  barcode,
 ) => {
   const {
     catalogNameButton,
     descriptionButton,
     authorsComboBox,
     barcodeButton,
-  } = myContext;
+  } = productContext;
 
   const input = page.locator(".v-select input");
 
