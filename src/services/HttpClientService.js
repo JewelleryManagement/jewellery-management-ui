@@ -28,7 +28,7 @@ export async function fetchPurchasedResourcePerUser(userId) {
 
 export async function fetchAvailabilityResourceById(resourceId) {
   return await fetchData(
-    `/organizations/resources-availability/by-resource/${resourceId}`
+    `/organizations/resources-availability/by-resource/${resourceId}`,
   );
 }
 
@@ -70,7 +70,7 @@ export async function getUserOrganizations() {
 
 export async function getResourceAvailabilityByOrganization(organizationId) {
   return await fetchData(
-    `/organizations/resources-availability/${organizationId}`
+    `/organizations/resources-availability/${organizationId}`,
   );
 }
 
@@ -84,6 +84,10 @@ export async function getAllSalesByResource(resourceId) {
 
 export async function getAllProductsByResource(resourceId) {
   return await fetchData(`/products/resource/${resourceId}`);
+}
+
+export async function getAllEventsRelatedTo(id) {
+  return await fetchData(`/system-events/related-to/${id}`);
 }
 
 // POSTS REQUESTS
@@ -125,7 +129,7 @@ export async function postUserToOrg(orgId, requestBody) {
 export async function postResourceTranferToOrg(orgData) {
   return await postData(
     "/organizations/resources-availability/transfer",
-    orgData
+    orgData,
   );
 }
 
@@ -158,10 +162,10 @@ export async function disassmebleProduct(productId) {
 export async function removeResourceFromOrg(
   organizationId,
   resourceId,
-  quantity
+  quantity,
 ) {
   return await removeData(
-    `/organizations/resources-availability/${organizationId}/${resourceId}/${quantity}`
+    `/organizations/resources-availability/${organizationId}/${resourceId}/${quantity}`,
   );
 }
 
@@ -203,6 +207,6 @@ export async function resourceReturn(saleId, resourceId) {
 export async function putUserToOrg(orgId, userId, permissions) {
   return await updateData(
     `/organizations/${orgId}/users/${userId}`,
-    permissions
+    permissions,
   );
 }

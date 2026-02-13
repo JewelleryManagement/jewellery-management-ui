@@ -25,6 +25,14 @@ export default {
     tableColumnDiscount: { key: "discount", title: "Discount" },
     tableColumnReturn: { key: "return", title: "Return" },
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
+    tableButtons: [
+      { label: "Resources", icon: "mdi-diamond-stone" },
+      { label: "Products", icon: "mdi-package-variant" },
+      {
+        label: "Events",
+        icon: "mdi-calendar",
+      },
+    ],
   },
   mutations: {
     setSales(state, sales) {
@@ -66,5 +74,6 @@ export default {
     getSaleById: (state) => (saleId) => {
       return state.sales.find((sale) => sale.id === saleId);
     },
+    getTableButtons: (state) => state.tableButtons,
   },
 };

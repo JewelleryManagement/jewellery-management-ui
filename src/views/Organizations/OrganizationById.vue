@@ -2,10 +2,10 @@
   <div class="my-12">
     <organization-card :organization="organization"></organization-card>
 
-    <ToggleTableButtons v-model="selectedButton" :buttons="buttons" />
+    <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
     <resource-availability-table
-      v-if="selectedButton === buttons[0].label"
+      v-if="selectedButton === 'Resources'"
       :tableColumns="tableColumnsResources"
       :resources="organizationResources"
       :name="organization.name"
@@ -48,7 +48,7 @@
     </resource-availability-table>
 
     <products-table
-      v-if="selectedButton === buttons[1].label"
+      v-if="selectedButton === 'Products'"
       :products="orgProducts"
       :additionalColumnsRight="disassemblyColumns"
       :title="`${organization.name}'s products table`"
@@ -69,7 +69,7 @@
     </products-table>
 
     <users-table
-      v-if="selectedButton === buttons[2].label"
+      v-if="selectedButton === 'Members'"
       title="Organization members"
       :users="orgMembers"
       :columns="orgUsersColumns"
@@ -100,6 +100,13 @@
         </div>
       </template>
     </users-table>
+
+    <EventsTable
+      v-if="selectedButton === 'Events'"
+      :headers="eventHeaders"
+      :items="events"
+    >
+    </EventsTable>
   </div>
 </template>
 
@@ -112,6 +119,7 @@ import ProductsTable from "@/components/Table/ProductsTable.vue";
 import OrganizationCard from "@/components/Card/OrganizationCard.vue";
 import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import EventsTable from "@/components/Table/EventsTable.vue";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
@@ -209,12 +217,11 @@ const onDelete = async (userId) => {
 
 const selectedButton = ref(null);
 
-const buttons = [
-  { label: "Resources", icon: "mdi-diamond-stone" },
-  { label: "Products", icon: "mdi-package-variant" },
-  {
-    label: "Members",
-    icon: "mdi-account-multiple",
-  },
-];
+const tableButtons = computed(
+  () => store.getters["organizations/getTableButtons"],
+);
+
+const events = await store.dispatch("systemEvents/getEventsRelatedTo", orgId);
+
+const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <div>
     <v-card
       class="d-flex flex-lg-row flex-md-row flex-column justify-space-between mx-auto mt-10"
       elevation="8"
@@ -69,96 +69,74 @@
         <picture-button @picture-selected="handlePictureSelected" />
 
         <div class="d-flex justify-center mt-10">
-          <v-btn
-            color="red"
-            @click="openDialog('resources')"
-            :size="isMediumScreen() ? 'x-small' : 'default'"
-            @click.stop
-            >Resources</v-btn
-          >
-          <v-btn
-            color="green"
-            @click="openDialog('products')"
-            :size="isMediumScreen() ? 'x-small' : 'default'"
-            @click.stop
-            >Products</v-btn
-          >
-          <v-btn
-            color="#03A9F4"
-            :size="isMediumScreen() ? 'x-small' : 'default'"
-            :to="`/products/edit/${currentProductId}`"
+          <text-button
             v-if="!currentProductInfo.partOfSale"
-            @click.stop
-            >Edit product</v-btn
-          >
+            color="#03A9F4"
+            text="Edit product"
+            :path="`/products/edit/${currentProductId}`"
+          />
 
           <return-product-button :currentProductInfo="currentProductInfo" />
         </div>
       </div>
     </v-card>
 
-    <resource-content-dialog
-      v-if="isResourceDialogOpen"
-      v-model="isResourceDialogOpen"
-      :data="currentProductInfo"
-      @close-dialog="closeDialog('resources')"
-    ></resource-content-dialog>
+    <ToggleTableButtons v-model="selectedButton" :buttons="tableButtons" />
 
-    <products-content-dialog
-      v-if="isProductsDialogOpen"
-      v-model="isProductsDialogOpen"
-      :data="currentProductInfo"
-      @close-dialog="closeDialog('products')"
+    <resource-availability-table
+      v-if="selectedButton === 'Resources'"
+      :tableColumns="tableColumnsResources"
+      :resources="getResourcesWithQuantity()"
+      name="Resources Part Of Product"
+    ></resource-availability-table>
+
+    <products-table
+      v-if="selectedButton === 'Products'"
+      :products="currentProductInfo.productsContent"
+      title="Products Part Of Product"
     >
-    </products-content-dialog>
-  </v-container>
+    </products-table>
+
+    <EventsTable
+      v-if="selectedButton === 'Events'"
+      :headers="eventHeaders"
+      :items="events"
+    >
+    </EventsTable>
+  </div>
 </template>
 
 <script setup>
 import { isMediumAndDownScreen, isMediumScreen } from "@/utils/display";
-import ResourceContentDialog from "@/components/Dialog/ResourceContentDialog.vue";
+import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
+import ProductsTable from "@/components/Table/ProductsTable.vue";
+import EventsTable from "@/components/Table/EventsTable.vue";
+import TextButton from "@/components/Button/TextButton.vue";
 import { onMounted } from "vue";
 import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
 const snackbarProvider = inject("snackbarProvider");
-const isResourceDialogOpen = ref(false);
-const isProductsDialogOpen = ref(false);
 const defaultPicture = require("@/assets/no-pic.png");
 const store = useStore();
 const route = useRoute();
 const picture = ref(null);
 const currentProductId = route.params.productId;
 const currentProductInfo = computed(
-  () => store.getters["products/allProducts"]
+  () => store.getters["products/allProducts"],
 ).value.find((product) => product.id === currentProductId);
 
 onMounted(() => {
   fetchAndUpdatePictureUrl();
 });
 
-const openDialog = (content) => {
-  if (content == "resources") {
-    isResourceDialogOpen.value = true;
-  } else {
-    isProductsDialogOpen.value = true;
-  }
-};
-
-const closeDialog = (content) => {
-  if (content === "resources") {
-    isResourceDialogOpen.value = false;
-  } else {
-    isProductsDialogOpen.value = false;
-  }
-};
-
 const fetchAndUpdatePictureUrl = async () => {
   try {
     const newPictureUrl = await store.dispatch(
       "products/getPicture",
-      currentProductId
+      currentProductId,
     );
     picture.value = newPictureUrl || defaultPicture;
   } catch (error) {
@@ -177,10 +155,32 @@ const postPicture = async (id, image) => {
   try {
     await store.dispatch("products/postPicture", { productId: id, image });
     snackbarProvider.showSuccessSnackbar(
-      "Successfully added picture to the product!"
+      "Successfully added picture to the product!",
     );
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };
+
+const selectedButton = ref("");
+
+const tableButtons = computed(() => store.getters["products/getTableButtons"]);
+
+const tableColumnsResources = computed(
+  () => store.getters["users/getTableColumnsWithQuantity"],
+);
+
+const getResourcesWithQuantity = () => {
+  return currentProductInfo.resourcesContent.map((item) => ({
+    quantity: item.quantity,
+    ...item.resource,
+  }));
+};
+
+const events = await store.dispatch(
+  "systemEvents/getEventsRelatedTo",
+  currentProductId,
+);
+
+const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
 </script>

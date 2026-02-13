@@ -91,3 +91,38 @@ test("All buttons work correct", async ({ page }) => {
     "Organizations Owning The Resource Table",
   );
 });
+
+test("View resource events table", async ({ page }) => {
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Resources",
+    expectedUrl: "/home",
+    navChildButtonText: "Element",
+    expectedNewUrl: "/resources?clazz=Element",
+    expectedHeader: "All Elements table",
+  });
+
+  await expect(
+    page.locator(".v-btn__content", { hasText: "Add Element" }),
+  ).toBeVisible();
+  await page.locator(".v-btn__content", { hasText: "Add Element" }).click();
+
+  await expect(page.getByText("Submit")).toBeVisible();
+  await page.getByLabel("Description").fill(String("Test Description"));
+
+  await page.getByLabel("Price per quantity", { exact: true }).fill(String(22));
+
+  await page
+    .getByRole("textbox", { name: "Stock Keeping Unit Stock" })
+    .fill("Stock Keeping Unit Element");
+  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
+  await page.getByLabel("Quantity", { exact: true }).fill(String(22));
+  await page.getByLabel("Delivery Cost", { exact: true }).fill(String(22));
+  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
+  await expect(page.getByText("All Elements table")).toBeVisible();
+
+  await expect(page.getByText("Test Description")).toBeVisible();
+  await page.getByText("Test Description").click();
+  await expect(page.getByText("Events Table")).toBeVisible();
+  await page.getByText("Events Table").click();
+  await expect(page.getByText("Create Resource")).toBeVisible();
+});

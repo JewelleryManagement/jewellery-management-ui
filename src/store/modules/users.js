@@ -31,6 +31,14 @@ export default {
       title: "Permissions",
       slot: "permissions",
     },
+    tableButtons: [
+      { label: "Resources", icon: "mdi-diamond-stone" },
+      { label: "Products", icon: "mdi-package-variant" },
+      {
+        label: "Events",
+        icon: "mdi-calendar",
+      },
+    ],
   },
   mutations: {
     setUsers(state, users) {
@@ -100,8 +108,9 @@ export default {
             quantity: resourceQuantity.quantity,
             ...resourceQuantity.resource,
           };
-        }
+        },
       );
     },
+    getTableButtons: (state) => state.tableButtons,
   },
 };

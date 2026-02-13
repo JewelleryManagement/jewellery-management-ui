@@ -41,6 +41,20 @@ const filterColumnsByKey = (state, additional, keys) => {
   return result;
 };
 
+const setSingleQuery = (queries, resourceClazz) => {
+  queries[resourceClazz] = { clazz: resourceClazz };
+};
+
+const addValueQueries = (queries, resourceClazz, allowedValues) => {
+  queries[resourceClazz] ??= {};
+  for (const { fieldName, value } of allowedValues) {
+    queries[resourceClazz][value] = {
+      clazz: resourceClazz,
+      [fieldName]: value,
+    };
+  }
+};
+
 export default {
   namespaced: true,
   state: reactive({
@@ -127,6 +141,18 @@ export default {
     },
     tableColumnClazz: { key: "clazz", title: "Clazz" },
     tableColumnQuantityType: { key: "quantityType", title: "Quantity Type" },
+    tableButtons: [
+      { label: "Sales", icon: "mdi-cart-outline" },
+      { label: "Products", icon: "mdi-package-variant" },
+      {
+        label: "Organizations",
+        icon: "mdi-diamond-stone",
+      },
+      {
+        label: "Events",
+        icon: "mdi-calendar",
+      },
+    ],
   }),
   mutations: {
     setResources(state, resources) {
@@ -204,17 +230,12 @@ export default {
       const queriesByResourceClass = {};
 
       for (const allowedValues of allowedValuesLists) {
-        for (const allowedValue of allowedValues) {
-          const { resourceClazz, fieldName, value } = allowedValue;
+        const resourceClazz = allowedValues[0].resourceClazz;
 
-          if (!queriesByResourceClass[resourceClazz]) {
-            queriesByResourceClass[resourceClazz] = {};
-          }
-
-          queriesByResourceClass[resourceClazz][value] = {
-            clazz: resourceClazz,
-            [fieldName]: value,
-          };
+        if (allowedValues.length === 1) {
+          setSingleQuery(queriesByResourceClass, resourceClazz);
+        } else {
+          addValueQueries(queriesByResourceClass, resourceClazz, allowedValues);
         }
       }
 
@@ -355,13 +376,12 @@ export default {
     getResourceDetails: (state) => state.resourceDetails,
     getResourceQuery:
       (state) =>
-      ({ clazz, type, quantityType }) => {
-        return (
-          state.resourcesQueries[clazz]?.[type] ??
-          state.resourcesQueries[clazz]?.[quantityType] ??
-          null
-        );
-      },
+      ({ clazz, type, quantityType }) =>
+        state.resourcesQueries[clazz]?.[type] ??
+        state.resourcesQueries[clazz]?.[quantityType] ??
+        state.resourcesQueries[clazz] ??
+        null,
+
     getAllResourceQueries: (state) => state.resourcesQueries,
     getTitle: (state) => (key) => {
       return state.titles[key]?.title || null;
@@ -380,5 +400,6 @@ export default {
       state.tableColumnClazz,
       state.tableColumnQuantityType,
     ],
+    getTableButtons: (state) => state.tableButtons,
   },
 };

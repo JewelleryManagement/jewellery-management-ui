@@ -37,6 +37,19 @@ export default {
       "TRANSFER_RESOURCE",
     ],
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
+    tableButtons: [
+      { label: "Resources", icon: "mdi-diamond-stone" },
+      { label: "Products", icon: "mdi-package-variant" },
+      {
+        label: "Members",
+        icon: "mdi-account-multiple",
+      },
+
+      {
+        label: "Events",
+        icon: "mdi-calendar",
+      },
+    ],
   },
   mutations: {
     setOrgs(state, organizations) {
@@ -90,5 +103,6 @@ export default {
       ...state.tableColumns,
     ],
     getUserPermissions: (state) => state.userPermissions,
+    getTableButtons: (state) => state.tableButtons,
   },
 };
