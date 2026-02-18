@@ -3,14 +3,17 @@
     :color="color"
     :size="isMediumScreen() ? 'x-small' : 'default'"
     :to="path || undefined"
+    :prepend-icon="prependIcon || undefined"
     @click.stop
     class="flex-grow-1"
-    >{{ text }}</v-btn
   >
+    {{ text }}
+  </v-btn>
 </template>
 
 <script setup>
 import { isMediumScreen } from "@/utils/display";
+
 const props = defineProps({
   path: {
     type: [String, Object],
@@ -18,5 +21,9 @@ const props = defineProps({
   },
   color: String,
   text: String,
+  prependIcon: {
+    type: String,
+    default: null,
+  },
 });
 </script>

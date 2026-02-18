@@ -48,6 +48,11 @@ defineProps({
   opacity: 1;
 }
 
+.action-icon {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
 .action-icon:hover {
   transform: scale(1.3);
 }

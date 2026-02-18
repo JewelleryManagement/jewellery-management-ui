@@ -1,16 +1,14 @@
 <template>
-  <v-container class="d-flex flex-column align-center">
-    <PageViewer :pageTitle="pageTitle" :content="content" />
+  <v-container fluid class="pa-0">
+    <EventTimeline class="w-100" :events="events" />
   </v-container>
 </template>
 
 <script setup>
-import { ref, onBeforeMount, inject } from "vue";
-import PageViewer from "../components/PageViewer.vue";
+import { onBeforeMount, inject } from "vue";
+import EventTimeline from "./Events/EventTimeline.vue";
 import { useStore } from "vuex";
 const store = useStore();
-const pageTitle = ref("Home Page");
-const content = ref("This is the home content");
 const snackbarProvider = inject("snackbarProvider");
 
 onBeforeMount(async () => {
@@ -25,4 +23,6 @@ onBeforeMount(async () => {
     snackbarProvider.showErrorSnackbar("Failed to fetch globally!");
   }
 });
+
+const events = await store.dispatch("systemEvents/getAllEvents");
 </script>

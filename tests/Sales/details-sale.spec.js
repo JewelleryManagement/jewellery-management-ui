@@ -39,16 +39,22 @@ test("View sale events table", async ({ page }) => {
 
   await selectResource(page);
 
+  const discount = "47";
+
+  await page
+    .locator(".v-input__control")
+    .filter({
+      has: page.getByText("Discount", { exact: true }),
+    })
+    .locator("input")
+    .fill(discount);
+
   await submitButton.click();
   await expect(page.getByText("Successfully sold the product!")).toBeVisible();
 
-  await expect(page.getByText("Date")).toBeVisible();
+  await expect(page.getByText(`%${discount}`)).toBeVisible();
+  await page.getByText(`%${discount}`).click();
 
-  await page.getByText("Date").click();
-
-  const table = page.locator(".v-table__wrapper");
-
-  await table.locator("tbody tr").first().locator("td").nth(8).click();
   await expect(page.getByText("Events Table")).toBeVisible();
   await page.getByText("Events Table").click();
   await expect(page.getByText("Create Sale")).toBeVisible();

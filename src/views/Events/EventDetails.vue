@@ -69,13 +69,11 @@ const eventTypes = computed(() => store.getters["systemEvents/getEventTypes"]);
 
 const date = new Date(event.timestamp).toLocaleString("en-GB");
 
-const typeColorMap = {
-  Create: "green",
-  Update: "purple",
-  Delete: "red",
-};
+const typeColorMap = computed(
+  () => store.getters["systemEvents/getTypeColorMap"],
+);
 
 const color = computed(
-  () => typeColorMap[eventTypes.value[event.type].type] ?? "grey",
+  () => typeColorMap.value[eventTypes.value[event.type].type] ?? "grey",
 );
 </script>
