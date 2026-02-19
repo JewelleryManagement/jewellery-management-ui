@@ -5,7 +5,7 @@
         class="icon-only-btn"
         v-bind="{ ...activatorProps, ...$attrs }"
         variant="plain"
-        :to="routerPath || undefined"
+        :to="routerPath"
         :disabled="disabled"
         :ripple="false"
       >
@@ -27,7 +27,7 @@ defineOptions({ inheritAttrs: false });
 defineProps({
   routerPath: {
     type: [String, Object],
-    default: null,
+    default: undefined,
   },
   disabled: {
     type: Boolean,

@@ -2,8 +2,8 @@
   <v-btn
     :color="color"
     :size="isMediumScreen() ? 'x-small' : 'default'"
-    :to="path || undefined"
-    :prepend-icon="prependIcon || undefined"
+    :to="path"
+    :prepend-icon="prependIcon"
     @click.stop
     class="flex-grow-1"
   >
@@ -17,13 +17,13 @@ import { isMediumScreen } from "@/utils/display";
 const props = defineProps({
   path: {
     type: [String, Object],
-    default: null,
+    default: undefined,
   },
   color: String,
   text: String,
   prependIcon: {
     type: String,
-    default: null,
+    default: undefined,
   },
 });
 </script>

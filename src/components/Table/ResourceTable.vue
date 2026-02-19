@@ -96,29 +96,16 @@ watch(
 const store = useStore();
 const resources = computed(() => store.getters["resources/allResources"]);
 
-const columnGettersMap = {
-  All: "resources/getColumns",
-  Element: "resources/getColumnsForElement",
-  Pearl: "resources/getColumnsForPearl",
-  Metal: "resources/getColumnsForMetal",
-  Diamond: "resources/getColumnsForDiamond",
-  DiamondMelee: "resources/getColumnsForDiamondMelee",
-  ColoredStone: "resources/getColumnsForColoredStone",
-  ColoredStoneMelee: "resources/getColumnsForColoredStoneMelee",
-  SemiPreciousStone: "resources/getColumnsForSemiPreciousStone",
-};
-
 const selectedTableColumns = computed(() => {
-  const getterName =
-    columnGettersMap[internalClazzChoice.value] || "resources/getColumns";
-
-  const getter = store.getters[getterName];
-
   if (internalClazzChoice.value === "All") {
-    return getter;
+    return store.getters["resources/getColumns"];
   }
 
-  return getter(props.selectedFilterButton === "All");
+  const getByResource = store.getters["resources/getColumnsByResource"];
+  if (typeof getByResource !== "function") return [];
+
+  const additional = props.selectedFilterButton === "All";
+  return getByResource(internalClazzChoice.value, additional);
 });
 
 const filteredResources = computed(() => {

@@ -39,17 +39,6 @@ const props = defineProps({
 
 const store = useStore();
 
-const columnGettersMap = {
-  Element: "resources/getColumnsForElement",
-  Pearl: "resources/getColumnsForPearl",
-  Metal: "resources/getColumnsForMetal",
-  Diamond: "resources/getColumnsForDiamond",
-  DiamondMelee: "resources/getColumnsForDiamondMelee",
-  ColoredStone: "resources/getColumnsForColoredStone",
-  ColoredStoneMelee: "resources/getColumnsForColoredStoneMelee",
-  SemiPreciousStone: "resources/getColumnsForSemiPreciousStone",
-};
-
 const isSimpleEntity = (entity) =>
   ["User", "Resource", "Organization"].includes(entity);
 
@@ -60,12 +49,11 @@ const entityType = computed(
 const rowsResolvers = {
   User: () => store.getters["users/getAllInformationColumns"],
   Organization: () => store.getters["organizations/getColumns"],
-  Resource: () => {
-    const clazz = props.event?.payload?.entity?.clazz;
-    const getterKey = columnGettersMap[clazz];
-    const getter = getterKey ? store.getters[getterKey] : null;
-    return typeof getter === "function" ? getter(true) : [];
-  },
+  Resource: () =>
+    store.getters["resources/getColumnsByResource"]?.(
+      props.event?.payload?.entity?.clazz,
+      true,
+    ) || [],
 };
 
 const rows = computed(() => rowsResolvers[entityType.value]?.() ?? []);

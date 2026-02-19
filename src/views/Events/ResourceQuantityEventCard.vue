@@ -55,21 +55,12 @@ const props = defineProps({
 
 const store = useStore();
 
-const columnGettersMap = {
-  Element: "resources/getColumnsForElement",
-  Pearl: "resources/getColumnsForPearl",
-  Metal: "resources/getColumnsForMetal",
-  Diamond: "resources/getColumnsForDiamond",
-  DiamondMelee: "resources/getColumnsForDiamondMelee",
-  ColoredStone: "resources/getColumnsForColoredStone",
-  ColoredStoneMelee: "resources/getColumnsForColoredStoneMelee",
-  SemiPreciousStone: "resources/getColumnsForSemiPreciousStone",
-};
-
-const resourceRows = computed(() =>
-  store.getters[
-    columnGettersMap[props.entity.resourcesAndQuantities[0].resource.clazz]
-  ](true),
+const resourceRows = computed(
+  () =>
+    store.getters["resources/getColumnsByResource"]?.(
+      props.entity?.resourcesAndQuantities[0]?.resource?.clazz,
+      true,
+    ) || [],
 );
 
 const additionalResourceRows = computed(
