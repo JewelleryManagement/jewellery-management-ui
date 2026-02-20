@@ -11,20 +11,22 @@
     </v-tooltip>
   </router-link>
 </template>
-  
-  <script setup>
+
+<script setup>
 const props = defineProps({
   organization: Object,
 });
 </script>
-  
-  <style scoped>
+
+<style scoped>
 a {
   text-decoration: none;
   color: inherit;
+  display: inline-block;
+  transition: transform 0.2s ease;
 }
 a:hover {
   color: blue;
+  transform: scale(1.1);
 }
 </style>
-  

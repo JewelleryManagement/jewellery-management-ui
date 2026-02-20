@@ -1,6 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { appLogin, navigateViaNavbar } from "tests/utils/functions";
-import { createGlobalVariables, myContext } from "tests/utils/orgUtils";
+import {
+  createOrganizationGlobalVariables,
+  organizationContext,
+} from "tests/utils/orgUtils";
 import { getRandomString } from "tests/utils/getRandomNumberOrString";
 
 test.beforeEach(async ({ page }) => {
@@ -12,7 +15,7 @@ test.beforeEach(async ({ page }) => {
     expectedNewUrl: "/organizations",
     expectedHeader: "Organizations Table",
   });
-  createGlobalVariables(page);
+  createOrganizationGlobalVariables(page);
 });
 
 test("View organization events table", async ({ page }) => {
@@ -23,7 +26,8 @@ test("View organization events table", async ({ page }) => {
 
   await expect(page.getByText("Create organization")).toBeVisible();
 
-  const { nameInput, addressInput, noteInput, submitButton } = myContext;
+  const { nameInput, addressInput, noteInput, submitButton } =
+    organizationContext;
 
   await nameInput.fill("Test Organization");
   await addressInput.fill(getRandomString(5));
@@ -31,8 +35,18 @@ test("View organization events table", async ({ page }) => {
 
   await submitButton.click();
 
-  await expect(page.getByText("Test Organization")).toBeVisible();
-  await page.getByText("Test Organization").click();
+  await page
+    .locator(".v-data-table-footer__items-per-page .v-input__control")
+    .click();
+  await page
+    .locator(".v-overlay-container .v-list-item", {})
+    .filter({ hasText: "All" })
+    .click();
+
+  await expect(
+    page.getByText("Test Organization", { exact: true }),
+  ).toBeVisible();
+  await page.getByText("Test Organization", { exact: true }).click();
   await expect(page.getByText("Events Table")).toBeVisible();
   await page.getByText("Events Table").click();
   await expect(page.getByText("Create Organization")).toBeVisible();

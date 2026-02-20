@@ -1,13 +1,19 @@
-export const myContext = {};
+export const organizationContext = {};
 
-export const createGlobalVariables = async (page) => {
-  myContext.createBtn = page.getByRole("link", { name: "New Organization" });
+export const createOrganizationGlobalVariables = async (page) => {
+  organizationContext.createBtn = page.getByRole("link", {
+    name: "New Organization",
+  });
 
-  myContext.nameInput = page.getByLabel("Name");
-  myContext.addressInput = page.getByLabel("Address");
-  myContext.noteInput = page.getByLabel("Note");
+  organizationContext.nameInput = page.getByLabel("Name");
+  organizationContext.addressInput = page.getByLabel("Address");
+  organizationContext.noteInput = page.getByLabel("Note");
 
-  myContext.submitButton = page.getByRole("button", { name: "Submit" });
-  myContext.resetButton = page.getByRole("button", { name: "Reset" });
-  myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
+  organizationContext.submitButton = page.getByRole("button", {
+    name: "Submit",
+  });
+  organizationContext.resetButton = page.getByRole("button", { name: "Reset" });
+  organizationContext.goBackButton = page.getByRole("button", {
+    name: "Go Back",
+  });
 };

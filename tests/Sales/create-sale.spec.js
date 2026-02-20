@@ -6,8 +6,8 @@ import {
   selectDate,
   selectProduct,
   selectResource,
-  myContext,
-  createGlobalVariables,
+  saleContext,
+  createSaleGlobalVariables,
   checkDisabledButtons,
 } from "tests/utils/salesUtils";
 import { wait } from "tests/utils/functions";
@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
     expectedNewUrl: "/sales/add",
     expectedHeader: "New Sale",
   });
-  createGlobalVariables(page);
+  createSaleGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -30,7 +30,7 @@ test.afterEach(async ({ page }) => {
 
 test.describe.serial("Tests that share state", () => {
   test("Create sale", async ({ page }) => {
-    const { submitButton } = myContext;
+    const { submitButton } = saleContext;
 
     await firstInputSelect(page, 1);
     await secondInputSelect(page);
@@ -43,12 +43,12 @@ test.describe.serial("Tests that share state", () => {
 
     await submitButton.click();
     await expect(
-      page.getByText("Successfully sold the product!")
+      page.getByText("Successfully sold the product!"),
     ).toBeVisible();
   });
 
   test("Create sale with a discount", async ({ page }) => {
-    const { submitButton } = myContext;
+    const { submitButton } = saleContext;
 
     await wait(3);
     await firstInputSelect(page);
@@ -63,13 +63,13 @@ test.describe.serial("Tests that share state", () => {
 
     await submitButton.click();
     await expect(
-      page.getByText("Successfully sold the product!")
+      page.getByText("Successfully sold the product!"),
     ).toBeVisible();
   });
 });
 
 test("Create sale - with empty inputs - fails", async ({ page }) => {
-  const { submitButton, calendarBtn, productsBtn, resourcesBtn } = myContext;
+  const { submitButton, calendarBtn, productsBtn, resourcesBtn } = saleContext;
 
   await submitButton.click();
 
@@ -79,12 +79,12 @@ test("Create sale - with empty inputs - fails", async ({ page }) => {
     calendarBtn,
     productsBtn,
     resourcesBtn,
-    expect
+    expect,
   );
 });
 
 test("Create sale - without a date - fails", async ({ page }) => {
-  const { submitButton } = myContext;
+  const { submitButton } = saleContext;
 
   await wait(3);
   await firstInputSelect(page);
@@ -94,7 +94,7 @@ test("Create sale - without a date - fails", async ({ page }) => {
 });
 
 test("Create sale - without a products/resources - fails", async ({ page }) => {
-  const { submitButton } = myContext;
+  const { submitButton } = saleContext;
 
   await wait(3);
   await firstInputSelect(page);
@@ -103,12 +103,12 @@ test("Create sale - without a products/resources - fails", async ({ page }) => {
 
   await submitButton.click();
   await expect(
-    page.getByText("Please select a product or a resource!")
+    page.getByText("Please select a product or a resource!"),
   ).toBeVisible();
 });
 
 test("Reset button - works as expected", async ({ page }) => {
-  const { resetButton, calendarBtn, productsBtn, resourcesBtn } = myContext;
+  const { resetButton, calendarBtn, productsBtn, resourcesBtn } = saleContext;
 
   await wait(3);
   await firstInputSelect(page);
@@ -124,12 +124,12 @@ test("Reset button - works as expected", async ({ page }) => {
     calendarBtn,
     productsBtn,
     resourcesBtn,
-    expect
+    expect,
   );
 });
 
 test("GoBack button - works as expected", async ({ page }) => {
-  const { goBackButton } = myContext;
+  const { goBackButton } = saleContext;
 
   await expect(page).toHaveURL("/sales/add");
   await goBackButton.click();

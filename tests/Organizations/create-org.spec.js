@@ -5,7 +5,10 @@ import {
   requiredField,
 } from "tests/utils/functions";
 import { getRandomString } from "tests/utils/getRandomNumberOrString";
-import { createGlobalVariables, myContext } from "tests/utils/orgUtils";
+import {
+  createOrganizationGlobalVariables,
+  organizationContext,
+} from "tests/utils/orgUtils";
 
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
@@ -16,7 +19,7 @@ test.beforeEach(async ({ page }) => {
     expectedNewUrl: "/organizations/add",
     expectedHeader: "Create organization",
   });
-  createGlobalVariables(page);
+  createOrganizationGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -24,7 +27,7 @@ test.afterEach(async ({ page }) => {
 });
 
 const verifyInputs = async (page) => {
-  const { nameInput, addressInput, noteInput } = myContext;
+  const { nameInput, addressInput, noteInput } = organizationContext;
 
   await expect(page).toHaveURL("/organizations/add");
 
@@ -37,7 +40,8 @@ const verifyInputs = async (page) => {
 };
 
 test("Create org", async ({ page }) => {
-  const { nameInput, addressInput, noteInput, submitButton } = myContext;
+  const { nameInput, addressInput, noteInput, submitButton } =
+    organizationContext;
   await verifyInputs(page);
 
   await nameInput.fill(getRandomString(5));
@@ -46,12 +50,12 @@ test("Create org", async ({ page }) => {
 
   await submitButton.click();
   await expect(
-    page.getByText("Successfully created an organization!")
+    page.getByText("Successfully created an organization!"),
   ).toBeVisible();
 });
 
 test("Submit throws validation when inputs are empty", async ({ page }) => {
-  const { submitButton } = myContext;
+  const { submitButton } = organizationContext;
   await verifyInputs(page);
   await submitButton.click();
 
@@ -61,7 +65,8 @@ test("Submit throws validation when inputs are empty", async ({ page }) => {
 });
 
 test("Reset button works", async ({ page }) => {
-  const { nameInput, addressInput, noteInput, resetButton } = myContext;
+  const { nameInput, addressInput, noteInput, resetButton } =
+    organizationContext;
   await verifyInputs(page);
 
   await nameInput.fill(getRandomString(5));
@@ -73,7 +78,7 @@ test("Reset button works", async ({ page }) => {
 });
 
 test("Go back button works", async ({ page }) => {
-  const { goBackButton } = myContext;
+  const { goBackButton } = organizationContext;
   await verifyInputs(page);
   await goBackButton.click();
   await expect(page).toHaveURL("/home");

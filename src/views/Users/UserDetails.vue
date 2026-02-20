@@ -64,7 +64,9 @@ const tableButtons = computed(() => store.getters["users/getTableButtons"]);
 
 const events = await store.dispatch("systemEvents/getEventsRelatedTo", userId);
 
-const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
+const eventHeaders = computed(
+  () => store.getters["systemEvents/getEventHeaders"],
+);
 
 async function fetchPurhasedResourcePerUser() {
   try {

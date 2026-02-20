@@ -10,7 +10,7 @@ import VuexPersistence from "vuex-persist";
 import systemEventsModule from "./modules/systemEvents";
 
 const PERSIST_KEY = "vuex";
-const STORE_VERSION = 2;
+const STORE_VERSION = 3;
 const VERSION_KEY = "store_version";
 
 const savedVersion = Number(localStorage.getItem(VERSION_KEY) || 0);

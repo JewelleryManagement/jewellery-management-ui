@@ -1,17 +1,17 @@
-export const myContext = {};
+export const saleContext = {};
 
-export const createGlobalVariables = async (page) => {
-  myContext.newSaleBtn = page.getByRole("link", { name: "New Sale" });
+export const createSaleGlobalVariables = async (page) => {
+  saleContext.newSaleBtn = page.getByRole("link", { name: "New Sale" });
 
-  myContext.calendarBtn = page.getByRole("button", { name: "Calendar" });
-  myContext.productsBtn = page.getByRole("button", { name: "Products" });
-  myContext.resourcesBtn = page.getByRole("button", { name: "Resources" });
+  saleContext.calendarBtn = page.getByRole("button", { name: "Calendar" });
+  saleContext.productsBtn = page.getByRole("button", { name: "Products" });
+  saleContext.resourcesBtn = page.getByRole("button", { name: "Resources" });
 
-  myContext.saveBtn = page.getByRole("button", { name: "Save" });
+  saleContext.saveBtn = page.getByRole("button", { name: "Save" });
 
-  myContext.submitButton = page.getByRole("button", { name: "Submit" });
-  myContext.resetButton = page.getByRole("button", { name: "Reset" });
-  myContext.goBackButton = page.getByRole("button", { name: "Go Back" });
+  saleContext.submitButton = page.getByRole("button", { name: "Submit" });
+  saleContext.resetButton = page.getByRole("button", { name: "Reset" });
+  saleContext.goBackButton = page.getByRole("button", { name: "Go Back" });
 };
 
 export const firstInputSelect = async (page) => {
@@ -25,7 +25,7 @@ export const secondInputSelect = async (page) => {
 };
 
 export const selectDate = async (page, expect) => {
-  const { calendarBtn } = myContext;
+  const { calendarBtn } = saleContext;
 
   const today = new Date();
   const day = today.getDate().toString();
@@ -39,12 +39,12 @@ export const selectDate = async (page, expect) => {
     })
     .click();
   await expect(
-    page.getByText(`Selected date: ${day.padStart(2, "0")}/${month}/${year}`)
+    page.getByText(`Selected date: ${day.padStart(2, "0")}/${month}/${year}`),
   ).toBeVisible();
 };
 
 export const selectProduct = async (page) => {
-  const { productsBtn, saveBtn } = myContext;
+  const { productsBtn, saveBtn } = saleContext;
 
   await productsBtn.click();
   await page
@@ -56,7 +56,7 @@ export const selectProduct = async (page) => {
 };
 
 export const selectResource = async (page) => {
-  const { resourcesBtn, saveBtn } = myContext;
+  const { resourcesBtn, saveBtn } = saleContext;
 
   await resourcesBtn.click();
   const locator = page.locator("td").first();
@@ -67,10 +67,10 @@ export const selectResource = async (page) => {
 
 export const checkErrorMessages = async (page, expect) => {
   await expect(
-    page.getByText("Please select at least one author").first()
+    page.getByText("Please select at least one author").first(),
   ).toBeVisible();
   await expect(
-    page.getByText("Please select at least one author").nth(1)
+    page.getByText("Please select at least one author").nth(1),
   ).toBeVisible();
 };
 
@@ -79,7 +79,7 @@ export const checkDisabledButtons = async (
   calendarBtn,
   productsBtn,
   resourcesBtn,
-  expect
+  expect,
 ) => {
   const calendarClassAttr =
     "v-btn v-btn--disabled v-theme--light bg-primary-green v-btn--density-default v-btn--size-small v-btn--variant-elevated";

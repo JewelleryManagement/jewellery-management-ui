@@ -1,8 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 import {
-  createGlobalVariables,
-  myContext,
+  createProductGlobalVariables,
+  productContext,
   fillProductForm,
   fillTableCellAndPress,
 } from "tests/utils/productsUtils";
@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
     expectedNewUrl: "/products",
     expectedHeader: "Products Table",
   });
-  await createGlobalVariables(page);
+  await createProductGlobalVariables(page);
 });
 
 test.afterEach(async ({ page }) => {
@@ -39,7 +39,7 @@ test("Product fields are visible", async ({ page }) => {
 });
 
 test("View product events table", async ({ page }) => {
-  const { submitButton, additionalPrice } = myContext;
+  const { submitButton, additionalPrice } = productContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
   const authors = ["root testroot@gmail.com"];
@@ -65,8 +65,15 @@ test("View product events table", async ({ page }) => {
 
   await submitButton.click();
 
-  await expect(page.getByText(productName)).toBeVisible();
+  await page
+    .locator(".v-data-table-footer__items-per-page .v-input__control")
+    .click();
+  await page
+    .locator(".v-overlay-container .v-list-item", {})
+    .filter({ hasText: "All" })
+    .click();
 
+  await expect(page.getByText(productName)).toBeVisible();
   await page.getByText(productName).click();
   await expect(page.getByText("Events Table")).toBeVisible();
   await page.getByText("Events Table").click();

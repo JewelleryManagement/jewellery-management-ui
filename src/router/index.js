@@ -182,6 +182,12 @@ const routes = [
     meta: { title: "Edit user in Organization", requiresAuth: true },
   },
   {
+    path: "/system-events/:eventId",
+    name: "Event-Details",
+    component: () => import("../views/Events/EventDetails.vue"),
+    meta: { title: "Event Page", requiresAuth: true },
+  },
+  {
     path: "/:notFound(.*)",
     component: () => import("../views/NotFound.vue"),
     meta: { requiresunAuth: true },
