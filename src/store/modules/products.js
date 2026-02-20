@@ -58,6 +58,14 @@ export default {
       key: "quantity",
       title: "Quantity",
     },
+    tableColumnDiscount: {
+      key: "discount",
+      title: "Discount",
+    },
+    tableColumnAdditionalPrice: {
+      key: "additionalPrice",
+      title: "AdditionalPrice",
+    },
     tableButtons: [
       { label: "Resources", icon: "mdi-diamond-stone" },
       { label: "Products", icon: "mdi-package-variant" },
@@ -162,5 +170,11 @@ export default {
     getActionsColumn: (state) => [state.tableActions],
     getResourceQuantityColumn: (state) => [state.tableColumnResourceQuantity],
     getTableButtons: (state) => state.tableButtons,
+    getAdditionalBaseColumns: (state) => [
+      state.tableColumnOwner,
+      state.tableColumnDiscount,
+      state.tableColumnAdditionalPrice,
+    ],
+    getOrganizationColumn: (state) => state.tableColumnOrganization,
   },
 };

@@ -100,10 +100,12 @@
 import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, toRefs } from "vue";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import IconButton from "../Button/IconButton.vue";
 import ResourceContentDialog from "../Dialog/ResourceContentDialog.vue";
 import ProductsContentDialog from "../Dialog/ProductsContentDialog.vue";
+const route = useRoute();
+const isEventPage = computed(() => route.path.startsWith("/system-events"));
 const router = useRouter();
 const props = defineProps({
   products: Array,
@@ -151,6 +153,7 @@ const closeDialog = (content) => {
   }
 };
 const navigateToItemPage = (row, item) => {
+  if (isEventPage.value) return;
   const productId = item.internalItem.key;
 
   navigateToItemDetails(router, "Product Details", "productId", productId);

@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 import { appLogin, navigateViaNavbar } from "tests/utils/functions";
 import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
 import {
-  createGlobalVariables,
-  myContext,
+  createProductGlobalVariables,
+  productContext,
   fillProductForm,
   fillTableCellAndPress,
 } from "tests/utils/productsUtils";
@@ -19,7 +19,7 @@ test.beforeEach(async ({ page }) => {
     expectedNewUrl: "/products",
     expectedHeader: "Products Table",
   });
-  await createGlobalVariables(page);
+  await createProductGlobalVariables(page);
   await page.goto(`products/edit/${PRODUCT_ID}`);
 });
 
@@ -30,7 +30,7 @@ test.afterEach(async ({ page }) => {
 test("Edit product and update additional price successfully", async ({
   page,
 }) => {
-  const { submitButton, additionalPrice } = myContext;
+  const { submitButton, additionalPrice } = productContext;
 
   await page.getByRole("button", { name: "Resources" }).click();
 
@@ -47,7 +47,7 @@ test("Edit product and update additional price successfully", async ({
 test("Edit product and update additional price successfully with reset button", async ({
   page,
 }) => {
-  const { submitButton, additionalPrice } = myContext;
+  const { submitButton, additionalPrice } = productContext;
 
   const catalogNameString = "catalog" + getRandomNumber();
   const descriptionString = "description" + getRandomNumber();
@@ -61,7 +61,7 @@ test("Edit product and update additional price successfully with reset button", 
     catalogNameString,
     descriptionString,
     authors,
-    barcode
+    barcode,
   );
 
   await page.getByRole("button", { name: "Resources" }).click();
@@ -78,7 +78,7 @@ test("Edit product and update additional price successfully with reset button", 
 });
 
 test("Edit product and fail on reset/submit", async ({ page }) => {
-  const { submitButton, resetButton } = myContext;
+  const { submitButton, resetButton } = productContext;
 
   await resetButton.click();
   await submitButton.click();

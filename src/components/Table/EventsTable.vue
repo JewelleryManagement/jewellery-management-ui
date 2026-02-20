@@ -9,7 +9,13 @@
       hide-details
     ></v-text-field>
   </v-card-title>
-  <v-data-table :headers="headers" :items="items" :search="search">
+  <v-data-table
+    :headers="headers"
+    :items="items"
+    :search="search"
+    @click:row="navigateToItemPage"
+    hover
+  >
     <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
       <slot :name="slot" v-bind="scope || {}" />
     </template>
@@ -19,7 +25,7 @@
     </template>
 
     <template v-slot:item.type="{ item }">
-      {{ eventTypes[item.type] }}
+      {{ eventTypes[item.type].title }}
     </template>
 
     <template v-slot:item.executor="{ item }">
@@ -32,6 +38,8 @@
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import UserToolTip from "../Tooltip/UserToolTip.vue";
+import { navigateToItemDetails } from "@/utils/row-click-handler";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   headers: Array,
@@ -40,6 +48,13 @@ const props = defineProps({
 
 const search = ref("");
 const store = useStore();
+const router = useRouter();
 
-const eventTypes = computed(() => store.getters["systemEvents/eventTypes"]);
+const eventTypes = computed(() => store.getters["systemEvents/getEventTypes"]);
+
+const navigateToItemPage = (row, item) => {
+  const eventId = item.internalItem.key;
+
+  navigateToItemDetails(router, "Event-Details", "eventId", eventId);
+};
 </script>

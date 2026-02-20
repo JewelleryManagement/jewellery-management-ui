@@ -86,7 +86,9 @@ const tableButtons = computed(() => store.getters["sales/getTableButtons"]);
 
 const events = await store.dispatch("systemEvents/getEventsRelatedTo", saleId);
 
-const eventHeaders = computed(() => store.getters["systemEvents/eventHeaders"]);
+const eventHeaders = computed(
+  () => store.getters["systemEvents/getEventHeaders"],
+);
 </script>
 
 <style lang="scss" scoped></style>

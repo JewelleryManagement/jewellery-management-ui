@@ -25,6 +25,10 @@ export default {
     tableColumnDiscount: { key: "discount", title: "Discount" },
     tableColumnReturn: { key: "return", title: "Return" },
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
+    tableColumnOrganizationSeller: {
+      key: "organizationSeller",
+      title: "Seller",
+    },
     tableButtons: [
       { label: "Resources", icon: "mdi-diamond-stone" },
       { label: "Products", icon: "mdi-package-variant" },
@@ -60,6 +64,10 @@ export default {
   getters: {
     getSales: (state) => state.sales,
     getColumns: (state) => [...state.tableColumns],
+    getColumnsWithOrganizationSeller: (state) => [
+      ...state.tableColumns,
+      state.tableColumnOrganizationSeller,
+    ],
     getAllColumnsWithQuantity: (state) => [
       state.tableColumnQuantity,
       ...state.tableColumns,
