@@ -17,14 +17,24 @@ export const getQuery = (resource, store) => {
   });
 };
 
-export const confirmDeleteResource = async (store, id) => {
+export const confirmDeleteResource = async (store, id, snackbarProvider) => {
   const confirmation = window.confirm(
     "Are you sure that you would like to delete this item?",
   );
 
-  if (confirmation) {
+  if (!confirmation) return false;
+
+  try {
     await store.dispatch("resources/removeResource", id);
+
+    snackbarProvider.showSuccessSnackbar("Resource deleted successfully!");
+
     return true;
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar(
+      error?.response?.data?.error || "Failed to delete resource",
+    );
+
+    return false;
   }
-  return false;
 };
