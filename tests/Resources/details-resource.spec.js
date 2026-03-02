@@ -53,7 +53,8 @@ const createResource = async (page) => {
     .fill(String(pricePerQuantity));
 
   await page
-    .getByRole("textbox", { name: "Stock Keeping Unit Stock" })
+    .locator(".v-text-field", { hasText: "Stock Keeping Unit" })
+    .locator("input")
     .fill(String(sku));
   await page.locator(".v-btn__content", { hasText: "Submit" }).click();
   await page.getByLabel("Quantity", { exact: true }).fill(String(22));
