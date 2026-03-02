@@ -22,7 +22,7 @@ test.beforeEach(async ({ page }) => {
   createSaleGlobalVariables(page);
 });
 
-test("View sale events table", async ({ page }) => {
+const createSale = async (page, discount) => {
   const { submitButton } = saleContext;
 
   await expect(
@@ -39,8 +39,6 @@ test("View sale events table", async ({ page }) => {
 
   await selectResource(page);
 
-  const discount = "47";
-
   await page
     .locator(".v-input__control")
     .filter({
@@ -54,8 +52,54 @@ test("View sale events table", async ({ page }) => {
 
   await expect(page.getByText(`%${discount}`)).toBeVisible();
   await page.getByText(`%${discount}`).click();
+};
+
+test("View sale events table", async ({ page }) => {
+  const discount = "47";
+
+  await createSale(page, discount);
 
   await expect(page.getByText("Events Table")).toBeVisible();
   await page.getByText("Events Table").click();
   await expect(page.getByText("Create Sale")).toBeVisible();
+});
+
+test("Try to access deleted sale details page", async ({ page }) => {
+  const discount = "67";
+
+  await createSale(page, discount);
+
+  await expect(page.getByText("Resources Table")).toBeVisible();
+  await page.getByText("Resources Table").click();
+
+  const url = page.url();
+  const saleId = url.split("/").pop();
+
+  page.once("dialog", async (dialog) => {
+    await dialog.accept();
+  });
+
+  await expect(
+    page.locator(".v-data-table__tr").first().locator(".mdi-cart-remove"),
+  ).toBeVisible();
+
+  await page
+    .locator(".v-data-table__tr")
+    .first()
+    .locator(".mdi-cart-remove")
+    .click();
+
+  await page.goto(`/sales/${saleId}`);
+
+  await expect(page.getByText("Sale not found")).toBeVisible();
+  await expect(
+    page.getByText(
+      "The requested sale was not found or may have been deleted.",
+    ),
+  ).toBeVisible();
+
+  await expect(page.getByText("GO BACK")).toBeVisible();
+  await page.getByText("GO BACK").click();
+
+  await expect(page.getByText("Sales table")).toBeVisible();
 });

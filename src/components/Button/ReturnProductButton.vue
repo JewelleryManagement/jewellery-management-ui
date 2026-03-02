@@ -22,6 +22,7 @@ import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { inject } from "vue";
 import IconButton from "./IconButton.vue";
+import { handleNotFound } from "@/utils/action-guard";
 const store = useStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
@@ -45,6 +46,8 @@ const submitSaleReturn = async () => {
     snackbarProvider.showSuccessSnackbar("Product has been returned from sale");
     isSalesPage ? router.push("/sales") : router.push("/products");
   } catch (error) {
+    if (await handleNotFound(router, error, "Product")) return;
+
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };

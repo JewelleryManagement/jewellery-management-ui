@@ -137,6 +137,6 @@ const closeResourcesDialog = () => {
 const rowClickHandler = (row, item) => {
   const saleId = item.internalItem.key;
 
-  navigateToItemDetails(router, "Sale-Details", "saleId", saleId);
+  navigateToItemDetails(router, "Sale-Details", "id", saleId);
 };
 </script>

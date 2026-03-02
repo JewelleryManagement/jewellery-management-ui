@@ -15,6 +15,10 @@ async function fetchData(endpoint, options = {}) {
       router.push("/login");
     }
 
+    if (error.response.status === 404) {
+      throw error;
+    }
+
     throw new Error("Failed to fetch data from the server.");
   }
 }
@@ -96,6 +100,26 @@ export async function getSystemEvent(id) {
 
 export async function getAllEvents() {
   return await fetchData("/system-events");
+}
+
+export async function getUser(id) {
+  return await fetchData(`/users/${id}`);
+}
+
+export async function getProduct(id) {
+  return await fetchData(`/products/${id}`);
+}
+
+export async function getSale(id) {
+  return await fetchData(`/sales/${id}`);
+}
+
+export async function getOrganization(id) {
+  return await fetchData(`/organizations/${id}`);
+}
+
+export async function getUserInOrganization(organizationId, userId) {
+  return await fetchData(`/organizations/${organizationId}/users/${userId}`);
 }
 
 // POSTS REQUESTS

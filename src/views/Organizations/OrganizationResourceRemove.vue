@@ -8,10 +8,11 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { inject, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
+import { handleNotFound } from "@/utils/action-guard";
 const { resourceId, userId } = defineProps({
   resourceId: String,
   userId: String,
@@ -19,12 +20,9 @@ const { resourceId, userId } = defineProps({
 
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
-const route = useRoute();
 const router = useRouter();
-const resourceAvailability = ref({});
-resourceAvailability.value = await store.dispatch(
-  "resources/fetchAvailabilityResourceById",
-  resourceId,
+const resourceAvailability = computed(
+  () => store.getters["resources/getCurrentAvailability"],
 );
 
 const handleSubmit = async (inputsData) => {
@@ -45,6 +43,8 @@ const postRemoveResource = async (organizationId, data) => {
     snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
     router.push(`/organizations/${organizationId}`);
   } catch (error) {
+    if (await handleNotFound(router, error, "Resource")) return;
+
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };

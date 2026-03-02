@@ -32,7 +32,7 @@
         <text-button
           color="blue"
           text="Add Quantity"
-          :path="{ name: 'Add-Quantity', params: { resourceId: resource.id } }"
+          :path="{ name: 'Add-Quantity', params: { id: resource.id } }"
         />
       </div>
     </v-card>
@@ -86,6 +86,7 @@ const formattedResource = formatResource(resourceAvailability.resource);
 const onDelete = async () => {
   const deleteConfirmation = await confirmDeleteResource(
     store,
+    router,
     resource.id,
     snackbarProvider,
   );

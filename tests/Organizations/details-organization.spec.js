@@ -51,3 +51,19 @@ test("View organization events table", async ({ page }) => {
   await page.getByText("Events Table").click();
   await expect(page.getByText("Create Organization")).toBeVisible();
 });
+
+test("Try to access deleted organization details page", async ({ page }) => {
+  await page.goto(`/organizations/985f4c02-f63b-462f-9226-fa1e07a89393`);
+
+  await expect(page.getByText("Organization not found")).toBeVisible();
+  await expect(
+    page.getByText(
+      "The requested organization was not found or may have been deleted.",
+    ),
+  ).toBeVisible();
+
+  await expect(page.getByText("GO BACK")).toBeVisible();
+  await page.getByText("GO BACK").click();
+
+  await expect(page.getByText("Organizations Table")).toBeVisible();
+});

@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { ref, inject, onMounted } from "vue";
+import { inject, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
@@ -30,10 +30,8 @@ const fetchUserOrgs = async () => {
   }
 };
 
-const resourceAvailability = ref({});
-resourceAvailability.value = await store.dispatch(
-  "resources/fetchAvailabilityResourceById",
-  resourceId,
+const resourceAvailability = computed(
+  () => store.getters["resources/getCurrentAvailability"],
 );
 
 const postQuantityTransfer = async (data) => {

@@ -39,7 +39,7 @@ export const selectDate = async (page, expect) => {
     })
     .click();
   await expect(
-    page.getByText(`Selected date: ${day.padStart(2, "0")}/${month}/${year}`),
+    page.getByText(`Selected date: ${day.padStart(2, "0")}-${month}-${year}`),
   ).toBeVisible();
 };
 

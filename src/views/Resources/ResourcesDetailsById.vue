@@ -65,8 +65,8 @@ const route = useRoute();
 const store = useStore();
 
 const resourceId = route.params.id;
-const resourceAvailability = ref(
-  await store.dispatch("resources/fetchAvailabilityResourceById", resourceId),
+const resourceAvailability = computed(
+  () => store.getters["resources/getCurrentAvailability"],
 );
 
 const sales = ref(

@@ -72,6 +72,7 @@ import {
   ELEMENT_CLAZZ,
 } from "@/utils/clazzConstants";
 import { getQuery } from "@/utils/resource-util";
+import { handleNotFound } from "@/utils/action-guard";
 
 const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
@@ -133,12 +134,13 @@ const generateSku = () => {
 
 const loadResourceDetails = () => {
   if (isEditState.value || isDuplicateState.value) {
-    const resourceDetails = computed(() =>
-      store.getters["resources/getResourceById"](props.id),
+    const resourceDetails = computed(
+      () => store.getters["resources/getCurrentAvailability"],
     );
-    store.dispatch("resources/setResourceDetails", resourceDetails.value);
-    selectedClazz.value = resourceDetails.value.clazz;
-    sku.value = resourceDetails.value.sku;
+    const resource = resourceDetails.value.resource;
+    store.dispatch("resources/setResourceDetails", resource);
+    selectedClazz.value = resource.clazz;
+    sku.value = resource.sku;
   }
 };
 
@@ -213,7 +215,7 @@ const handleSubmit = async () => {
 const navigateToResourceQuantityPage = (result) => {
   router.push({
     name: "Add-Quantity",
-    params: { resourceId: result.id },
+    params: { id: result.id },
   });
 };
 
@@ -239,6 +241,8 @@ const editResource = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully edited resource!");
     navigateToResourcePage();
   } catch (error) {
+    if (await handleNotFound(router, error, "Resource")) return;
+
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 };

@@ -4,11 +4,14 @@ import {
   updateUser,
   fetchPurchasedResourcePerUser,
   fetchUsersByOrganization,
+  getUser,
+  getUserInOrganization,
 } from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
   state: {
+    selectedUser: {},
     users: [],
     purchasedResources: [],
     baseColumns: [
@@ -60,10 +63,16 @@ export default {
     setAllResourcesByUsers(state, usersResources) {
       state.allResourcesByUser.push(usersResources);
     },
+    setSelectedUser(state, selectedUser) {
+      state.selectedUser = selectedUser;
+    },
   },
   actions: {
     async fetchUsersByOrganization({ commit }, organizationId) {
       return await fetchUsersByOrganization(organizationId);
+    },
+    async fetchUserInOrganization({ commit }, { organizationId, userId }) {
+      return await getUserInOrganization(organizationId, userId);
     },
     async fetchUsers({ commit }) {
       const res = await fetchUsers();
@@ -78,6 +87,13 @@ export default {
     async fetchPurchasedResourcesPerUser({ commit }, userId) {
       const res = await fetchPurchasedResourcePerUser(userId);
       commit("setPurchasedResources", res);
+    },
+    async fetchUser({ commit }, userId) {
+      const data = await getUser(userId);
+
+      commit("setSelectedUser", data);
+
+      return data;
     },
   },
   getters: {
@@ -131,5 +147,6 @@ export default {
       );
     },
     getTableButtons: (state) => state.tableButtons,
+    getSelectedUser: (state) => state.selectedUser,
   },
 };

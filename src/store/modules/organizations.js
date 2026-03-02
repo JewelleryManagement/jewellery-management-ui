@@ -10,11 +10,13 @@ import {
   postUserToOrg,
   putUserToOrg,
   removeUserFromOrg,
+  getOrganization,
 } from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
   state: {
+    selectedOrganization: {},
     organizations: [],
     tableColumns: [
       { key: "id", title: "Id", align: " d-none" },
@@ -55,6 +57,9 @@ export default {
     setOrgs(state, organizations) {
       state.organizations = organizations;
     },
+    setSelectedOrganization(state, selectedOrganization) {
+      state.selectedOrganization = selectedOrganization;
+    },
   },
   actions: {
     async fetchOrgs({ commit }) {
@@ -92,6 +97,14 @@ export default {
       const { userId, orgId } = data;
       return await removeUserFromOrg(orgId, userId);
     },
+
+    async fetchOrganization({ commit }, id) {
+      const data = await getOrganization(id);
+
+      commit("setSelectedOrganization", data);
+
+      return data;
+    },
   },
   getters: {
     getOrgs: (state) => {
@@ -104,5 +117,6 @@ export default {
     ],
     getUserPermissions: (state) => state.userPermissions,
     getTableButtons: (state) => state.tableButtons,
+    getSelectedOrganization: (state) => state.selectedOrganization,
   },
 };

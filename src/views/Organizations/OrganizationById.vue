@@ -121,11 +121,13 @@ import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
 import { ref, computed, inject, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { handleNotFound } from "@/utils/action-guard";
 
 const store = useStore();
 const route = useRoute();
+const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 const organizationResources = ref([]);
 const tableColumnsResources = computed(
@@ -140,7 +142,7 @@ const orgMembers = ref([]);
 const disassemblyColumns = computed(
   () => store.getters["products/getActionsColumn"],
 );
-const orgId = route.params.organizationId;
+const orgId = route.params.id;
 const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`);
 onMounted(async () => {
   await updateOrganizationDetails();
@@ -207,11 +209,18 @@ const onDelete = async (userId) => {
     "Are you sure that you would like to remove this user from organization?",
   );
   if (confirmation) {
-    await store.dispatch("organizations/removeUser", {
-      userId: userId,
-      orgId: orgId,
-    });
-    await fetchUsersForOrganization();
+    try {
+      await store.dispatch("organizations/removeUser", {
+        userId,
+        orgId,
+      });
+
+      await fetchUsersForOrganization();
+    } catch (error) {
+      if (await handleNotFound(router, error, "User")) return;
+
+      console.error("Failed to remove user:", error);
+    }
   }
 };
 

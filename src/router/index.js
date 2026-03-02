@@ -1,6 +1,27 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store/store";
 
+export const makeFetchGuard =
+  ({ dispatch, type, getPayload = (to) => to.params.id }) =>
+  async (to) => {
+    try {
+      await dispatch(getPayload(to));
+      return true;
+    } catch (e) {
+      const status = e?.response?.status;
+
+      if (status === 404 || status === 410) {
+        return {
+          name: "NotFound",
+          query: { type },
+          replace: true,
+        };
+      }
+
+      throw e;
+    }
+  };
+
 const routes = [
   { path: "/", redirect: "/login" },
   {
@@ -27,6 +48,10 @@ const routes = [
     name: "Users Details",
     component: () => import("../views/Users/UserDetails.vue"),
     meta: { title: "Users Details", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "User",
+      dispatch: (id) => store.dispatch("users/fetchUser", id),
+    }),
   },
   {
     path: "/users/create",
@@ -41,6 +66,10 @@ const routes = [
     name: "Edit-User",
     component: () => import("../views/Users/UserUpdate.vue"),
     meta: { title: "Edit user", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "User",
+      dispatch: (id) => store.dispatch("users/fetchUser", id),
+    }),
   },
   {
     path: "/resources",
@@ -50,9 +79,14 @@ const routes = [
   },
   {
     path: "/resources/:id",
-    name: "Resource Details",
+    name: "ResourceDetails",
     component: () => import("../views/Resources/ResourcesDetailsById.vue"),
     meta: { title: "Resource page", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Resource",
+      dispatch: (id) =>
+        store.dispatch("resources/fetchAvailabilityResourceById", id),
+    }),
   },
   {
     path: "/resources/add",
@@ -66,6 +100,11 @@ const routes = [
     props: true,
     component: () => import("../views/Resources/ResourceDetails.vue"),
     meta: { title: "Edit resource", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Resource",
+      dispatch: (id) =>
+        store.dispatch("resources/fetchAvailabilityResourceById", id),
+    }),
   },
   {
     path: "/resources/duplicate/:id",
@@ -73,6 +112,11 @@ const routes = [
     props: true,
     component: () => import("../views/Resources/ResourceDetails.vue"),
     meta: { title: "Duplicate resource", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Resource",
+      dispatch: (id) =>
+        store.dispatch("resources/fetchAvailabilityResourceById", id),
+    }),
   },
   {
     path: "/products",
@@ -88,18 +132,26 @@ const routes = [
     meta: { title: "Create product", requiresAuth: true },
   },
   {
-    path: "/products/edit/:productId",
+    path: "/products/edit/:id",
     name: "Edit Product",
     props: true,
     component: () => import("../views/Products/ProductEdit.vue"),
     meta: { title: "Edit product", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Product",
+      dispatch: (id) => store.dispatch("products/fetchProduct", id),
+    }),
   },
   {
-    path: "/products/:productId",
+    path: "/products/:id",
     name: "Product Details",
     props: true,
     component: () => import("../views/Products/ProductsDetailsById.vue"),
     meta: { title: "Product details", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Product",
+      dispatch: (id) => store.dispatch("products/fetchProduct", id),
+    }),
   },
   {
     path: "/profile",
@@ -120,10 +172,14 @@ const routes = [
     meta: { title: "New Sale", requiresAuth: true },
   },
   {
-    path: "/sales/:saleId",
+    path: "/sales/:id",
     name: "Sale-Details",
     component: () => import("../views/Sales/SaleDetails.vue"),
     meta: { title: "Sale Details", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Sale",
+      dispatch: (id) => store.dispatch("sales/fetchSale", id),
+    }),
   },
   { path: "/logout", redirect: "/login" },
   {
@@ -132,11 +188,15 @@ const routes = [
     component: () => import("../views/Organizations/Organizations.vue"),
   },
   {
-    path: "/organizations/:organizationId",
+    path: "/organizations/:id",
     name: "Organization Details",
     props: true,
     component: () => import("../views/Organizations/OrganizationById"),
     meta: { title: "Organization details", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Organization",
+      dispatch: (id) => store.dispatch("organizations/fetchOrganization", id),
+    }),
   },
   {
     path: "/organizations/add",
@@ -144,12 +204,17 @@ const routes = [
     component: () => import("../views/Organizations/OrganizationsAdd.vue"),
   },
   {
-    path: "/organizations/availability/add/:resourceId",
+    path: "/organizations/availability/add/:id",
     props: true,
     name: "Add-Quantity",
     component: () =>
       import("../views/Organizations/OrganizationResourceAdd.vue"),
     meta: { title: "Add Quantity", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Resource",
+      dispatch: (id) =>
+        store.dispatch("resources/fetchAvailabilityResourceById", id),
+    }),
   },
   {
     path: "/organizations/availability/remove/:organizationId/:resourceId/:quantity",
@@ -158,6 +223,12 @@ const routes = [
     component: () =>
       import("../views/Organizations/OrganizationResourceRemove.vue"),
     meta: { title: "Remove Quantity", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Resource",
+      getPayload: (to) => to.params.resourceId,
+      dispatch: (resourceId) =>
+        store.dispatch("resources/fetchAvailabilityResourceById", resourceId),
+    }),
   },
   {
     path: "/organizations/availability/transfer/:organizationId/:resourceId/:quantity",
@@ -166,6 +237,12 @@ const routes = [
     component: () =>
       import("../views/Organizations/OrganizationResourceTransfer.vue"),
     meta: { title: "Transfer Quantity", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Resource",
+      getPayload: (to) => to.params.resourceId,
+      dispatch: (resourceId) =>
+        store.dispatch("resources/fetchAvailabilityResourceById", resourceId),
+    }),
   },
   {
     path: "/organizations/:organizationId/add-user",
@@ -180,12 +257,27 @@ const routes = [
     props: true,
     component: () => import("../views/Organizations/OrganizationUserEdit.vue"),
     meta: { title: "Edit user in Organization", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "User",
+      getPayload: (to) => ({
+        organizationId: to.params.organizationId,
+        userId: to.params.userId,
+      }),
+      dispatch: (payload) =>
+        store.dispatch("users/fetchUserInOrganization", payload),
+    }),
   },
   {
     path: "/system-events/:eventId",
     name: "Event-Details",
     component: () => import("../views/Events/EventDetails.vue"),
     meta: { title: "Event Page", requiresAuth: true },
+  },
+  {
+    path: "/not-found",
+    name: "NotFound",
+    component: () => import("../views/NotFound.vue"),
+    meta: { title: "Not Found", requiresunAuth: true },
   },
   {
     path: "/:notFound(.*)",
@@ -200,18 +292,20 @@ const router = createRouter({
   linkActiveClass: "active",
 });
 
-router.beforeEach((to, from, next) => {
-  const pageTitle = to.meta.title;
-  document.title = pageTitle;
+router.beforeEach((to, from) => {
+  document.title = to.meta.title || "App";
+
   const isAuthenticated = store.getters["auth/isAuthenticated"];
 
   if (to.meta.requiresAuth && !isAuthenticated) {
-    next("/login");
-  } else if (to.path === "/login" && isAuthenticated) {
-    next("/home");
-  } else {
-    next();
+    return { path: "/login", replace: true };
   }
+
+  if (to.path === "/login" && isAuthenticated) {
+    return { path: "/home", replace: true };
+  }
+
+  return true;
 });
 
 export default router;

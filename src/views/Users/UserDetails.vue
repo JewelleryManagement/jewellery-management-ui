@@ -93,7 +93,7 @@ const tableColumnsResources = computed(
 const purchasedResources = computed(
   () => store.getters["users/getPurchasedResources"],
 );
-const user = computed(() => store.getters["users/getUserById"](userId)).value;
+const user = computed(() => store.getters["users/getSelectedUser"]);
 </script>
 
 <style scoped>

@@ -161,6 +161,7 @@ export default {
   state: reactive({
     resources: [],
     resourceDetails: {},
+    currentAvailability: {},
     tableColumns: [
       { key: "clazz", title: "Resource Type" },
       { key: "color", title: "Color" },
@@ -286,6 +287,9 @@ export default {
     setResourcesQueries(state, payload) {
       state.resourcesQueries = payload;
     },
+    setCurrentAvailability(state, resource) {
+      state.currentAvailability = resource;
+    },
   },
   actions: {
     async fetchResources({ commit }) {
@@ -319,7 +323,11 @@ export default {
       commit("updateResource", updatedResource);
     },
     async fetchAvailabilityResourceById({ commit }, resourceId) {
-      return await fetchAvailabilityResourceById(resourceId);
+      const data = await fetchAvailabilityResourceById(resourceId);
+
+      commit("setCurrentAvailability", data);
+
+      return data;
     },
     async buildResourcesQueries({ state, commit }) {
       const allowedValueParams = state.allowedValueParams;
@@ -408,5 +416,6 @@ export default {
       if (!keys) return [];
       return filterColumnsByKey(state, additional, keys);
     },
+    getCurrentAvailability: (state) => state.currentAvailability,
   },
 };

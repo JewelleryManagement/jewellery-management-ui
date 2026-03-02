@@ -1,3 +1,5 @@
+import { handleNotFound } from "./action-guard";
+
 export const setInitialType = (clazz, store, route) => {
   const type = store.getters["resources/getParamsFieldName"](clazz);
 
@@ -17,7 +19,12 @@ export const getQuery = (resource, store) => {
   });
 };
 
-export const confirmDeleteResource = async (store, id, snackbarProvider) => {
+export const confirmDeleteResource = async (
+  store,
+  router,
+  id,
+  snackbarProvider,
+) => {
   const confirmation = window.confirm(
     "Are you sure that you would like to delete this item?",
   );
@@ -31,6 +38,8 @@ export const confirmDeleteResource = async (store, id, snackbarProvider) => {
 
     return true;
   } catch (error) {
+    if (await handleNotFound(router, error, "Resource")) return;
+
     snackbarProvider.showErrorSnackbar(
       error?.response?.data?.error || "Failed to delete resource",
     );

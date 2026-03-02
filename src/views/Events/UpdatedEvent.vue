@@ -74,6 +74,7 @@
     />
 
     <SaleEventCard
+      v-if="event.payload.entity.saleAfter !== null"
       :sale="event.payload.entity.saleAfter"
       title="Entity After"
       :date="event.payload.entity.date"

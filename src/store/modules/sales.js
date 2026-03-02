@@ -4,11 +4,13 @@ import {
   productReturn,
   resourceReturn,
   getAllSalesByResource,
+  getSale,
 } from "@/services/HttpClientService";
 
 export default {
   namespaced: true,
   state: {
+    selectedSale: {},
     sales: [],
     tableColumns: [
       { key: "id", title: "Id", align: " d-none" },
@@ -42,6 +44,9 @@ export default {
     setSales(state, sales) {
       state.sales = sales;
     },
+    setSelectedSale(state, selectedSale) {
+      state.selectedSale = selectedSale;
+    },
   },
   actions: {
     async fetchSales({ commit }) {
@@ -59,6 +64,14 @@ export default {
     },
     async getAllSalesByResource({ commit }, resourceId) {
       return await getAllSalesByResource(resourceId);
+    },
+
+    async fetchSale({ commit }, id) {
+      const data = await getSale(id);
+
+      commit("setSelectedSale", data);
+
+      return data;
     },
   },
   getters: {
@@ -83,5 +96,6 @@ export default {
       return state.sales.find((sale) => sale.id === saleId);
     },
     getTableButtons: (state) => state.tableButtons,
+    getSelectedSale: (state) => state.selectedSale,
   },
 };

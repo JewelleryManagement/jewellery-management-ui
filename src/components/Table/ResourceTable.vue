@@ -62,7 +62,7 @@
           color="blue"
           :routerPath="{
             name: 'Add-Quantity',
-            params: { resourceId: item.id },
+            params: { id: item.id },
           }"
         />
       </div>
@@ -125,12 +125,12 @@ const filteredResources = computed(() => {
 const search = ref("");
 
 const onDelete = async (id) => {
-  confirmDeleteResource(store, id, snackbarProvider);
+  confirmDeleteResource(store, router, id, snackbarProvider);
 };
 
 const navigateToItemPage = (row, item) => {
   const resourceId = item.internalItem.key;
 
-  navigateToItemDetails(router, "Resource Details", "id", resourceId);
+  navigateToItemDetails(router, "ResourceDetails", "id", resourceId);
 };
 </script>

@@ -156,7 +156,7 @@ const navigateToItemPage = (row, item) => {
   if (isEventPage.value) return;
   const productId = item.internalItem.key;
 
-  navigateToItemDetails(router, "Product Details", "productId", productId);
+  navigateToItemDetails(router, "Product Details", "id", productId);
 };
 </script>
 
