@@ -214,13 +214,12 @@ const onDelete = async (userId) => {
         userId,
         orgId,
       });
-
-      await fetchUsersForOrganization();
     } catch (error) {
       if (await handleNotFound(router, error, "User")) return;
 
       console.error("Failed to remove user:", error);
     }
+    await fetchUsersForOrganization();
   }
 };
 
