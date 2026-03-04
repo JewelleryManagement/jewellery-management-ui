@@ -160,7 +160,7 @@ const [currentResourcePrice, currentProductPrice, totalPrice] = [
     () =>
       Number(currentResourcePrice.value) +
       Number(currentProductPrice.value) +
-      (Number(props.productInfo.additionalPrice) || 0)
+      (Number(props.productInfo.additionalPrice) || 0),
   ),
 ];
 const form = ref(null);
@@ -205,14 +205,14 @@ const calculatePricesInEditView = async () => {
           Number(resource.quantity) * Number(resource.resource.pricePerQuantity)
         );
       },
-      0
+      0,
     );
 
     const productsContentTotal = props.productInfo.productsContent.reduce(
       (total, product) => {
         return total + Number(product.salePrice);
       },
-      0
+      0,
     );
 
     currentResourcePrice.value = resourceContentTotal;
@@ -223,7 +223,7 @@ const fetchUsersForOrganization = async (organization) => {
   try {
     let response = await store.dispatch(
       "users/fetchUsersByOrganization",
-      organization.id
+      organization.id,
     );
     orgUsers.value = response.members.map((member) => member.user);
   } catch (error) {
@@ -238,7 +238,7 @@ const fetchOrganizations = async () => {
       : "CREATE_PRODUCT";
     const response = await store.dispatch(
       "organizations/fetchUserOrgsByPermission",
-      permission
+      permission,
     );
     allOrgsByUser.value = response;
   } catch (error) {
@@ -256,12 +256,12 @@ const fetchResourcesForOrganization = async (organization) => {
             quantity: resourceAndQuantity.quantity,
             ...resourceAndQuantity.resource,
           };
-        })
+        }),
       );
     if (isInEditView) {
       props.productInfo.resourcesContent?.forEach((resource) => {
         const indexOfFetchedResource = resourcesToChooseFrom.value.findIndex(
-          (fetchedResource) => fetchedResource.id == resource.resource.id
+          (fetchedResource) => fetchedResource.id == resource.resource.id,
         );
         if (indexOfFetchedResource > -1) {
           resourcesToChooseFrom.value[indexOfFetchedResource].quantity +=
@@ -276,7 +276,7 @@ const fetchResourcesForOrganization = async (organization) => {
     }
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
-      "Could not fetch resources for organization!"
+      "Could not fetch resources for organization!",
     );
   }
 };
@@ -289,17 +289,17 @@ const fetchProductsForOrganization = async (organization) => {
           (product) =>
             !product.contentOf &&
             !product.partOfSale &&
-            product.id !== props.productInfo?.id
+            product.id !== props.productInfo?.id,
         );
       });
     if (isInEditView) {
       props.productInfo.productsContent?.forEach((product) =>
-        productsToChooseFrom.value.push(product)
+        productsToChooseFrom.value.push(product),
       );
     }
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
-      "Could not fetch products for organization!"
+      "Could not fetch products for organization!",
     );
   }
 };
@@ -363,10 +363,12 @@ const handleSubmit = async () => {
   if (!isResourceSelected()) return;
 
   let productResponse = await props.submitReqFunction();
-  await submitPicture(productResponse);
+  if (productResponse !== undefined) {
+    await submitPicture(productResponse);
 
-  resetForm();
-  router.push("/products");
+    resetForm();
+    router.push("/products");
+  }
 };
 
 const isPictureValidated = () => {
@@ -379,11 +381,11 @@ const postPicture = async (id, image) => {
     snackbarProvider.showSuccessSnackbar(
       `Successfully ${
         route.path.includes("edit") ? "edited" : "added"
-      } picture and product`
+      } picture and product`,
     );
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
-      "Couldn't add the picture to the product!"
+      "Couldn't add the picture to the product!",
     );
   }
 };

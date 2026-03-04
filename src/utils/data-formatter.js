@@ -5,7 +5,7 @@ export function dateFormatter(date) {
   const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
   const day = String(selectedDate.getDate()).padStart(2, "0");
 
-  return `${day}/${month}/${year}`;
+  return `${day}-${month}-${year}`;
 }
 
 export function userPropsFormatter(user) {

@@ -12,12 +12,15 @@
 import { useStore } from "vuex";
 import { inject } from "vue";
 import IconButton from "./IconButton.vue";
+import { handleNotFound } from "@/utils/action-guard";
+import { useRouter } from "vue-router";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   item: Object,
 });
 
 const store = useStore();
+const router = useRouter();
 
 const disassmebleProduct = async () => {
   const catalogNumber = props.item.catalogNumber;
@@ -36,6 +39,8 @@ async function sendDisassembleRequest(productId) {
     emits("disassembled-product", productId);
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {
+    if (await handleNotFound(router, error, "Product")) return;
+
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
 }

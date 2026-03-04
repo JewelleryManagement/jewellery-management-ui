@@ -52,11 +52,6 @@ const search = ref("");
 const navigateToItemPage = (row, item) => {
   const organizationId = item.internalItem.key;
 
-  navigateToItemDetails(
-    router,
-    "Organization Details",
-    "organizationId",
-    organizationId,
-  );
+  navigateToItemDetails(router, "Organization Details", "id", organizationId);
 };
 </script>

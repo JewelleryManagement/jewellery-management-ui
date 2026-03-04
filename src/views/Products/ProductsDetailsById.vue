@@ -107,7 +107,7 @@
 </template>
 
 <script setup>
-import { isMediumAndDownScreen, isMediumScreen } from "@/utils/display";
+import { isMediumAndDownScreen } from "@/utils/display";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
@@ -123,10 +123,10 @@ const defaultPicture = require("@/assets/no-pic.png");
 const store = useStore();
 const route = useRoute();
 const picture = ref(null);
-const currentProductId = route.params.productId;
+const currentProductId = route.params.id;
 const currentProductInfo = computed(
-  () => store.getters["products/allProducts"],
-).value.find((product) => product.id === currentProductId);
+  () => store.getters["products/getSelectedProduct"],
+);
 
 onMounted(() => {
   fetchAndUpdatePictureUrl();
@@ -171,7 +171,7 @@ const tableColumnsResources = computed(
 );
 
 const getResourcesWithQuantity = () => {
-  return currentProductInfo.resourcesContent.map((item) => ({
+  return currentProductInfo.value.resourcesContent.map((item) => ({
     quantity: item.quantity,
     ...item.resource,
   }));

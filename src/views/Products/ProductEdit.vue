@@ -20,14 +20,16 @@ import {
   prepareResourcesContent,
 } from "@/utils/data-formatter";
 import { ref, inject } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
+import { handleNotFound } from "@/utils/action-guard";
 
 const props = defineProps(["VDataTable"]);
 const store = useStore();
 const route = useRoute();
-const productId = route.params.productId;
+const router = useRouter();
+const productId = route.params.id;
 const snackbarProvider = inject("snackbarProvider");
 
 const productInfo = ref(store.getters["products/getProductById"](productId));
@@ -40,7 +42,7 @@ const updateProduct = async () => {
     authors: productInfo.value.authors.map((author) => author.id),
     productsContent: prepareProductsContent(productInfo.value.productsContent),
     resourcesContent: prepareResourcesContent(
-      productInfo.value.resourcesContent
+      productInfo.value.resourcesContent,
     ),
   };
   delete updatedProduct.id;
@@ -53,6 +55,8 @@ const updateProduct = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully updated product!");
     return res;
   } catch (error) {
+    if (await handleNotFound(router, error, "Product")) return;
+
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
   return false;

@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { appLogin, navigateViaNavbar } from "tests/utils/functions";
+import { getRandomNumber } from "tests/utils/getRandomNumberOrString";
 
 const checkButtonsVisibility = async (page) => {
   await expect(page.locator(".v-btn", { hasText: "Delete" })).toBeVisible();
@@ -34,8 +35,68 @@ const clickCardButtons = async (page, buttonName, pageTitle) => {
   ).toBeVisible();
 };
 
+let description = null;
+let pricePerQuantity = null;
+let sku = null;
+
+const createResource = async (page) => {
+  await expect(
+    page.locator(".v-btn__content", { hasText: "Add Element" }),
+  ).toBeVisible();
+  await page.locator(".v-btn__content", { hasText: "Add Element" }).click();
+
+  await expect(page.getByText("Submit")).toBeVisible();
+  await page.getByLabel("Description").fill(String(description));
+
+  await page
+    .getByLabel("Price per quantity", { exact: true })
+    .fill(String(pricePerQuantity));
+
+  await page
+    .locator(".v-text-field", { hasText: "Stock Keeping Unit" })
+    .locator("input")
+    .fill(String(sku));
+  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
+  await page.getByLabel("Quantity", { exact: true }).fill(String(22));
+  await page.getByLabel("Delivery Cost", { exact: true }).fill(String(22));
+  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
+  await expect(page.getByText("All Elements table")).toBeVisible();
+
+  await selectAllItems(page);
+
+  await expect(page.getByText(sku)).toBeVisible();
+  await page.getByText(sku).click();
+};
+
+const selectAllItems = async (page) => {
+  await page
+    .locator(".v-data-table-footer__items-per-page .v-input__control")
+    .click();
+  await page
+    .locator(".v-overlay-container .v-list-item", {})
+    .filter({ hasText: "All" })
+    .click();
+};
+
+const clickIconButton = async (page, entityIdentifier, icon) => {
+  await expect(
+    page
+      .locator(".v-data-table__tr", { hasText: entityIdentifier })
+      .locator(icon),
+  ).toBeVisible();
+
+  await page
+    .locator(".v-data-table__tr", { hasText: entityIdentifier })
+    .locator(icon)
+    .click();
+};
+
 test.beforeEach(async ({ page }) => {
   await appLogin(page);
+
+  description = "Description" + getRandomNumber();
+  pricePerQuantity = getRandomNumber();
+  sku = "Stock Keeping Unit" + getRandomNumber();
 });
 
 test.afterEach(async ({ page }) => {
@@ -101,28 +162,77 @@ test("View resource events table", async ({ page }) => {
     expectedHeader: "All Elements table",
   });
 
-  await expect(
-    page.locator(".v-btn__content", { hasText: "Add Element" }),
-  ).toBeVisible();
-  await page.locator(".v-btn__content", { hasText: "Add Element" }).click();
+  await createResource(page);
 
-  await expect(page.getByText("Submit")).toBeVisible();
-  await page.getByLabel("Description").fill(String("Test Description"));
-
-  await page.getByLabel("Price per quantity", { exact: true }).fill(String(22));
-
-  await page
-    .getByRole("textbox", { name: "Stock Keeping Unit Stock" })
-    .fill("Stock Keeping Unit Element");
-  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
-  await page.getByLabel("Quantity", { exact: true }).fill(String(22));
-  await page.getByLabel("Delivery Cost", { exact: true }).fill(String(22));
-  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
-  await expect(page.getByText("All Elements table")).toBeVisible();
-
-  await expect(page.getByText("Test Description")).toBeVisible();
-  await page.getByText("Test Description").click();
   await expect(page.getByText("Events Table")).toBeVisible();
   await page.getByText("Events Table").click();
   await expect(page.getByText("Create Resource")).toBeVisible();
+});
+
+test("Try to access deleted resource details page", async ({ page }) => {
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Resources",
+    expectedUrl: "/home",
+    navChildButtonText: "Element",
+    expectedNewUrl: "/resources?clazz=Element",
+    expectedHeader: "All Elements table",
+  });
+
+  await createResource(page);
+
+  await expect(page.getByText("Organizations Table")).toBeVisible();
+  await page.getByText("Organizations Table").click();
+
+  const url = page.url();
+  const reourceId = url.split("/").pop();
+
+  await expect(
+    page.getByText("Organization with User, Sale and Resources"),
+  ).toBeVisible();
+  await page.getByText("Organization with User, Sale and Resources").click();
+
+  await expect(page.getByText("Resources Table")).toBeVisible();
+  await page.getByText("Resources Table").click();
+
+  await selectAllItems(page);
+
+  await expect(page.getByText(sku)).toBeVisible();
+
+  await clickIconButton(page, sku, ".mdi-minus");
+
+  await expect(page.getByText(sku)).toBeVisible();
+
+  await expect(page.getByText("Remove Quantity")).toBeVisible();
+
+  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
+
+  await expect(page.getByText("Resources Table")).toBeVisible();
+
+  await navigateViaNavbar(page, expect, {
+    navParentButtonText: "Resources",
+    expectedUrl: page.url(),
+    navChildButtonText: "Element",
+    expectedNewUrl: "/resources?clazz=Element",
+    expectedHeader: "All Elements table",
+  });
+
+  page.once("dialog", async (dialog) => {
+    await dialog.accept();
+  });
+
+  await clickIconButton(page, sku, ".mdi-delete");
+
+  await page.goto(`/resources/${reourceId}`);
+
+  await expect(page.getByText("Resource not found")).toBeVisible();
+  await expect(
+    page.getByText(
+      "The requested resource was not found or may have been deleted.",
+    ),
+  ).toBeVisible();
+
+  await expect(page.getByText("GO BACK")).toBeVisible();
+  await page.getByText("GO BACK").click();
+
+  await expect(page.getByText("All Elements table")).toBeVisible();
 });

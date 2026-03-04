@@ -7,12 +7,13 @@
     @update:chosenPermissions="getChosenOptions"
   />
 </template>
-    
-  <script setup>
+
+<script setup>
 import UserInOrganizationForm from "@/components/Form/UserInOrganizationForm.vue";
-import { computed, ref, reactive, inject, watch, onMounted } from "vue";
+import { computed, ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
+import { handleNotFound } from "@/utils/action-guard";
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
 
@@ -23,8 +24,8 @@ const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
 const selectedOrg = computed(
   () =>
     (selectedOrg.value = allOrgsByUser.value.filter(
-      (x) => x.id === route.params.organizationId
-    )[0])
+      (x) => x.id === route.params.organizationId,
+    )[0]),
 );
 const route = useRoute();
 const router = useRouter();
@@ -46,6 +47,7 @@ const editUserInOrg = async () => {
     snackbarProvider.showSuccessSnackbar("Successfully Edited user in org!");
     router.push(`/organizations/${route.params.organizationId}`);
   } catch (error) {
+    if (await handleNotFound(router, error, "User")) return;
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
   return false;
@@ -64,16 +66,15 @@ const fetchSelectedUser = async () => {
         return formattedUsers;
       });
     const selectedUserIndex = orgMembers.findIndex(
-      (member) => member.id === selectedUserId
+      (member) => member.id === selectedUserId,
     );
     selectedUser.value = orgMembers[selectedUserIndex];
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
-      "Could not fetch users for organization!"
+      "Could not fetch users for organization!",
     );
   }
 };
 </script>
-    
-  <style scoped></style>
-    
+
+<style scoped></style>

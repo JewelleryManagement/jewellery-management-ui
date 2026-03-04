@@ -57,13 +57,13 @@ import { useStore } from "vuex";
 
 const store = useStore();
 const route = useRoute();
-const saleId = route.params.saleId;
+const saleId = route.params.id;
 
 const tableColumnsResources = computed(
   () => store.getters["sales/getResourceColumns"],
 );
 
-const currentSale = computed(() => store.getters["sales/getSaleById"](saleId));
+const currentSale = computed(() => store.getters["sales/getSelectedSale"]);
 const saleProducts = ref(currentSale.value.products);
 const saleResources = ref(
   currentSale.value.resources.map((saleResource) => {

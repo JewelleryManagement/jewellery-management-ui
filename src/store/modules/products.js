@@ -8,11 +8,13 @@ import {
   fetchPicture,
   updateProduct,
   getAllProductsByResource,
+  getProduct,
 } from "@/services/HttpClientService.js";
 
 export default {
   namespaced: true,
   state: {
+    selectedProduct: {},
     products: [],
     currentUserProducts: [],
     tableColumns: [
@@ -82,6 +84,9 @@ export default {
     setCurrentUserProducts(state, products) {
       state.currentUserProducts = products;
     },
+    setSelectedProduct(state, product) {
+      state.selectedProduct = product;
+    },
   },
   actions: {
     async fetchProducts({ dispatch, rootGetters, commit }) {
@@ -140,6 +145,13 @@ export default {
     async getAllProductsByResource({ commit }, resourceId) {
       return await getAllProductsByResource(resourceId);
     },
+    async fetchProduct({ commit }, id) {
+      const data = await getProduct(id);
+
+      commit("setSelectedProduct", data);
+
+      return data;
+    },
   },
   getters: {
     allProducts: (state) => {
@@ -176,5 +188,6 @@ export default {
       state.tableColumnAdditionalPrice,
     ],
     getOrganizationColumn: (state) => state.tableColumnOrganization,
+    getSelectedProduct: (state) => state.selectedProduct,
   },
 };

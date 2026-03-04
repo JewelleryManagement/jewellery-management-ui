@@ -22,6 +22,7 @@ import {
   mapUserDataToNewData,
   formatDateForInput,
 } from "@/utils/data-formatter";
+import { handleNotFound } from "@/utils/action-guard";
 const snackbarProvider = inject("snackbarProvider");
 
 const form = ref(null);
@@ -30,7 +31,9 @@ const router = useRouter();
 const store = useStore();
 const pageTitle = computed(() => route.meta.title);
 const userId = computed(() => route.params.id);
-const userDetails = computed(() => store.getters["users/getUserById"](userId.value));
+const userDetails = computed(() =>
+  store.getters["users/getUserById"](userId.value),
+);
 const userData = ref({});
 
 const { birthDate, ...otherUserDetails } = userDetails.value;
@@ -57,9 +60,11 @@ const submitEditUser = async () => {
   try {
     const res = await store.dispatch("users/updateUser", data);
     snackbarProvider.showSuccessSnackbar(
-      `Successfully updated user ${res.firstName}`
+      `Successfully updated user ${res.firstName}`,
     );
   } catch (error) {
+    if (await handleNotFound(router, error, "User")) return;
+
     const errors = Object.values(error?.response?.data?.error).join(", ");
     snackbarProvider.showErrorSnackbar(errors);
   }
