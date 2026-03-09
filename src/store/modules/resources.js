@@ -417,5 +417,9 @@ export default {
       return filterColumnsByKey(state, additional, keys);
     },
     getCurrentAvailability: (state) => state.currentAvailability,
+    getTableColumnsWithQuantity: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
   },
 };

@@ -17,14 +17,14 @@
 import { inject, onMounted } from "vue";
 import UsersTable from "@/components/Table/UsersTable.vue";
 import IconButton from "@/components/Button/IconButton.vue";
-import { useStore } from "vuex";
+import { useUsersStore } from "@/store/users";
 
-const store = useStore();
+const userStore = useUsersStore();
 const snackbarProvider = inject("snackbarProvider");
 
 onMounted(async () => {
   try {
-    await store.dispatch("users/fetchUsers");
+    await userStore.fetchUsers();
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch users.");
   }

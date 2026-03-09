@@ -14,8 +14,10 @@ import { computed, ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
+import { useUsersStore } from "@/store/users";
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
+const usersStore = useUsersStore();
 
 onMounted(async () => {
   await fetchSelectedUser();
@@ -54,8 +56,8 @@ const editUserInOrg = async () => {
 };
 const fetchSelectedUser = async () => {
   try {
-    let orgMembers = await store
-      .dispatch("users/fetchUsersByOrganization", selectedOrg.value.id)
+    let orgMembers = await usersStore
+      .fetchUsersByOrganization(selectedOrg.value.id)
       .then((usersResponse) => {
         const formattedUsers = usersResponse.members.map((singleUser) => {
           return {

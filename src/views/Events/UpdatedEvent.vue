@@ -90,6 +90,7 @@ import SimpleEntityEventCard from "./SimpleEntityEventCard.vue";
 import SaleEventCard from "./SaleEventCard.vue";
 import { computed } from "vue";
 import { useStore } from "vuex";
+import { useUsersStore } from "@/store/users";
 
 const props = defineProps({
   event: Object,
@@ -97,11 +98,12 @@ const props = defineProps({
 });
 
 const store = useStore();
+const usersStore = useUsersStore();
 
 const isSimpleEntity = (entity) => ["User", "Resource"].includes(entity);
 
 const rowsByEntity = {
-  User: () => store.getters["users/getAllInformationColumns"],
+  User: () => usersStore.getAllInformationColumns,
   Resource: () =>
     store.getters["resources/getColumnsByResource"]?.(
       props.event?.payload?.entityAfter?.clazz,

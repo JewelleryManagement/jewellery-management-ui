@@ -8,13 +8,17 @@
 import { onBeforeMount, inject } from "vue";
 import EventTimeline from "./Events/EventTimeline.vue";
 import { useStore } from "vuex";
+import { useUsersStore } from "@/store/users";
+
+const userStore = useUsersStore();
+await userStore.fetchUsers();
+
 const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 
 onBeforeMount(async () => {
   try {
     await Promise.all([
-      store.dispatch("users/fetchUsers"),
       store.dispatch("resources/fetchResources"),
       store.dispatch("products/fetchProducts"),
       store.dispatch("resources/buildResourcesQueries"),

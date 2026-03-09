@@ -28,7 +28,7 @@ const store = createStore({
   modules: {
     resources: resourcesModule,
     products: productsModule,
-    users: usersModule,
+    // users: usersModule,
     auth: authModule,
     sales: salesModule,
     organizations: organizationsModule,

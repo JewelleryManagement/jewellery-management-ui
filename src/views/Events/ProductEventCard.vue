@@ -102,15 +102,14 @@ const productRows = computed(() => [
 ]);
 
 const tableResourceColumns = computed(
-  () => store.getters["users/getTableColumnsWithQuantity"],
+  () => store.getters["resources/getTableColumnsWithQuantity"],
 );
 
-const normalizeResources = () => {
+const normalizeResources = () =>
   props.entity.resourcesContent.map(({ quantity, resource }) => ({
     ...resource,
     quantity,
   }));
-};
 
 const fullEntity = {
   product: props.entity ?? null,

@@ -124,8 +124,10 @@ import { ref, computed, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
+import { useUsersStore } from "@/store/users";
 
 const store = useStore();
+const usersStore = useUsersStore();
 const route = useRoute();
 const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
@@ -133,9 +135,7 @@ const organizationResources = ref([]);
 const tableColumnsResources = computed(
   () => store.getters["resources/getAvailabilityUpdateColumns"],
 );
-const orgUsersColumns = computed(
-  () => store.getters["users/getOrganizationColumns"],
-);
+const orgUsersColumns = computed(() => usersStore.getOrganizationColumns);
 const organization = ref({});
 const orgProducts = ref([]);
 const orgMembers = ref([]);
@@ -181,8 +181,8 @@ const fetchProductsForOrganization = async () => {
 };
 const fetchUsersForOrganization = async () => {
   try {
-    orgMembers.value = await store
-      .dispatch("users/fetchUsersByOrganization", orgId)
+    orgMembers.value = await usersStore
+      .fetchUsersByOrganization(orgId)
       .then((usersResponse) => {
         const formattedUsers = usersResponse.members.map((singleUser) => {
           return {

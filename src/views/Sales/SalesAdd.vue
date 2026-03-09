@@ -57,10 +57,12 @@ import {
   ProductsDialog,
   ResourcesDialog,
 } from "@/components";
+import { useUsersStore } from "@/store/users";
 
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
+const usersStore = useUsersStore();
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
@@ -68,7 +70,7 @@ const [resourcesDialog, resourcesForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const clearTable = ref(false);
 
-const allUsers = computed(() => store.getters["users/getAllUsers"]).value;
+const allUsers = computed(() => usersStore.users).value;
 
 const sellObject = reactive({
   seller: {},
@@ -91,19 +93,19 @@ watch(
                 quantity: resourceAndQuantity.quantity,
                 ...resourceAndQuantity.resource,
               };
-            }
-          )
+            },
+          ),
         );
 
       productsForSale.value = await store
         .dispatch("products/fetchProductsByOrganization", newSeller.id)
         .then((productsResponse) => {
           return productsResponse.products.filter(
-            (product) => !product.contentOf && !product.partOfSale
+            (product) => !product.contentOf && !product.partOfSale,
           );
         });
     }
-  }
+  },
 );
 
 const isSellerSelected = computed(() => !!sellObject.seller?.id);
@@ -165,7 +167,7 @@ const isProductsValidated = () => {
 
   if (!selectedProducts && !selectedResources) {
     snackbarProvider.showErrorSnackbar(
-      "Please select a product or a resource!"
+      "Please select a product or a resource!",
     );
     return false;
   }

@@ -141,6 +141,7 @@ import {
 import { useRoute, useRouter } from "vue-router";
 import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
+import { useUsersStore } from "@/store/users";
 const props = defineProps({
   productInfo: Object,
   submitReqFunction: Function,
@@ -152,6 +153,7 @@ const snackbarProvider = inject("snackbarProvider");
 const router = useRouter();
 const route = useRoute();
 const store = useStore();
+const usersStore = useUsersStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const [currentResourcePrice, currentProductPrice, totalPrice] = [
   ref(0),
@@ -221,10 +223,7 @@ const calculatePricesInEditView = async () => {
 };
 const fetchUsersForOrganization = async (organization) => {
   try {
-    let response = await store.dispatch(
-      "users/fetchUsersByOrganization",
-      organization.id,
-    );
+    let response = await usersStore.fetchUsersByOrganization(organization.id);
     orgUsers.value = response.members.map((member) => member.user);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch users!");

@@ -1,11 +1,33 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store/store";
+import { useUsersStore } from "@/store/users";
 
 export const makeFetchGuard =
   ({ dispatch, type, getPayload = (to) => to.params.id }) =>
   async (to) => {
     try {
       await dispatch(getPayload(to));
+      return true;
+    } catch (e) {
+      const status = e?.response?.status;
+
+      if (status === 404 || status === 410) {
+        return {
+          name: "NotFound",
+          query: { type },
+          replace: true,
+        };
+      }
+
+      throw e;
+    }
+  };
+
+export const makePiniaFetchGuard =
+  ({ action, type, getPayload = (to) => to.params.id }) =>
+  async (to) => {
+    try {
+      await action(getPayload(to));
       return true;
     } catch (e) {
       const status = e?.response?.status;
@@ -48,9 +70,9 @@ const routes = [
     name: "Users Details",
     component: () => import("../views/Users/UserDetails.vue"),
     meta: { title: "Users Details", requiresAuth: true },
-    beforeEnter: makeFetchGuard({
+    beforeEnter: makePiniaFetchGuard({
+      action: (id) => useUsersStore().fetchUser(id),
       type: "User",
-      dispatch: (id) => store.dispatch("users/fetchUser", id),
     }),
   },
   {
@@ -66,9 +88,9 @@ const routes = [
     name: "Edit-User",
     component: () => import("../views/Users/UserUpdate.vue"),
     meta: { title: "Edit user", requiresAuth: true },
-    beforeEnter: makeFetchGuard({
+    beforeEnter: makePiniaFetchGuard({
+      action: (id) => useUsersStore().fetchUser(id),
       type: "User",
-      dispatch: (id) => store.dispatch("users/fetchUser", id),
     }),
   },
   {
@@ -257,14 +279,13 @@ const routes = [
     props: true,
     component: () => import("../views/Organizations/OrganizationUserEdit.vue"),
     meta: { title: "Edit user in Organization", requiresAuth: true },
-    beforeEnter: makeFetchGuard({
+    beforeEnter: makePiniaFetchGuard({
       type: "User",
       getPayload: (to) => ({
         organizationId: to.params.organizationId,
         userId: to.params.userId,
       }),
-      dispatch: (payload) =>
-        store.dispatch("users/fetchUserInOrganization", payload),
+      action: (payload) => useUsersStore().fetchUserInOrganization(payload),
     }),
   },
   {

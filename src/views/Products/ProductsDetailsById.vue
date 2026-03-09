@@ -167,7 +167,7 @@ const selectedButton = ref("");
 const tableButtons = computed(() => store.getters["products/getTableButtons"]);
 
 const tableColumnsResources = computed(
-  () => store.getters["users/getTableColumnsWithQuantity"],
+  () => store.getters["resources/getTableColumnsWithQuantity"],
 );
 
 const getResourcesWithQuantity = () => {

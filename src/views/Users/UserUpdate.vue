@@ -15,7 +15,6 @@
 
 <script setup>
 import UserForm from "@/components/Form/UserForm.vue";
-import { useStore } from "vuex";
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import {
@@ -23,17 +22,16 @@ import {
   formatDateForInput,
 } from "@/utils/data-formatter";
 import { handleNotFound } from "@/utils/action-guard";
+import { useUsersStore } from "@/store/users";
 const snackbarProvider = inject("snackbarProvider");
 
 const form = ref(null);
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const usersStore = useUsersStore();
 const pageTitle = computed(() => route.meta.title);
-const userId = computed(() => route.params.id);
-const userDetails = computed(() =>
-  store.getters["users/getUserById"](userId.value),
-);
+const userDetails = computed(() => usersStore.selectedUser);
+
 const userData = ref({});
 
 const { birthDate, ...otherUserDetails } = userDetails.value;
@@ -58,7 +56,7 @@ const submitEditUser = async () => {
   };
 
   try {
-    const res = await store.dispatch("users/updateUser", data);
+    const res = await usersStore.updateUser(data);
     snackbarProvider.showSuccessSnackbar(
       `Successfully updated user ${res.firstName}`,
     );

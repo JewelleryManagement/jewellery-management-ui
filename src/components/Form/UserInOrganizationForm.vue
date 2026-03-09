@@ -22,14 +22,15 @@
     >
   </v-sheet>
 </template>
-  
-  <script setup>
+
+<script setup>
 import { ref, computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import UserSelect from "@/components/Select/UserSelect.vue";
 import OptionsPicker from "@/components/Select/OptionsPicker.vue";
+import { useUsersStore } from "@/store/users";
 
 const route = useRoute();
 const emit = defineEmits(["update:selectedUser", "update:chosenPermissions"]);
@@ -61,12 +62,13 @@ const selectedUser = computed({
   set: (value) => handleSelectedUserChange(value),
 });
 const store = useStore();
+const usersStore = useUsersStore();
 const isOrgSelectDisabled = ref(!!props.selectedOrg);
 const isUserSelectDisabled = ref(route.path.includes("edit-user"));
 
 const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
 const allPermissions = computed(
-  () => store.getters["organizations/getUserPermissions"]
+  () => store.getters["organizations/getUserPermissions"],
 );
 const chosenPermissions = computed({
   get: () => props.chosenPermissions,
@@ -90,17 +92,16 @@ const handleChosenPermissionsChange = (newChosenOptions) => {
 };
 const handleSelectedUserChange = (newUser) => {
   emit("update:selectedUser", newUser);
-}
+};
 
 const getUsersOutsideOrg = async (organization) => {
-  const usersInOrganization = await store.dispatch(
-    "users/fetchUsersByOrganization",
-    organization?.id
+  const usersInOrganization = await usersStore.fetchUsersByOrganization(
+    organization?.id,
   );
-  const fetchedAllUsers = computed(() => store.getters["users/getAllUsers"]);
+  const fetchedAllUsers = computed(() => usersStore.users);
   allUsers.value = fetchedAllUsers.value.filter((user) => {
     const indexOfMatch = usersInOrganization.members.findIndex(
-      (member) => member.user.id === user.id
+      (member) => member.user.id === user.id,
     );
     return indexOfMatch == -1;
   });
@@ -111,6 +112,5 @@ const handleSubmit = async () => {
   let addUserResponse = await props.submitRequestFunction();
 };
 </script>
-  
-  <style lang="scss" scoped></style>
-  
+
+<style lang="scss" scoped></style>

@@ -45,7 +45,7 @@
 </template>
 <script setup>
 import { computed, ref } from "vue";
-import { useStore } from "vuex";
+import { useUsersStore } from "@/store/users";
 import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.vue";
 
 const props = defineProps({
@@ -53,10 +53,10 @@ const props = defineProps({
   title: String,
 });
 
-const store = useStore();
+const usersStore = useUsersStore();
 
 const userInOrganizationRows = computed(
-  () => store.getters["users/getBaseColumnsWithPermmisions"],
+  () => usersStore.getBaseColumnsWithPermmisions,
 );
 
 const rawDataButton = ref(false);
