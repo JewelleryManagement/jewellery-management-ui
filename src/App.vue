@@ -27,24 +27,15 @@
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { ref, provide, computed } from "vue";
-import {
-  PEARL_CLAZZ,
-  DIAMOND_CLAZZ,
-  DIAMON_MELEE_CLAZZ,
-  COLORED_STONE_CLAZZ,
-  COLORED_STONE_MELEE_CLAZZ,
-  SEMI_PRECIOUS_STONE_CLAZZ,
-  METAL_CLAZZ,
-  ELEMENT_CLAZZ,
-} from "./utils/clazzConstants";
-
 import NavBar from "./components/Nav/NavBar.vue";
 import SnackBar from "./components/Popup/SnackBar.vue";
+import { useAuthStore } from "./store/auth";
 
 const store = useStore();
+const authStore = useAuthStore();
 const router = useRouter();
 
-const isAuth = computed(() => store.getters["auth/isAuthenticated"]);
+const isAuth = computed(() => authStore.isAuthenticated);
 
 const snackbar = ref({
   isActive: false,
@@ -77,14 +68,14 @@ const snackbarProvider = {
 provide("snackbarProvider", snackbarProvider);
 
 const logoutHandler = () => {
-  store.dispatch("auth/logout");
+  authStore.logout();
   snackbarProvider.showSuccessSnackbar("Logged out successfully!");
   router.push("/login");
 };
 
 const useResourceButtons = () => {
   const queries = computed(
-    () => store.getters["resources/getAllResourceQueries"] || {}
+    () => store.getters["resources/getAllResourceQueries"] || {},
   );
 
   const buttons = computed(() =>
@@ -96,7 +87,7 @@ const useResourceButtons = () => {
         url: "/resources",
         query: { clazz: key },
       };
-    })
+    }),
   );
 
   return buttons;

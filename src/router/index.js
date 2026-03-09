@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store/store";
 import { useUsersStore } from "@/store/users";
+import { useAuthStore } from "@/store/auth";
 
 export const makeFetchGuard =
   ({ dispatch, type, getPayload = (to) => to.params.id }) =>
@@ -316,7 +317,7 @@ const router = createRouter({
 router.beforeEach((to, from) => {
   document.title = to.meta.title || "App";
 
-  const isAuthenticated = store.getters["auth/isAuthenticated"];
+  const isAuthenticated = useAuthStore().isAuthenticated;
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return { path: "/login", replace: true };

@@ -17,19 +17,19 @@ export default {
     },
   },
   actions: {
-    async login({ commit }, payload) {
-      const user = await postUserLogin(payload);
-      commit("setUser", user);
-      return user.user;
-    },
-    logout({ commit }) {
-      commit("clearUser");
-      localStorage.removeItem("vuex");
-    },
+    // async login({ commit }, payload) {
+    //   const user = await postUserLogin(payload);
+    //   commit("setUser", user);
+    //   return user.user;
+    // },
+    // logout({ commit }) {
+    //   commit("clearUser");
+    //   localStorage.removeItem("vuex");
+    // },
   },
   getters: {
-    isAuthenticated: (state) => !!state.user,
-    getUser: (state) => state.user,
-    getToken: (state) => state.token,
+    // isAuthenticated: (state) => !!state.user,
+    // getUser: (state) => state.user,
+    // getToken: (state) => state.token,
   },
 };

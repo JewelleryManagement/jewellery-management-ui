@@ -154,7 +154,7 @@ const resetForm = () => {
 };
 
 const clearAllowedValueDetails = () => {
-  allowedValuesStore.clearAllowedValueDetails;
+  allowedValuesStore.clearAllowedValueDetails();
 };
 
 const clearResourceDetails = (clazz) => {
