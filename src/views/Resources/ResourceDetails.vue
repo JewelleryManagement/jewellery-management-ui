@@ -73,6 +73,7 @@ import {
 } from "@/utils/clazzConstants";
 import { getQuery } from "@/utils/resource-util";
 import { handleNotFound } from "@/utils/action-guard";
+import { useAllowedValuesStore } from "@/store/allowedValues";
 
 const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
@@ -80,6 +81,7 @@ const props = defineProps({
   id: String,
 });
 const store = useStore();
+const allowedValuesStore = useAllowedValuesStore();
 const route = useRoute();
 const router = useRouter();
 const options = ref([
@@ -106,7 +108,7 @@ const isDuplicateState = computed(() =>
   route.path.startsWith("/resources/duplicate"),
 );
 const allowedValueDetail = computed(
-  () => store.getters["allowedValues/getAllowedValueDetails"],
+  () => allowedValuesStore.allowedValueDetails,
 );
 
 const actionTitle = computed(() => {
@@ -122,9 +124,7 @@ const form = ref(null);
 const sku = ref("");
 
 const generateSku = () => {
-  const order = store.getters["allowedValues/getAllowedFieldsByType"](
-    selectedClazz.value,
-  );
+  const order = allowedValuesStore.allowedFieldsByType[selectedClazz.value];
 
   sku.value = order
     .map((col) => allowedValueDetail.value[col]?.sku)
@@ -149,12 +149,12 @@ const resetForm = () => {
     form.value.reset();
     form.value.resetValidation();
     clearAllowedValueDetails();
-    store.dispatch("allowedValues/setAllowedValueReset", true);
+    allowedValuesStore.setAllowedValueReset(true);
   }
 };
 
 const clearAllowedValueDetails = () => {
-  store.dispatch("allowedValues/clearAllowedValueDetails");
+  allowedValuesStore.clearAllowedValueDetails;
 };
 
 const clearResourceDetails = (clazz) => {
@@ -230,7 +230,7 @@ const navigateToResourcePage = () => {
 const editResource = async () => {
   try {
     await addNewAllowedValuesIfNeeded(
-      store,
+      allowedValuesStore,
       selectedClazz.value,
       allowedValueDetail.value,
     );
@@ -250,7 +250,7 @@ const editResource = async () => {
 const createResource = async () => {
   try {
     await addNewAllowedValuesIfNeeded(
-      store,
+      allowedValuesStore,
       selectedClazz.value,
       allowedValueDetail.value,
     );

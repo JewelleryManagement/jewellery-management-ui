@@ -41,9 +41,11 @@ import {
 } from "../../utils/validation-rules.js";
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 import { useRoute } from "vue-router";
+import { useAllowedValuesStore } from "@/store/allowedValues.js";
 
 const route = useRoute();
 const store = useStore();
+const allowedValuesStore = useAllowedValuesStore();
 const formData = computed(() => store.getters["resources/getResourceDetails"]);
 
 const setInitialValues = () => {
@@ -70,7 +72,7 @@ const updateResourceDetails = (key, value) =>
   store.dispatch("resources/setResourceDetailsField", { key, value });
 
 const updateAllowedValueDetail = (key, value) => {
-  store.dispatch("allowedValues/setAllowedValueDetail", {
+  allowedValuesStore.setAllowedValueDetail({
     [key]: value,
   });
 };
@@ -82,24 +84,22 @@ const descriptionRules = useTextAreaFieldRules();
 const numberFieldRules = useNumberFieldRules();
 
 const clazzOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "clazz")
+  getAllowedValue(allowedValuesStore, resourceClazz, "clazz"),
 );
 const quantityTypeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quantityType")
+  getAllowedValue(allowedValuesStore, resourceClazz, "quantityType"),
 );
 
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
-  await fetchAllowedValues(store, resourceClazz);
+  await fetchAllowedValues(allowedValuesStore, resourceClazz);
   isFetching.value = false;
 
   setInitialValues();
 };
 
-const resetForm = computed(
-  () => store.getters["allowedValues/getAllowedValueReset"]
-);
+const resetForm = computed(() => allowedValuesStore.allowedValuesReset);
 
 // When fullPath changes, reinitialize allowed value details
 // When resetForm changes, reinitialize allowed value details (e.g. after a reset)
@@ -108,9 +108,9 @@ watch(
   [() => route.fullPath, () => resetForm.value],
   () => {
     setInitialValues();
-    store.dispatch("allowedValues/setAllowedValueReset", false);
+    allowedValuesStore.setAllowedValueReset(false);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 onMounted(fetchAllowedValuesOptions);
