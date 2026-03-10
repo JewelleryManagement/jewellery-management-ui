@@ -16,180 +16,177 @@ import { useOrganizationsStore } from "../organizations";
 export default {
   namespaced: true,
   state: {
-    selectedProduct: {},
-    products: [],
-    currentUserProducts: [],
-    tableColumns: [
-      { key: "id", title: "Id", align: " d-none" },
-      { key: "catalogNumber", title: "Catalog Number" },
-      { key: "productionNumber", title: "Production Number" },
-      { key: "description", title: "Description" },
-      { key: "authors", title: "Authors", slot: "authors" },
-      { key: "partOfSale", title: "Sold", slot: "partOfSale" },
-      { key: "salePrice", title: "Sale price", slot: "salePrice" },
-      { key: "contentOf", title: "Part of product" },
-    ],
-
-    tableColumnAdd: { key: "add", title: "", slot: "add" },
-    tableColumnOwner: {
-      key: "owner",
-      title: "Owner",
-      slot: "owner",
-    },
-    tableColumnOrganization: {
-      key: "organization",
-      title: "Organization",
-      slot: "organization",
-    },
-    tableColumnResourcesContent: {
-      key: "resourceContent",
-      title: "Resources Content",
-      slot: "resourceContent",
-      align: "center",
-    },
-    tableColumnProductsContent: {
-      key: "productsContent",
-      title: "Products Content",
-      slot: "productsContent",
-      align: "center",
-    },
-    tableActions: {
-      key: "actions",
-      title: "",
-      align: "center",
-    },
-    tableColumnResourceQuantity: {
-      key: "quantity",
-      title: "Quantity",
-    },
-    tableColumnDiscount: {
-      key: "discount",
-      title: "Discount",
-    },
-    tableColumnAdditionalPrice: {
-      key: "additionalPrice",
-      title: "AdditionalPrice",
-    },
-    tableButtons: [
-      { label: "Resources", icon: "mdi-diamond-stone" },
-      { label: "Products", icon: "mdi-package-variant" },
-      {
-        label: "Events",
-        icon: "mdi-calendar",
-      },
-    ],
+    // selectedProduct: {},
+    // products: [],
+    // currentUserProducts: [],
+    // tableColumns: [
+    //   { key: "id", title: "Id", align: " d-none" },
+    //   { key: "catalogNumber", title: "Catalog Number" },
+    //   { key: "productionNumber", title: "Production Number" },
+    //   { key: "description", title: "Description" },
+    //   { key: "authors", title: "Authors", slot: "authors" },
+    //   { key: "partOfSale", title: "Sold", slot: "partOfSale" },
+    //   { key: "salePrice", title: "Sale price", slot: "salePrice" },
+    //   { key: "contentOf", title: "Part of product" },
+    // ],
+    // tableColumnAdd: { key: "add", title: "", slot: "add" },
+    // tableColumnOwner: {
+    //   key: "owner",
+    //   title: "Owner",
+    //   slot: "owner",
+    // },
+    // tableColumnOrganization: {
+    //   key: "organization",
+    //   title: "Organization",
+    //   slot: "organization",
+    // },
+    // tableColumnResourcesContent: {
+    //   key: "resourceContent",
+    //   title: "Resources Content",
+    //   slot: "resourceContent",
+    //   align: "center",
+    // },
+    // tableColumnProductsContent: {
+    //   key: "productsContent",
+    //   title: "Products Content",
+    //   slot: "productsContent",
+    //   align: "center",
+    // },
+    // tableActions: {
+    //   key: "actions",
+    //   title: "",
+    //   align: "center",
+    // },
+    // tableColumnResourceQuantity: {
+    //   key: "quantity",
+    //   title: "Quantity",
+    // },
+    // tableColumnDiscount: {
+    //   key: "discount",
+    //   title: "Discount",
+    // },
+    // tableColumnAdditionalPrice: {
+    //   key: "additionalPrice",
+    //   title: "AdditionalPrice",
+    // },
+    // tableButtons: [
+    //   { label: "Resources", icon: "mdi-diamond-stone" },
+    //   { label: "Products", icon: "mdi-package-variant" },
+    //   {
+    //     label: "Events",
+    //     icon: "mdi-calendar",
+    //   },
+    // ],
   },
   mutations: {
-    setProducts(state, products) {
-      state.products = products;
-    },
-    setCurrentUserProducts(state, products) {
-      state.currentUserProducts = products;
-    },
-    setSelectedProduct(state, product) {
-      state.selectedProduct = product;
-    },
+    // setProducts(state, products) {
+    //   state.products = products;
+    // },
+    // setCurrentUserProducts(state, products) {
+    //   state.currentUserProducts = products;
+    // },
+    // setSelectedProduct(state, product) {
+    //   state.selectedProduct = product;
+    // },
   },
   actions: {
-    async fetchProducts({ commit }) {
-      let orgs = useOrganizationsStore().organizations;
-      if (!orgs || orgs.length == 0) {
-        await useOrganizationsStore().fetchOrganizations();
-        orgs = useOrganizationsStore().organizations;
-      }
-      let allProducts = [];
-      await Promise.all(
-        orgs.map(async (org) => {
-          let orgProductsResponse = await fetchProductsByOrganization(org.id);
-          let orgProducts = orgProductsResponse.products;
-          orgProducts.forEach((product) => {
-            allProducts.push({
-              ...product,
-              organization: org,
-            });
-          });
-        }),
-      );
-      commit("setProducts", allProducts);
-    },
-    async createProduct({ commit }, product) {
-      const res = await postProduct(product);
-      return res;
-    },
-    async fetchProductsByOwner({ commit }, ownerId) {
-      const res = await fetchProductsByOwner(ownerId);
-      commit("setCurrentUserProducts", res);
-    },
-    async fetchProductsByOrganization({ commit }, ownerId) {
-      return await fetchProductsByOrganization(ownerId);
-    },
-    async disassmebleProduct({ commit }, productId) {
-      await disassmebleProduct(productId);
-    },
-    async transferProduct({ commit }, data) {
-      const { productId, recipientId } = data;
-      await transferProduct(productId, recipientId);
-    },
-    async postPicture({ commit }, { productId, image }) {
-      await postPicture(productId, image);
-    },
-    async updateProduct({ commit }, { productId, updatedProduct }) {
-      return await updateProduct(productId, updatedProduct);
-    },
-    async getPicture({ commit }, productId) {
-      try {
-        const res = await fetchPicture(productId);
-        return URL.createObjectURL(new Blob([res], { type: "image/png" }));
-      } catch (error) {
-        return null;
-      }
-    },
-    async getAllProductsByResource({ commit }, resourceId) {
-      return await getAllProductsByResource(resourceId);
-    },
-    async fetchProduct({ commit }, id) {
-      const data = await getProduct(id);
-
-      commit("setSelectedProduct", data);
-
-      return data;
-    },
+    // async fetchProducts({ commit }) {
+    //   let orgs = useOrganizationsStore().organizations;
+    //   if (!orgs || orgs.length == 0) {
+    //     await useOrganizationsStore().fetchOrganizations();
+    //     orgs = useOrganizationsStore().organizations;
+    //   }
+    //   let allProducts = [];
+    //   await Promise.all(
+    //     orgs.map(async (org) => {
+    //       let orgProductsResponse = await fetchProductsByOrganization(org.id);
+    //       let orgProducts = orgProductsResponse.products;
+    //       orgProducts.forEach((product) => {
+    //         allProducts.push({
+    //           ...product,
+    //           organization: org,
+    //         });
+    //       });
+    //     }),
+    //   );
+    //   commit("setProducts", allProducts);
+    // },
+    // async createProduct({ commit }, product) {
+    //   const res = await postProduct(product);
+    //   return res;
+    // },
+    // async fetchProductsByOwner({ commit }, ownerId) {
+    //   const res = await fetchProductsByOwner(ownerId);
+    //   commit("setCurrentUserProducts", res);
+    // },
+    // async fetchProductsByOrganization({ commit }, ownerId) {
+    //   return await fetchProductsByOrganization(ownerId);
+    // },
+    // async disassmebleProduct({ commit }, productId) {
+    //   await disassmebleProduct(productId);
+    // },
+    // async transferProduct({ commit }, data) {
+    //   const { productId, recipientId } = data;
+    //   await transferProduct(productId, recipientId);
+    // },
+    // async postPicture({ commit }, { productId, image }) {
+    //   await postPicture(productId, image);
+    // },
+    // async updateProduct({ commit }, { productId, updatedProduct }) {
+    //   return await updateProduct(productId, updatedProduct);
+    // },
+    // async getPicture({ commit }, productId) {
+    //   try {
+    //     const res = await fetchPicture(productId);
+    //     return URL.createObjectURL(new Blob([res], { type: "image/png" }));
+    //   } catch (error) {
+    //     return null;
+    //   }
+    // },
+    // async getAllProductsByResource({ commit }, resourceId) {
+    //   return await getAllProductsByResource(resourceId);
+    // },
+    // async fetchProduct({ commit }, id) {
+    //   const data = await getProduct(id);
+    //   commit("setSelectedProduct", data);
+    //   return data;
+    // },
   },
   getters: {
-    allProducts: (state) => {
-      return state.products;
-    },
-    getProductById: (state) => (productId) => {
-      return state.products.find((product) => product.id === productId);
-    },
-    getColumns: (state) => [
-      ...state.tableColumns,
-      state.tableColumnResourcesContent,
-      state.tableColumnProductsContent,
-    ],
-    getCurrentUserProducts: (state) => state.currentUserProducts,
-    getAddColumn: (state) => state.tableColumnAdd,
-    getUserColumn: (state) => state.tableColumnOwner,
-    getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
-    getColumnsWithRCandPC: (state) => [
-      ...state.tableColumns,
-      state.tableColumnResourcesContent,
-      state.tableColumnProductsContent,
-    ],
-    getDisassembleAndUserColumns: (state) => [
-      state.tableColumnOwner,
-      state.tableColumnOrganization,
-      state.tableActions,
-    ],
-    getActionsColumn: (state) => [state.tableActions],
-    getResourceQuantityColumn: (state) => [state.tableColumnResourceQuantity],
-    getTableButtons: (state) => state.tableButtons,
-    getAdditionalBaseColumns: (state) => [
-      state.tableColumnOwner,
-      state.tableColumnDiscount,
-      state.tableColumnAdditionalPrice,
-    ],
-    getOrganizationColumn: (state) => state.tableColumnOrganization,
-    getSelectedProduct: (state) => state.selectedProduct,
+    // allProducts: (state) => {
+    //   return state.products;
+    // },
+    // getProductById: (state) => (productId) => {
+    //   return state.products.find((product) => product.id === productId);
+    // },
+    // getColumns: (state) => [
+    //   ...state.tableColumns,
+    //   state.tableColumnResourcesContent,
+    //   state.tableColumnProductsContent,
+    // ],
+    // getCurrentUserProducts: (state) => state.currentUserProducts,
+    // getAddColumn: (state) => state.tableColumnAdd,
+    // getUserColumn: (state) => state.tableColumnOwner,
+    // getColumnsWithAdd: (state) => [state.tableColumnAdd, ...state.tableColumns],
+    // getColumnsWithRCandPC: (state) => [
+    //   ...state.tableColumns,
+    //   state.tableColumnResourcesContent,
+    //   state.tableColumnProductsContent,
+    // ],
+    // getDisassembleAndUserColumns: (state) => [
+    //   state.tableColumnOwner,
+    //   state.tableColumnOrganization,
+    //   state.tableActions,
+    // ],
+    // getActionsColumn: (state) => [state.tableActions],
+    // getResourceQuantityColumn: (state) => [state.tableColumnResourceQuantity],
+    // getTableButtons: (state) => state.tableButtons,
+    // getAdditionalBaseColumns: (state) => [
+    //   state.tableColumnOwner,
+    //   state.tableColumnDiscount,
+    //   state.tableColumnAdditionalPrice,
+    // ],
+    // getOrganizationColumn: (state) => state.tableColumnOrganization,
+    // getSelectedProduct: (state) => state.selectedProduct,
   },
 };

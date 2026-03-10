@@ -140,9 +140,9 @@ import {
 } from "@/utils/validation-rules";
 import { useRoute, useRouter } from "vue-router";
 import { userPropsFormatter } from "@/utils/data-formatter";
-import { useStore } from "vuex";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
 const props = defineProps({
   productInfo: Object,
   submitReqFunction: Function,
@@ -153,9 +153,9 @@ const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 const snackbarProvider = inject("snackbarProvider");
 const router = useRouter();
 const route = useRoute();
-const store = useStore();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
+const productsStore = useProductsStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const [currentResourcePrice, currentProductPrice, totalPrice] = [
   ref(0),
@@ -282,8 +282,8 @@ const fetchResourcesForOrganization = async (organization) => {
 };
 const fetchProductsForOrganization = async (organization) => {
   try {
-    productsToChooseFrom.value = await store
-      .dispatch("products/fetchProductsByOrganization", organization.id)
+    productsToChooseFrom.value = await productsStore
+      .fetchProductsByOrganization(organization.id)
       .then((productsResponse) => {
         return productsResponse.products.filter(
           (product) =>
@@ -377,7 +377,7 @@ const isPictureValidated = () => {
 
 const postPicture = async (id, image) => {
   try {
-    await store.dispatch("products/postPicture", { productId: id, image });
+    await productsStore.postPicture({ productId: id, image });
     snackbarProvider.showSuccessSnackbar(
       `Successfully ${
         route.path.includes("edit") ? "edited" : "added"

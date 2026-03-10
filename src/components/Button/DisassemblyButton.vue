@@ -9,17 +9,17 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { inject } from "vue";
 import IconButton from "./IconButton.vue";
 import { handleNotFound } from "@/utils/action-guard";
 import { useRouter } from "vue-router";
+import { useProductsStore } from "@/store/products";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   item: Object,
 });
 
-const store = useStore();
+const productsStore = useProductsStore();
 const router = useRouter();
 
 const disassmebleProduct = async () => {
@@ -35,7 +35,7 @@ const disassmebleProduct = async () => {
 const emits = defineEmits(["disassembled-product"]);
 async function sendDisassembleRequest(productId) {
   try {
-    await store.dispatch("products/disassmebleProduct", productId);
+    await productsStore.disassmebleProduct(productId);
     emits("disassembled-product", productId);
     snackbarProvider.showSuccessSnackbar("Product disassembled successfully!");
   } catch (error) {

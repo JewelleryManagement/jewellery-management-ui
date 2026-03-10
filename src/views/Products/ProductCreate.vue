@@ -16,12 +16,12 @@ import {
   prepareProductsContent,
   prepareResourcesContent,
 } from "@/utils/data-formatter";
-import { ref, computed, inject } from "vue";
+import { ref, inject } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
+import { useProductsStore } from "@/store/products";
 const snackbarProvider = inject("snackbarProvider");
 
-const store = useStore();
+const productsStore = useProductsStore();
 const route = useRoute();
 
 const pageTitle = ref(route.meta.title);
@@ -33,15 +33,12 @@ const createProduct = async () => {
     authors: productInfo.value.authors.map((author) => author.id),
     productsContent: prepareProductsContent(productInfo.value.productsContent),
     resourcesContent: prepareResourcesContent(
-      productInfo.value.resourcesContent
+      productInfo.value.resourcesContent,
     ),
   };
 
   try {
-    const res = await store.dispatch(
-      "products/createProduct",
-      productForCreation
-    );
+    const res = productsStore.createProduct(productForCreation);
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {

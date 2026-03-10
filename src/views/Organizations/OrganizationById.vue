@@ -126,10 +126,12 @@ import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
 
 const store = useStore();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
+const productsStore = useProductsStore();
 const route = useRoute();
 const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
@@ -141,9 +143,7 @@ const orgUsersColumns = computed(() => usersStore.getOrganizationColumns);
 const organization = ref({});
 const orgProducts = ref([]);
 const orgMembers = ref([]);
-const disassemblyColumns = computed(
-  () => store.getters["products/getActionsColumn"],
-);
+const disassemblyColumns = computed(() => [productsStore.tableActions]);
 const orgId = route.params.id;
 const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`);
 onMounted(async () => {
@@ -169,8 +169,8 @@ const fetchResourcesForOrganization = async () => {
 };
 const fetchProductsForOrganization = async () => {
   try {
-    orgProducts.value = await store
-      .dispatch("products/fetchProductsByOrganization", orgId)
+    orgProducts.value = await productsStore
+      .fetchProductsByOrganization(orgId)
       .then((productsResponse) => productsResponse.products);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(

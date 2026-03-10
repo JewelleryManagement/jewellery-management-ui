@@ -59,12 +59,14 @@ import {
 } from "@/components";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
 
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
+const productsStore = useProductsStore();
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
@@ -99,8 +101,8 @@ watch(
           ),
         );
 
-      productsForSale.value = await store
-        .dispatch("products/fetchProductsByOrganization", newSeller.id)
+      productsForSale.value = await productsStore
+        .fetchProductsByOrganization(newSeller.id)
         .then((productsResponse) => {
           return productsResponse.products.filter(
             (product) => !product.contentOf && !product.partOfSale,

@@ -21,18 +21,18 @@ import {
 } from "@/utils/data-formatter";
 import { ref, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import ProductCreateAndEditForm from "@/components/Form/ProductCreateAndEditForm.vue";
 import { handleNotFound } from "@/utils/action-guard";
+import { useProductsStore } from "@/store/products";
 
 const props = defineProps(["VDataTable"]);
-const store = useStore();
+const productsStore = useProductsStore();
 const route = useRoute();
 const router = useRouter();
 const productId = route.params.id;
 const snackbarProvider = inject("snackbarProvider");
 
-const productInfo = ref(store.getters["products/getProductById"](productId));
+const productInfo = ref(productsStore.getProductById(productId));
 const pageTitle = ref(route.meta.title);
 
 const updateProduct = async () => {
@@ -48,7 +48,7 @@ const updateProduct = async () => {
   delete updatedProduct.id;
 
   try {
-    const res = await store.dispatch("products/updateProduct", {
+    const res = await productsStore.updateProduct({
       productId,
       updatedProduct,
     });

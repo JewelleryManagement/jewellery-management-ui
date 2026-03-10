@@ -73,6 +73,7 @@ import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.v
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import { useProductsStore } from "@/store/products";
 
 const props = defineProps({
   entity: Object,
@@ -84,15 +85,15 @@ const props = defineProps({
 });
 
 const store = useStore();
-
-const productBaseRows = computed(() => store.getters["products/getColumns"]);
+const productsStore = useProductsStore();
+const productBaseRows = computed(() => productsStore.getColumns);
 
 const additionalProductRows = computed(
-  () => store.getters["products/getAdditionalBaseColumns"],
+  () => productsStore.getAdditionalBaseColumns,
 );
 
 const organizationProductRow = computed(
-  () => store.getters["products/getOrganizationColumn"],
+  () => productsStore.tableColumnOrganization,
 );
 
 const productRows = computed(() => [

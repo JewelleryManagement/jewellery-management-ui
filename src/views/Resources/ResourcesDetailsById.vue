@@ -61,9 +61,11 @@ import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
 
 const route = useRoute();
 const store = useStore();
+const productsStore = useProductsStore();
 const organizationsStore = useOrganizationsStore();
 
 const resourceId = route.params.id;
@@ -78,12 +80,10 @@ const salesTableColumns = computed(
   () => store.getters["sales/getAllColumnsWithQuantity"],
 );
 
-const products = ref(
-  await store.dispatch("products/getAllProductsByResource", resourceId),
-);
-const resourceQuantityInProductColumn = computed(
-  () => store.getters["products/getResourceQuantityColumn"],
-);
+const products = ref(await productsStore.getAllProductsByResource(resourceId));
+const resourceQuantityInProductColumn = computed(() => [
+  productsStore.tableColumnResourceQuantity,
+]);
 
 const organizations = computed(() =>
   resourceAvailability.value.organizationsAndQuantities.map((x) => x.owner),

@@ -44,6 +44,7 @@ import UserCard from "@/components/Card/UserCard.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
 import { useUsersStore } from "@/store/users";
+import { useProductsStore } from "@/store/products";
 const route = useRoute();
 const router = useRouter();
 watch(
@@ -54,11 +55,10 @@ watch(
 const { id } = defineProps(["id"]);
 const userId = id;
 const store = useStore();
+const productsStore = useProductsStore();
 const usersStore = useUsersStore();
 const snackbarProvider = inject("snackbarProvider");
-const userProducts = computed(
-  () => store.getters["products/getCurrentUserProducts"] ?? [],
-);
+const userProducts = computed(() => productsStore.currentUserProducts ?? []);
 
 const selectedButton = ref("");
 
@@ -80,7 +80,7 @@ async function fetchPurhasedResourcePerUser() {
 
 async function fetchProductsForUser() {
   try {
-    await store.dispatch("products/fetchProductsByOwner", userId);
+    await productsStore.fetchProductsByOwner(userId);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch products.");
   }

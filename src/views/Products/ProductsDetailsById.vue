@@ -117,16 +117,16 @@ import { onMounted } from "vue";
 import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { useProductsStore } from "@/store/products";
 
 const snackbarProvider = inject("snackbarProvider");
 const defaultPicture = require("@/assets/no-pic.png");
 const store = useStore();
+const productsStore = useProductsStore();
 const route = useRoute();
 const picture = ref(null);
 const currentProductId = route.params.id;
-const currentProductInfo = computed(
-  () => store.getters["products/getSelectedProduct"],
-);
+const currentProductInfo = computed(() => productsStore.selectedProduct);
 
 onMounted(() => {
   fetchAndUpdatePictureUrl();
@@ -134,10 +134,7 @@ onMounted(() => {
 
 const fetchAndUpdatePictureUrl = async () => {
   try {
-    const newPictureUrl = await store.dispatch(
-      "products/getPicture",
-      currentProductId,
-    );
+    const newPictureUrl = await productsStore.getPicture(currentProductId);
     picture.value = newPictureUrl || defaultPicture;
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
@@ -153,7 +150,7 @@ const handlePictureSelected = async (newPicture) => {
 
 const postPicture = async (id, image) => {
   try {
-    await store.dispatch("products/postPicture", { productId: id, image });
+    await productsStore.postPicture({ productId: id, image });
     snackbarProvider.showSuccessSnackbar(
       "Successfully added picture to the product!",
     );
@@ -164,7 +161,7 @@ const postPicture = async (id, image) => {
 
 const selectedButton = ref("");
 
-const tableButtons = computed(() => store.getters["products/getTableButtons"]);
+const tableButtons = computed(() => productsStore.tableButtons);
 
 const tableColumnsResources = computed(
   () => store.getters["resources/getTableColumnsWithQuantity"],

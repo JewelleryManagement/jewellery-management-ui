@@ -3,6 +3,7 @@ import store from "@/store/store";
 import { useUsersStore } from "@/store/users";
 import { useAuthStore } from "@/store/auth";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
 
 export const makeFetchGuard =
   ({ dispatch, type, getPayload = (to) => to.params.id }) =>
@@ -161,9 +162,9 @@ const routes = [
     props: true,
     component: () => import("../views/Products/ProductEdit.vue"),
     meta: { title: "Edit product", requiresAuth: true },
-    beforeEnter: makeFetchGuard({
+    beforeEnter: makePiniaFetchGuard({
+      action: (id) => useProductsStore().fetchProduct(id),
       type: "Product",
-      dispatch: (id) => store.dispatch("products/fetchProduct", id),
     }),
   },
   {
@@ -172,9 +173,9 @@ const routes = [
     props: true,
     component: () => import("../views/Products/ProductsDetailsById.vue"),
     meta: { title: "Product details", requiresAuth: true },
-    beforeEnter: makeFetchGuard({
+    beforeEnter: makePiniaFetchGuard({
+      action: (id) => useProductsStore().fetchProduct(id),
       type: "Product",
-      dispatch: (id) => store.dispatch("products/fetchProduct", id),
     }),
   },
   {
