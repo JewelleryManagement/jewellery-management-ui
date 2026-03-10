@@ -142,6 +142,7 @@ import { useRoute, useRouter } from "vue-router";
 import { userPropsFormatter } from "@/utils/data-formatter";
 import { useStore } from "vuex";
 import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
 const props = defineProps({
   productInfo: Object,
   submitReqFunction: Function,
@@ -154,6 +155,7 @@ const router = useRouter();
 const route = useRoute();
 const store = useStore();
 const usersStore = useUsersStore();
+const organizationsStore = useOrganizationsStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const [currentResourcePrice, currentProductPrice, totalPrice] = [
   ref(0),
@@ -235,8 +237,7 @@ const fetchOrganizations = async () => {
     const permission = route.path.includes("edit")
       ? "EDIT_PRODUCT"
       : "CREATE_PRODUCT";
-    const response = await store.dispatch(
-      "organizations/fetchUserOrgsByPermission",
+    const response = await organizationsStore.fetchUserOrgsByPermission(
       permission,
     );
     allOrgsByUser.value = response;
@@ -247,8 +248,8 @@ const fetchOrganizations = async () => {
 
 const fetchResourcesForOrganization = async (organization) => {
   try {
-    resourcesToChooseFrom.value = await store
-      .dispatch("organizations/fetchOrganizationResources", organization.id)
+    resourcesToChooseFrom.value = await organizationsStore
+      .fetchOrganizationResources(organization.id)
       .then((resourcesResponse) =>
         resourcesResponse.resourcesAndQuantities.map((resourceAndQuantity) => {
           return {

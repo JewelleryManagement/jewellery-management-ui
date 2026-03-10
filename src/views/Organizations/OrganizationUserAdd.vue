@@ -7,20 +7,20 @@
     @update:chosenPermissions="getChosenOptions"
   />
 </template>
-  
+
 <script setup>
 import UserInOrganizationForm from "@/components/Form/UserInOrganizationForm.vue";
-import { computed, ref, inject, watch } from "vue";
+import { computed, ref, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
+import { useOrganizationsStore } from "@/store/organizations";
 const snackbarProvider = inject("snackbarProvider");
-const store = useStore();
-const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
+const organizationsStore = useOrganizationsStore();
+const allOrgsByUser = computed(() => organizationsStore.organizations);
 const selectedOrg = computed(
   () =>
     (selectedOrg.value = allOrgsByUser.value.filter(
-      (x) => x.id === route.params.organizationId
-    )[0])
+      (x) => x.id === route.params.organizationId,
+    )[0]),
 );
 const selectedUser = ref({});
 const route = useRoute();
@@ -39,7 +39,7 @@ const addUserToOrg = async () => {
     requestBody: requestBody,
   };
   try {
-    const res = await store.dispatch("organizations/addUserToOrg", data);
+    const res = await organizationsStore.addUserToOrg(data);
     snackbarProvider.showSuccessSnackbar("Successfully added user to org!");
     router.push(`/organizations/${route.params.organizationId}`);
   } catch (error) {
@@ -48,6 +48,5 @@ const addUserToOrg = async () => {
   return false;
 };
 </script>
-  
+
 <style scoped></style>
-  

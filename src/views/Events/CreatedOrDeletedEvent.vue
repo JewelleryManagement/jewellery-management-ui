@@ -32,6 +32,7 @@ import SimpleEntityEventCard from "./SimpleEntityEventCard.vue";
 import { computed } from "vue";
 import { useStore } from "vuex";
 import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
 
 const props = defineProps({
   event: Object,
@@ -40,6 +41,7 @@ const props = defineProps({
 
 const store = useStore();
 const usersStore = useUsersStore();
+const organizationsStore = useOrganizationsStore();
 
 const isSimpleEntity = (entity) =>
   ["User", "Resource", "Organization"].includes(entity);
@@ -50,7 +52,7 @@ const entityType = computed(
 
 const rowsResolvers = {
   User: () => usersStore.getAllInformationColumns,
-  Organization: () => store.getters["organizations/getColumns"],
+  Organization: () => organizationsStore.tableColumns,
   Resource: () =>
     store.getters["resources/getColumnsByResource"]?.(
       props.event?.payload?.entity?.clazz,

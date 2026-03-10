@@ -11,6 +11,8 @@ import {
   getProduct,
 } from "@/services/HttpClientService.js";
 
+import { useOrganizationsStore } from "../organizations";
+
 export default {
   namespaced: true,
   state: {
@@ -89,11 +91,11 @@ export default {
     },
   },
   actions: {
-    async fetchProducts({ dispatch, rootGetters, commit }) {
-      let orgs = rootGetters["organizations/getOrgs"];
+    async fetchProducts({ commit }) {
+      let orgs = useOrganizationsStore().organizations;
       if (!orgs || orgs.length == 0) {
-        await dispatch("organizations/fetchOrgs", null, { root: true });
-        orgs = rootGetters["organizations/getOrgs"];
+        await useOrganizationsStore().fetchOrganizations();
+        orgs = useOrganizationsStore().organizations;
       }
       let allProducts = [];
       await Promise.all(

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import store from "@/store/store";
 import { useUsersStore } from "@/store/users";
 import { useAuthStore } from "@/store/auth";
+import { useOrganizationsStore } from "@/store/organizations";
 
 export const makeFetchGuard =
   ({ dispatch, type, getPayload = (to) => to.params.id }) =>
@@ -216,9 +217,9 @@ const routes = [
     props: true,
     component: () => import("../views/Organizations/OrganizationById"),
     meta: { title: "Organization details", requiresAuth: true },
-    beforeEnter: makeFetchGuard({
+    beforeEnter: makePiniaFetchGuard({
+      action: (id) => useOrganizationsStore().fetchOrganization(id),
       type: "Organization",
-      dispatch: (id) => store.dispatch("organizations/fetchOrganization", id),
     }),
   },
   {

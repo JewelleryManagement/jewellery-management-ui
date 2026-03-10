@@ -58,11 +58,13 @@ import {
   ResourcesDialog,
 } from "@/components";
 import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
 
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
 const store = useStore();
 const usersStore = useUsersStore();
+const organizationsStore = useOrganizationsStore();
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
@@ -84,8 +86,8 @@ watch(
   () => sellObject.seller,
   async (newSeller) => {
     if (newSeller.id) {
-      resourcesForSale.value = await store
-        .dispatch("organizations/fetchOrganizationResources", newSeller.id)
+      resourcesForSale.value = await organizationsStore
+        .fetchOrganizationResources(newSeller.id)
         .then((resourcesResponse) =>
           resourcesResponse.resourcesAndQuantities.map(
             (resourceAndQuantity) => {

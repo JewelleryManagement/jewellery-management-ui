@@ -13,6 +13,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
 import { handleNotFound } from "@/utils/action-guard";
+import { useOrganizationsStore } from "@/store/organizations";
 const { resourceId, userId } = defineProps({
   resourceId: String,
   userId: String,
@@ -20,6 +21,7 @@ const { resourceId, userId } = defineProps({
 
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
+const organizationsStore = useOrganizationsStore();
 const router = useRouter();
 const resourceAvailability = computed(
   () => store.getters["resources/getCurrentAvailability"],
@@ -39,7 +41,7 @@ const handleSubmit = async (inputsData) => {
 
 const postRemoveResource = async (organizationId, data) => {
   try {
-    await store.dispatch("organizations/removeResourceFromOrg", data);
+    await organizationsStore.removeResourceFromOrg(data);
     snackbarProvider.showSuccessSnackbar("Successfully removed quantity");
     router.push(`/organizations/${organizationId}`);
   } catch (error) {

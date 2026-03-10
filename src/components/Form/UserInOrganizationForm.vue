@@ -25,12 +25,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useStore } from "vuex";
 import { useRoute } from "vue-router";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import UserSelect from "@/components/Select/UserSelect.vue";
 import OptionsPicker from "@/components/Select/OptionsPicker.vue";
 import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
 
 const route = useRoute();
 const emit = defineEmits(["update:selectedUser", "update:chosenPermissions"]);
@@ -61,15 +61,13 @@ const selectedUser = computed({
   get: () => props.selectedUser,
   set: (value) => handleSelectedUserChange(value),
 });
-const store = useStore();
+const organizationsStore = useOrganizationsStore();
 const usersStore = useUsersStore();
 const isOrgSelectDisabled = ref(!!props.selectedOrg);
 const isUserSelectDisabled = ref(route.path.includes("edit-user"));
 
-const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
-const allPermissions = computed(
-  () => store.getters["organizations/getUserPermissions"],
-);
+const allOrgsByUser = computed(() => organizationsStore.organizations);
+const allPermissions = computed(() => organizationsStore.userPermissions);
 const chosenPermissions = computed({
   get: () => props.chosenPermissions,
   set: (value) => handleChosenPermissionsChange(value),

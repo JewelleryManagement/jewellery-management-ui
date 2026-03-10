@@ -60,9 +60,11 @@ import EventsTable from "@/components/Table/EventsTable.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { useOrganizationsStore } from "@/store/organizations";
 
 const route = useRoute();
 const store = useStore();
+const organizationsStore = useOrganizationsStore();
 
 const resourceId = route.params.id;
 const resourceAvailability = computed(
@@ -87,7 +89,7 @@ const organizations = computed(() =>
   resourceAvailability.value.organizationsAndQuantities.map((x) => x.owner),
 );
 const organizationsTableColumns = computed(
-  () => store.getters["organizations/getAllColumnsWithQuantityColumn"],
+  () => organizationsStore.getAllColumnsWithQuantityColumn,
 );
 
 const selectedButton = ref("");

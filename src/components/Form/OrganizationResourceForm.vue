@@ -33,22 +33,22 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { ref, computed, onMounted } from "vue";
 import { useNumberFieldRules } from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
+import { useOrganizationsStore } from "@/store/organizations";
 
 const emits = defineEmits(["handle-submit"]);
 const form = ref(null);
-const store = useStore();
+const organizationsStore = useOrganizationsStore();
 const route = useRoute();
 const pageTitle = ref(route.meta.title);
 const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
 const quantity = ref("");
 const dealPrice = ref("");
-const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
+const allOrgsByUser = computed(() => organizationsStore.organizations);
 const selectedOrg = ref(allOrgsByUser.value.at(0));
 const isRouteTransfer = route.path.includes("/transfer");
 const isRouteRemove = route.path.includes("/remove");
@@ -91,7 +91,7 @@ const resetForm = () => {
 const removeCurrentOrgFromList = () => {
   const organizationId = route.params.organizationId;
   const indexToRemove = allOrgsByUser.value.findIndex(
-    (x) => x.id === organizationId
+    (x) => x.id === organizationId,
   );
   if (indexToRemove !== -1) {
     allOrgsByUser.value.splice(indexToRemove, 1);
@@ -100,7 +100,7 @@ const removeCurrentOrgFromList = () => {
 
 const setCurrentOrgInTheList = () => {
   selectedOrg.value = allOrgsByUser.value.filter(
-    (x) => x.id === route.params.organizationId
+    (x) => x.id === route.params.organizationId,
   );
 };
 </script>

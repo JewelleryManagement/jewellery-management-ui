@@ -125,9 +125,11 @@ import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
 import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
 
 const store = useStore();
 const usersStore = useUsersStore();
+const organizationsStore = useOrganizationsStore();
 const route = useRoute();
 const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
@@ -150,10 +152,7 @@ onMounted(async () => {
 
 const fetchResourcesForOrganization = async () => {
   try {
-    const res = await store.dispatch(
-      "organizations/fetchOrganizationResources",
-      orgId,
-    );
+    const res = await organizationsStore.fetchOrganizationResources(orgId);
     organization.value = res.owner;
     organizationResources.value = [];
     for (const item of res.resourcesAndQuantities) {
@@ -210,10 +209,7 @@ const onDelete = async (userId) => {
   );
   if (confirmation) {
     try {
-      await store.dispatch("organizations/removeUser", {
-        userId,
-        orgId,
-      });
+      await organizationsStore.removeUser({ userId, orgId });
     } catch (error) {
       if (await handleNotFound(router, error, "User")) return;
 
@@ -225,9 +221,7 @@ const onDelete = async (userId) => {
 
 const selectedButton = ref(null);
 
-const tableButtons = computed(
-  () => store.getters["organizations/getTableButtons"],
-);
+const tableButtons = computed(() => organizationsStore.tableButtons);
 
 const events = await store.dispatch("systemEvents/getEventsRelatedTo", orgId);
 

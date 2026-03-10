@@ -12,9 +12,11 @@ import { inject, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
+import { useOrganizationsStore } from "@/store/organizations";
 
 const snackbarProvider = inject("snackbarProvider");
 const store = useStore();
+const organizationsStore = useOrganizationsStore();
 const route = useRoute();
 const router = useRouter();
 const resourceId = route.params.resourceId;
@@ -24,7 +26,7 @@ onMounted(async () => {
 });
 const fetchUserOrgs = async () => {
   try {
-    await store.dispatch("organizations/fetchOrgs");
+    await organizationsStore.fetchOrganizations();
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
   }
@@ -36,7 +38,7 @@ const resourceAvailability = computed(
 
 const postQuantityTransfer = async (data) => {
   try {
-    await store.dispatch("organizations/transferResourceFromOrg", data);
+    await organizationsStore.transferResourceFromOrg(data);
     snackbarProvider.showSuccessSnackbar("Successfully transfered!");
     router.push(`/organizations/${organizationId}`);
   } catch (error) {
