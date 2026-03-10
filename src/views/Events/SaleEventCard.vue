@@ -73,6 +73,7 @@ import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import { useProductsStore } from "@/store/products";
 import { useSalesStore } from "@/store/sales";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const props = defineProps({
   sale: Object,
@@ -84,6 +85,7 @@ const props = defineProps({
 });
 
 const store = useStore();
+const systemEventsStore = useSystemEventsStore();
 const productsStore = useProductsStore();
 const salesStore = useSalesStore();
 
@@ -108,7 +110,5 @@ const normalizedResources = props.sale.resources.map((resource) => ({
 
 const selectedButton = ref("");
 
-const eventTableButtons = computed(
-  () => store.getters["systemEvents/getEventTableButtons"],
-);
+const eventTableButtons = computed(() => systemEventsStore.eventTableButtons);
 </script>

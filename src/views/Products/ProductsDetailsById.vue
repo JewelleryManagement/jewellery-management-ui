@@ -118,10 +118,12 @@ import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const snackbarProvider = inject("snackbarProvider");
 const defaultPicture = require("@/assets/no-pic.png");
 const store = useStore();
+const systemEventsStore = useSystemEventsStore();
 const productsStore = useProductsStore();
 const route = useRoute();
 const picture = ref(null);
@@ -174,12 +176,7 @@ const getResourcesWithQuantity = () => {
   }));
 };
 
-const events = await store.dispatch(
-  "systemEvents/getEventsRelatedTo",
-  currentProductId,
-);
+const events = await systemEventsStore.getEventsRelatedTo(currentProductId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>

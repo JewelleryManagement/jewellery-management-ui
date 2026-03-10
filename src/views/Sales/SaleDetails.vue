@@ -55,9 +55,11 @@ import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useSalesStore } from "@/store/sales";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const store = useStore();
 const salesStore = useSalesStore();
+const systemEventsStore = useSystemEventsStore();
 const route = useRoute();
 const saleId = route.params.id;
 
@@ -84,11 +86,9 @@ const selectedButton = ref(null);
 
 const tableButtons = computed(() => salesStore.tableButtons);
 
-const events = await store.dispatch("systemEvents/getEventsRelatedTo", saleId);
+const events = await systemEventsStore.getEventsRelatedTo(saleId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>
 
 <style lang="scss" scoped></style>

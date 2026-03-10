@@ -88,7 +88,6 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { useStore } from "vuex";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -96,6 +95,7 @@ import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import { useRouter } from "vue-router";
 import { navigateToItemDetails } from "@/utils/row-click-handler";
 import TextButton from "@/components/Button/TextButton.vue";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 dayjs.extend(relativeTime);
 dayjs.extend(customParseFormat);
@@ -106,13 +106,11 @@ const props = defineProps({
   events: Array,
 });
 
-const store = useStore();
+const systemEventsStore = useSystemEventsStore();
 const router = useRouter();
-const eventTypes = computed(() => store.getters["systemEvents/getEventTypes"]);
+const eventTypes = computed(() => systemEventsStore.eventTypes);
 
-const typeColorMap = computed(
-  () => store.getters["systemEvents/getTypeColorMap"],
-);
+const typeColorMap = computed(() => systemEventsStore.typeColorMap);
 const color = (event) =>
   typeColorMap.value[eventTypes.value[event.type]?.type] ?? "grey";
 

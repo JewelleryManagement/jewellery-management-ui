@@ -74,6 +74,7 @@ import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const props = defineProps({
   entity: Object,
@@ -85,6 +86,7 @@ const props = defineProps({
 });
 
 const store = useStore();
+const systemEventsStore = useSystemEventsStore();
 const productsStore = useProductsStore();
 const productBaseRows = computed(() => productsStore.getColumns);
 
@@ -121,7 +123,5 @@ const rawDataButton = ref(false);
 
 const selectedButton = ref("");
 
-const eventTableButtons = computed(
-  () => store.getters["systemEvents/getEventTableButtons"],
-);
+const eventTableButtons = computed(() => systemEventsStore.eventTableButtons);
 </script>

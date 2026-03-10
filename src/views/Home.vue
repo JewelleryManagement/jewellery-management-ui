@@ -10,9 +10,11 @@ import EventTimeline from "./Events/EventTimeline.vue";
 import { useStore } from "vuex";
 import { useUsersStore } from "@/store/users";
 import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const userStore = useUsersStore();
 const productsStore = useProductsStore();
+const systemEventsStore = useSystemEventsStore();
 
 await userStore.fetchUsers();
 await productsStore.fetchProducts();
@@ -31,5 +33,5 @@ onBeforeMount(async () => {
   }
 });
 
-const events = await store.dispatch("systemEvents/getAllEvents");
+const events = await systemEventsStore.getAllEvents();
 </script>

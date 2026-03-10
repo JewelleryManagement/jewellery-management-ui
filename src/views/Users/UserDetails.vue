@@ -45,6 +45,7 @@ import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
 import { useUsersStore } from "@/store/users";
 import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
 const route = useRoute();
 const router = useRouter();
 watch(
@@ -57,6 +58,7 @@ const userId = id;
 const store = useStore();
 const productsStore = useProductsStore();
 const usersStore = useUsersStore();
+const systemEventsStore = useSystemEventsStore();
 const snackbarProvider = inject("snackbarProvider");
 const userProducts = computed(() => productsStore.currentUserProducts ?? []);
 
@@ -64,11 +66,9 @@ const selectedButton = ref("");
 
 const tableButtons = computed(() => usersStore.tableButtons);
 
-const events = await store.dispatch("systemEvents/getEventsRelatedTo", userId);
+const events = await systemEventsStore.getEventsRelatedTo(userId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 
 async function fetchPurhasedResourcePerUser() {
   try {

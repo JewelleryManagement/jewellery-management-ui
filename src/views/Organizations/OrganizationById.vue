@@ -127,11 +127,13 @@ import { handleNotFound } from "@/utils/action-guard";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const store = useStore();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
 const productsStore = useProductsStore();
+const systemEventsStore = useSystemEventsStore();
 const route = useRoute();
 const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
@@ -223,9 +225,7 @@ const selectedButton = ref(null);
 
 const tableButtons = computed(() => organizationsStore.tableButtons);
 
-const events = await store.dispatch("systemEvents/getEventsRelatedTo", orgId);
+const events = await systemEventsStore.getEventsRelatedTo(orgId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>
