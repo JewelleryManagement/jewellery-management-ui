@@ -10,92 +10,89 @@ import {
 export default {
   namespaced: true,
   state: {
-    selectedSale: {},
-    sales: [],
-    tableColumns: [
-      { key: "id", title: "Id", align: " d-none" },
-      { key: "seller", title: "Seller" },
-      { key: "buyer", title: "Buyer" },
-      { key: "resources", title: "Resources", align: "center" },
-      { key: "products", title: "Products", align: "center" },
-      { key: "totalPrice", title: "Total Price" },
-      { key: "totalDiscount", title: "Discount" },
-      { key: "totalDiscountedPrice", title: "Discounted Price" },
-      { key: "date", title: "Date" },
-    ],
-    tableColumnPrice: { key: "salePrice", title: "Price" },
-    tableColumnDiscount: { key: "discount", title: "Discount" },
-    tableColumnReturn: { key: "return", title: "Return" },
-    tableColumnQuantity: { key: "quantity", title: "Quantity" },
-    tableColumnOrganizationSeller: {
-      key: "organizationSeller",
-      title: "Seller",
-    },
-    tableButtons: [
-      { label: "Resources", icon: "mdi-diamond-stone" },
-      { label: "Products", icon: "mdi-package-variant" },
-      {
-        label: "Events",
-        icon: "mdi-calendar",
-      },
-    ],
+    // selectedSale: {},
+    // sales: [],
+    // tableColumns: [
+    //   { key: "id", title: "Id", align: " d-none" },
+    //   { key: "seller", title: "Seller" },
+    //   { key: "buyer", title: "Buyer" },
+    //   { key: "resources", title: "Resources", align: "center" },
+    //   { key: "products", title: "Products", align: "center" },
+    //   { key: "totalPrice", title: "Total Price" },
+    //   { key: "totalDiscount", title: "Discount" },
+    //   { key: "totalDiscountedPrice", title: "Discounted Price" },
+    //   { key: "date", title: "Date" },
+    // ],
+    // tableColumnPrice: { key: "salePrice", title: "Price" },
+    // tableColumnDiscount: { key: "discount", title: "Discount" },
+    // tableColumnReturn: { key: "return", title: "Return" },
+    // tableColumnQuantity: { key: "quantity", title: "Quantity" },
+    // tableColumnOrganizationSeller: {
+    //   key: "organizationSeller",
+    //   title: "Seller",
+    // },
+    // tableButtons: [
+    //   { label: "Resources", icon: "mdi-diamond-stone" },
+    //   { label: "Products", icon: "mdi-package-variant" },
+    //   {
+    //     label: "Events",
+    //     icon: "mdi-calendar",
+    //   },
+    // ],
   },
   mutations: {
-    setSales(state, sales) {
-      state.sales = sales;
-    },
-    setSelectedSale(state, selectedSale) {
-      state.selectedSale = selectedSale;
-    },
+    // setSales(state, sales) {
+    //   state.sales = sales;
+    // },
+    // setSelectedSale(state, selectedSale) {
+    //   state.selectedSale = selectedSale;
+    // },
   },
   actions: {
-    async fetchSales({ commit }) {
-      const res = await fetchSales();
-      commit("setSales", res);
-    },
-    async postSale({ commit }, data) {
-      await postSale(data);
-    },
-    async returnProduct({ commit }, productId) {
-      await productReturn(productId);
-    },
-    async returnResource({ commit }, args) {
-      await resourceReturn(args.saleId, args.resourceId);
-    },
-    async getAllSalesByResource({ commit }, resourceId) {
-      return await getAllSalesByResource(resourceId);
-    },
-
-    async fetchSale({ commit }, id) {
-      const data = await getSale(id);
-
-      commit("setSelectedSale", data);
-
-      return data;
-    },
+    // async fetchSales({ commit }) {
+    //   const res = await fetchSales();
+    //   commit("setSales", res);
+    // },
+    // async postSale({ commit }, data) {
+    //   await postSale(data);
+    // },
+    // async returnProduct({ commit }, productId) {
+    //   await productReturn(productId);
+    // },
+    // async returnResource({ commit }, args) {
+    //   await resourceReturn(args.saleId, args.resourceId);
+    // },
+    // async getAllSalesByResource({ commit }, resourceId) {
+    //   return await getAllSalesByResource(resourceId);
+    // },
+    // async fetchSale({ commit }, id) {
+    //   const data = await getSale(id);
+    //   commit("setSelectedSale", data);
+    //   return data;
+    // },
   },
   getters: {
-    getSales: (state) => state.sales,
-    getColumns: (state) => [...state.tableColumns],
-    getColumnsWithOrganizationSeller: (state) => [
-      ...state.tableColumns,
-      state.tableColumnOrganizationSeller,
-    ],
-    getAllColumnsWithQuantity: (state) => [
-      state.tableColumnQuantity,
-      ...state.tableColumns,
-    ],
-    getResourceColumns: (state, getters, rootState, rootGetters) => [
-      rootState.resources.tableColumnQuantity,
-      state.tableColumnPrice,
-      state.tableColumnDiscount,
-      ...rootState.resources.tableColumns,
-      state.tableColumnReturn,
-    ],
-    getSaleById: (state) => (saleId) => {
-      return state.sales.find((sale) => sale.id === saleId);
-    },
-    getTableButtons: (state) => state.tableButtons,
-    getSelectedSale: (state) => state.selectedSale,
+    // getSales: (state) => state.sales,
+    // getColumns: (state) => [...state.tableColumns],
+    // getColumnsWithOrganizationSeller: (state) => [
+    //   ...state.tableColumns,
+    //   state.tableColumnOrganizationSeller,
+    // ],
+    // getAllColumnsWithQuantity: (state) => [
+    //   state.tableColumnQuantity,
+    //   ...state.tableColumns,
+    // ],
+    // getResourceColumns: (state, getters, rootState, rootGetters) => [
+    //   rootState.resources.tableColumnQuantity,
+    //   state.tableColumnPrice,
+    //   state.tableColumnDiscount,
+    //   ...rootState.resources.tableColumns,
+    //   state.tableColumnReturn,
+    // ],
+    // getSaleById: (state) => (saleId) => {
+    //   return state.sales.find((sale) => sale.id === saleId);
+    // },
+    // getTableButtons: (state) => state.tableButtons,
+    // getSelectedSale: (state) => state.selectedSale,
   },
 };

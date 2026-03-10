@@ -8,12 +8,12 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { inject } from "vue";
 import IconButton from "./IconButton.vue";
 import { handleNotFound } from "@/utils/action-guard";
-const store = useStore();
+import { useSalesStore } from "@/store/sales";
+const salesStore = useSalesStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
 const isSalesPage = route.path.includes("/sales");
@@ -33,7 +33,7 @@ const submitReturn = () => {
 
 const submitSaleReturn = async () => {
   try {
-    await store.dispatch("sales/returnResource", {
+    await salesStore.returnResource({
       saleId: props.saleToReturnFrom.id,
       resourceId: props.currentResourceInfo.id,
     });

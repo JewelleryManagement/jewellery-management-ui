@@ -54,16 +54,16 @@ import EventsTable from "@/components/Table/EventsTable.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { useSalesStore } from "@/store/sales";
 
 const store = useStore();
+const salesStore = useSalesStore();
 const route = useRoute();
 const saleId = route.params.id;
 
-const tableColumnsResources = computed(
-  () => store.getters["sales/getResourceColumns"],
-);
+const tableColumnsResources = computed(() => salesStore.getResourceColumns);
 
-const currentSale = computed(() => store.getters["sales/getSelectedSale"]);
+const currentSale = computed(() => salesStore.selectedSale);
 const saleProducts = ref(currentSale.value.products);
 const saleResources = ref(
   currentSale.value.resources.map((saleResource) => {
@@ -82,7 +82,7 @@ const productsTableAdditionalColumns = computed(() => [
 
 const selectedButton = ref(null);
 
-const tableButtons = computed(() => store.getters["sales/getTableButtons"]);
+const tableButtons = computed(() => salesStore.tableButtons);
 
 const events = await store.dispatch("systemEvents/getEventsRelatedTo", saleId);
 

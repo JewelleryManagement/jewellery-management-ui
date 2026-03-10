@@ -62,23 +62,21 @@ import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
+import { useSalesStore } from "@/store/sales";
 
 const route = useRoute();
 const store = useStore();
 const productsStore = useProductsStore();
 const organizationsStore = useOrganizationsStore();
+const salesStore = useSalesStore();
 
 const resourceId = route.params.id;
 const resourceAvailability = computed(
   () => store.getters["resources/getCurrentAvailability"],
 );
 
-const sales = ref(
-  await store.dispatch("sales/getAllSalesByResource", resourceId),
-);
-const salesTableColumns = computed(
-  () => store.getters["sales/getAllColumnsWithQuantity"],
-);
+const sales = ref(await salesStore.getAllSalesByResource(resourceId));
+const salesTableColumns = computed(() => salesStore.getAllColumnsWithQuantity);
 
 const products = ref(await productsStore.getAllProductsByResource(resourceId));
 const resourceQuantityInProductColumn = computed(() => [

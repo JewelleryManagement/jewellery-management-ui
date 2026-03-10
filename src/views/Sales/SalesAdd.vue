@@ -47,7 +47,6 @@
 <script setup>
 import { ref, computed, watch, inject, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import {
   SaleInputs,
   SaleButtons,
@@ -60,13 +59,14 @@ import {
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
+import { useSalesStore } from "@/store/sales";
 
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
-const store = useStore();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
 const productsStore = useProductsStore();
+const salesStore = useSalesStore();
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
@@ -225,7 +225,7 @@ const buildSaleRequestData = () => {
 
 const postSale = async (data) => {
   try {
-    await store.dispatch("sales/postSale", data);
+    await salesStore.postSale(data);
     snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
     router.push("/sales");
   } catch (error) {

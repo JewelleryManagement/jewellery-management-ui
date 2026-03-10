@@ -4,6 +4,7 @@ import { useUsersStore } from "@/store/users";
 import { useAuthStore } from "@/store/auth";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
+import { useSalesStore } from "@/store/sales";
 
 export const makeFetchGuard =
   ({ dispatch, type, getPayload = (to) => to.params.id }) =>
@@ -201,9 +202,9 @@ const routes = [
     name: "Sale-Details",
     component: () => import("../views/Sales/SaleDetails.vue"),
     meta: { title: "Sale Details", requiresAuth: true },
-    beforeEnter: makeFetchGuard({
+    beforeEnter: makePiniaFetchGuard({
+      action: (id) => useSalesStore().fetchSale(id),
       type: "Sale",
-      dispatch: (id) => store.dispatch("sales/fetchSale", id),
     }),
   },
   { path: "/logout", redirect: "/login" },

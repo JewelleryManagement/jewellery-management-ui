@@ -72,6 +72,7 @@ import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTa
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import { useProductsStore } from "@/store/products";
+import { useSalesStore } from "@/store/sales";
 
 const props = defineProps({
   sale: Object,
@@ -84,10 +85,9 @@ const props = defineProps({
 
 const store = useStore();
 const productsStore = useProductsStore();
+const salesStore = useSalesStore();
 
-const saleRows = computed(
-  () => store.getters["sales/getColumnsWithOrganizationSeller"],
-);
+const saleRows = computed(() => [...salesStore.tableColumns]);
 
 const additionalProductColumns = computed(
   () => productsStore.getAdditionalBaseColumns,
