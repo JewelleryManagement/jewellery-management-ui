@@ -72,12 +72,12 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import { useStore } from "vuex";
 import IconButton from "@/components/Button/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import { confirmDeleteResource } from "@/utils/resource-util";
 import { navigateToItemDetails } from "@/utils/row-click-handler";
 import { inject } from "vue";
+import { useResourcesStore } from "@/store/resources";
 const snackbarProvider = inject("snackbarProvider");
 
 const route = useRoute();
@@ -95,19 +95,19 @@ watch(
     internalClazzChoice.value = newSortChoice;
   },
 );
-const store = useStore();
-const resources = computed(() => store.getters["resources/allResources"]);
+const resourcesStore = useResourcesStore();
+const resources = computed(() => resourcesStore.resources);
 
 const selectedTableColumns = computed(() => {
   if (internalClazzChoice.value === "All") {
-    return store.getters["resources/getColumns"];
+    return resourcesStore.getColumns;
   }
 
-  const getByResource = store.getters["resources/getColumnsByResource"];
-  if (typeof getByResource !== "function") return [];
-
   const additional = props.selectedFilterButton === "All";
-  return getByResource(internalClazzChoice.value, additional);
+  return resourcesStore.getColumnsByResource(
+    internalClazzChoice.value,
+    additional,
+  );
 });
 
 const filteredResources = computed(() => {
@@ -125,7 +125,7 @@ const filteredResources = computed(() => {
 const search = ref("");
 
 const onDelete = async (id) => {
-  confirmDeleteResource(store, router, id, snackbarProvider);
+  confirmDeleteResource(resourcesStore, router, id, snackbarProvider);
 };
 
 const navigateToItemPage = (row, item) => {

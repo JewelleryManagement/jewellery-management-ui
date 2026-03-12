@@ -118,7 +118,6 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { computed, onMounted, ref, watch } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import {
@@ -130,11 +129,12 @@ import {
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 import { useRoute } from "vue-router";
 import { useAllowedValuesStore } from "@/store/allowedValues";
+import { useResourcesStore } from "@/store/resources";
 
 const route = useRoute();
-const store = useStore();
 const allowedValuesStore = useAllowedValuesStore();
-const formData = computed(() => store.getters["resources/getResourceDetails"]);
+const resourcesStore = useResourcesStore();
+const formData = computed(() => resourcesStore.resourceDetails);
 const allowedValueDetail = computed(
   () => allowedValuesStore.allowedValueDetails,
 );
@@ -160,7 +160,7 @@ const setInitialAllowedValueDetails = () => {
 };
 
 const updateResourceDetails = (key, value) =>
-  store.dispatch("resources/setResourceDetailsField", { key, value });
+  resourcesStore.setResourceDetailsField({ key, value });
 
 const updateAllowedValueDetail = (key, value) => {
   allowedValuesStore.setAllowedValueDetail({

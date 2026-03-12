@@ -3,13 +3,13 @@
     <div v-html="getResourceInformationHtml(props.resource)"></div>
   </v-tooltip>
 </template>
-  
-  <script setup>
-import { useStore } from "vuex";
+
+<script setup>
 import { computed } from "vue";
+import { useResourcesStore } from "@/store/resources";
 
 const props = defineProps({ saleData: Object, resource: Object });
-const store = useStore();
+const resourcesStore = useResourcesStore();
 
 const getResourceInformationHtml = (resource) => {
   const saleItem = props.saleData.find((item) => item.id === resource.id);
@@ -18,9 +18,7 @@ const getResourceInformationHtml = (resource) => {
   const resourceData = saleItem;
   const quantity = saleItem.quantity;
 
-  const tableColumns = computed(
-    () => store.getters["resources/getTableColumns"]
-  ).value;
+  const tableColumns = computed(() => resourcesStore.tableColumns).value;
 
   let resourceInfoHtml = "";
   for (const key in resourceData) {
@@ -36,4 +34,3 @@ const getResourceInformationHtml = (resource) => {
   return resourceInfoHtml;
 };
 </script>
-  

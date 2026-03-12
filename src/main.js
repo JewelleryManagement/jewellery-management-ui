@@ -3,6 +3,25 @@ import App from "./App.vue";
 import { registerPlugins } from "@/plugins";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+
+const STORE_VERSION = 1;
+const VERSION_KEY = "store_version";
+
+const savedVersion = Number(localStorage.getItem(VERSION_KEY) || 0);
+
+if (savedVersion !== STORE_VERSION) {
+  localStorage.removeItem("auth");
+  localStorage.removeItem("users");
+  localStorage.removeItem("resources");
+  localStorage.removeItem("products");
+  localStorage.removeItem("sales");
+  localStorage.removeItem("organizations");
+  localStorage.removeItem("allowedValues");
+  localStorage.removeItem("systemEvents");
+
+  localStorage.setItem(VERSION_KEY, STORE_VERSION);
+}
+
 const app = createApp(App);
 const pinia = createPinia();
 

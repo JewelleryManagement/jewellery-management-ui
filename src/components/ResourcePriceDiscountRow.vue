@@ -25,16 +25,16 @@
 
 <script setup>
 import { computed } from "vue";
-import { useStore } from "vuex";
 import { useDiscountFieldRules } from "@/utils/validation-rules";
+import { useResourcesStore } from "@/store/resources";
 
-const store = useStore();
+const resourcesStore = useResourcesStore();
 const props = defineProps({ resource: Object });
 
 const resourceName = computed(() => {
-  const allResources = store.state.resources.resources;
+  const allResources = resourcesStore.resources;
   const matchedResource = allResources.find(
-    (resource) => resource.id === props.resource.id
+    (resource) => resource.id === props.resource.id,
   );
   return matchedResource ? matchedResource.clazz : "";
 });

@@ -30,18 +30,18 @@ import ResourceTransferEventCard from "./ResourceTransferEventCard.vue";
 import SaleEventCard from "./SaleEventCard.vue";
 import SimpleEntityEventCard from "./SimpleEntityEventCard.vue";
 import { computed } from "vue";
-import { useStore } from "vuex";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useResourcesStore } from "@/store/resources";
 
 const props = defineProps({
   event: Object,
   eventTypes: Object,
 });
 
-const store = useStore();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
+const resourcesStore = useResourcesStore();
 
 const isSimpleEntity = (entity) =>
   ["User", "Resource", "Organization"].includes(entity);
@@ -54,7 +54,7 @@ const rowsResolvers = {
   User: () => usersStore.getAllInformationColumns,
   Organization: () => organizationsStore.tableColumns,
   Resource: () =>
-    store.getters["resources/getColumnsByResource"]?.(
+    resourcesStore.getColumnsByResource(
       props.event?.payload?.entity?.clazz,
       true,
     ) || [],

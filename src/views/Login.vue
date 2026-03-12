@@ -65,13 +65,11 @@ import {
   useEmailFieldRules,
   usePasswordFieldRules,
 } from "../utils/validation-rules";
-import { useStore } from "vuex";
 import { ref, inject } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/store/auth";
 const snackbarProvider = inject("snackbarProvider");
 
-const store = useStore();
 const authStore = useAuthStore();
 const router = useRouter();
 const visible = ref(false);

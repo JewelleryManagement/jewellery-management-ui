@@ -21,23 +21,21 @@
 <script setup>
 import { inject, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
 import OrganizationsTable from "@/components/Table/OrganizationsTable.vue";
 import { getQuery } from "@/utils/resource-util";
 import { handleNotFound } from "@/utils/action-guard";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useResourcesStore } from "@/store/resources";
 const { id } = defineProps({
   id: String,
 });
 
 const snackbarProvider = inject("snackbarProvider");
-const store = useStore();
 const organizationsStore = useOrganizationsStore();
+const resourcesStore = useResourcesStore();
 const router = useRouter();
-const resourceAvailability = computed(
-  () => store.getters["resources/getCurrentAvailability"],
-);
+const resourceAvailability = computed(() => resourcesStore.currentAvailability);
 
 onMounted(async () => {
   fetchUserOrg();
@@ -55,7 +53,7 @@ const postAddQuantity = async (data) => {
   try {
     await organizationsStore.postResourceToOrg(data);
     snackbarProvider.showSuccessSnackbar("Successfully added quantity!");
-    const query = getQuery(resourceAvailability.value.resource, store);
+    const query = getQuery(resourceAvailability.value.resource, resourcesStore);
     router.push({
       path: "/resources",
       query: query,

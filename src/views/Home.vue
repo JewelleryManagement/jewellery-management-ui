@@ -7,26 +7,25 @@
 <script setup>
 import { onBeforeMount, inject } from "vue";
 import EventTimeline from "./Events/EventTimeline.vue";
-import { useStore } from "vuex";
 import { useUsersStore } from "@/store/users";
 import { useProductsStore } from "@/store/products";
 import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
 const userStore = useUsersStore();
 const productsStore = useProductsStore();
 const systemEventsStore = useSystemEventsStore();
+const resourcesStore = useResourcesStore();
 
-await userStore.fetchUsers();
-await productsStore.fetchProducts();
-
-const store = useStore();
 const snackbarProvider = inject("snackbarProvider");
 
 onBeforeMount(async () => {
   try {
     await Promise.all([
-      store.dispatch("resources/fetchResources"),
-      store.dispatch("resources/buildResourcesQueries"),
+      userStore.fetchUsers(),
+      resourcesStore.fetchResources(),
+      productsStore.fetchProducts(),
+      resourcesStore.buildResourcesQueries(),
     ]);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch globally!");

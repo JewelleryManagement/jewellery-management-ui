@@ -89,28 +89,28 @@ import ResourceQuantityEventCard from "./ResourceQuantityEventCard.vue";
 import SimpleEntityEventCard from "./SimpleEntityEventCard.vue";
 import SaleEventCard from "./SaleEventCard.vue";
 import { computed } from "vue";
-import { useStore } from "vuex";
 import { useUsersStore } from "@/store/users";
+import { useResourcesStore } from "@/store/resources";
 
 const props = defineProps({
   event: Object,
   eventTypes: Object,
 });
 
-const store = useStore();
 const usersStore = useUsersStore();
+const resourcesStore = useResourcesStore();
 
 const isSimpleEntity = (entity) => ["User", "Resource"].includes(entity);
 
 const rowsByEntity = {
   User: () => usersStore.getAllInformationColumns,
   Resource: () =>
-    store.getters["resources/getColumnsByResource"]?.(
+    resourcesStore.getColumnsByResource(
       props.event?.payload?.entityAfter?.clazz,
       true,
     ) || [],
   ReturnResource: () =>
-    store.getters["resources/getColumnsByResource"]?.(
+    resourcesStore.getColumnsByResource(
       props.event?.payload?.entity?.returnedResource?.clazz,
       true,
     ) || [],

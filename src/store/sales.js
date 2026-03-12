@@ -25,6 +25,9 @@ export const useSalesStore = defineStore("sales", {
       { key: "date", title: "Date" },
     ],
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
+    tableColumnPrice: { key: "salePrice", title: "Price" },
+    tableColumnDiscount: { key: "discount", title: "Discount" },
+    tableColumnReturn: { key: "return", title: "Return" },
     tableButtons: [
       { label: "Resources", icon: "mdi-diamond-stone" },
       { label: "Products", icon: "mdi-package-variant" },
@@ -39,6 +42,17 @@ export const useSalesStore = defineStore("sales", {
       state.tableColumnQuantity,
       ...state.tableColumns,
     ],
+    getResourceColumns: (state) => {
+      const resourcesStore = useResourcesStore();
+
+      return [
+        resourcesStore.tableColumnQuantity,
+        state.tableColumnPrice,
+        state.tableColumnDiscount,
+        ...resourcesStore.tableColumns,
+        state.tableColumnReturn,
+      ];
+    },
   },
   actions: {
     async fetchSales() {
@@ -61,17 +75,6 @@ export const useSalesStore = defineStore("sales", {
       const data = await getSale(id);
       this.selectedSale = data;
       return data;
-    },
-    getResourceColumns: (state) => {
-      const resourcesStore = useResourcesStore();
-
-      return [
-        resourcesStore.tableColumnQuantity,
-        state.tableColumnPrice,
-        state.tableColumnDiscount,
-        ...resourcesStore.tableColumns,
-        state.tableColumnReturn,
-      ];
     },
   },
   persist: {

@@ -40,21 +40,21 @@
 <script setup>
 import { onMounted, inject, computed } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
-import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
+import { useResourcesStore } from "@/store/resources";
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const resourcesStore = useResourcesStore();
 const snackbarProvider = inject("snackbarProvider");
 const selectedResourceClazz = computed(() => route.query.clazz || "All");
 const selectedButton = computed(() => {
   return route.query.quantityType || route.query.type || "All";
 });
 
-const resourceTypes = store.getters["resources/resourceFilterButtons"];
+const resourceTypes = resourcesStore.resourceFilterButtons;
 
 const title = computed(() =>
-  store.getters["resources/getTitle"](selectedResourceClazz.value),
+  resourcesStore.getTitle(selectedResourceClazz.value),
 );
 
 const currentResourceTypes = computed(() => {
@@ -64,7 +64,7 @@ const currentResourceTypes = computed(() => {
 
 const filterResourcesByType = (resourceType) => {
   selectedButton.value = resourceType;
-  const query = store.getters["resources/getResourceQuery"]({
+  const query = resourcesStore.getResourceQuery({
     clazz: selectedResourceClazz.value,
     type: resourceType,
     quantityType: resourceType,
@@ -78,7 +78,7 @@ const filterResourcesByType = (resourceType) => {
 
 onMounted(async () => {
   try {
-    await store.dispatch("resources/fetchResources");
+    await resourcesStore.fetchResources();
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
   }

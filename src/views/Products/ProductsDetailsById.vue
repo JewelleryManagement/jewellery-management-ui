@@ -116,15 +116,15 @@ import TextButton from "@/components/Button/TextButton.vue";
 import { onMounted } from "vue";
 import { ref, computed, inject } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
 import { useProductsStore } from "@/store/products";
 import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
 const snackbarProvider = inject("snackbarProvider");
 const defaultPicture = require("@/assets/no-pic.png");
-const store = useStore();
 const systemEventsStore = useSystemEventsStore();
 const productsStore = useProductsStore();
+const resourcesStore = useResourcesStore();
 const route = useRoute();
 const picture = ref(null);
 const currentProductId = route.params.id;
@@ -166,7 +166,7 @@ const selectedButton = ref("");
 const tableButtons = computed(() => productsStore.tableButtons);
 
 const tableColumnsResources = computed(
-  () => store.getters["resources/getTableColumnsWithQuantity"],
+  () => resourcesStore.getTableColumnsWithQuantity,
 );
 
 const getResourcesWithQuantity = () => {

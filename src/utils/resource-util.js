@@ -1,18 +1,18 @@
 import { handleNotFound } from "./action-guard";
 
-export const setInitialType = (clazz, store, route) => {
-  const type = store.getters["resources/getParamsFieldName"](clazz);
+export const setInitialType = (clazz, resourcesStore, route) => {
+  const type = resourcesStore.getParamsFieldName(clazz);
 
   if (type in route.query) {
-    store.dispatch("resources/setResourceDetailsField", {
+    resourcesStore.setResourceDetailsField({
       key: type,
       value: route.query[type],
     });
   }
 };
 
-export const getQuery = (resource, store) => {
-  return store.getters["resources/getResourceQuery"]({
+export const getQuery = (resource, resourcesStore) => {
+  return resourcesStore.getResourceQuery({
     clazz: resource.clazz,
     type: resource.type,
     quantityType: resource.quantityType,
@@ -20,7 +20,7 @@ export const getQuery = (resource, store) => {
 };
 
 export const confirmDeleteResource = async (
-  store,
+  resourcesStore,
   router,
   id,
   snackbarProvider,
@@ -32,7 +32,7 @@ export const confirmDeleteResource = async (
   if (!confirmation) return false;
 
   try {
-    await store.dispatch("resources/removeResource", id);
+    await resourcesStore.removeResource(id);
 
     snackbarProvider.showSuccessSnackbar("Resource deleted successfully!");
 

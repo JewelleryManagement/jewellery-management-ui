@@ -65,7 +65,6 @@
 </template>
 <script setup>
 import { computed, ref } from "vue";
-import { useStore } from "vuex";
 import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
@@ -84,7 +83,6 @@ const props = defineProps({
   },
 });
 
-const store = useStore();
 const systemEventsStore = useSystemEventsStore();
 const productsStore = useProductsStore();
 const salesStore = useSalesStore();
@@ -95,9 +93,7 @@ const additionalProductColumns = computed(
   () => productsStore.getAdditionalBaseColumns,
 );
 
-const tableResourceColumns = computed(
-  () => store.getters["sales/getResourceColumns"],
-);
+const tableResourceColumns = computed(() => salesStore.getResourceColumns);
 
 const rawDataButton = ref(false);
 

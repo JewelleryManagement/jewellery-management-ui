@@ -68,13 +68,13 @@
 </template>
 <script setup>
 import { computed, ref } from "vue";
-import { useStore } from "vuex";
 import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import { useProductsStore } from "@/store/products";
 import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
 const props = defineProps({
   entity: Object,
@@ -85,10 +85,10 @@ const props = defineProps({
   title: String,
 });
 
-const store = useStore();
 const systemEventsStore = useSystemEventsStore();
 const productsStore = useProductsStore();
 const productBaseRows = computed(() => productsStore.getColumns);
+const resourcesStore = useResourcesStore();
 
 const additionalProductRows = computed(
   () => productsStore.getAdditionalBaseColumns,
@@ -105,7 +105,7 @@ const productRows = computed(() => [
 ]);
 
 const tableResourceColumns = computed(
-  () => store.getters["resources/getTableColumnsWithQuantity"],
+  () => resourcesStore.getTableColumnsWithQuantity,
 );
 
 const normalizeResources = () =>

@@ -12,12 +12,10 @@
 import UserInOrganizationForm from "@/components/Form/UserInOrganizationForm.vue";
 import { computed, ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
 const snackbarProvider = inject("snackbarProvider");
-const store = useStore();
 const organizationsStore = useOrganizationsStore();
 const usersStore = useUsersStore();
 

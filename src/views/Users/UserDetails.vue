@@ -36,7 +36,6 @@
 
 <script setup>
 import { computed, inject, ref, watch } from "vue";
-import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
@@ -46,6 +45,7 @@ import EventsTable from "@/components/Table/EventsTable.vue";
 import { useUsersStore } from "@/store/users";
 import { useProductsStore } from "@/store/products";
 import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 const route = useRoute();
 const router = useRouter();
 watch(
@@ -55,10 +55,10 @@ watch(
 
 const { id } = defineProps(["id"]);
 const userId = id;
-const store = useStore();
 const productsStore = useProductsStore();
 const usersStore = useUsersStore();
 const systemEventsStore = useSystemEventsStore();
+const resourcesStore = useResourcesStore();
 const snackbarProvider = inject("snackbarProvider");
 const userProducts = computed(() => productsStore.currentUserProducts ?? []);
 
@@ -90,7 +90,7 @@ await fetchPurhasedResourcePerUser();
 await fetchProductsForUser();
 
 const tableColumnsResources = computed(
-  () => store.getters["resources/getTableColumnsWithQuantity"],
+  () => resourcesStore.getTableColumnsWithQuantity,
 );
 const purchasedResources = computed(() => usersStore.getPurchasedResources);
 const user = computed(() => usersStore.selectedUser);

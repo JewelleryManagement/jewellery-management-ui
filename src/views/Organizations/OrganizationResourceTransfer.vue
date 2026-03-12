@@ -10,13 +10,13 @@
 <script setup>
 import { inject, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import ResourceDetailsCard from "@/components/Card/ResourceDetailsCard.vue";
 import { useOrganizationsStore } from "@/store/organizations";
+import { useResourcesStore } from "@/store/resources";
 
 const snackbarProvider = inject("snackbarProvider");
-const store = useStore();
 const organizationsStore = useOrganizationsStore();
+const resourcesStore = useResourcesStore();
 const route = useRoute();
 const router = useRouter();
 const resourceId = route.params.resourceId;
@@ -32,9 +32,7 @@ const fetchUserOrgs = async () => {
   }
 };
 
-const resourceAvailability = computed(
-  () => store.getters["resources/getCurrentAvailability"],
-);
+const resourceAvailability = computed(() => resourcesStore.currentAvailability);
 
 const postQuantityTransfer = async (data) => {
   try {

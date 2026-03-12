@@ -37,7 +37,7 @@ const submitPostUser = async () => {
   const newData = mapUserDataToNewData(userData);
 
   try {
-    const res = usersStore.createUser(newData);
+    const res = await usersStore.createUser(newData);
     snackbarProvider.showSuccessSnackbar(
       `Successfully created user ${res.firstName}`,
     );

@@ -102,7 +102,6 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { computed, onMounted, ref, watch } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import AllowedValueSelect from "./AllowedValueSelect.vue";
@@ -116,11 +115,12 @@ import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 import { setInitialType } from "../../utils/resource-util";
 import { useRoute } from "vue-router";
 import { useAllowedValuesStore } from "@/store/allowedValues";
+import { useResourcesStore } from "@/store/resources";
 
 const route = useRoute();
-const store = useStore();
 const allowedValuesStore = useAllowedValuesStore();
-const formData = computed(() => store.getters["resources/getResourceDetails"]);
+const resourcesStore = useResourcesStore();
+const formData = computed(() => resourcesStore.resourceDetails);
 const allowedValueDetail = computed(
   () => allowedValuesStore.allowedValueDetails,
 );
@@ -176,7 +176,7 @@ const fetchAllowedValuesOptions = async () => {
   isFetching.value = false;
 
   setInitialAllowedValueDetails();
-  setInitialType(resourceClazz.value, store, route);
+  setInitialType(resourceClazz.value, resourcesStore, route);
 };
 
 const resetForm = computed(() => allowedValuesStore.allowedValuesReset);

@@ -25,13 +25,13 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { ref, provide, computed } from "vue";
 import NavBar from "./components/Nav/NavBar.vue";
 import SnackBar from "./components/Popup/SnackBar.vue";
 import { useAuthStore } from "./store/auth";
+import { useResourcesStore } from "./store/resources";
 
-const store = useStore();
+const resourcesStore = useResourcesStore();
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -74,9 +74,7 @@ const logoutHandler = () => {
 };
 
 const useResourceButtons = () => {
-  const queries = computed(
-    () => store.getters["resources/getAllResourceQueries"] || {},
-  );
+  const queries = computed(() => resourcesStore.resourcesQueries || {});
 
   const buttons = computed(() =>
     Object.keys(queries.value).map((key) => {

@@ -55,7 +55,6 @@ import ColoredStone from "@/components/Form/ColoredStone.vue";
 import ColoredStoneMelee from "@/components/Form/ColoredStoneMelee.vue";
 import SemiPreciousStone from "@/components/Form/SemiPreciousStone.vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { addNewAllowedValuesIfNeeded } from "@/utils/allowed-values.js";
 import {
   useTextFieldLargeRules,
@@ -74,14 +73,15 @@ import {
 import { getQuery } from "@/utils/resource-util";
 import { handleNotFound } from "@/utils/action-guard";
 import { useAllowedValuesStore } from "@/store/allowedValues";
+import { useResourcesStore } from "@/store/resources";
 
 const largeFieldRules = [...useInputValidate(), ...useTextFieldLargeRules()];
 
 const props = defineProps({
   id: String,
 });
-const store = useStore();
 const allowedValuesStore = useAllowedValuesStore();
+const resourcesStore = useResourcesStore();
 const route = useRoute();
 const router = useRouter();
 const options = ref([
@@ -95,12 +95,10 @@ const options = ref([
   ELEMENT_CLAZZ,
 ]);
 const pageTitle = computed(
-  () => store.getters["resources/getTitle"](selectedClazz.value) || "Resource",
+  () => resourcesStore.getTitle(selectedClazz.value) || "Resource",
 );
 
-const resourceDetails = computed(
-  () => store.getters["resources/getResourceDetails"],
-);
+const resourceDetails = computed(() => resourcesStore.resourceDetails);
 const snackbarProvider = inject("snackbarProvider");
 const selectedClazz = ref("");
 const isEditState = computed(() => route.path.startsWith("/resources/edit"));
@@ -134,11 +132,9 @@ const generateSku = () => {
 
 const loadResourceDetails = () => {
   if (isEditState.value || isDuplicateState.value) {
-    const resourceDetails = computed(
-      () => store.getters["resources/getCurrentAvailability"],
-    );
+    const resourceDetails = computed(() => resourcesStore.currentAvailability);
     const resource = resourceDetails.value.resource;
-    store.dispatch("resources/setResourceDetails", resource);
+    resourcesStore.setResourceDetails(resource);
     selectedClazz.value = resource.clazz;
     sku.value = resource.sku;
   }
@@ -158,7 +154,7 @@ const clearAllowedValueDetails = () => {
 };
 
 const clearResourceDetails = (clazz) => {
-  store.dispatch("resources/setResourceDetails", { clazz: clazz });
+  resourcesStore.setResourceDetails({ clazz: clazz });
 };
 
 const handleRouteChange = () => {
@@ -220,7 +216,7 @@ const navigateToResourceQuantityPage = (result) => {
 };
 
 const navigateToResourcePage = () => {
-  const query = getQuery(resourceDetails.value, store);
+  const query = getQuery(resourceDetails.value, resourcesStore);
   router.push({
     path: "/resources",
     query: query,
@@ -234,7 +230,7 @@ const editResource = async () => {
       selectedClazz.value,
       allowedValueDetail.value,
     );
-    await store.dispatch("resources/updateResource", {
+    await resourcesStore.updateResource({
       ...resourceDetails.value,
       sku: sku.value,
     });
@@ -254,7 +250,7 @@ const createResource = async () => {
       selectedClazz.value,
       allowedValueDetail.value,
     );
-    const result = await store.dispatch("resources/createResource", {
+    const result = await resourcesStore.createResource({
       ...resourceDetails.value,
       sku: sku.value,
     });

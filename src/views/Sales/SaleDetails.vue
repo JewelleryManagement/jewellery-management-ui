@@ -56,10 +56,12 @@ import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { useSalesStore } from "@/store/sales";
 import { useSystemEventsStore } from "@/store/systemEvents";
+import { useProductsStore } from "@/store/products";
 
 const store = useStore();
 const salesStore = useSalesStore();
 const systemEventsStore = useSystemEventsStore();
+const productsStore = useProductsStore();
 const route = useRoute();
 const saleId = route.params.id;
 
@@ -77,9 +79,9 @@ const saleResources = ref(
   }),
 );
 const productsTableAdditionalColumns = computed(() => [
-  store.state.products.tableColumnOrganization,
-  store.state.products.tableColumnOwner,
-  store.state.sales.tableColumnReturn,
+  productsStore.tableColumnOrganization,
+  productsStore.tableColumnOwner,
+  salesStore.tableColumnReturn,
 ]);
 
 const selectedButton = ref(null);

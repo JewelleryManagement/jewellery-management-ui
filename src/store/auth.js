@@ -22,8 +22,15 @@ export const useAuthStore = defineStore("auth", {
     },
 
     logout() {
-      this.$reset();
       localStorage.removeItem("auth");
+      localStorage.removeItem("users");
+      localStorage.removeItem("resources");
+      localStorage.removeItem("products");
+      localStorage.removeItem("sales");
+      localStorage.removeItem("organizations");
+      localStorage.removeItem("allowedValues");
+      localStorage.removeItem("systemEvents");
+      this.$reset();
     },
   },
 

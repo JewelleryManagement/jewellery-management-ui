@@ -122,24 +122,24 @@ import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
 import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
-const store = useStore();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
 const productsStore = useProductsStore();
 const systemEventsStore = useSystemEventsStore();
+const resourcesStore = useResourcesStore();
 const route = useRoute();
 const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 const organizationResources = ref([]);
 const tableColumnsResources = computed(
-  () => store.getters["resources/getAvailabilityUpdateColumns"],
+  () => resourcesStore.getAvailabilityUpdateColumns,
 );
 const orgUsersColumns = computed(() => usersStore.getOrganizationColumns);
 const organization = ref({});

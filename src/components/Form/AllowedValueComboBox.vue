@@ -164,5 +164,6 @@ async function handleDelete() {
     fieldValue: valueToDelete.value,
   });
   deleteDialog.value = false;
+  emit("update:modelValue", "");
 }
 </script>

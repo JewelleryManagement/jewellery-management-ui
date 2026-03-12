@@ -59,23 +59,21 @@ import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
 import { useSalesStore } from "@/store/sales";
 import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
 const route = useRoute();
-const store = useStore();
 const productsStore = useProductsStore();
 const organizationsStore = useOrganizationsStore();
 const salesStore = useSalesStore();
 const systemEventsStore = useSystemEventsStore();
+const resourcesStore = useResourcesStore();
 
 const resourceId = route.params.id;
-const resourceAvailability = computed(
-  () => store.getters["resources/getCurrentAvailability"],
-);
+const resourceAvailability = computed(() => resourcesStore.currentAvailability);
 
 const sales = ref(await salesStore.getAllSalesByResource(resourceId));
 const salesTableColumns = computed(() => salesStore.getAllColumnsWithQuantity);
@@ -94,7 +92,7 @@ const organizationsTableColumns = computed(
 
 const selectedButton = ref("");
 
-const tableButtons = computed(() => store.getters["resources/getTableButtons"]);
+const tableButtons = computed(() => resourcesStore.tableButtons);
 
 const getQuantityInSale = (item) => {
   return (

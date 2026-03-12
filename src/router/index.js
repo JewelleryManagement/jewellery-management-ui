@@ -1,33 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
-import store from "@/store/store";
 import { useUsersStore } from "@/store/users";
 import { useAuthStore } from "@/store/auth";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
 import { useSalesStore } from "@/store/sales";
+import { useResourcesStore } from "@/store/resources";
 
 export const makeFetchGuard =
-  ({ dispatch, type, getPayload = (to) => to.params.id }) =>
-  async (to) => {
-    try {
-      await dispatch(getPayload(to));
-      return true;
-    } catch (e) {
-      const status = e?.response?.status;
-
-      if (status === 404 || status === 410) {
-        return {
-          name: "NotFound",
-          query: { type },
-          replace: true,
-        };
-      }
-
-      throw e;
-    }
-  };
-
-export const makePiniaFetchGuard =
   ({ action, type, getPayload = (to) => to.params.id }) =>
   async (to) => {
     try {
@@ -74,7 +53,7 @@ const routes = [
     name: "Users Details",
     component: () => import("../views/Users/UserDetails.vue"),
     meta: { title: "Users Details", requiresAuth: true },
-    beforeEnter: makePiniaFetchGuard({
+    beforeEnter: makeFetchGuard({
       action: (id) => useUsersStore().fetchUser(id),
       type: "User",
     }),
@@ -92,7 +71,7 @@ const routes = [
     name: "Edit-User",
     component: () => import("../views/Users/UserUpdate.vue"),
     meta: { title: "Edit user", requiresAuth: true },
-    beforeEnter: makePiniaFetchGuard({
+    beforeEnter: makeFetchGuard({
       action: (id) => useUsersStore().fetchUser(id),
       type: "User",
     }),
@@ -109,9 +88,8 @@ const routes = [
     component: () => import("../views/Resources/ResourcesDetailsById.vue"),
     meta: { title: "Resource page", requiresAuth: true },
     beforeEnter: makeFetchGuard({
+      action: (id) => useResourcesStore().fetchAvailabilityResourceById(id),
       type: "Resource",
-      dispatch: (id) =>
-        store.dispatch("resources/fetchAvailabilityResourceById", id),
     }),
   },
   {
@@ -127,9 +105,8 @@ const routes = [
     component: () => import("../views/Resources/ResourceDetails.vue"),
     meta: { title: "Edit resource", requiresAuth: true },
     beforeEnter: makeFetchGuard({
+      action: (id) => useResourcesStore().fetchAvailabilityResourceById(id),
       type: "Resource",
-      dispatch: (id) =>
-        store.dispatch("resources/fetchAvailabilityResourceById", id),
     }),
   },
   {
@@ -139,9 +116,8 @@ const routes = [
     component: () => import("../views/Resources/ResourceDetails.vue"),
     meta: { title: "Duplicate resource", requiresAuth: true },
     beforeEnter: makeFetchGuard({
+      action: (id) => useResourcesStore().fetchAvailabilityResourceById(id),
       type: "Resource",
-      dispatch: (id) =>
-        store.dispatch("resources/fetchAvailabilityResourceById", id),
     }),
   },
   {
@@ -163,7 +139,7 @@ const routes = [
     props: true,
     component: () => import("../views/Products/ProductEdit.vue"),
     meta: { title: "Edit product", requiresAuth: true },
-    beforeEnter: makePiniaFetchGuard({
+    beforeEnter: makeFetchGuard({
       action: (id) => useProductsStore().fetchProduct(id),
       type: "Product",
     }),
@@ -174,7 +150,7 @@ const routes = [
     props: true,
     component: () => import("../views/Products/ProductsDetailsById.vue"),
     meta: { title: "Product details", requiresAuth: true },
-    beforeEnter: makePiniaFetchGuard({
+    beforeEnter: makeFetchGuard({
       action: (id) => useProductsStore().fetchProduct(id),
       type: "Product",
     }),
@@ -202,7 +178,7 @@ const routes = [
     name: "Sale-Details",
     component: () => import("../views/Sales/SaleDetails.vue"),
     meta: { title: "Sale Details", requiresAuth: true },
-    beforeEnter: makePiniaFetchGuard({
+    beforeEnter: makeFetchGuard({
       action: (id) => useSalesStore().fetchSale(id),
       type: "Sale",
     }),
@@ -219,7 +195,7 @@ const routes = [
     props: true,
     component: () => import("../views/Organizations/OrganizationById"),
     meta: { title: "Organization details", requiresAuth: true },
-    beforeEnter: makePiniaFetchGuard({
+    beforeEnter: makeFetchGuard({
       action: (id) => useOrganizationsStore().fetchOrganization(id),
       type: "Organization",
     }),
@@ -237,9 +213,8 @@ const routes = [
       import("../views/Organizations/OrganizationResourceAdd.vue"),
     meta: { title: "Add Quantity", requiresAuth: true },
     beforeEnter: makeFetchGuard({
+      action: (id) => useResourcesStore().fetchAvailabilityResourceById(id),
       type: "Resource",
-      dispatch: (id) =>
-        store.dispatch("resources/fetchAvailabilityResourceById", id),
     }),
   },
   {
@@ -252,8 +227,8 @@ const routes = [
     beforeEnter: makeFetchGuard({
       type: "Resource",
       getPayload: (to) => to.params.resourceId,
-      dispatch: (resourceId) =>
-        store.dispatch("resources/fetchAvailabilityResourceById", resourceId),
+      action: (resourceId) =>
+        useResourcesStore().fetchAvailabilityResourceById(resourceId),
     }),
   },
   {
@@ -266,8 +241,8 @@ const routes = [
     beforeEnter: makeFetchGuard({
       type: "Resource",
       getPayload: (to) => to.params.resourceId,
-      dispatch: (resourceId) =>
-        store.dispatch("resources/fetchAvailabilityResourceById", resourceId),
+      action: (resourceId) =>
+        useResourcesStore().fetchAvailabilityResourceById(resourceId),
     }),
   },
   {
@@ -283,7 +258,7 @@ const routes = [
     props: true,
     component: () => import("../views/Organizations/OrganizationUserEdit.vue"),
     meta: { title: "Edit user in Organization", requiresAuth: true },
-    beforeEnter: makePiniaFetchGuard({
+    beforeEnter: makeFetchGuard({
       type: "User",
       getPayload: (to) => ({
         organizationId: to.params.organizationId,
