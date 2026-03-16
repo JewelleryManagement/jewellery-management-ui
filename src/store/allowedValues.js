@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import AllowedValuesService from "@/services/AllowedValuesService";
 
 export const useAllowedValuesStore = defineStore("allowedValues", {
@@ -174,7 +176,7 @@ export const useAllowedValuesStore = defineStore("allowedValues", {
     },
   },
   persist: {
-    key: "allowedValues",
-    storage: localStorage,
+    key: STORAGE_KEYS.ALLOWED_VALUES,
+    storage: storageService.getStorage(),
   },
 });

@@ -32,5 +32,5 @@ onBeforeMount(async () => {
   }
 });
 
-const events = await systemEventsStore.getAllEvents();
+const events = await systemEventsStore.fetchAllEvents();
 </script>

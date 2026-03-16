@@ -75,10 +75,12 @@ const resourcesStore = useResourcesStore();
 const resourceId = route.params.id;
 const resourceAvailability = computed(() => resourcesStore.currentAvailability);
 
-const sales = ref(await salesStore.getAllSalesByResource(resourceId));
+const sales = ref(await salesStore.fetchAllSalesByResource(resourceId));
 const salesTableColumns = computed(() => salesStore.getAllColumnsWithQuantity);
 
-const products = ref(await productsStore.getAllProductsByResource(resourceId));
+const products = ref(
+  await productsStore.fetchAllProductsByResource(resourceId),
+);
 const resourceQuantityInProductColumn = computed(() => [
   productsStore.tableColumnResourceQuantity,
 ]);
@@ -117,7 +119,7 @@ const getOrganizationQuantity = (item) => {
   );
 };
 
-const events = await systemEventsStore.getEventsRelatedTo(resourceId);
+const events = await systemEventsStore.fetchEventsRelatedTo(resourceId);
 
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>

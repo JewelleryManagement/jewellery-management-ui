@@ -136,7 +136,7 @@ onMounted(() => {
 
 const fetchAndUpdatePictureUrl = async () => {
   try {
-    const newPictureUrl = await productsStore.getPicture(currentProductId);
+    const newPictureUrl = await productsStore.fetchPicture(currentProductId);
     picture.value = newPictureUrl || defaultPicture;
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
@@ -176,7 +176,7 @@ const getResourcesWithQuantity = () => {
   }));
 };
 
-const events = await systemEventsStore.getEventsRelatedTo(currentProductId);
+const events = await systemEventsStore.fetchEventsRelatedTo(currentProductId);
 
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>

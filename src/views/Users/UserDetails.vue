@@ -66,7 +66,7 @@ const selectedButton = ref("");
 
 const tableButtons = computed(() => usersStore.tableButtons);
 
-const events = await systemEventsStore.getEventsRelatedTo(userId);
+const events = await systemEventsStore.fetchEventsRelatedTo(userId);
 
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 

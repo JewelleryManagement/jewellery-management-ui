@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import { useOrganizationsStore } from "./organizations";
 import {
   fetchProductsByOrganization,
@@ -148,10 +150,10 @@ export const useProductsStore = defineStore("products", {
     async updateProduct({ productId, updatedProduct }) {
       return await updateProduct(productId, updatedProduct);
     },
-    async getAllProductsByResource(resourceId) {
+    async fetchAllProductsByResource(resourceId) {
       return await getAllProductsByResource(resourceId);
     },
-    async getPicture(productId) {
+    async fetchPicture(productId) {
       try {
         const res = await fetchPicture(productId);
         return URL.createObjectURL(new Blob([res], { type: "image/png" }));
@@ -166,7 +168,7 @@ export const useProductsStore = defineStore("products", {
     },
   },
   persist: {
-    key: "products",
-    storage: localStorage,
+    key: STORAGE_KEYS.PRODUCTS,
+    storage: storageService.getStorage(),
   },
 });

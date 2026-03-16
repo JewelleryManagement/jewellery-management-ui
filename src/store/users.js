@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
   fetchUsers,
   getUser,
@@ -106,7 +108,7 @@ export const useUsersStore = defineStore("users", {
     },
   },
   persist: {
-    key: "users",
-    storage: localStorage,
+    key: STORAGE_KEYS.USERS,
+    storage: storageService.getStorage(),
   },
 });

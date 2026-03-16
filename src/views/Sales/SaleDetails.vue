@@ -88,7 +88,7 @@ const selectedButton = ref(null);
 
 const tableButtons = computed(() => salesStore.tableButtons);
 
-const events = await systemEventsStore.getEventsRelatedTo(saleId);
+const events = await systemEventsStore.fetchEventsRelatedTo(saleId);
 
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>

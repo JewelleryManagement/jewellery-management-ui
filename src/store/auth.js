@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import { postUserLogin } from "@/services/HttpClientService";
 
 export const useAuthStore = defineStore("auth", {
@@ -22,20 +24,13 @@ export const useAuthStore = defineStore("auth", {
     },
 
     logout() {
-      localStorage.removeItem("auth");
-      localStorage.removeItem("users");
-      localStorage.removeItem("resources");
-      localStorage.removeItem("products");
-      localStorage.removeItem("sales");
-      localStorage.removeItem("organizations");
-      localStorage.removeItem("allowedValues");
-      localStorage.removeItem("systemEvents");
+      storageService.clearStorage();
       this.$reset();
     },
   },
 
   persist: {
-    key: "auth",
-    storage: localStorage,
+    key: STORAGE_KEYS.AUTH,
+    storage: storageService.getStorage(),
   },
 });

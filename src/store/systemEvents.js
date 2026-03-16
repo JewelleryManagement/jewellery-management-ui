@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
   getAllEventsRelatedTo,
   getSystemEvent,
@@ -152,18 +154,18 @@ export const useSystemEventsStore = defineStore("systemEvents", {
   }),
   getters: {},
   actions: {
-    async getEventsRelatedTo(id) {
+    async fetchEventsRelatedTo(id) {
       return getAllEventsRelatedTo(id);
     },
-    async getSystemEvent(id) {
+    async fetchSystemEvent(id) {
       return getSystemEvent(id);
     },
-    async getAllEvents() {
+    async fetchAllEvents() {
       return getAllEvents();
     },
   },
   persist: {
-    key: "systemEvents",
-    storage: localStorage,
+    key: STORAGE_KEYS.SYSTEM_EVENTS,
+    storage: storageService.getStorage(),
   },
 });

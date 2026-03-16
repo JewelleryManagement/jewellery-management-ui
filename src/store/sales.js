@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
   fetchSales,
   postSale,
@@ -68,7 +70,7 @@ export const useSalesStore = defineStore("sales", {
     async returnResource(args) {
       await resourceReturn(args.saleId, args.resourceId);
     },
-    async getAllSalesByResource(resourceId) {
+    async fetchAllSalesByResource(resourceId) {
       return await getAllSalesByResource(resourceId);
     },
     async fetchSale(id) {
@@ -78,7 +80,7 @@ export const useSalesStore = defineStore("sales", {
     },
   },
   persist: {
-    key: "sales",
-    storage: localStorage,
+    key: STORAGE_KEYS.SALES,
+    storage: storageService.getStorage(),
   },
 });

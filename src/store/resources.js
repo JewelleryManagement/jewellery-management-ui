@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
   fetchResources,
   postResources,
@@ -375,7 +377,7 @@ export const useResourcesStore = defineStore("resources", {
     },
   },
   persist: {
-    key: "resources",
-    storage: localStorage,
+    key: STORAGE_KEYS.RESOURCES,
+    storage: storageService.getStorage(),
   },
 });

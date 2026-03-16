@@ -1,4 +1,6 @@
 import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
   fetchOrgs,
   getResourceAvailabilityByOrganization,
@@ -101,7 +103,7 @@ export const useOrganizationsStore = defineStore("organizations", {
     },
   },
   persist: {
-    key: "organizations",
-    storage: localStorage,
+    key: STORAGE_KEYS.ORGANIZATIONS,
+    storage: storageService.getStorage(),
   },
 });

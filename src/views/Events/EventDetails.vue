@@ -63,7 +63,7 @@ const systemEventsStore = useSystemEventsStore();
 
 const eventId = route.params.eventId;
 
-const event = await systemEventsStore.getSystemEvent(eventId);
+const event = await systemEventsStore.fetchSystemEvent(eventId);
 
 const eventTypes = computed(() => systemEventsStore.eventTypes);
 

@@ -225,7 +225,7 @@ const selectedButton = ref(null);
 
 const tableButtons = computed(() => organizationsStore.tableButtons);
 
-const events = await systemEventsStore.getEventsRelatedTo(orgId);
+const events = await systemEventsStore.fetchEventsRelatedTo(orgId);
 
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>
