@@ -44,14 +44,14 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { useStore } from "vuex";
+import { useResourcesStore } from "@/store/resources";
 const { modelValue, data } = defineProps({
   modelValue: Boolean,
   data: Object,
 });
-const store = useStore();
+const resourcesStore = useResourcesStore();
 const tableColumnsResources = computed(
-  () => store.getters["resources/getColumnsWithQuantity"]
+  () => resourcesStore.getColumnsWithQuantity,
 );
 const search = ref("");
 

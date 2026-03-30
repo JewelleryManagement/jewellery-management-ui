@@ -59,40 +59,42 @@ import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
+import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
+import { useSalesStore } from "@/store/sales";
+import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
 const route = useRoute();
-const store = useStore();
+const productsStore = useProductsStore();
+const organizationsStore = useOrganizationsStore();
+const salesStore = useSalesStore();
+const systemEventsStore = useSystemEventsStore();
+const resourcesStore = useResourcesStore();
 
 const resourceId = route.params.id;
-const resourceAvailability = computed(
-  () => store.getters["resources/getCurrentAvailability"],
-);
+const resourceAvailability = computed(() => resourcesStore.currentAvailability);
 
-const sales = ref(
-  await store.dispatch("sales/getAllSalesByResource", resourceId),
-);
-const salesTableColumns = computed(
-  () => store.getters["sales/getAllColumnsWithQuantity"],
-);
+const sales = ref(await salesStore.fetchAllSalesByResource(resourceId));
+const salesTableColumns = computed(() => salesStore.getAllColumnsWithQuantity);
 
 const products = ref(
-  await store.dispatch("products/getAllProductsByResource", resourceId),
+  await productsStore.fetchAllProductsByResource(resourceId),
 );
-const resourceQuantityInProductColumn = computed(
-  () => store.getters["products/getResourceQuantityColumn"],
-);
+const resourceQuantityInProductColumn = computed(() => [
+  productsStore.tableColumnResourceQuantity,
+]);
 
 const organizations = computed(() =>
   resourceAvailability.value.organizationsAndQuantities.map((x) => x.owner),
 );
 const organizationsTableColumns = computed(
-  () => store.getters["organizations/getAllColumnsWithQuantityColumn"],
+  () => organizationsStore.getAllColumnsWithQuantityColumn,
 );
 
 const selectedButton = ref("");
 
-const tableButtons = computed(() => store.getters["resources/getTableButtons"]);
+const tableButtons = computed(() => resourcesStore.tableButtons);
 
 const getQuantityInSale = (item) => {
   return (
@@ -117,12 +119,7 @@ const getOrganizationQuantity = (item) => {
   );
 };
 
-const events = await store.dispatch(
-  "systemEvents/getEventsRelatedTo",
-  resourceId,
-);
+const events = await systemEventsStore.fetchEventsRelatedTo(resourceId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>

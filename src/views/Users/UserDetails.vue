@@ -36,13 +36,16 @@
 
 <script setup>
 import { computed, inject, ref, watch } from "vue";
-import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import UserCard from "@/components/Card/UserCard.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
+import { useUsersStore } from "@/store/users";
+import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 const route = useRoute();
 const router = useRouter();
 watch(
@@ -52,25 +55,24 @@ watch(
 
 const { id } = defineProps(["id"]);
 const userId = id;
-const store = useStore();
+const productsStore = useProductsStore();
+const usersStore = useUsersStore();
+const systemEventsStore = useSystemEventsStore();
+const resourcesStore = useResourcesStore();
 const snackbarProvider = inject("snackbarProvider");
-const userProducts = computed(
-  () => store.getters["products/getCurrentUserProducts"] ?? [],
-);
+const userProducts = computed(() => productsStore.currentUserProducts ?? []);
 
 const selectedButton = ref("");
 
-const tableButtons = computed(() => store.getters["users/getTableButtons"]);
+const tableButtons = computed(() => usersStore.tableButtons);
 
-const events = await store.dispatch("systemEvents/getEventsRelatedTo", userId);
+const events = await systemEventsStore.fetchEventsRelatedTo(userId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 
 async function fetchPurhasedResourcePerUser() {
   try {
-    await store.dispatch("users/fetchPurchasedResourcesPerUser", userId);
+    await usersStore.fetchPurchasedResourcesPerUser(userId);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch purchased resources.");
   }
@@ -78,7 +80,7 @@ async function fetchPurhasedResourcePerUser() {
 
 async function fetchProductsForUser() {
   try {
-    await store.dispatch("products/fetchProductsByOwner", userId);
+    await productsStore.fetchProductsByOwner(userId);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch products.");
   }
@@ -88,12 +90,10 @@ await fetchPurhasedResourcePerUser();
 await fetchProductsForUser();
 
 const tableColumnsResources = computed(
-  () => store.getters["users/getTableColumnsWithQuantity"],
+  () => resourcesStore.getTableColumnsWithQuantity,
 );
-const purchasedResources = computed(
-  () => store.getters["users/getPurchasedResources"],
-);
-const user = computed(() => store.getters["users/getSelectedUser"]);
+const purchasedResources = computed(() => usersStore.getPurchasedResources);
+const user = computed(() => usersStore.selectedUser);
 </script>
 
 <style scoped>

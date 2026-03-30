@@ -35,7 +35,7 @@
 import { navigateToItemDetails } from "@/utils/row-click-handler";
 import { ref, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
+import { useUsersStore } from "@/store/users";
 const props = defineProps({
   title: String,
   users: Array,
@@ -43,17 +43,17 @@ const props = defineProps({
   headBtnPath: String,
   headBtnName: String,
 });
-const store = useStore();
+const usersStore = useUsersStore();
 const search = ref("");
 const router = useRouter();
 const headBtnPath = ref(props.headBtnPath ?? "/users/create");
 const headBtnName = ref(props.headBtnName ?? "Create user");
-const allUsers = computed(() => store.getters["users/getAllUsers"]);
+const allUsers = computed(() => usersStore.users);
 const tableUsers = computed(() =>
   props.users?.length > 0 ? props.users : allUsers.value,
 );
 const defaultColumnsWithEdit = computed(
-  () => store.getters["users/getTableColumnsWithActions"],
+  () => usersStore.getTableColumnsWithActions,
 );
 const tableColumns = computed(() =>
   props.columns ? props.columns : defaultColumnsWithEdit.value,

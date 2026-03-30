@@ -1,11 +1,13 @@
-import { reactive } from "vue";
+import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
   fetchResources,
   postResources,
   removeResource,
-  updateResource,
   fetchAvailabilityResourceById,
-} from "@/services/HttpClientService.js";
+  updateResource,
+} from "@/services/HttpClientService";
 import AllowedValuesService from "@/services/AllowedValuesService";
 import {
   PEARL_CLAZZ,
@@ -156,12 +158,12 @@ const addValueQueries = (queries, resourceClazz, allowedValues) => {
   }
 };
 
-export default {
-  namespaced: true,
-  state: reactive({
+export const useResourcesStore = defineStore("resources", {
+  state: () => ({
     resources: [],
     resourceDetails: {},
     currentAvailability: {},
+    resourcesQueries: {},
     tableColumns: [
       { key: "clazz", title: "Resource Type" },
       { key: "color", title: "Color" },
@@ -188,28 +190,6 @@ export default {
       { key: "treatment", title: "Treatment" },
       { key: "totalPrice", title: "Total Price" },
     ],
-    allowedValueParams: {
-      Pearl: { resourceClazz: PEARL_CLAZZ, fieldName: "quantityType" },
-      Diamond: { resourceClazz: DIAMOND_CLAZZ, fieldName: "type" },
-      DiamondMelee: { resourceClazz: DIAMON_MELEE_CLAZZ, fieldName: "type" },
-      ColoredStone: {
-        resourceClazz: COLORED_STONE_CLAZZ,
-        fieldName: "quantityType",
-      },
-      ColoredStoneMelee: {
-        resourceClazz: COLORED_STONE_MELEE_CLAZZ,
-        fieldName: "quantityType",
-      },
-      SemiPreciousStone: {
-        resourceClazz: SEMI_PRECIOUS_STONE_CLAZZ,
-        fieldName: "quantityType",
-      },
-      Metal: { resourceClazz: METAL_CLAZZ, fieldName: "type" },
-      Element: { resourceClazz: ELEMENT_CLAZZ, fieldName: "quantityType" },
-    },
-
-    resourcesQueries: {},
-
     titles: {
       Pearl: {
         title: "Pearl",
@@ -234,19 +214,38 @@ export default {
       },
       Element: { title: "Element" },
     },
+    allowedValueParams: {
+      Pearl: { resourceClazz: PEARL_CLAZZ, fieldName: "quantityType" },
+      Diamond: { resourceClazz: DIAMOND_CLAZZ, fieldName: "type" },
+      DiamondMelee: { resourceClazz: DIAMON_MELEE_CLAZZ, fieldName: "type" },
+      ColoredStone: {
+        resourceClazz: COLORED_STONE_CLAZZ,
+        fieldName: "quantityType",
+      },
+      ColoredStoneMelee: {
+        resourceClazz: COLORED_STONE_MELEE_CLAZZ,
+        fieldName: "quantityType",
+      },
+      SemiPreciousStone: {
+        resourceClazz: SEMI_PRECIOUS_STONE_CLAZZ,
+        fieldName: "quantityType",
+      },
+      Metal: { resourceClazz: METAL_CLAZZ, fieldName: "type" },
+      Element: { resourceClazz: ELEMENT_CLAZZ, fieldName: "quantityType" },
+    },
+    tableColumnClazz: { key: "clazz", title: "Clazz" },
+    tableColumnQuantityType: { key: "quantityType", title: "Quantity Type" },
     tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableColumnActions: { key: "actions", title: "", slot: "actions" },
+    tableColumnOwner: { key: "owner", title: "Owner" },
+    tableColumnDealPrice: { key: "dealPrice", title: "Deal Price" },
+    tableColumnNewOwner: { key: "newOwner", title: "New Owner" },
+    tableColumnPreviousOwner: { key: "previousOwner", title: "Previous Owner" },
     tableColumnAddQuantity: {
       key: "addQuantity",
       title: "",
       slot: "addQuantity",
     },
-    tableColumnClazz: { key: "clazz", title: "Clazz" },
-    tableColumnQuantityType: { key: "quantityType", title: "Quantity Type" },
-    tableColumnOwner: { key: "owner", title: "Owner" },
-    tableColumnDealPrice: { key: "dealPrice", title: "Deal Price" },
-    tableColumnNewOwner: { key: "newOwner", title: "New Owner" },
-    tableColumnPreviousOwner: { key: "previousOwner", title: "Previous Owner" },
     tableButtons: [
       { label: "Sales", icon: "mdi-cart-outline" },
       { label: "Products", icon: "mdi-package-variant" },
@@ -260,77 +259,99 @@ export default {
       },
     ],
   }),
-  mutations: {
-    setResources(state, resources) {
-      state.resources = resources;
+  getters: {
+    getColumnsWithQuantity: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
+    getColumns: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+      state.tableColumnActions,
+    ],
+    getAvailabilityUpdateColumns: (state) => [
+      state.tableColumnActions,
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
+    getResourceQuery:
+      (state) =>
+      ({ clazz, type, quantityType }) =>
+        state.resourcesQueries[clazz]?.[type] ??
+        state.resourcesQueries[clazz]?.[quantityType] ??
+        state.resourcesQueries[clazz] ??
+        null,
+    getTitle: (state) => (key) => state.titles[key]?.title ?? null,
+    resourceFilterButtons: (state) =>
+      Object.fromEntries(
+        Object.entries(state.resourcesQueries).map(([clazz, entries]) => [
+          clazz,
+          Object.keys(entries),
+        ]),
+      ),
+    getParamsFieldName: (state) => (clazz) =>
+      state.allowedValueParams?.[clazz]?.fieldName ?? null,
+    getTableColumnOrganizationQuantity: (state) => [
+      state.tableColumnOwner,
+      state.tableColumnDealPrice,
+    ],
+    getTableColumnsOrganizationTransfer: (state) => [
+      state.tableColumnNewOwner,
+      state.tableColumnPreviousOwner,
+      state.tableColumnDealPrice,
+    ],
+    getColumnsByResource: (state) => (resource, additional) => {
+      const keys = RESOURCE_COLUMN_KEYS[resource];
+      if (!keys) return [];
+      return filterColumnsByKey(state, additional, keys);
     },
-    createResource(state, payload) {
-      state.resources.push(payload);
-    },
-    removeResource(state, id) {
-      state.resources = state.resources.filter(
-        (resource) => resource.id !== id,
-      );
-    },
-    setResourceDetails(state, payload) {
-      state.resourceDetails = payload;
-    },
-    setResourceDetailsField(state, { key, value }) {
-      state.resourceDetails[key] = value;
-    },
-    updateResource(state, updatedResource) {
-      const index = state.resources.findIndex(
-        (resource) => resource.id === updatedResource.id,
-      );
-      if (index !== -1) state.resources[index] = updatedResource;
-    },
-    setResourcesQueries(state, payload) {
-      state.resourcesQueries = payload;
-    },
-    setCurrentAvailability(state, resource) {
-      state.currentAvailability = resource;
-    },
+    getTableColumnsWithQuantity: (state) => [
+      state.tableColumnQuantity,
+      ...state.tableColumns,
+    ],
   },
   actions: {
-    async fetchResources({ commit }) {
+    async fetchResources() {
       const res = await fetchResources();
       const formattedResponse = Object.values(res).map((item) => ({
         ...item.resource,
         quantity: item.quantity,
       }));
-      commit("setResources", formattedResponse);
+      this.resources = formattedResponse;
     },
-    async createResource({ commit }, formData) {
+    async createResource(formData) {
       const res = await postResources(formData);
-      commit("createResource", res);
+      this.resources.push(res);
       return res;
     },
-    async removeResource({ commit }, id) {
+    async removeResource(id) {
       await removeResource(id);
-      commit("removeResource", id);
+      this.resources = this.resources.filter((resource) => resource.id !== id);
     },
-    setResourceDetails({ commit }, data) {
-      commit("setResourceDetails", structuredClone(data));
+    setResourceDetails(data) {
+      this.resourceDetails = structuredClone(data);
     },
-    setResourceDetailsField({ commit }, { key, value }) {
-      commit("setResourceDetailsField", { key, value });
-    },
-    setResourceForm({ commit }, data) {
-      commit("setResourcForm", data);
-    },
-    async updateResource({ commit }, { id, ...resourceWithoutId }) {
-      const updatedResource = await updateResource(id, resourceWithoutId);
-      commit("updateResource", updatedResource);
-    },
-    async fetchAvailabilityResourceById({ commit }, resourceId) {
+    async fetchAvailabilityResourceById(resourceId) {
       const data = await fetchAvailabilityResourceById(resourceId);
-
-      commit("setCurrentAvailability", data);
-
+      this.currentAvailability = data;
       return data;
     },
-    async buildResourcesQueries({ state, commit }) {
-      const allowedValueParams = state.allowedValueParams;
+    setResourceDetailsField({ key, value }) {
+      this.resourceDetails[key] = value;
+    },
+    async updateResource({ id, ...resourceWithoutId }) {
+      const updatedResource = await updateResource(id, resourceWithoutId);
+
+      const index = this.resources.findIndex(
+        (resource) => resource.id === updatedResource.id,
+      );
+
+      if (index !== -1) {
+        this.resources[index] = updatedResource;
+      }
+    },
+    async buildResourcesQueries() {
+      const allowedValueParams = this.allowedValueParams;
 
       const responses = await Promise.all(
         Object.values(allowedValueParams).map((param) =>
@@ -352,70 +373,11 @@ export default {
         }
       }
 
-      commit("setResourcesQueries", queriesByResourceClass);
+      this.resourcesQueries = queriesByResourceClass;
     },
   },
-  getters: {
-    getTableColumns: (state) => state.tableColumns,
-    allResources: (state) => state.resources,
-    getColumnsWithQuantity: (state) => [
-      state.tableColumnQuantity,
-      ...state.tableColumns,
-    ],
-    getColumns: (state) => [
-      state.tableColumnQuantity,
-      ...state.tableColumns,
-      state.tableColumnActions,
-    ],
-    getAvailabilityUpdateColumns: (state) => [
-      state.tableColumnActions,
-      state.tableColumnQuantity,
-      ...state.tableColumns,
-    ],
-    getResourceById: (state) => (id) =>
-      state.resources.find((resource) => resource.id === id),
-    getResourceDetails: (state) => state.resourceDetails,
-    getResourceQuery:
-      (state) =>
-      ({ clazz, type, quantityType }) =>
-        state.resourcesQueries[clazz]?.[type] ??
-        state.resourcesQueries[clazz]?.[quantityType] ??
-        state.resourcesQueries[clazz] ??
-        null,
-
-    getAllResourceQueries: (state) => state.resourcesQueries,
-    getTitle: (state) => (key) => {
-      return state.titles[key]?.title || null;
-    },
-    resourceFilterButtons: (state) =>
-      Object.fromEntries(
-        Object.entries(state.resourcesQueries).map(([clazz, entries]) => [
-          clazz,
-          Object.keys(entries),
-        ]),
-      ),
-    getParamsFieldName: (state) => (clazz) => {
-      return state.allowedValueParams[clazz].fieldName;
-    },
-    getAdditionalResourceColumns: (state) => [
-      state.tableColumnClazz,
-      state.tableColumnQuantityType,
-    ],
-    getTableButtons: (state) => state.tableButtons,
-    getTableColumnOrganizationQuantity: (state) => [
-      state.tableColumnOwner,
-      state.tableColumnDealPrice,
-    ],
-    getTableColumnsOrganizationTransfer: (state) => [
-      state.tableColumnNewOwner,
-      state.tableColumnPreviousOwner,
-      state.tableColumnDealPrice,
-    ],
-    getColumnsByResource: (state) => (resource, additional) => {
-      const keys = RESOURCE_COLUMN_KEYS[resource];
-      if (!keys) return [];
-      return filterColumnsByKey(state, additional, keys);
-    },
-    getCurrentAvailability: (state) => state.currentAvailability,
+  persist: {
+    key: STORAGE_KEYS.RESOURCES,
+    storage: storageService.getStorage(),
   },
-};
+});

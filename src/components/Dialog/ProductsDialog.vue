@@ -83,8 +83,8 @@
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import { ref, computed, inject, watch, onMounted } from "vue";
 
-import { useStore } from "vuex";
-const store = useStore();
+import { useProductsStore } from "@/store/products";
+const productsStore = useProductsStore();
 const props = defineProps({
   modelValue: Boolean,
   inputProducts: Array,
@@ -116,8 +116,8 @@ onMounted(async () => {
     props.availableProducts.push(product);
   });
 });
-const addColumn = computed(() => [store.getters["products/getAddColumn"]]);
-const userColumn = computed(() => [store.getters["products/getUserColumn"]]);
+const addColumn = computed(() => [productsStore.tableColumnAdd]);
+const userColumn = computed(() => [productsStore.tableColumnOwner]);
 
 const savedProducts = ref(props.inputProducts || []);
 const temporarySelectedProducts = ref([]);

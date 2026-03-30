@@ -68,11 +68,13 @@
 </template>
 <script setup>
 import { computed, ref } from "vue";
-import { useStore } from "vuex";
 import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
 const props = defineProps({
   entity: Object,
@@ -83,16 +85,17 @@ const props = defineProps({
   title: String,
 });
 
-const store = useStore();
-
-const productBaseRows = computed(() => store.getters["products/getColumns"]);
+const systemEventsStore = useSystemEventsStore();
+const productsStore = useProductsStore();
+const productBaseRows = computed(() => productsStore.getColumns);
+const resourcesStore = useResourcesStore();
 
 const additionalProductRows = computed(
-  () => store.getters["products/getAdditionalBaseColumns"],
+  () => productsStore.getAdditionalBaseColumns,
 );
 
 const organizationProductRow = computed(
-  () => store.getters["products/getOrganizationColumn"],
+  () => productsStore.tableColumnOrganization,
 );
 
 const productRows = computed(() => [
@@ -102,15 +105,14 @@ const productRows = computed(() => [
 ]);
 
 const tableResourceColumns = computed(
-  () => store.getters["users/getTableColumnsWithQuantity"],
+  () => resourcesStore.getTableColumnsWithQuantity,
 );
 
-const normalizeResources = () => {
+const normalizeResources = () =>
   props.entity.resourcesContent.map(({ quantity, resource }) => ({
     ...resource,
     quantity,
   }));
-};
 
 const fullEntity = {
   product: props.entity ?? null,
@@ -121,7 +123,5 @@ const rawDataButton = ref(false);
 
 const selectedButton = ref("");
 
-const eventTableButtons = computed(
-  () => store.getters["systemEvents/getEventTableButtons"],
-);
+const eventTableButtons = computed(() => systemEventsStore.eventTableButtons);
 </script>

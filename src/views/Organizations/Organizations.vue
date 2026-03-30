@@ -8,17 +8,18 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { useStore } from "vuex";
+import { computed, inject } from "vue";
 import OrganizationsTable from "@/components/Table/OrganizationsTable.vue";
-const store = useStore();
+import { useOrganizationsStore } from "@/store/organizations";
+const organizationsStore = useOrganizationsStore();
+const snackbarProvider = inject("snackbarProvider");
 
 try {
-  await store.dispatch("organizations/fetchOrgs");
+  await organizationsStore.fetchOrganizations();
 } catch (error) {
   snackbarProvider.showErrorSnackbar("Couldn't fetch the organizations!");
 }
 
-const tableColumns = computed(() => store.getters["organizations/getColumns"]);
-const organizations = computed(() => store.getters["organizations/getOrgs"]);
+const tableColumns = computed(() => organizationsStore.tableColumns);
+const organizations = computed(() => organizationsStore.organizations);
 </script>

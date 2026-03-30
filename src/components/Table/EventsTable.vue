@@ -36,10 +36,10 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import { useStore } from "vuex";
 import UserToolTip from "../Tooltip/UserToolTip.vue";
 import { navigateToItemDetails } from "@/utils/row-click-handler";
 import { useRouter } from "vue-router";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const props = defineProps({
   headers: Array,
@@ -47,10 +47,10 @@ const props = defineProps({
 });
 
 const search = ref("");
-const store = useStore();
+const systemEventsStore = useSystemEventsStore();
 const router = useRouter();
 
-const eventTypes = computed(() => store.getters["systemEvents/getEventTypes"]);
+const eventTypes = computed(() => systemEventsStore.eventTypes);
 
 const navigateToItemPage = (row, item) => {
   const eventId = item.internalItem.key;

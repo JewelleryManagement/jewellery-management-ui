@@ -44,7 +44,6 @@
 
 <script setup>
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
 import { computed } from "vue";
 import CreatedOrDeletedEvent from "./CreatedOrDeletedEvent.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
@@ -52,6 +51,7 @@ import UpdatedEvent from "./UpdatedEvent.vue";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 dayjs.extend(relativeTime);
 dayjs.extend(customParseFormat);
@@ -59,19 +59,17 @@ dayjs.extend(customParseFormat);
 const timeAgo = (input) => dayjs(input, "DD/MM/YYYY, HH:mm:ss", true).fromNow();
 
 const route = useRoute();
-const store = useStore();
+const systemEventsStore = useSystemEventsStore();
 
 const eventId = route.params.eventId;
 
-const event = await store.dispatch("systemEvents/getSystemEvent", eventId);
+const event = await systemEventsStore.fetchSystemEvent(eventId);
 
-const eventTypes = computed(() => store.getters["systemEvents/getEventTypes"]);
+const eventTypes = computed(() => systemEventsStore.eventTypes);
 
 const date = new Date(event.timestamp).toLocaleString("en-GB");
 
-const typeColorMap = computed(
-  () => store.getters["systemEvents/getTypeColorMap"],
-);
+const typeColorMap = computed(() => systemEventsStore.typeColorMap);
 
 const color = computed(
   () => typeColorMap.value[eventTypes.value[event.type].type] ?? "grey",

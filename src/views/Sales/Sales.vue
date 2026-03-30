@@ -11,16 +11,16 @@
 
 <script setup>
 import { inject, computed } from "vue";
-import { useStore } from "vuex";
 import SalesTable from "@/components/Table/SalesTable.vue";
+import { useSalesStore } from "@/store/sales";
 
 const snackbarProvider = inject("snackbarProvider");
-const store = useStore();
+const salesStore = useSalesStore();
 try {
-  await store.dispatch("sales/fetchSales");
+  await salesStore.fetchSales();
 } catch (error) {
   snackbarProvider.showErrorSnackbar("Couldn't fetch the sales!");
 }
-const tableColumns = computed(() => store.getters["sales/getColumns"]);
-const sales = computed(() => store.getters["sales/getSales"]);
+const tableColumns = computed(() => salesStore.tableColumns);
+const sales = computed(() => salesStore.sales);
 </script>

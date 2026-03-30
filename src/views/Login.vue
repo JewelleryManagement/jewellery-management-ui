@@ -65,12 +65,12 @@ import {
   useEmailFieldRules,
   usePasswordFieldRules,
 } from "../utils/validation-rules";
-import { useStore } from "vuex";
 import { ref, inject } from "vue";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/store/auth";
 const snackbarProvider = inject("snackbarProvider");
 
-const store = useStore();
+const authStore = useAuthStore();
 const router = useRouter();
 const visible = ref(false);
 const emailInput = ref("");
@@ -88,7 +88,7 @@ const submitHandler = async () => {
 
 const userLogin = async (data) => {
   try {
-    const user = await store.dispatch("auth/login", data);
+    const user = await authStore.login(data);
     snackbarProvider.showSuccessSnackbar("Successfully logged in!");
     user ? router.push("/home") : "";
   } catch (error) {

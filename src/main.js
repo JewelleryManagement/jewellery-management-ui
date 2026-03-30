@@ -1,7 +1,27 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import { registerPlugins } from "@/plugins";
+import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { storageService } from "./store/storageService";
+
+const STORE_VERSION = 1;
+const VERSION_KEY = "store_version";
+
+const savedVersion = Number(localStorage.getItem(VERSION_KEY) || 0);
+
+if (savedVersion !== STORE_VERSION) {
+  storageService.clearStorage();
+
+  storageService.setItem(VERSION_KEY, STORE_VERSION);
+}
+
 const app = createApp(App);
+const pinia = createPinia();
+
+pinia.use(piniaPluginPersistedstate);
+
+app.use(pinia);
 registerPlugins(app);
 
 import {

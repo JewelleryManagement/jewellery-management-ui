@@ -12,15 +12,17 @@
 import UserInOrganizationForm from "@/components/Form/UserInOrganizationForm.vue";
 import { computed, ref, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
+import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
 const snackbarProvider = inject("snackbarProvider");
-const store = useStore();
+const organizationsStore = useOrganizationsStore();
+const usersStore = useUsersStore();
 
 onMounted(async () => {
   await fetchSelectedUser();
 });
-const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
+const allOrgsByUser = computed(() => organizationsStore.organizations);
 const selectedOrg = computed(
   () =>
     (selectedOrg.value = allOrgsByUser.value.filter(
@@ -43,7 +45,7 @@ const editUserInOrg = async () => {
     },
   };
   try {
-    const res = await store.dispatch("organizations/editUserInOrg", data);
+    const res = await organizationsStore.editUserInOrg(data);
     snackbarProvider.showSuccessSnackbar("Successfully Edited user in org!");
     router.push(`/organizations/${route.params.organizationId}`);
   } catch (error) {
@@ -54,8 +56,8 @@ const editUserInOrg = async () => {
 };
 const fetchSelectedUser = async () => {
   try {
-    let orgMembers = await store
-      .dispatch("users/fetchUsersByOrganization", selectedOrg.value.id)
+    let orgMembers = await usersStore
+      .fetchUsersByOrganization(selectedOrg.value.id)
       .then((usersResponse) => {
         const formattedUsers = usersResponse.members.map((singleUser) => {
           return {

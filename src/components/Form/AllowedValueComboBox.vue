@@ -56,8 +56,8 @@
 
 <script setup>
 import { ref, watch } from "vue";
-import { useStore } from "vuex";
 import IconButton from "../Button/IconButton.vue";
+import { useAllowedValuesStore } from "@/store/allowedValues";
 
 const props = defineProps({
   modelValue: [String, Number],
@@ -145,7 +145,7 @@ const applySkuRules = () => {
   return props.modelValue ? props.rules : [];
 };
 
-const store = useStore();
+const allowedValuesStore = useAllowedValuesStore();
 
 const deleteDialog = ref(false);
 const valueToDelete = ref("");
@@ -158,11 +158,12 @@ function confirmDelete(selected) {
 }
 
 async function handleDelete() {
-  await store.dispatch("allowedValues/deleteAllowedValue", {
+  await allowedValuesStore.deleteAllowedValue({
     resourceClazz: props.resourceClazz,
     fieldName: props.fieldName,
     fieldValue: valueToDelete.value,
   });
   deleteDialog.value = false;
+  emit("update:modelValue", "");
 }
 </script>

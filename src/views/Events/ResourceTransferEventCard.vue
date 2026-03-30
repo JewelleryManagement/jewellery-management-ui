@@ -49,25 +49,25 @@
 
 <script setup>
 import { computed, ref } from "vue";
-import { useStore } from "vuex";
 import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.vue";
+import { useResourcesStore } from "@/store/resources";
 const props = defineProps({
   entity: Object,
   title: String,
 });
 
-const store = useStore();
+const resourcesStore = useResourcesStore();
 
 const resourceRows = computed(
   () =>
-    store.getters["resources/getColumnsByResource"]?.(
+    resourcesStore.getColumnsByResource(
       props.entity?.transferredResource?.resource?.clazz,
       true,
     ) || [],
 );
 
 const additionalResourceRows = computed(
-  () => store.getters["resources/getTableColumnsOrganizationTransfer"],
+  () => resourcesStore.getTableColumnsOrganizationTransfer,
 );
 
 const rows = [...additionalResourceRows.value, ...resourceRows.value];

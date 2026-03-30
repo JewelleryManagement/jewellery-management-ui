@@ -15,16 +15,16 @@
 
 <script setup>
 import UserForm from "@/components/Form/UserForm.vue";
-import { useStore } from "vuex";
 import { ref, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { mapUserDataToNewData } from "@/utils/data-formatter";
+import { useUsersStore } from "@/store/users";
 const snackbarProvider = inject("snackbarProvider");
 
 const form = ref(null);
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const usersStore = useUsersStore();
 const pageTitle = computed(() => route.meta.title);
 const userData = ref({});
 
@@ -37,13 +37,13 @@ const submitPostUser = async () => {
   const newData = mapUserDataToNewData(userData);
 
   try {
-    const res = await store.dispatch("users/createUser", newData);
+    const res = await usersStore.createUser(newData);
     snackbarProvider.showSuccessSnackbar(
-      `Successfully created user ${res.firstName}`
+      `Successfully created user ${res.firstName}`,
     );
     router.push("/users");
   } catch (error) {
-    const errors = Object.values(error?.response?.data?.error).join(', ');
+    const errors = Object.values(error?.response?.data?.error).join(", ");
     snackbarProvider.showErrorSnackbar(errors);
   }
 };
@@ -51,7 +51,7 @@ const submitPostUser = async () => {
 const handleSubmit = async () => {
   if (!(await isFormValid())) return;
 
- await submitPostUser();
+  await submitPostUser();
 };
 
 const resetForm = () => {

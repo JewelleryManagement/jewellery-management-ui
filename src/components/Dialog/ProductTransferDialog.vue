@@ -27,9 +27,10 @@
 <script setup>
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import { ref, computed, inject } from "vue";
-import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
 import { useRouter } from "vue-router";
+import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   modelValue: Boolean,
@@ -37,17 +38,18 @@ const props = defineProps({
 });
 const { modelValue, product } = props;
 const [selectedOrg, form] = [ref(""), ref(null)];
-const store = useStore();
+const productsStore = useProductsStore();
+const organizationsStore = useOrganizationsStore();
 
 const router = useRouter();
 
 const emits = defineEmits(["close-dialog"]);
 
-const allOrgsByUser = computed(() => store.getters["organizations/getOrgs"]);
+const allOrgsByUser = computed(() => organizationsStore.organizations);
 
 const postProducTransfer = async (data) => {
   try {
-    await store.dispatch("products/transferProduct", data);
+    await productsStore.transferProduct(data);
     snackbarProvider.showSuccessSnackbar("Successfully transferred product!");
     closeDialog("submitted");
   } catch (error) {

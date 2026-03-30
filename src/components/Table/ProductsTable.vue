@@ -99,11 +99,11 @@
 <script setup>
 import { navigateToItemDetails } from "../../utils/row-click-handler.js";
 import { ref, computed, toRefs } from "vue";
-import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import IconButton from "../Button/IconButton.vue";
 import ResourceContentDialog from "../Dialog/ResourceContentDialog.vue";
 import ProductsContentDialog from "../Dialog/ProductsContentDialog.vue";
+import { useProductsStore } from "@/store/products.js";
 const route = useRoute();
 const isEventPage = computed(() => route.path.startsWith("/system-events"));
 const router = useRouter();
@@ -113,7 +113,7 @@ const props = defineProps({
   additionalColumnsRight: Array,
   title: String,
 });
-const store = useStore();
+const productsStore = useProductsStore();
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);
@@ -121,7 +121,7 @@ const { products, additionalColumnsLeft, additionalColumnsRight } =
 const tableColumns = computed(() => {
   const leftColumns = additionalColumnsLeft.value || [];
   const rightColumns = additionalColumnsRight.value || [];
-  const defaultColumns = store.getters["products/getColumns"];
+  const defaultColumns = productsStore.getColumns;
 
   return [...leftColumns, ...defaultColumns, ...rightColumns];
 });
@@ -131,9 +131,7 @@ const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 
 const search = ref("");
 
-const allProducts = computed(
-  () => products.value ?? store.getters["products/allProducts"],
-);
+const allProducts = computed(() => products.value ?? productsStore.products);
 
 const openDialog = (item, content) => {
   if (content == "resources") {

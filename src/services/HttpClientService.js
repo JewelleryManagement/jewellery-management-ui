@@ -1,6 +1,6 @@
 import axios from "@/axios.config";
-import store from "@/store/store";
 import router from "@/router/index";
+import { useAuthStore } from "@/store/auth";
 
 // GET REQUESTS
 async function fetchData(endpoint, options = {}) {
@@ -11,7 +11,7 @@ async function fetchData(endpoint, options = {}) {
     }
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      store.dispatch("auth/logout");
+      useAuthStore().logout();
       router.push("/login");
     }
 

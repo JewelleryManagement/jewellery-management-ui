@@ -5,17 +5,17 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { computed } from "vue";
+import { useProductsStore } from "@/store/products";
 
 const props = defineProps({ saleData: Object, product: Object });
-const store = useStore();
+const productsStore = useProductsStore();
 
 const getProductInformationHtml = (product) => {
   const tableColumns = computed(() => [
-    ...store.state.products.tableColumns,
-    store.state.products.tableColumnOwner,
-    store.state.products.tableColumnOrganization,
+    ...productsStore.tableColumns,
+    productsStore.tableColumnOwner,
+    productsStore.tableColumnOrganization,
   ]).value;
 
   let productInfoHtml = "";

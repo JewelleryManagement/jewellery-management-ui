@@ -43,12 +43,12 @@ import {
 } from "../../utils/validation-rules.js";
 import { ref, reactive, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
+import { useOrganizationsStore } from "@/store/organizations.js";
 
 const smallFieldRules = [...useInputValidate(), ...useTextFieldRules()];
 
 const snackbarProvider = inject("snackbarProvider");
-const store = useStore();
+const organizationsStore = useOrganizationsStore();
 const [route, router] = [useRoute(), useRouter()];
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
@@ -72,9 +72,9 @@ const isFormValid = async () => {
 
 const postOrg = async (data) => {
   try {
-    await store.dispatch("organizations/postOrg", data);
+    await organizationsStore.postOrg(data);
     snackbarProvider.showSuccessSnackbar(
-      "Successfully created an organization!"
+      "Successfully created an organization!",
     );
     router.push("/organizations");
   } catch (error) {

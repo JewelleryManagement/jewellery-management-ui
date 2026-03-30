@@ -122,26 +122,30 @@ import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
 import { ref, computed, inject, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { handleNotFound } from "@/utils/action-guard";
+import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
+import { useSystemEventsStore } from "@/store/systemEvents";
+import { useResourcesStore } from "@/store/resources";
 
-const store = useStore();
+const usersStore = useUsersStore();
+const organizationsStore = useOrganizationsStore();
+const productsStore = useProductsStore();
+const systemEventsStore = useSystemEventsStore();
+const resourcesStore = useResourcesStore();
 const route = useRoute();
 const router = useRouter();
 const snackbarProvider = inject("snackbarProvider");
 const organizationResources = ref([]);
 const tableColumnsResources = computed(
-  () => store.getters["resources/getAvailabilityUpdateColumns"],
+  () => resourcesStore.getAvailabilityUpdateColumns,
 );
-const orgUsersColumns = computed(
-  () => store.getters["users/getOrganizationColumns"],
-);
+const orgUsersColumns = computed(() => usersStore.getOrganizationColumns);
 const organization = ref({});
 const orgProducts = ref([]);
 const orgMembers = ref([]);
-const disassemblyColumns = computed(
-  () => store.getters["products/getActionsColumn"],
-);
+const disassemblyColumns = computed(() => [productsStore.tableActions]);
 const orgId = route.params.id;
 const addUserToOrgPath = ref(`/organizations/${orgId}/add-user`);
 onMounted(async () => {
@@ -150,10 +154,7 @@ onMounted(async () => {
 
 const fetchResourcesForOrganization = async () => {
   try {
-    const res = await store.dispatch(
-      "organizations/fetchOrganizationResources",
-      orgId,
-    );
+    const res = await organizationsStore.fetchOrganizationResources(orgId);
     organization.value = res.owner;
     organizationResources.value = [];
     for (const item of res.resourcesAndQuantities) {
@@ -170,8 +171,8 @@ const fetchResourcesForOrganization = async () => {
 };
 const fetchProductsForOrganization = async () => {
   try {
-    orgProducts.value = await store
-      .dispatch("products/fetchProductsByOrganization", orgId)
+    orgProducts.value = await productsStore
+      .fetchProductsByOrganization(orgId)
       .then((productsResponse) => productsResponse.products);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
@@ -181,8 +182,8 @@ const fetchProductsForOrganization = async () => {
 };
 const fetchUsersForOrganization = async () => {
   try {
-    orgMembers.value = await store
-      .dispatch("users/fetchUsersByOrganization", orgId)
+    orgMembers.value = await usersStore
+      .fetchUsersByOrganization(orgId)
       .then((usersResponse) => {
         const formattedUsers = usersResponse.members.map((singleUser) => {
           return {
@@ -210,10 +211,7 @@ const onDelete = async (userId) => {
   );
   if (confirmation) {
     try {
-      await store.dispatch("organizations/removeUser", {
-        userId,
-        orgId,
-      });
+      await organizationsStore.removeUser({ userId, orgId });
     } catch (error) {
       if (await handleNotFound(router, error, "User")) return;
 
@@ -225,13 +223,9 @@ const onDelete = async (userId) => {
 
 const selectedButton = ref(null);
 
-const tableButtons = computed(
-  () => store.getters["organizations/getTableButtons"],
-);
+const tableButtons = computed(() => organizationsStore.tableButtons);
 
-const events = await store.dispatch("systemEvents/getEventsRelatedTo", orgId);
+const events = await systemEventsStore.fetchEventsRelatedTo(orgId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>

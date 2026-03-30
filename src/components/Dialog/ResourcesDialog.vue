@@ -62,10 +62,11 @@
 import { usePositiveNumberRules } from "../../utils/validation-rules";
 import { ref, computed, watch, inject } from "vue";
 import { useRoute } from "vue-router";
+import { useResourcesStore } from "@/store/resources";
 const snackbarProvider = inject("snackbarProvider");
 const route = useRoute();
-import { useStore } from "vuex";
-const store = useStore();
+
+const resourcesStore = useResourcesStore();
 const isEditPage = route.path.includes("edit");
 const emits = defineEmits(["save-resources-dialog", "close-dialog"]);
 const props = defineProps({
@@ -79,9 +80,9 @@ const [currentInputQuantities, savedQuantitiesInProduct] = [
   ref([]),
 ];
 const tableColumns = [
-  computed(() => store.state.resources.tableColumnAddQuantity).value,
-  computed(() => store.state.resources.tableColumnQuantity).value,
-  ...computed(() => store.state.resources.tableColumns).value,
+  computed(() => resourcesStore.tableColumnAddQuantity).value,
+  computed(() => resourcesStore.tableColumnQuantity).value,
+  ...computed(() => resourcesStore.tableColumns).value,
 ];
 
 const copyCurrentInputQuantities = () => {
@@ -98,7 +99,8 @@ const copyCurrentInputQuantities = () => {
 const addProductQuantitiesToAvailableInUser = () => {
   currentInputQuantities.value.forEach((currentInputQuantity) => {
     let matchingResourceContent = props.availableResources.find(
-      (resourceInUser) => resourceInUser.id === currentInputQuantity.resource.id
+      (resourceInUser) =>
+        resourceInUser.id === currentInputQuantity.resource.id,
     );
     if (matchingResourceContent) {
       matchingResourceContent.quantity += currentInputQuantity.quantity;
@@ -113,7 +115,7 @@ const addProductQuantitiesToAvailableInUser = () => {
 const populateCurrentInputQuantitiesFromSavedInProduct = () => {
   currentInputQuantities.value = [];
   savedQuantitiesInProduct.value.forEach(
-    ({ id, quantity }) => (currentInputQuantities.value[id] = quantity)
+    ({ id, quantity }) => (currentInputQuantities.value[id] = quantity),
   );
 };
 
@@ -133,7 +135,7 @@ watch(
   () => props.clearTable,
   async (newId, oldId) => {
     clearTableValues();
-  }
+  },
 );
 
 const saveTableValues = () => {
@@ -145,8 +147,8 @@ const saveTableValues = () => {
       let currentResourcePrice =
         Number(
           props.availableResources.find(
-            (resource) => resource.id === resourceId
-          ).pricePerQuantity
+            (resource) => resource.id === resourceId,
+          ).pricePerQuantity,
         ) * Number(quantity);
 
       savedQuantitiesInProduct.value.push({
@@ -158,7 +160,7 @@ const saveTableValues = () => {
     emits("save-resources-dialog", savedQuantitiesInProduct.value);
   } else {
     snackbarProvider.showErrorSnackbar(
-      "There needs to be at least one resource in the product contents"
+      "There needs to be at least one resource in the product contents",
     );
   }
 };
@@ -187,7 +189,7 @@ const areQuantitiesValid = () => {
 const closeDialog = () => {
   currentInputQuantities.value = [];
   savedQuantitiesInProduct.value.forEach(
-    ({ id, quantity }) => (currentInputQuantities.value[id] = quantity)
+    ({ id, quantity }) => (currentInputQuantities.value[id] = quantity),
   );
   emits("close-dialog", "resources");
 };

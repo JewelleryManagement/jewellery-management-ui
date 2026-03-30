@@ -1,17 +1,17 @@
 export async function addNewAllowedValuesIfNeeded(
-  store,
+  allowedValuesStore,
   resourceClazz,
-  formData
+  formData,
 ) {
-  const fields =
-    store.getters["allowedValues/getAllowedFieldsByType"](resourceClazz);
+  const fields = allowedValuesStore.allowedFieldsByType[resourceClazz];
 
   for (const fieldName of fields) {
     const fieldValue = formData[fieldName];
-    const allowed = store.getters["allowedValues/getAllowedValues"](
+    const allowed = allowedValuesStore.getAllowedValues(
       resourceClazz,
-      fieldName
+      fieldName,
     );
+
     if (
       fieldValue &&
       typeof fieldValue.value === "string" &&
@@ -20,10 +20,10 @@ export async function addNewAllowedValuesIfNeeded(
         (item) =>
           item.value.trim().toLowerCase() ===
             fieldValue.value.trim().toLowerCase() &&
-          item.sku.trim().toLowerCase() === fieldValue.sku.trim().toLowerCase()
+          item.sku.trim().toLowerCase() === fieldValue.sku.trim().toLowerCase(),
       )
     ) {
-      await store.dispatch("allowedValues/addAllowedValue", {
+      await allowedValuesStore.addAllowedValue({
         resourceClazz,
         fieldName,
         fieldValue,
@@ -32,22 +32,21 @@ export async function addNewAllowedValuesIfNeeded(
   }
 }
 
-export const fetchAllowedValues = async (store, resourceClazz) => {
-  const fields = store.getters["allowedValues/getAllowedFieldsByType"](
-    resourceClazz.value
-  );
+export const fetchAllowedValues = async (
+  allowedVasluesStore,
+  resourceClazz,
+) => {
+  const fields = allowedVasluesStore.allowedFieldsByType[resourceClazz.value];
+  console.log(fields);
   await Promise.all(
     fields.map((fieldName) =>
-      store.dispatch("allowedValues/fetchAllowedValues", {
+      allowedVasluesStore.fetchAllowedValues({
         resourceClazz: resourceClazz.value ?? resourceClazz,
         fieldName,
-      })
-    )
+      }),
+    ),
   );
 };
 
-export const getAllowedValue = (store, resourceClazz, fieldName) =>
-  store.getters["allowedValues/getAllowedValues"](
-    resourceClazz.value,
-    fieldName
-  );
+export const getAllowedValue = (allowedValuesStore, resourceClazz, fieldName) =>
+  allowedValuesStore.getAllowedValues(resourceClazz.value, fieldName);

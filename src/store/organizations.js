@@ -1,8 +1,10 @@
+import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
   fetchOrgs,
-  postOrg,
-  getUserOrganizations,
   getResourceAvailabilityByOrganization,
+  postOrg,
   getUserOrganizationsByPermission,
   postResourceToOrg,
   removeResourceFromOrg,
@@ -13,9 +15,8 @@ import {
   getOrganization,
 } from "@/services/HttpClientService";
 
-export default {
-  namespaced: true,
-  state: {
+export const useOrganizationsStore = defineStore("organizations", {
+  state: () => ({
     selectedOrganization: {},
     organizations: [],
     tableColumns: [
@@ -24,6 +25,7 @@ export default {
       { key: "address", title: "Address" },
       { key: "note", title: "Note" },
     ],
+    tableColumnQuantity: { key: "quantity", title: "Quantity" },
     userPermissions: [
       "DESTROY_ORGANIZATION",
       "MANAGE_USERS",
@@ -38,7 +40,6 @@ export default {
       "RETURN_PRODUCT",
       "TRANSFER_RESOURCE",
     ],
-    tableColumnQuantity: { key: "quantity", title: "Quantity" },
     tableButtons: [
       { label: "Resources", icon: "mdi-diamond-stone" },
       { label: "Products", icon: "mdi-package-variant" },
@@ -52,71 +53,57 @@ export default {
         icon: "mdi-calendar",
       },
     ],
-  },
-  mutations: {
-    setOrgs(state, organizations) {
-      state.organizations = organizations;
-    },
-    setSelectedOrganization(state, selectedOrganization) {
-      state.selectedOrganization = selectedOrganization;
-    },
-  },
-  actions: {
-    async fetchOrgs({ commit }) {
-      const res = await fetchOrgs();
-      commit("setOrgs", res);
-    },
-    async fetchOrganizationResources({ commit }, orgId) {
-      return await getResourceAvailabilityByOrganization(orgId);
-    },
-    async postOrg({ commit }, data) {
-      await postOrg(data);
-    },
-    async fetchUserOrgsByPermission({ commit }, permission) {
-      return await getUserOrganizationsByPermission(permission);
-    },
-    async postResourceToOrg({ commit }, data) {
-      await postResourceToOrg(data);
-    },
-    async removeResourceFromOrg({ commit }, data) {
-      const { organizationId, resourceId, quantity } = data;
-      await removeResourceFromOrg(organizationId, resourceId, quantity);
-    },
-    async transferResourceFromOrg({ commit }, data) {
-      await postResourceTranferToOrg(data);
-    },
-    async addUserToOrg({ commit }, data) {
-      const { requestBody, orgId } = data;
-      return await postUserToOrg(orgId, requestBody);
-    },
-    async editUserInOrg({ commit }, data) {
-      const { userId, orgId, requestBody } = data;
-      return await putUserToOrg(orgId, userId, requestBody);
-    },
-    async removeUser({ commit }, data) {
-      const { userId, orgId } = data;
-      return await removeUserFromOrg(orgId, userId);
-    },
-
-    async fetchOrganization({ commit }, id) {
-      const data = await getOrganization(id);
-
-      commit("setSelectedOrganization", data);
-
-      return data;
-    },
-  },
+  }),
   getters: {
-    getOrgs: (state) => {
-      if (state.organizations) return state.organizations;
-    },
-    getColumns: (state) => [...state.tableColumns],
     getAllColumnsWithQuantityColumn: (state) => [
       state.tableColumnQuantity,
       ...state.tableColumns,
     ],
-    getUserPermissions: (state) => state.userPermissions,
-    getTableButtons: (state) => state.tableButtons,
-    getSelectedOrganization: (state) => state.selectedOrganization,
   },
-};
+  actions: {
+    async fetchOrganizations() {
+      const orgs = await fetchOrgs();
+      this.organizations = orgs;
+    },
+    async fetchOrganizationResources(orgId) {
+      return await getResourceAvailabilityByOrganization(orgId);
+    },
+    async postOrg(data) {
+      await postOrg(data);
+    },
+    async fetchUserOrgsByPermission(permission) {
+      return await getUserOrganizationsByPermission(permission);
+    },
+    async postResourceToOrg(data) {
+      await postResourceToOrg(data);
+    },
+    async removeResourceFromOrg(data) {
+      const { organizationId, resourceId, quantity } = data;
+      await removeResourceFromOrg(organizationId, resourceId, quantity);
+    },
+    async transferResourceFromOrg(data) {
+      await postResourceTranferToOrg(data);
+    },
+    async addUserToOrg(data) {
+      const { requestBody, orgId } = data;
+      return await postUserToOrg(orgId, requestBody);
+    },
+    async editUserInOrg(data) {
+      const { userId, orgId, requestBody } = data;
+      return await putUserToOrg(orgId, userId, requestBody);
+    },
+    async removeUser(data) {
+      const { userId, orgId } = data;
+      return await removeUserFromOrg(orgId, userId);
+    },
+    async fetchOrganization(id) {
+      const data = await getOrganization(id);
+      this.selectedOrganization = data;
+      return data;
+    },
+  },
+  persist: {
+    key: STORAGE_KEYS.ORGANIZATIONS,
+    storage: storageService.getStorage(),
+  },
+});

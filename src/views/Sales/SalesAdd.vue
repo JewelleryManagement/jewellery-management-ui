@@ -47,7 +47,6 @@
 <script setup>
 import { ref, computed, watch, inject, reactive } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useStore } from "vuex";
 import {
   SaleInputs,
   SaleButtons,
@@ -57,10 +56,17 @@ import {
   ProductsDialog,
   ResourcesDialog,
 } from "@/components";
+import { useUsersStore } from "@/store/users";
+import { useOrganizationsStore } from "@/store/organizations";
+import { useProductsStore } from "@/store/products";
+import { useSalesStore } from "@/store/sales";
 
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
-const store = useStore();
+const usersStore = useUsersStore();
+const organizationsStore = useOrganizationsStore();
+const productsStore = useProductsStore();
+const salesStore = useSalesStore();
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
@@ -68,7 +74,7 @@ const [resourcesDialog, resourcesForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const clearTable = ref(false);
 
-const allUsers = computed(() => store.getters["users/getAllUsers"]).value;
+const allUsers = computed(() => usersStore.users).value;
 
 const sellObject = reactive({
   seller: {},
@@ -82,8 +88,8 @@ watch(
   () => sellObject.seller,
   async (newSeller) => {
     if (newSeller.id) {
-      resourcesForSale.value = await store
-        .dispatch("organizations/fetchOrganizationResources", newSeller.id)
+      resourcesForSale.value = await organizationsStore
+        .fetchOrganizationResources(newSeller.id)
         .then((resourcesResponse) =>
           resourcesResponse.resourcesAndQuantities.map(
             (resourceAndQuantity) => {
@@ -91,19 +97,19 @@ watch(
                 quantity: resourceAndQuantity.quantity,
                 ...resourceAndQuantity.resource,
               };
-            }
-          )
+            },
+          ),
         );
 
-      productsForSale.value = await store
-        .dispatch("products/fetchProductsByOrganization", newSeller.id)
+      productsForSale.value = await productsStore
+        .fetchProductsByOrganization(newSeller.id)
         .then((productsResponse) => {
           return productsResponse.products.filter(
-            (product) => !product.contentOf && !product.partOfSale
+            (product) => !product.contentOf && !product.partOfSale,
           );
         });
     }
-  }
+  },
 );
 
 const isSellerSelected = computed(() => !!sellObject.seller?.id);
@@ -165,7 +171,7 @@ const isProductsValidated = () => {
 
   if (!selectedProducts && !selectedResources) {
     snackbarProvider.showErrorSnackbar(
-      "Please select a product or a resource!"
+      "Please select a product or a resource!",
     );
     return false;
   }
@@ -219,7 +225,7 @@ const buildSaleRequestData = () => {
 
 const postSale = async (data) => {
   try {
-    await store.dispatch("sales/postSale", data);
+    await salesStore.postSale(data);
     snackbarProvider.showSuccessSnackbar("Successfully sold the product!");
     router.push("/sales");
   } catch (error) {

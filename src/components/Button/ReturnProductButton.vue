@@ -18,12 +18,12 @@
 
 <script setup>
 import { isMediumScreen } from "@/utils/display";
-import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { inject } from "vue";
 import IconButton from "./IconButton.vue";
 import { handleNotFound } from "@/utils/action-guard";
-const store = useStore();
+import { useSalesStore } from "@/store/sales";
+const salesStore = useSalesStore();
 const [router, route] = [useRouter(), useRoute()];
 const snackbarProvider = inject("snackbarProvider");
 const isSalesPage = route.path.includes("/sales");
@@ -42,7 +42,7 @@ const submitReturn = () => {
 
 const submitSaleReturn = async () => {
   try {
-    await store.dispatch("sales/returnProduct", currentProductId);
+    await salesStore.returnProduct(currentProductId);
     snackbarProvider.showSuccessSnackbar("Product has been returned from sale");
     isSalesPage ? router.push("/sales") : router.push("/products");
   } catch (error) {

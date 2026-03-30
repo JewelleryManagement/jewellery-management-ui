@@ -54,16 +54,20 @@ import EventsTable from "@/components/Table/EventsTable.vue";
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
+import { useSalesStore } from "@/store/sales";
+import { useSystemEventsStore } from "@/store/systemEvents";
+import { useProductsStore } from "@/store/products";
 
 const store = useStore();
+const salesStore = useSalesStore();
+const systemEventsStore = useSystemEventsStore();
+const productsStore = useProductsStore();
 const route = useRoute();
 const saleId = route.params.id;
 
-const tableColumnsResources = computed(
-  () => store.getters["sales/getResourceColumns"],
-);
+const tableColumnsResources = computed(() => salesStore.getResourceColumns);
 
-const currentSale = computed(() => store.getters["sales/getSelectedSale"]);
+const currentSale = computed(() => salesStore.selectedSale);
 const saleProducts = ref(currentSale.value.products);
 const saleResources = ref(
   currentSale.value.resources.map((saleResource) => {
@@ -75,20 +79,18 @@ const saleResources = ref(
   }),
 );
 const productsTableAdditionalColumns = computed(() => [
-  store.state.products.tableColumnOrganization,
-  store.state.products.tableColumnOwner,
-  store.state.sales.tableColumnReturn,
+  productsStore.tableColumnOrganization,
+  productsStore.tableColumnOwner,
+  salesStore.tableColumnReturn,
 ]);
 
 const selectedButton = ref(null);
 
-const tableButtons = computed(() => store.getters["sales/getTableButtons"]);
+const tableButtons = computed(() => salesStore.tableButtons);
 
-const events = await store.dispatch("systemEvents/getEventsRelatedTo", saleId);
+const events = await systemEventsStore.fetchEventsRelatedTo(saleId);
 
-const eventHeaders = computed(
-  () => store.getters["systemEvents/getEventHeaders"],
-);
+const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 </script>
 
 <style lang="scss" scoped></style>

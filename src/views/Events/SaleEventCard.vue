@@ -65,12 +65,14 @@
 </template>
 <script setup>
 import { computed, ref } from "vue";
-import { useStore } from "vuex";
 import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
+import { useProductsStore } from "@/store/products";
+import { useSalesStore } from "@/store/sales";
+import { useSystemEventsStore } from "@/store/systemEvents";
 
 const props = defineProps({
   sale: Object,
@@ -81,19 +83,17 @@ const props = defineProps({
   },
 });
 
-const store = useStore();
+const systemEventsStore = useSystemEventsStore();
+const productsStore = useProductsStore();
+const salesStore = useSalesStore();
 
-const saleRows = computed(
-  () => store.getters["sales/getColumnsWithOrganizationSeller"],
-);
+const saleRows = computed(() => [...salesStore.tableColumns]);
 
 const additionalProductColumns = computed(
-  () => store.getters["products/getAdditionalBaseColumns"],
+  () => productsStore.getAdditionalBaseColumns,
 );
 
-const tableResourceColumns = computed(
-  () => store.getters["sales/getResourceColumns"],
-);
+const tableResourceColumns = computed(() => salesStore.getResourceColumns);
 
 const rawDataButton = ref(false);
 
@@ -106,7 +106,5 @@ const normalizedResources = props.sale.resources.map((resource) => ({
 
 const selectedButton = ref("");
 
-const eventTableButtons = computed(
-  () => store.getters["systemEvents/getEventTableButtons"],
-);
+const eventTableButtons = computed(() => systemEventsStore.eventTableButtons);
 </script>

@@ -1,18 +1,19 @@
+import { defineStore } from "pinia";
+import { STORAGE_KEYS } from "./storageKeys";
+import { storageService } from "./storageService";
 import {
-  getAllEvents,
   getAllEventsRelatedTo,
   getSystemEvent,
+  getAllEvents,
 } from "@/services/HttpClientService";
 
-export default {
-  namespaced: true,
-  state: {
+export const useSystemEventsStore = defineStore("systemEvents", {
+  state: () => ({
     eventHeaders: [
       { key: "timestamp", title: "Date" },
       { key: "type", title: "Event Type" },
       { key: "executor", title: "Executor" },
     ],
-
     eventTypes: {
       USER_CREATE: {
         title: "Create User",
@@ -145,30 +146,26 @@ export default {
       { label: "Resources", icon: "mdi-diamond-stone" },
       { label: "Products", icon: "mdi-package-variant" },
     ],
-
     typeColorMap: {
       Create: "green",
       Update: "purple",
       Delete: "red",
     },
-  },
-
-  getters: {
-    getEventHeaders: (state) => state.eventHeaders,
-    getEventTypes: (state) => state.eventTypes,
-    getEventTableButtons: (state) => state.eventTableButtons,
-    getTypeColorMap: (state) => state.typeColorMap,
-  },
-
+  }),
+  getters: {},
   actions: {
-    async getEventsRelatedTo({ commit }, id) {
+    async fetchEventsRelatedTo(id) {
       return getAllEventsRelatedTo(id);
     },
-    async getSystemEvent({ commit }, id) {
+    async fetchSystemEvent(id) {
       return getSystemEvent(id);
     },
-    async getAllEvents({ commit }) {
+    async fetchAllEvents() {
       return getAllEvents();
     },
   },
-};
+  persist: {
+    key: STORAGE_KEYS.SYSTEM_EVENTS,
+    storage: storageService.getStorage(),
+  },
+});

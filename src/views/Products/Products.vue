@@ -52,22 +52,23 @@ import OrganizationToolTip from "@/components/Tooltip/OrganizationToolTip.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import TableButton from "@/components/Button/TableButton.vue";
 import { onMounted, inject, computed } from "vue";
-import { useStore } from "vuex";
-const store = useStore();
+import { useProductsStore } from "@/store/products";
+
+const productsStore = useProductsStore();
 const snackbarProvider = inject("snackbarProvider");
 
 const disassembleAndUserColumns = computed(
-  () => store.getters["products/getDisassembleAndUserColumns"],
+  () => productsStore.getDisassembleAndUserColumns,
 );
 
 onMounted(async () => {
   try {
-    await store.dispatch("products/fetchProducts");
+    await productsStore.fetchProducts();
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch products");
   }
 });
 const updateProductList = async (productId) => {
-  await store.dispatch("products/fetchProducts");
+  await productsStore.fetchProducts();
 };
 </script>

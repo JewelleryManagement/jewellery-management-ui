@@ -167,7 +167,6 @@
 </template>
 
 <script setup>
-import { useStore } from "vuex";
 import { computed, onMounted, ref, watch } from "vue";
 import AllowedValueComboBox from "./AllowedValueComboBox.vue";
 import AllowedValueSelect from "./AllowedValueSelect.vue";
@@ -180,12 +179,15 @@ import {
 import { fetchAllowedValues, getAllowedValue } from "@/utils/allowed-values.js";
 import { useRoute } from "vue-router";
 import { setInitialType } from "../../utils/resource-util";
+import { useAllowedValuesStore } from "@/store/allowedValues";
+import { useResourcesStore } from "@/store/resources";
 
 const route = useRoute();
-const store = useStore();
-const formData = computed(() => store.getters["resources/getResourceDetails"]);
+const allowedValuesStore = useAllowedValuesStore();
+const resourcesStore = useResourcesStore();
+const formData = computed(() => resourcesStore.resourceDetails);
 const allowedValueDetail = computed(
-  () => store.getters["allowedValues/getAllowedValueDetails"],
+  () => allowedValuesStore.allowedValueDetails,
 );
 
 const setInitialValues = () => {
@@ -208,10 +210,10 @@ const setInitialAllowedValueDetails = () => {
 };
 
 const updateResourceDetails = (key, value) =>
-  store.dispatch("resources/setResourceDetailsField", { key, value });
+  resourcesStore.setResourceDetailsField({ key, value });
 
 const updateAllowedValueDetail = (key, value) => {
-  store.dispatch("allowedValues/setAllowedValueDetail", {
+  allowedValuesStore.setAllowedValueDetail({
     [key]: value,
   });
 };
@@ -223,58 +225,58 @@ const numberFieldRules = useNumberFieldRules();
 const resourceClazz = computed(() => formData.value?.clazz);
 
 const clazzOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "clazz"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "clazz"),
 );
 const quantityTypeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "quantityType"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "quantityType"),
 );
 const typeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "type"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "type"),
 );
 const shapeOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "shape"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "shape"),
 );
 const caratOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "carat"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "carat"),
 );
 
 const colorOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "color"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "color"),
 );
 
 const colorHueOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "colorHue"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "colorHue"),
 );
 const clarityOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "clarity"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "clarity"),
 );
-const cutOptions = computed(() => getAllowedValue(store, resourceClazz, "cut"));
+const cutOptions = computed(() =>
+  getAllowedValue(allowedValuesStore, resourceClazz, "cut"),
+);
 
 const polishOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "polish"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "polish"),
 );
 const symmetryOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "symmetry"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "symmetry"),
 );
 const fluorescenceOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "fluorescence"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "fluorescence"),
 );
 const certificateOptions = computed(() =>
-  getAllowedValue(store, resourceClazz, "certificate"),
+  getAllowedValue(allowedValuesStore, resourceClazz, "certificate"),
 );
 const isFetching = ref(true);
 
 const fetchAllowedValuesOptions = async () => {
-  await fetchAllowedValues(store, resourceClazz);
+  await fetchAllowedValues(allowedValuesStore, resourceClazz);
   isFetching.value = false;
 
   setInitialValues();
-  setInitialType(resourceClazz.value, store, route);
+  setInitialType(resourceClazz.value, resourcesStore, route);
 };
 
-const resetForm = computed(
-  () => store.getters["allowedValues/getAllowedValueReset"],
-);
+const resetForm = computed(() => allowedValuesStore.allowedValuesReset);
 
 // When fullPath changes, reinitialize allowed value details and quantityType
 // When resetForm changes, reinitialize allowed value details (e.g. after a reset)
@@ -283,7 +285,7 @@ watch(
   [() => route.fullPath, () => resetForm.value],
   () => {
     setInitialValues();
-    store.dispatch("allowedValues/setAllowedValueReset", false);
+    allowedValuesStore.setAllowedValueReset(false);
   },
   { immediate: true },
 );
