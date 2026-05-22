@@ -45,7 +45,11 @@ const router = useRouter();
 
 const emits = defineEmits(["close-dialog"]);
 
-const allOrgsByUser = computed(() => organizationsStore.organizations);
+const allOrgsByUser = ref(
+  await organizationsStore.fetchUserOrgsByPermission(
+    "ORGANIZATION_PRODUCT_TRANSFER",
+  ),
+);
 
 const postProducTransfer = async (data) => {
   try {

@@ -14,9 +14,9 @@ export const createSaleGlobalVariables = async (page) => {
   saleContext.goBackButton = page.getByRole("button", { name: "Go Back" });
 };
 
-export const firstInputSelect = async (page) => {
+export const firstInputSelect = async (page, organization) => {
   await page.locator(".v-field__input").first().click();
-  await page.getByRole("option").first().click();
+  await page.getByRole("option", { name: organization }).click();
 };
 
 export const secondInputSelect = async (page) => {
@@ -27,17 +27,22 @@ export const secondInputSelect = async (page) => {
 export const selectDate = async (page, expect) => {
   const { calendarBtn } = saleContext;
 
-  const today = new Date();
-  const day = today.getDate().toString();
-  const month = (today.getMonth() + 1).toString().padStart(2, "0");
-  const year = today.getFullYear();
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  const day = yesterday.getDate().toString();
+  const month = (yesterday.getMonth() + 1).toString().padStart(2, "0");
+  const year = yesterday.getFullYear();
+
   await calendarBtn.click();
+
   await page
     .locator(".v-btn")
     .filter({
       hasText: new RegExp(`^${day}$`),
     })
     .click();
+
   await expect(
     page.getByText(`Selected date: ${day.padStart(2, "0")}-${month}-${year}`),
   ).toBeVisible();

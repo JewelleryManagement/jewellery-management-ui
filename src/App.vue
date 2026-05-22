@@ -145,6 +145,17 @@ const mainMenuPages = computed(() => [
     active: false,
   },
   {
+    link: { text: "Roles", url: "/roles" },
+    children: [
+      { text: "Create Organization Role", url: "/roles/organization/create" },
+      { text: "Organization Roles", url: "/roles/organization" },
+      { text: "Create System Role", url: "/roles/system/create" },
+      { text: "System Roles", url: "/roles/system" },
+    ],
+    icon: "mdi-shield-account",
+    active: false,
+  },
+  {
     link: { text: "Profile", url: "/profile" },
     children: [
       { text: "Details", url: "/profile" },

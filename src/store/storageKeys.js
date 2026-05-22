@@ -7,4 +7,6 @@ export const STORAGE_KEYS = {
   ORGANIZATIONS: "organizations",
   ALLOWED_VALUES: "allowedValues",
   SYSTEM_EVENTS: "systemEvents",
+  ROLES: "roles",
+  PERMISSIONS: "permissions",
 };

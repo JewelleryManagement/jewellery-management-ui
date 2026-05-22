@@ -5,6 +5,8 @@ import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
 import { useSalesStore } from "@/store/sales";
 import { useResourcesStore } from "@/store/resources";
+import { useSystemEventsStore } from "@/store/systemEvents";
+import { useRolesStore } from "@/store/roles";
 
 export const makeFetchGuard =
   ({ action, type, getPayload = (to) => to.params.id }) =>
@@ -15,7 +17,7 @@ export const makeFetchGuard =
     } catch (e) {
       const status = e?.response?.status;
 
-      if (status === 404 || status === 410) {
+      if (status === 403 || status === 404 || status === 410) {
         return {
           name: "NotFound",
           query: { type },
@@ -272,6 +274,34 @@ const routes = [
     name: "Event-Details",
     component: () => import("../views/Events/EventDetails.vue"),
     meta: { title: "Event Page", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Event",
+      getPayload: (to) => to.params.eventId,
+      action: (eventId) => useSystemEventsStore().fetchSystemEvent(eventId),
+    }),
+  },
+  {
+    path: "/roles/:id",
+    name: "Role-Details",
+    component: () => import("../views/Roles/RoleDetails.vue"),
+    meta: { title: "Role", requiresAuth: true },
+    beforeEnter: makeFetchGuard({
+      type: "Role",
+      getPayload: (to) => to.params.id,
+      action: (id) => useRolesStore().fetchRole(id),
+    }),
+  },
+  {
+    path: "/roles/:type(organization|system)",
+    name: "Roles",
+    component: () => import("../components/Table/RolesTable.vue"),
+    meta: { title: "Roles", requiresAuth: true },
+  },
+  {
+    path: "/roles/:type(organization|system)/create",
+    name: "Role-Create",
+    component: () => import("../components/Form/RoleForm.vue"),
+    meta: { title: "Create Role", requiresAuth: true },
   },
   {
     path: "/not-found",

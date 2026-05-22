@@ -3,7 +3,7 @@
     <div class="text-center">
       <h1>{{ title }}</h1>
     </div>
-    <div class="d-flex justify-end">
+    <div v-if="headBtnName" class="d-flex justify-end">
       <table-button :path="headBtnPath">{{ headBtnName }}</table-button>
     </div>
     <v-card-title>
@@ -41,13 +41,15 @@ const props = defineProps({
   users: Array,
   columns: Array,
   headBtnPath: String,
-  headBtnName: String,
+  headBtnName: {
+    type: String,
+    default: null,
+  },
 });
 const usersStore = useUsersStore();
 const search = ref("");
 const router = useRouter();
 const headBtnPath = ref(props.headBtnPath ?? "/users/create");
-const headBtnName = ref(props.headBtnName ?? "Create user");
 const allUsers = computed(() => usersStore.users);
 const tableUsers = computed(() =>
   props.users?.length > 0 ? props.users : allUsers.value,

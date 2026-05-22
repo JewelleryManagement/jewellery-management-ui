@@ -74,6 +74,31 @@
         />
       </template>
 
+      <template v-slot:item.actions="{ item }">
+        <div class="d-flex align-center ga-2" @click.stop>
+          <disassembly-button
+            v-if="permissionsStore.canDisassembleProduct(item.organization.id)"
+            :item="item"
+            @disassembled-product="updateProductList"
+          />
+
+          <product-transfer-button
+            v-if="permissionsStore.canTransferProduct(item.organization.id)"
+            :product="item"
+            @transferred-product="updateProductList"
+          />
+
+          <IconButton
+            v-if="permissionsStore.canUpdateProduct(item.organization.id)"
+            icon="mdi-pencil"
+            name="Edit"
+            color="green"
+            :disabled="item.partOfSale"
+            :routerPath="`/products/edit/${item.id}`"
+          />
+        </div>
+      </template>
+
       <template v-for="(_, slot) in $slots" v-slot:[slot]="scope">
         <slot :name="slot" v-bind="scope || {}" />
       </template>
@@ -98,12 +123,15 @@
 
 <script setup>
 import { navigateToItemDetails } from "../../utils/row-click-handler.js";
-import { ref, computed, toRefs } from "vue";
+import { ref, computed, toRefs, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import IconButton from "../Button/IconButton.vue";
 import ResourceContentDialog from "../Dialog/ResourceContentDialog.vue";
 import ProductsContentDialog from "../Dialog/ProductsContentDialog.vue";
 import { useProductsStore } from "@/store/products.js";
+import ProductTransferButton from "../Button/ProductTransferButton.vue";
+import { usePermissionsStore } from "@/store/permissions.js";
+
 const route = useRoute();
 const isEventPage = computed(() => route.path.startsWith("/system-events"));
 const router = useRouter();
@@ -114,6 +142,7 @@ const props = defineProps({
   title: String,
 });
 const productsStore = useProductsStore();
+const permissionsStore = usePermissionsStore();
 
 const { products, additionalColumnsLeft, additionalColumnsRight } =
   toRefs(props);
@@ -132,6 +161,22 @@ const [isProductsDialogOpen, productsDialogData] = [ref(false), ref({})];
 const search = ref("");
 
 const allProducts = computed(() => products.value ?? productsStore.products);
+
+const productOrganizationIds = computed(() => [
+  ...new Set(
+    allProducts.value
+      .map((product) => product.organization?.id)
+      .filter(Boolean),
+  ),
+]);
+
+watch(
+  productOrganizationIds,
+  async (organizationIds) => {
+    await permissionsStore.fetchPermissionsForOrganizations(organizationIds);
+  },
+  { immediate: true },
+);
 
 const openDialog = (item, content) => {
   if (content == "resources") {
@@ -155,6 +200,10 @@ const navigateToItemPage = (row, item) => {
   const productId = item.internalItem.key;
 
   navigateToItemDetails(router, "Product Details", "id", productId);
+};
+
+const updateProductList = async (productId) => {
+  await productsStore.fetchProducts();
 };
 </script>
 

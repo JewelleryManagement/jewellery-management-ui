@@ -26,9 +26,8 @@ const organizationsStore = useOrganizationsStore();
 const allOrgsByUser = ref([]);
 
 onMounted(async () => {
-  allOrgsByUser.value = await organizationsStore.fetchUserOrgsByPermission(
-    "CREATE_SALE",
-  );
+  await organizationsStore.fetchOrganizations();
+  allOrgsByUser.value = organizationsStore.organizations;
 });
 
 const updateSelectedOrg = (newOrg) => {

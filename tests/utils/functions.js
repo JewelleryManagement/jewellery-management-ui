@@ -21,20 +21,20 @@ export const navigateViaNavbar = async (
     navChildButtonText,
     expectedNewUrl,
     expectedHeader,
-  }
+  },
 ) => {
   const drawer = page.locator(".v-navigation-drawer");
 
   await drawer.hover();
   await expect(
-    drawer.getByText(navParentButtonText, { exact: true })
+    drawer.getByText(navParentButtonText, { exact: true }),
   ).toBeVisible();
   await wait(1);
 
   await drawer.getByText(navParentButtonText, { exact: true }).click();
   await expect(page).toHaveURL(expectedUrl);
   await expect(
-    drawer.getByRole("group").getByText(navChildButtonText, { exact: true })
+    drawer.getByRole("group").getByText(navChildButtonText, { exact: true }),
   ).toBeVisible();
   await wait(1);
 
@@ -45,7 +45,7 @@ export const navigateViaNavbar = async (
   await expect(page).toHaveURL(expectedNewUrl);
   await wait(1);
   await expect(
-    page.locator(".v-main").getByText(expectedHeader, { exact: true })
+    page.locator(".v-main").getByText(expectedHeader, { exact: true }),
   ).toBeVisible();
   await wait(1);
 };

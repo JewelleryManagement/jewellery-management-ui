@@ -5,7 +5,7 @@
         {{ pageTitle }}
       </div>
       <v-form @submit.prevent="handleSubmit" ref="form">
-        <SaleInputs :sellObject="sellObject" :all-users="allUsers" />
+        <SaleInputs :sellObject="sellObject" :all-users="users" />
         <SaleButtons :sellObject="sellObject" @open-dialog="handleDialogs" />
 
         <SaleCalendar
@@ -27,7 +27,6 @@
       v-model="productsDialog"
       @close-dialog="handleDialogs('products', false)"
       @save-product-dialog="setProductsForSale"
-      :userId="sellObject.seller.id"
       :clearTable="clearTable"
       :available-products="productsForSale"
     >
@@ -60,6 +59,7 @@ import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
 import { useSalesStore } from "@/store/sales";
+import { usePermissionsStore } from "@/store/permissions";
 
 const snackbarProvider = inject("snackbarProvider");
 const [route, router] = [useRoute(), useRouter()];
@@ -67,6 +67,7 @@ const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
 const productsStore = useProductsStore();
 const salesStore = useSalesStore();
+const permissionsStore = usePermissionsStore();
 const pageTitle = ref(route.meta.title);
 const form = ref(null);
 const [productsDialog, productsForSale] = [ref(false), ref([])];
@@ -74,7 +75,7 @@ const [resourcesDialog, resourcesForSale] = [ref(false), ref([])];
 const calendarDialog = ref(false);
 const clearTable = ref(false);
 
-const allUsers = computed(() => usersStore.users).value;
+const users = ref([]);
 
 const sellObject = reactive({
   seller: {},
@@ -88,29 +89,55 @@ watch(
   () => sellObject.seller,
   async (newSeller) => {
     if (newSeller.id) {
-      resourcesForSale.value = await organizationsStore
-        .fetchOrganizationResources(newSeller.id)
-        .then((resourcesResponse) =>
-          resourcesResponse.resourcesAndQuantities.map(
-            (resourceAndQuantity) => {
-              return {
-                quantity: resourceAndQuantity.quantity,
-                ...resourceAndQuantity.resource,
-              };
-            },
-          ),
-        );
+      await permissionsStore.fetchCurrentUserPermissions(newSeller.id);
 
-      productsForSale.value = await productsStore
-        .fetchProductsByOrganization(newSeller.id)
-        .then((productsResponse) => {
-          return productsResponse.products.filter(
-            (product) => !product.contentOf && !product.partOfSale,
-          );
-        });
+      initUsersForSale(newSeller.id);
+      initResourcesForSale(newSeller.id);
+      initProductsForSale(newSeller.id);
     }
   },
 );
+
+const initUsersForSale = async (sellerId) => {
+  users.value = [];
+
+  if (!permissionsStore.canReadUser(sellerId)) return;
+
+  users.value = (await usersStore.fetchUsersByOrganization(sellerId)).map(
+    (item) => item.user,
+  );
+};
+
+const initResourcesForSale = async (sellerId) => {
+  resourcesForSale.value = [];
+
+  if (!permissionsStore.canReadResource(sellerId)) return;
+
+  const resourcesResponse = await organizationsStore.fetchOrganizationResources(
+    sellerId,
+  );
+
+  resourcesForSale.value = resourcesResponse.resourcesAndQuantities.map(
+    (resourceAndQuantity) => ({
+      quantity: resourceAndQuantity.quantity,
+      ...resourceAndQuantity.resource,
+    }),
+  );
+};
+
+const initProductsForSale = async (sellerId) => {
+  productsForSale.value = [];
+
+  if (!permissionsStore.canReadProduct(sellerId)) return;
+
+  const productsResponse = await productsStore.fetchProductsByOrganization(
+    sellerId,
+  );
+
+  productsForSale.value = productsResponse.products.filter(
+    (product) => !product.contentOf && !product.partOfSale,
+  );
+};
 
 const isSellerSelected = computed(() => !!sellObject.seller?.id);
 

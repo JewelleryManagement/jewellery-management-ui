@@ -1,23 +1,36 @@
 <template>
-  <div>{{ formattedPermissionsShort }}</div>
-  <v-tooltip activator="parent" location="top">
-    <div>{{ formattedPermissions }}</div>
+  <v-tooltip location="top">
+    <template #activator="{ props: tooltipProps }">
+      <span
+        v-bind="tooltipProps"
+        class="d-inline-block text-truncate"
+        style="max-width: 140px; cursor: pointer"
+      >
+        {{ formattedPermissionsShort }}
+      </span>
+    </template>
+
+    <div style="max-width: 320px; white-space: normal; overflow-wrap: anywhere">
+      {{ formattedPermissions }}
+    </div>
   </v-tooltip>
 </template>
 
 <script setup>
-import {ref, watch } from "vue";
+import { computed } from "vue";
 
-const props = defineProps({ permissions: Array });
-const formattedPermissions = ref(props.permissions?.join(", "));
-const formattedPermissionsShort = ref(
-  formattedPermissions.value?.substring(0, 10) + "..."
-);
-watch(
-  () => props.permissions,
-  (permissions) => {
-    formattedPermissions.value = permissions.join(", ");
-    formattedPermissionsShort.value = formattedPermissions.value.substring(0, 10) + "...";
-  }
-);
+const props = defineProps({
+  permissions: {
+    type: Array,
+    default: () => [],
+  },
+});
+
+const formattedPermissions = computed(() => props.permissions.join(", "));
+
+const formattedPermissionsShort = computed(() => {
+  const text = formattedPermissions.value;
+  if (text.length <= 20) return text;
+  return `${text.slice(0, 20)}...`;
+});
 </script>

@@ -10,9 +10,11 @@ import {
   removeResourceFromOrg,
   postResourceTranferToOrg,
   postUserToOrg,
+  postUserToOrgWithRoles,
   putUserToOrg,
   removeUserFromOrg,
   getOrganization,
+  getCurrentUserPermissions,
 } from "@/services/HttpClientService";
 
 export const useOrganizationsStore = defineStore("organizations", {
@@ -52,7 +54,18 @@ export const useOrganizationsStore = defineStore("organizations", {
         label: "Events",
         icon: "mdi-calendar",
       },
+      {
+        label: "Roles",
+        icon: "mdi-shield-account",
+      },
     ],
+    buttonPermissionsMap: {
+      Resources: "ORGANIZATION_RESOURCE_READ",
+      Products: "ORGANIZATION_PRODUCT_READ",
+      Members: "ORGANIZATION_USER_READ",
+      Events: "ORGANIZATION_EVENT_READ",
+      Roles: "ORGANIZATION_USER_ROLES_READ",
+    },
   }),
   getters: {
     getAllColumnsWithQuantityColumn: (state) => [
@@ -84,9 +97,13 @@ export const useOrganizationsStore = defineStore("organizations", {
     async transferResourceFromOrg(data) {
       await postResourceTranferToOrg(data);
     },
-    async addUserToOrg(data) {
+
+    async addUserToOrg(orgId, userId) {
+      return await postUserToOrg(orgId, userId);
+    },
+    async addUserToOrgWithRoles(data) {
       const { requestBody, orgId } = data;
-      return await postUserToOrg(orgId, requestBody);
+      return await postUserToOrgWithRoles(orgId, requestBody);
     },
     async editUserInOrg(data) {
       const { userId, orgId, requestBody } = data;
@@ -100,6 +117,9 @@ export const useOrganizationsStore = defineStore("organizations", {
       const data = await getOrganization(id);
       this.selectedOrganization = data;
       return data;
+    },
+    async fetchCurrentUserPermissions(organizationId) {
+      return await getCurrentUserPermissions(organizationId);
     },
   },
   persist: {

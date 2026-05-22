@@ -2,9 +2,8 @@
   <UserInOrganizationForm
     :selectedOrg="selectedOrg"
     v-model:selectedUser="selectedUser"
-    v-model:chosenPermissions="selectedUser.permissions"
+    v-model:selectedRoles="selectedRoles"
     :submitRequestFunction="editUserInOrg"
-    @update:chosenPermissions="getChosenOptions"
   />
 </template>
 
@@ -33,19 +32,18 @@ const route = useRoute();
 const router = useRouter();
 const selectedUserId = route.params.userId;
 const selectedUser = ref({});
-const getChosenOptions = (chosenOptions) => {
-  selectedUser.value.permissions = chosenOptions;
-};
+const selectedRoles = ref([]);
+
 const editUserInOrg = async () => {
   const data = {
     orgId: selectedOrg.value.id,
     userId: selectedUser.value.id,
     requestBody: {
-      organizationPermission: selectedUser.value.permissions,
+      organizationRoles: selectedRoles.value.map((role) => role.id),
     },
   };
   try {
-    const res = await organizationsStore.editUserInOrg(data);
+    await organizationsStore.editUserInOrg(data);
     snackbarProvider.showSuccessSnackbar("Successfully Edited user in org!");
     router.push(`/organizations/${route.params.organizationId}`);
   } catch (error) {
@@ -56,21 +54,15 @@ const editUserInOrg = async () => {
 };
 const fetchSelectedUser = async () => {
   try {
-    let orgMembers = await usersStore
-      .fetchUsersByOrganization(selectedOrg.value.id)
-      .then((usersResponse) => {
-        const formattedUsers = usersResponse.members.map((singleUser) => {
-          return {
-            ...singleUser.user,
-            permissions: singleUser.organizationPermissions,
-          };
-        });
-        return formattedUsers;
-      });
-    const selectedUserIndex = orgMembers.findIndex(
-      (member) => member.id === selectedUserId,
+    let orgMembers = await usersStore.fetchUsersByOrganizationWithRoles(
+      selectedOrg.value.id,
     );
-    selectedUser.value = orgMembers[selectedUserIndex];
+    const selectedUserIndex = orgMembers.findIndex(
+      (member) => member.user.id === selectedUserId,
+    );
+    selectedUser.value = orgMembers[selectedUserIndex]?.user;
+    selectedRoles.value = orgMembers[selectedUserIndex]?.organizationRoles;
+    console.log(selectedRoles.value);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
       "Could not fetch users for organization!",

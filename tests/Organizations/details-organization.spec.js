@@ -24,7 +24,9 @@ test("View organization events table", async ({ page }) => {
   ).toBeVisible();
   page.locator(".v-btn__content", { hasText: "NEW ORGANIZATION" }).click();
 
-  await expect(page.getByText("Create organization")).toBeVisible();
+  await expect(
+    page.getByText("Create organization", { exact: true }),
+  ).toBeVisible();
 
   const { nameInput, addressInput, noteInput, submitButton } =
     organizationContext;
@@ -49,7 +51,9 @@ test("View organization events table", async ({ page }) => {
   await page.getByText("Test Organization", { exact: true }).click();
   await expect(page.getByText("Events Table")).toBeVisible();
   await page.getByText("Events Table").click();
-  await expect(page.getByText("Create Organization")).toBeVisible();
+  await expect(
+    page.getByText("Create Organization", { exact: true }),
+  ).toBeVisible();
 });
 
 test("Try to access deleted organization details page", async ({ page }) => {

@@ -27,6 +27,7 @@ import { getQuery } from "@/utils/resource-util";
 import { handleNotFound } from "@/utils/action-guard";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useResourcesStore } from "@/store/resources";
+import OrganizationResourceForm from "@/components/Form/OrganizationResourceForm.vue";
 const { id } = defineProps({
   id: String,
 });
@@ -36,18 +37,6 @@ const organizationsStore = useOrganizationsStore();
 const resourcesStore = useResourcesStore();
 const router = useRouter();
 const resourceAvailability = computed(() => resourcesStore.currentAvailability);
-
-onMounted(async () => {
-  fetchUserOrg();
-});
-
-const fetchUserOrg = async () => {
-  try {
-    await organizationsStore.fetchOrganizations();
-  } catch (error) {
-    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
-  }
-};
 
 const postAddQuantity = async (data) => {
   try {

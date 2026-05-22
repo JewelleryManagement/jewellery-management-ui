@@ -32,7 +32,7 @@ test.describe.serial("Tests that share state", () => {
   test("Create sale", async ({ page }) => {
     const { submitButton } = saleContext;
 
-    await firstInputSelect(page, 1);
+    await firstInputSelect(page, "Organization with User, Sale and Resources");
     await secondInputSelect(page);
 
     await selectDate(page, expect);
@@ -51,7 +51,7 @@ test.describe.serial("Tests that share state", () => {
     const { submitButton } = saleContext;
 
     await wait(3);
-    await firstInputSelect(page);
+    await firstInputSelect(page, "Organization with User, Sale and Resources");
     await secondInputSelect(page);
 
     await selectDate(page, expect);
@@ -87,7 +87,7 @@ test("Create sale - without a date - fails", async ({ page }) => {
   const { submitButton } = saleContext;
 
   await wait(3);
-  await firstInputSelect(page);
+  await firstInputSelect(page, "Organization with User, Sale and Resources");
   await secondInputSelect(page);
 
   await submitButton.click();
@@ -97,7 +97,7 @@ test("Create sale - without a products/resources - fails", async ({ page }) => {
   const { submitButton } = saleContext;
 
   await wait(3);
-  await firstInputSelect(page);
+  await firstInputSelect(page, "Organization with User, Sale and Resources");
   await secondInputSelect(page);
   await selectDate(page, expect);
 
@@ -111,7 +111,7 @@ test("Reset button - works as expected", async ({ page }) => {
   const { resetButton, calendarBtn, productsBtn, resourcesBtn } = saleContext;
 
   await wait(3);
-  await firstInputSelect(page);
+  await firstInputSelect(page, "Organization with User, Sale and Resources");
   await secondInputSelect(page);
   await selectDate(page, expect);
   await selectProduct(page);

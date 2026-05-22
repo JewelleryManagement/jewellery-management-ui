@@ -9,6 +9,7 @@ import {
 
 export const useSystemEventsStore = defineStore("systemEvents", {
   state: () => ({
+    selectedEvent: {},
     eventHeaders: [
       { key: "timestamp", title: "Date" },
       { key: "type", title: "Event Type" },
@@ -146,6 +147,7 @@ export const useSystemEventsStore = defineStore("systemEvents", {
       { label: "Resources", icon: "mdi-diamond-stone" },
       { label: "Products", icon: "mdi-package-variant" },
     ],
+    eventTableButtonForRoles: [{ label: "Roles", icon: "mdi-shield-account" }],
     typeColorMap: {
       Create: "green",
       Update: "purple",
@@ -158,7 +160,9 @@ export const useSystemEventsStore = defineStore("systemEvents", {
       return getAllEventsRelatedTo(id);
     },
     async fetchSystemEvent(id) {
-      return getSystemEvent(id);
+      const data = await getSystemEvent(id);
+      this.selectedEvent = data;
+      return data;
     },
     async fetchAllEvents() {
       return getAllEvents();

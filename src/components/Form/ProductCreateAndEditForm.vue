@@ -129,6 +129,7 @@ import ResourcesDialog from "@/components/Dialog/ResourcesDialog.vue";
 import ProductsDialog from "@/components/Dialog/ProductsDialog.vue";
 import ProductContentsInfoPanel from "@/components/ProductContentsInfoPanel.vue";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
+import FormButtons from "../Button/FormButtons.vue";
 
 import {
   useTextFieldLargeRules,
@@ -143,6 +144,7 @@ import { userPropsFormatter } from "@/utils/data-formatter";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
+import { usePermissionsStore } from "@/store/permissions";
 const props = defineProps({
   productInfo: Object,
   submitReqFunction: Function,
@@ -156,6 +158,7 @@ const route = useRoute();
 const usersStore = useUsersStore();
 const organizationsStore = useOrganizationsStore();
 const productsStore = useProductsStore();
+const permissionsStore = usePermissionsStore();
 const [resourceDialog, productsDialog] = [ref(false), ref(false)];
 const [currentResourcePrice, currentProductPrice, totalPrice] = [
   ref(0),
@@ -187,6 +190,7 @@ const populateFormData = async (newOrg) => {
   if (currentOrg) {
     props.productInfo.ownerId = currentOrg.id;
     selectedOrg.value = currentOrg;
+    await permissionsStore.fetchCurrentUserPermissions(currentOrg.id);
     return Promise.all([
       fetchResourcesForOrganization(currentOrg),
       fetchProductsForOrganization(currentOrg),
@@ -224,9 +228,13 @@ const calculatePricesInEditView = async () => {
   }
 };
 const fetchUsersForOrganization = async (organization) => {
+  if (!permissionsStore.canReadUser(organization.id)) {
+    orgUsers.value = [];
+    return;
+  }
   try {
     let response = await usersStore.fetchUsersByOrganization(organization.id);
-    orgUsers.value = response.members.map((member) => member.user);
+    orgUsers.value = response.map((item) => item.user);
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch users!");
   }
@@ -234,19 +242,18 @@ const fetchUsersForOrganization = async (organization) => {
 
 const fetchOrganizations = async () => {
   try {
-    const permission = route.path.includes("edit")
-      ? "EDIT_PRODUCT"
-      : "CREATE_PRODUCT";
-    const response = await organizationsStore.fetchUserOrgsByPermission(
-      permission,
-    );
-    allOrgsByUser.value = response;
+    await organizationsStore.fetchOrganizations();
+    allOrgsByUser.value = organizationsStore.organizations;
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch organizations!");
   }
 };
 
 const fetchResourcesForOrganization = async (organization) => {
+  if (!permissionsStore.canReadResource(organization.id)) {
+    resourcesToChooseFrom.value = [];
+    return;
+  }
   try {
     resourcesToChooseFrom.value = await organizationsStore
       .fetchOrganizationResources(organization.id)
@@ -281,6 +288,10 @@ const fetchResourcesForOrganization = async (organization) => {
   }
 };
 const fetchProductsForOrganization = async (organization) => {
+  if (!permissionsStore.canReadProduct(organization.id)) {
+    productsToChooseFrom.value = [];
+    return;
+  }
   try {
     productsToChooseFrom.value = await productsStore
       .fetchProductsByOrganization(organization.id)
@@ -363,7 +374,7 @@ const handleSubmit = async () => {
   if (!isResourceSelected()) return;
 
   let productResponse = await props.submitReqFunction();
-  if (productResponse !== undefined) {
+  if (productResponse !== undefined && productResponse !== false) {
     await submitPicture(productResponse);
 
     resetForm();

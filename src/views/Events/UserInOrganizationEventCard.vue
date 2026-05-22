@@ -41,12 +41,25 @@
         </template>
       </template>
     </v-card-text>
+    <ToggleTableButtons
+      v-if="!rawDataButton"
+      v-model="selectedButton"
+      :buttons="eventTableButtons"
+    />
+
+    <RolesTable
+      v-if="!rawDataButton && selectedButton === 'Roles'"
+      :roles="entity.member.organizationRoles"
+    />
   </v-card>
 </template>
 <script setup>
 import { computed, ref } from "vue";
 import { useUsersStore } from "@/store/users";
 import EventCardTitleWithRawInfoButton from "./EventCardTitleWithRawInfoButton.vue";
+import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
+import { useSystemEventsStore } from "@/store/systemEvents";
+import RolesTable from "@/components/Table/RolesTable.vue";
 
 const props = defineProps({
   entity: Object,
@@ -54,10 +67,17 @@ const props = defineProps({
 });
 
 const usersStore = useUsersStore();
+const systemEventsStore = useSystemEventsStore();
 
 const userInOrganizationRows = computed(
   () => usersStore.getBaseColumnsWithPermmisions,
 );
 
 const rawDataButton = ref(false);
+
+const selectedButton = ref("");
+
+const eventTableButtons = computed(
+  () => systemEventsStore.eventTableButtonForRoles,
+);
 </script>

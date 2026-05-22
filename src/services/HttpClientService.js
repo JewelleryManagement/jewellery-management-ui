@@ -15,7 +15,7 @@ async function fetchData(endpoint, options = {}) {
       router.push("/login");
     }
 
-    if (error.response.status === 404) {
+    if (error.response.status === 404 || error.response.status === 403) {
       throw error;
     }
 
@@ -122,6 +122,26 @@ export async function getUserInOrganization(organizationId, userId) {
   return await fetchData(`/organizations/${organizationId}/users/${userId}`);
 }
 
+export async function getCurrentUserPermissions(organizationId) {
+  return await fetchData(`/organizations/${organizationId}/permissions`);
+}
+
+export async function getRolesByType(roleType) {
+  return await fetchData(`/roles/type/${roleType}`);
+}
+
+export async function getAllPermissions() {
+  return await fetchData("/roles/permissions");
+}
+
+export async function getRole(id) {
+  return await fetchData(`/roles/${id}`);
+}
+
+export async function getAllUsersByOrganizationWithRoles(organizationId) {
+  return await fetchData(`/organizations/${organizationId}/users/roles`);
+}
+
 // POSTS REQUESTS
 async function postData(endpoint, data, customHeaders = {}) {
   const response = await axios.post(endpoint, data, {
@@ -154,8 +174,11 @@ export async function postOrg(orgData) {
 export async function postResourceToOrg(orgData) {
   return await postData("/organizations/resources-availability", orgData);
 }
-export async function postUserToOrg(orgId, requestBody) {
-  return await postData(`/organizations/${orgId}/users`, requestBody);
+export async function postUserToOrg(orgId, userId) {
+  return await postData(`/organizations/${orgId}/users/${userId}`);
+}
+export async function postUserToOrgWithRoles(orgId, requestBody) {
+  return await postData(`/organizations/${orgId}/users/roles`, requestBody);
 }
 
 export async function postResourceTranferToOrg(orgData) {
@@ -163,6 +186,10 @@ export async function postResourceTranferToOrg(orgData) {
     "/organizations/resources-availability/transfer",
     orgData,
   );
+}
+
+export async function postCreateRole(data) {
+  return await postData("/roles", data);
 }
 
 export async function postPicture(productId, image) {

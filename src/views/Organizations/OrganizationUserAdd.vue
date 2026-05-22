@@ -2,9 +2,8 @@
   <UserInOrganizationForm
     :selectedOrg="selectedOrg"
     v-model:selectedUser="selectedUser"
-    v-model:chosenPermissions="selectedUser.permissions"
+    v-model:selectedRoles="selectedRoles"
     :submitRequestFunction="addUserToOrg"
-    @update:chosenPermissions="getChosenOptions"
   />
 </template>
 
@@ -16,36 +15,34 @@ import { useOrganizationsStore } from "@/store/organizations";
 const snackbarProvider = inject("snackbarProvider");
 const organizationsStore = useOrganizationsStore();
 const allOrgsByUser = computed(() => organizationsStore.organizations);
-const selectedOrg = computed(
-  () =>
-    (selectedOrg.value = allOrgsByUser.value.filter(
-      (x) => x.id === route.params.organizationId,
-    )[0]),
+const selectedOrg = computed(() =>
+  allOrgsByUser.value.find((x) => x.id === route.params.organizationId),
 );
+
 const selectedUser = ref({});
 const route = useRoute();
 const router = useRouter();
-const getChosenOptions = (chosenOptions) => {
-  selectedUser.value.permissions = chosenOptions;
-};
-const addUserToOrg = async () => {
-  const requestBody = {
-    userId: selectedUser.value.id,
-    organizationPermission: selectedUser.value.permissions,
-  };
+const selectedRoles = ref([]);
 
-  const data = {
-    orgId: selectedOrg.value.id,
-    requestBody: requestBody,
-  };
+const addUserToOrg = async ({ organization, user, roles, canAssignRoles }) => {
   try {
-    const res = await organizationsStore.addUserToOrg(data);
+    if (canAssignRoles) {
+      await organizationsStore.addUserToOrgWithRoles({
+        orgId: organization.id,
+        requestBody: {
+          userId: user.id,
+          organizationRoles: roles.map((role) => role.id),
+        },
+      });
+    } else {
+      await organizationsStore.addUserToOrg(organization.id, user.id);
+    }
+
     snackbarProvider.showSuccessSnackbar("Successfully added user to org!");
     router.push(`/organizations/${route.params.organizationId}`);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(error?.response?.data?.error);
   }
-  return false;
 };
 </script>
 

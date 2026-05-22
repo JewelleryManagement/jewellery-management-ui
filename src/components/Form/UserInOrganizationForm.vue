@@ -12,10 +12,18 @@
       @update:selectedUser="handleSelectedUserChange"
       :disabled="isUserSelectDisabled"
     />
-    <OptionsPicker
-      :allOptions="allPermissions"
-      v-model:chosenOptions="chosenPermissions"
-      @update:chosenOptions="handleChosenPermissionsChange"
+    <v-autocomplete
+      v-if="permissionsStore.canAssignRoles(selectedOrg.id)"
+      v-model="selectedRolesModel"
+      :items="roles"
+      item-title="name"
+      return-object
+      label="Select roles"
+      multiple
+      chips
+      closable-chips
+      clearable
+      class="mt-4"
     />
     <v-btn color="success" class="mt-4" block @click="handleSubmit"
       >Add user</v-btn
@@ -28,14 +36,19 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import UserSelect from "@/components/Select/UserSelect.vue";
-import OptionsPicker from "@/components/Select/OptionsPicker.vue";
 import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
+import { getRolesByType } from "@/services/HttpClientService";
+import { usePermissionsStore } from "@/store/permissions";
 
 const route = useRoute();
-const emit = defineEmits(["update:selectedUser", "update:chosenPermissions"]);
+const emit = defineEmits([
+  "update:selectedUser",
+  "update:chosenPermissions",
+  "update:selectedRoles",
+]);
 const props = defineProps({
-  chosenPermissions: {
+  selectedRoles: {
     type: Array,
     required: false,
     default: [],
@@ -61,22 +74,26 @@ const selectedUser = computed({
   get: () => props.selectedUser,
   set: (value) => handleSelectedUserChange(value),
 });
+const selectedRolesModel = computed({
+  get: () => props.selectedRoles,
+  set: (value) => emit("update:selectedRoles", value),
+});
+
 const organizationsStore = useOrganizationsStore();
 const usersStore = useUsersStore();
+const permissionsStore = usePermissionsStore();
 const isOrgSelectDisabled = ref(!!props.selectedOrg);
 const isUserSelectDisabled = ref(route.path.includes("edit-user"));
 
 const allOrgsByUser = computed(() => organizationsStore.organizations);
-const allPermissions = computed(() => organizationsStore.userPermissions);
-const chosenPermissions = computed({
-  get: () => props.chosenPermissions,
-  set: (value) => handleChosenPermissionsChange(value),
-});
 const allUsers = ref([]);
+const roles = await getRolesByType("ORGANIZATION");
+
 onMounted(async () => {
   if (props.selectedOrg) {
     await getUsersOutsideOrg(selectedOrg.value);
   }
+  await permissionsStore.fetchCurrentUserPermissions(props.selectedOrg.id);
 });
 const updateSelectedOrg = async (newOrg) => {
   if (newOrg) {
@@ -85,20 +102,18 @@ const updateSelectedOrg = async (newOrg) => {
     await getUsersOutsideOrg(selectedOrg.value);
   }
 };
-const handleChosenPermissionsChange = (newChosenOptions) => {
-  emit("update:chosenPermissions", newChosenOptions);
-};
 const handleSelectedUserChange = (newUser) => {
   emit("update:selectedUser", newUser);
 };
 
 const getUsersOutsideOrg = async (organization) => {
+  await usersStore.fetchUsers();
   const usersInOrganization = await usersStore.fetchUsersByOrganization(
     organization?.id,
   );
   const fetchedAllUsers = computed(() => usersStore.users);
   allUsers.value = fetchedAllUsers.value.filter((user) => {
-    const indexOfMatch = usersInOrganization.members.findIndex(
+    const indexOfMatch = usersInOrganization.findIndex(
       (member) => member.user.id === user.id,
     );
     return indexOfMatch == -1;
@@ -107,7 +122,12 @@ const getUsersOutsideOrg = async (organization) => {
 };
 
 const handleSubmit = async () => {
-  let addUserResponse = await props.submitRequestFunction();
+  await props.submitRequestFunction({
+    organization: selectedOrg.value,
+    user: selectedUser.value,
+    roles: selectedRolesModel.value,
+    canAssignRoles: permissionsStore.canAssignRoles(props.selectedOrg.id),
+  });
 };
 </script>
 

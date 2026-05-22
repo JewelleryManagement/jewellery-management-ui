@@ -9,6 +9,7 @@ import {
   postUser,
   updateUser,
   fetchUsersByOrganization,
+  getAllUsersByOrganizationWithRoles,
 } from "@/services/HttpClientService";
 
 export const useUsersStore = defineStore("users", {
@@ -30,10 +31,10 @@ export const useUsersStore = defineStore("users", {
       { key: "note", title: "Note" },
       { key: "role", title: "Role" },
     ],
-    tableColumnPermissions: {
-      key: "permissions",
-      title: "Permissions",
-      slot: "permissions",
+    tableColumnRoles: {
+      key: "roles",
+      title: "Roles",
+      slot: "roles",
     },
     tableActions: { key: "actions", title: "", slot: "actions" },
     tableColumnOrganizationPermissions: {
@@ -63,7 +64,7 @@ export const useUsersStore = defineStore("users", {
       })) ?? [],
     getOrganizationColumns: (state) => [
       ...state.baseColumns,
-      state.tableColumnPermissions,
+      state.tableColumnRoles,
       state.tableActions,
     ],
     getTableColumnsWithActions: (state) => [
@@ -105,6 +106,9 @@ export const useUsersStore = defineStore("users", {
     },
     async fetchUsersByOrganization(organizationId) {
       return await fetchUsersByOrganization(organizationId);
+    },
+    async fetchUsersByOrganizationWithRoles(organizationId) {
+      return await getAllUsersByOrganizationWithRoles(organizationId);
     },
   },
   persist: {
