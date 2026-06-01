@@ -145,6 +145,7 @@ import { useUsersStore } from "@/store/users";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
 import { usePermissionsStore } from "@/store/permissions";
+import { ORGANIZATION_PRODUCT_CREATE } from "@/utils/permissionConstants.js";
 const props = defineProps({
   productInfo: Object,
   submitReqFunction: Function,
@@ -242,8 +243,9 @@ const fetchUsersForOrganization = async (organization) => {
 
 const fetchOrganizations = async () => {
   try {
-    await organizationsStore.fetchOrganizations();
-    allOrgsByUser.value = organizationsStore.organizations;
+    allOrgsByUser.value = await organizationsStore.fetchUserOrgsByPermission(
+      ORGANIZATION_PRODUCT_CREATE,
+    );
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch organizations!");
   }

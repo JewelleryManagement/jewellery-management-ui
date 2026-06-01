@@ -38,6 +38,10 @@ import { useNumberFieldRules } from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import { useOrganizationsStore } from "@/store/organizations";
+import {
+  ORGANIZATION_RESOURCE_ADD,
+  ORGANIZATION_RESOURCE_TRANSFER,
+} from "@/utils/permissionConstants";
 
 const emits = defineEmits(["handle-submit"]);
 const form = ref(null);
@@ -58,11 +62,12 @@ const loadAllOrganizations = async () => {
   try {
     if (isRouteTransfer) {
       allOrgsByUser.value = await organizationsStore.fetchUserOrgsByPermission(
-        "ORGANIZATION_RESOURCE_TRANSFER",
+        ORGANIZATION_RESOURCE_TRANSFER,
       );
     } else {
-      await organizationsStore.fetchOrganizations();
-      allOrgsByUser.value = organizationsStore.organizations;
+      allOrgsByUser.value = await organizationsStore.fetchUserOrgsByPermission(
+        ORGANIZATION_RESOURCE_ADD,
+      );
     }
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");

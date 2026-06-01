@@ -21,13 +21,15 @@ import { userPropsFormatter } from "@/utils/data-formatter.js";
 import { validateAuthors } from "@/utils/validation-rules";
 import { ref, onMounted } from "vue";
 import { useOrganizationsStore } from "@/store/organizations";
+import { ORGANIZATION_SALE_CREATE } from "@/utils/permissionConstants";
 const props = defineProps({ sellObject: Object, allUsers: Object });
 const organizationsStore = useOrganizationsStore();
 const allOrgsByUser = ref([]);
 
 onMounted(async () => {
-  await organizationsStore.fetchOrganizations();
-  allOrgsByUser.value = organizationsStore.organizations;
+  allOrgsByUser.value = await organizationsStore.fetchUserOrgsByPermission(
+    ORGANIZATION_SALE_CREATE,
+  );
 });
 
 const updateSelectedOrg = (newOrg) => {

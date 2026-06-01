@@ -2,12 +2,6 @@ import { test, expect } from "@playwright/test";
 import { appLogin } from "tests/utils/functions";
 import { wait, navigateViaNavbar } from "tests/utils/functions";
 import {
-  createProductGlobalVariables,
-  productContext,
-  fillProductForm,
-  fillTableCellAndPress,
-} from "tests/utils/productsUtils";
-import {
   firstInputSelect,
   createSaleGlobalVariables,
   secondInputSelect,
@@ -310,25 +304,13 @@ test("Try to create product without product create permission", async ({
     expectedHeader: "Create product",
   });
 
-  createProductGlobalVariables(page);
-  const { submitButton, additionalPrice } = productContext;
-  await fillProductForm(
-    page,
-    "Organization with User, Sale and Resources",
-    "authProductTest",
-    "Test auth product",
-    ["root test"],
-    "someAuthBArcode",
-  );
-  await page.getByRole("button", { name: "Resources" }).click();
-  await fillTableCellAndPress(page, 1, 1, "2");
-  await page.getByRole("button", { name: "Save" }).click();
-  await additionalPrice.fill("2");
-  await submitButton.click();
-
-  await expect(
-    page.getByText("You do not have permission to perform this action"),
-  ).toBeVisible();
+  await page
+    .locator(".v-input__control")
+    .filter({
+      has: page.getByText("Select organization", { exact: true }),
+    })
+    .click();
+  await expect(page.getByText("No data available")).toBeVisible();
 });
 
 test("Try to delete product without product delete permission", async ({
@@ -470,18 +452,7 @@ test("Try to add resource to organization without add permission", async ({
       has: page.getByText("Select organization", { exact: true }),
     })
     .click();
-  await page
-    .locator(".v-overlay-container .v-list-item", {})
-    .filter({ hasText: "Organization with User, Sale and Resources" })
-    .click();
-
-  await page.getByLabel("Quantity", { exact: true }).fill(String(22));
-  await page.getByLabel("Delivery Cost", { exact: true }).fill(String(22));
-  await page.locator(".v-btn__content", { hasText: "Submit" }).click();
-
-  await expect(
-    page.getByText("You do not have permission to perform this action"),
-  ).toBeVisible();
+  await expect(page.getByText("No data available")).toBeVisible();
 });
 
 test("Try to remove resource quantity from organization without remove permission", async ({
@@ -677,27 +648,13 @@ test("Try to create sale without create permission", async ({ page }) => {
     expectedHeader: "New Sale",
   });
 
-  await createSaleGlobalVariables(page);
-  await firstInputSelect(page, "Organization with User, Sale and Resources");
-  await secondInputSelect(page);
-  await selectDate(page, expect);
-  await selectResource(page);
-
-  const discountField = page.locator(".v-row ", {
-    hasText: "quantities of",
-  });
-  await discountField
+  await page
     .locator(".v-input__control")
     .filter({
-      has: page.getByText("Discount", { exact: true }),
+      has: page.getByText("Select organization", { exact: true }),
     })
-    .locator("input")
-    .fill("3");
-
-  await page.getByRole("button", { name: "Submit" }).click();
-  await expect(
-    page.getByText("You do not have permission to perform this action"),
-  ).toBeVisible();
+    .click();
+  await expect(page.getByText("No data available")).toBeVisible();
 });
 
 test("Try to return product from sale without return permission", async ({

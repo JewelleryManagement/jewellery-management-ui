@@ -31,6 +31,7 @@ import { handleNotFound } from "@/utils/action-guard";
 import { useRouter } from "vue-router";
 import { useOrganizationsStore } from "@/store/organizations";
 import { useProductsStore } from "@/store/products";
+import { ORGANIZATION_PRODUCT_TRANSFER } from "@/utils/permissionConstants";
 const snackbarProvider = inject("snackbarProvider");
 const props = defineProps({
   modelValue: Boolean,
@@ -47,7 +48,7 @@ const emits = defineEmits(["close-dialog"]);
 
 const allOrgsByUser = ref(
   await organizationsStore.fetchUserOrgsByPermission(
-    "ORGANIZATION_PRODUCT_TRANSFER",
+    ORGANIZATION_PRODUCT_TRANSFER,
   ),
 );
 

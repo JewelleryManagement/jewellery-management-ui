@@ -2,6 +2,24 @@ import { defineStore } from "pinia";
 import { STORAGE_KEYS } from "./storageKeys";
 import { storageService } from "./storageService";
 import { getCurrentUserPermissions } from "@/services/HttpClientService";
+import {
+  ORGANIZATION_EVENT_READ,
+  ORGANIZATION_PRODUCT_DELETE,
+  ORGANIZATION_PRODUCT_READ,
+  ORGANIZATION_PRODUCT_TRANSFER,
+  ORGANIZATION_PRODUCT_UPDATE,
+  ORGANIZATION_RESOURCE_DELETE,
+  ORGANIZATION_RESOURCE_READ,
+  ORGANIZATION_RESOURCE_TRANSFER,
+  ORGANIZATION_ROLE_ASSIGN,
+  ORGANIZATION_ROLE_READ,
+  ORGANIZATION_ROLE_UPDATE,
+  ORGANIZATION_SALE_PRODUCT_RETURN,
+  ORGANIZATION_SALE_RESOURCE_RETURN,
+  ORGANIZATION_USER_ADD,
+  ORGANIZATION_USER_DELETE,
+  ORGANIZATION_USER_READ,
+} from "@/utils/permissionConstants";
 
 export const usePermissionsStore = defineStore("permissions", {
   state: () => ({
@@ -69,82 +87,82 @@ export const usePermissionsStore = defineStore("permissions", {
 
     canReadResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_RESOURCE_READ");
+        this.hasPermission(organizationId, ORGANIZATION_RESOURCE_READ);
     },
 
     canReadProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_PRODUCT_READ");
+        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_READ);
     },
 
     canReadUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_USER_READ");
+        this.hasPermission(organizationId, ORGANIZATION_USER_READ);
     },
 
     canReadEvent() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_EVENT_READ");
+        this.hasPermission(organizationId, ORGANIZATION_EVENT_READ);
     },
 
     canReadRole() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_ROLE_READ");
+        this.hasPermission(organizationId, ORGANIZATION_ROLE_READ);
     },
 
     canDeleteResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_RESOURCE_DELETE");
+        this.hasPermission(organizationId, ORGANIZATION_RESOURCE_DELETE);
     },
 
     canTransferResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_RESOURCE_TRANSFER");
+        this.hasPermission(organizationId, ORGANIZATION_RESOURCE_TRANSFER);
     },
 
     canDisassembleProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_PRODUCT_DELETE");
+        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_DELETE);
     },
 
     canTransferProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_PRODUCT_TRANSFER");
+        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_TRANSFER);
     },
 
     canAddUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_USER_ADD");
+        this.hasPermission(organizationId, ORGANIZATION_USER_ADD);
     },
 
     canDeleteUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_USER_DELETE");
+        this.hasPermission(organizationId, ORGANIZATION_USER_DELETE);
     },
 
     canUpdateUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_ROLE_UPDATE");
+        this.hasPermission(organizationId, ORGANIZATION_ROLE_UPDATE);
     },
 
     canAssignRoles() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_ROLE_ASSIGN");
+        this.hasPermission(organizationId, ORGANIZATION_ROLE_ASSIGN);
     },
 
     canReturnResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_SALE_RESOURCE_RETURN");
+        this.hasPermission(organizationId, ORGANIZATION_SALE_RESOURCE_RETURN);
     },
 
     canReturnProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_SALE_PRODUCT_RETURN");
+        this.hasPermission(organizationId, ORGANIZATION_SALE_PRODUCT_RETURN);
     },
 
     canUpdateProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, "ORGANIZATION_PRODUCT_UPDATE");
+        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_UPDATE);
     },
   },
   actions: {

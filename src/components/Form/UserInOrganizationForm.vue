@@ -87,14 +87,23 @@ const isUserSelectDisabled = ref(route.path.includes("edit-user"));
 
 const allOrgsByUser = computed(() => organizationsStore.organizations);
 const allUsers = ref([]);
-const roles = await getRolesByType("ORGANIZATION");
+const roles = ref([]);
 
 onMounted(async () => {
   if (props.selectedOrg) {
     await getUsersOutsideOrg(selectedOrg.value);
   }
   await permissionsStore.fetchCurrentUserPermissions(props.selectedOrg.id);
+
+  await fetchRoles();
 });
+
+const fetchRoles = async () => {
+  if (permissionsStore.canAssignRoles(props.selectedOrg.id)) {
+    roles.value = await getRolesByType("ORGANIZATION");
+  }
+};
+
 const updateSelectedOrg = async (newOrg) => {
   if (newOrg) {
     selectedOrg.value = newOrg;

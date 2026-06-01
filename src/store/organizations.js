@@ -16,6 +16,13 @@ import {
   getOrganization,
   getCurrentUserPermissions,
 } from "@/services/HttpClientService";
+import {
+  ORGANIZATION_EVENT_READ,
+  ORGANIZATION_PRODUCT_READ,
+  ORGANIZATION_RESOURCE_READ,
+  ORGANIZATION_ROLE_READ,
+  ORGANIZATION_USER_READ,
+} from "@/utils/permissionConstants";
 
 export const useOrganizationsStore = defineStore("organizations", {
   state: () => ({
@@ -60,11 +67,11 @@ export const useOrganizationsStore = defineStore("organizations", {
       },
     ],
     buttonPermissionsMap: {
-      Resources: "ORGANIZATION_RESOURCE_READ",
-      Products: "ORGANIZATION_PRODUCT_READ",
-      Members: "ORGANIZATION_USER_READ",
-      Events: "ORGANIZATION_EVENT_READ",
-      Roles: "ORGANIZATION_USER_ROLES_READ",
+      Resources: ORGANIZATION_RESOURCE_READ,
+      Products: ORGANIZATION_PRODUCT_READ,
+      Members: ORGANIZATION_USER_READ,
+      Events: ORGANIZATION_EVENT_READ,
+      Roles: ORGANIZATION_ROLE_READ,
     },
   }),
   getters: {
