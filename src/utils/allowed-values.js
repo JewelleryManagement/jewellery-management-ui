@@ -37,7 +37,6 @@ export const fetchAllowedValues = async (
   resourceClazz,
 ) => {
   const fields = allowedVasluesStore.allowedFieldsByType[resourceClazz.value];
-  console.log(fields);
   await Promise.all(
     fields.map((fieldName) =>
       allowedVasluesStore.fetchAllowedValues({

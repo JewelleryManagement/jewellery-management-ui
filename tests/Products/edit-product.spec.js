@@ -51,13 +51,14 @@ test("Edit product and update additional price successfully with reset button", 
 
   const catalogNameString = "catalog" + getRandomNumber();
   const descriptionString = "description" + getRandomNumber();
-  const authors = ["root testroot@gmail.com"];
+  const authors = ["root test"];
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await page.getByRole("button", { name: "Reset" }).click();
 
   await fillProductForm(
     page,
+    null,
     catalogNameString,
     descriptionString,
     authors,

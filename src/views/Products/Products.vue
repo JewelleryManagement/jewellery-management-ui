@@ -17,37 +17,12 @@
       <template v-slot:item.organization="{ item }">
         <organization-tool-tip :organization="item.organization" @click.stop />
       </template>
-
-      <template v-slot:item.actions="{ item }">
-        <div class="d-flex align-center ga-2" @click.stop>
-          <disassembly-button
-            :item="item"
-            @disassembled-product="updateProductList"
-          />
-
-          <product-transfer-button
-            :product="item"
-            @transferred-product="updateProductList"
-          />
-
-          <IconButton
-            icon="mdi-pencil"
-            name="Edit"
-            color="green"
-            :disabled="item.partOfSale"
-            :routerPath="`/products/edit/${item.id}`"
-          />
-        </div>
-      </template>
     </products-table>
   </div>
 </template>
 
 <script setup>
 import ProductsTable from "@/components/Table/ProductsTable.vue";
-import IconButton from "@/components/Button/IconButton.vue";
-import DisassemblyButton from "@/components/Button/DisassemblyButton.vue";
-import ProductTransferButton from "@/components/Button/ProductTransferButton.vue";
 import OrganizationToolTip from "@/components/Tooltip/OrganizationToolTip.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
 import TableButton from "@/components/Button/TableButton.vue";
@@ -68,7 +43,4 @@ onMounted(async () => {
     snackbarProvider.showErrorSnackbar("Failed to fetch products");
   }
 });
-const updateProductList = async (productId) => {
-  await productsStore.fetchProducts();
-};
 </script>

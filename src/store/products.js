@@ -101,12 +101,8 @@ export const useProductsStore = defineStore("products", {
     async fetchProducts() {
       const organizationsStore = useOrganizationsStore();
 
+      await organizationsStore.fetchOrganizations();
       let orgs = organizationsStore.organizations;
-
-      if (!orgs || orgs.length === 0) {
-        await organizationsStore.fetchOrganizations();
-        orgs = organizationsStore.organizations;
-      }
 
       const allProducts = [];
 

@@ -5,11 +5,9 @@ export const createProductGlobalVariables = async (page) => {
   productContext.descriptionButton = page.getByLabel(
     "Description of the product",
   );
-  productContext.authorsComboBox = page
-    .getByRole("combobox")
-    .locator("div")
-    .filter({ hasText: "AuthorsAuthors" })
-    .locator("div");
+  productContext.authorsComboBox = page.getByRole("combobox", {
+    name: "Authors",
+  });
   productContext.additionalPrice = page.getByLabel("Additional price");
   productContext.barcodeButton = page.getByLabel("Barcode...");
   productContext.resourcesButton = page.getByRole("button", {
@@ -28,6 +26,7 @@ export const createProductGlobalVariables = async (page) => {
 
 export const fillProductForm = async (
   page,
+  organization,
   catalogName,
   description,
   authors,
@@ -44,17 +43,18 @@ export const fillProductForm = async (
 
   if (!(await input.isDisabled())) {
     await page.locator(".v-field__input").first().click();
-    await page.getByRole("option").first().click();
+    await page.getByRole("option", { name: organization }).click();
   }
 
   await catalogNameButton.fill(catalogName);
   await descriptionButton.fill(description);
   await authorsComboBox.click();
   for (const author of authors) {
-    await page
-      .locator(".v-overlay__content .v-list:visible")
-      .getByText(author, { exact: true })
-      .click();
+    await authorsComboBox.click();
+    await authorsComboBox.pressSequentially(author);
+    await page.waitForTimeout(300);
+    await page.keyboard.press("ArrowDown");
+    await page.keyboard.press("Enter");
   }
   await barcodeButton.fill(barcode);
 };

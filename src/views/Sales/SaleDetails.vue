@@ -12,6 +12,11 @@
     >
       <template v-slot:item.return="{ item }">
         <return-resource-button
+          v-if="
+            permissionsStone.canReturnResource(
+              currentSale.organizationSeller.id,
+            )
+          "
           :currentResourceInfo="item"
           :saleToReturnFrom="currentSale"
         />
@@ -29,7 +34,12 @@
       </template>
 
       <template v-slot:item.return="{ item }">
-        <return-product-button :currentProductInfo="item" />
+        <return-product-button
+          v-if="
+            permissionsStone.canReturnProduct(currentSale.organizationSeller.id)
+          "
+          :currentProductInfo="item"
+        />
       </template>
     </products-table>
 
@@ -51,17 +61,17 @@ import ReturnResourceButton from "@/components/Button/ReturnResourceButton.vue";
 import ReturnProductButton from "@/components/Button/ReturnProductButton.vue";
 import ToggleTableButtons from "@/components/Button/ToggleTableButtons.vue";
 import EventsTable from "@/components/Table/EventsTable.vue";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
 import { useSalesStore } from "@/store/sales";
 import { useSystemEventsStore } from "@/store/systemEvents";
 import { useProductsStore } from "@/store/products";
+import { usePermissionsStore } from "@/store/permissions";
 
-const store = useStore();
 const salesStore = useSalesStore();
 const systemEventsStore = useSystemEventsStore();
 const productsStore = useProductsStore();
+const permissionsStone = usePermissionsStore();
 const route = useRoute();
 const saleId = route.params.id;
 
@@ -91,6 +101,12 @@ const tableButtons = computed(() => salesStore.tableButtons);
 const events = await systemEventsStore.fetchEventsRelatedTo(saleId);
 
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
+
+onMounted(async () => {
+  await permissionsStone.fetchCurrentUserPermissions(
+    currentSale.value.organizationSeller.id,
+  );
+});
 </script>
 
 <style lang="scss" scoped></style>

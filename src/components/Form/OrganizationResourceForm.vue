@@ -33,11 +33,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { inject, ref, watch, onMounted } from "vue";
 import { useNumberFieldRules } from "../../utils/validation-rules";
 import { useRoute } from "vue-router";
 import OrganizationSelect from "@/components/Select/OrganizationSelect.vue";
 import { useOrganizationsStore } from "@/store/organizations";
+import {
+  ORGANIZATION_RESOURCE_ADD,
+  ORGANIZATION_RESOURCE_TRANSFER,
+} from "@/utils/permissionConstants";
 
 const emits = defineEmits(["handle-submit"]);
 const form = ref(null);
@@ -48,15 +52,52 @@ const numberFieldRules = useNumberFieldRules();
 const selectedUser = ref("");
 const quantity = ref("");
 const dealPrice = ref("");
-const allOrgsByUser = computed(() => organizationsStore.organizations);
-const selectedOrg = ref(allOrgsByUser.value.at(0));
+const allOrgsByUser = ref([]);
+const selectedOrg = ref(null);
 const isRouteTransfer = route.path.includes("/transfer");
 const isRouteRemove = route.path.includes("/remove");
+const snackbarProvider = inject("snackbarProvider");
 
-onMounted(() => {
-  if (isRouteRemove || isRouteTransfer) quantity.value = route.params.quantity;
-  if (isRouteRemove) setCurrentOrgInTheList();
-  if (isRouteTransfer) removeCurrentOrgFromList();
+const loadAllOrganizations = async () => {
+  try {
+    if (isRouteTransfer) {
+      allOrgsByUser.value = await organizationsStore.fetchUserOrgsByPermission(
+        ORGANIZATION_RESOURCE_TRANSFER,
+      );
+    } else {
+      allOrgsByUser.value = await organizationsStore.fetchUserOrgsByPermission(
+        ORGANIZATION_RESOURCE_ADD,
+      );
+    }
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Could not fetch user's organizations");
+  }
+};
+
+watch(
+  () => allOrgsByUser.value,
+  (orgs) => {
+    if (orgs.length && !selectedOrg.value) {
+      selectedOrg.value = orgs[0];
+    }
+  },
+  { immediate: true },
+);
+
+onMounted(async () => {
+  await loadAllOrganizations();
+
+  if (isRouteRemove || isRouteTransfer) {
+    quantity.value = route.params.quantity;
+  }
+
+  if (isRouteRemove) {
+    setCurrentOrgInTheList();
+  }
+
+  if (isRouteTransfer) {
+    removeCurrentOrgFromList();
+  }
 });
 
 const updateSelectedOrg = (newOrg) => {

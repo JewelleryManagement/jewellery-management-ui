@@ -38,7 +38,7 @@ const createProduct = async () => {
   };
 
   try {
-    const res = productsStore.createProduct(productForCreation);
+    const res = await productsStore.createProduct(productForCreation);
     snackbarProvider.showSuccessSnackbar("Successfully added product!");
     return res;
   } catch (error) {

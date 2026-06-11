@@ -57,6 +57,16 @@ const createResource = async (page) => {
     .locator("input")
     .fill(String(sku));
   await page.locator(".v-btn__content", { hasText: "Submit" }).click();
+  await page
+    .locator(".v-input__control")
+    .filter({
+      has: page.getByText("Select organization", { exact: true }),
+    })
+    .click();
+  await page
+    .locator(".v-overlay-container .v-list-item", {})
+    .filter({ hasText: "Organization with User, Sale and Resources" })
+    .click();
   await page.getByLabel("Quantity", { exact: true }).fill(String(22));
   await page.getByLabel("Delivery Cost", { exact: true }).fill(String(22));
   await page.locator(".v-btn__content", { hasText: "Submit" }).click();

@@ -1,6 +1,6 @@
 <template>
   <div class="my-12">
-    <users-table title="Users table">
+    <users-table title="Users table" headBtnName="Create user">
       <template v-slot:item.actions="{ item }">
         <IconButton
           icon="mdi-pencil"

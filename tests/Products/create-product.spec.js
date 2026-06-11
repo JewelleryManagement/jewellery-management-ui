@@ -76,9 +76,10 @@ test("Create a product with empty fields is unsuccessful", async ({ page }) => {
 
   await fillProductForm(
     page,
+    "Organization with User, Sale and Resources",
     "Product" + getRandomNumber(),
     "Description" + getRandomNumber(),
-    ["root testroot@gmail.com"],
+    ["root test"],
     getRandomNumberAsString(),
     `asd${getRandomNumber()}asdf`,
   );
@@ -93,11 +94,12 @@ test("Create a product is successful", async ({ page }) => {
   const { submitButton, additionalPrice } = productContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
-  const authors = ["root testroot@gmail.com"];
+  const authors = ["root test"];
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await fillProductForm(
     page,
+    "Organization with User, Sale and Resources",
     productName,
     productDescription,
     authors,
@@ -127,11 +129,12 @@ test("Create a product with a product is successful and negative additional pric
   const { submitButton, additionalPrice } = productContext;
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
-  const authors = ["root testroot@gmail.com"];
+  const authors = ["root test"];
   const barcode = `asd${getRandomNumber()}asdf`;
 
   await fillProductForm(
     page,
+    "Organization with User, Sale and Resources",
     productName,
     productDescription,
     authors,
@@ -159,11 +162,12 @@ test("Barcode throws an error if cyrilic symbols are entered", async ({
 }) => {
   const productName = "Product" + getRandomNumber();
   const productDescription = "Description" + getRandomNumber();
-  const authors = ["root testroot@gmail.com"];
+  const authors = ["root test"];
   const barcode = `асд${getRandomNumber()}asdf`;
 
   await fillProductForm(
     page,
+    "Organization with User, Sale and Resources",
     productName,
     productDescription,
     authors,

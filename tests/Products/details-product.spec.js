@@ -22,6 +22,7 @@ const createProduct = async (page) => {
 
   await fillProductForm(
     page,
+    "Organization with User, Sale and Resources",
     productName,
     productDescription,
     authors,
@@ -65,7 +66,7 @@ test.beforeEach(async ({ page }) => {
 
   productName = "Product" + getRandomNumber();
   productDescription = "Description" + getRandomNumber();
-  authors = ["root testroot@gmail.com"];
+  authors = ["root test"];
   barcode = `asd${getRandomNumber()}asdf`;
 });
 

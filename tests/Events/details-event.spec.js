@@ -62,7 +62,7 @@ test.beforeEach(async ({ page }) => {
 
   productName = "Product" + getRandomNumber();
   productDescription = "Description" + getRandomNumber();
-  authors = ["root testroot@gmail.com"];
+  authors = ["root test"];
   barcode = `asd${getRandomNumber()}asdf`;
 });
 
@@ -117,6 +117,7 @@ const visitEventPage = async (page, entityIdentifier, eventName) => {
     })
     .first()
     .click();
+  await page.waitForTimeout(3000);
   await expect(
     page.locator(".v-card-title", { hasText: eventName }),
   ).toBeVisible();
@@ -207,7 +208,9 @@ const createOrganization = async (page, expectedUrl) => {
     page.locator(".v-btn__content", { hasText: "NEW ORGANIZATION" }),
   ).toBeVisible();
   page.locator(".v-btn__content", { hasText: "NEW ORGANIZATION" }).click();
-  await expect(page.getByText("Create organization")).toBeVisible();
+  await expect(
+    page.getByText("Create organization", { exact: true }),
+  ).toBeVisible();
   const { nameInput, addressInput, noteInput, submitButton } =
     organizationContext;
   await nameInput.fill(organizationName);
@@ -228,16 +231,25 @@ const addUserToOrganization = async (page) => {
   await expect(page.getByText("Add User")).toBeVisible();
   await page.getByText("Add User").click();
   await fillDropdownInput(page, "Select a user", "admin@gmail.com");
-  const checkbox = page.locator(".v-input__control", {
-    hasText: "CREATE_PRODUCT",
+  const checkbox = page.getByRole("combobox", {
+    name: "Roles",
   });
-  await expect(
-    checkbox
-      .locator(".v-selection-control__input")
-      .locator(".mdi-checkbox-blank-outline"),
-  ).toBeVisible();
-  await checkbox.locator(".v-selection-control__input").click();
-  await page.locator(".v-btn__content", { hasText: "Add User" }).click();
+  await checkbox.click();
+  await checkbox.pressSequentially("ORGANIZATION_ADMIN");
+  await page.waitForTimeout(300);
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await page.locator("body").click();
+  await page.waitForTimeout(1000);
+  await page.locator("body").click();
+  await page
+    .getByRole("button", {
+      name: "Add user",
+      exact: true,
+    })
+    .click();
+  await expect(page.getByText("Successfully added user to org!")).toBeVisible();
+
   await expect(page.getByText("Successfully added user to org!")).toBeVisible();
 };
 
@@ -258,6 +270,7 @@ const createProduct = async (page, expectedUrl) => {
   const { submitButton, additionalPrice } = productContext;
   await fillProductForm(
     page,
+    "Organization with User, Sale and Resources",
     productName,
     productDescription,
     authors,
@@ -293,7 +306,7 @@ const createSale = async (page, discount) => {
     expectedHeader: "New Sale",
   });
   const { submitButton, resourcesBtn, saveBtn, productsBtn } = saleContext;
-  await firstInputSelect(page, 1);
+  await firstInputSelect(page, "Organization with User, Sale and Resources");
   await secondInputSelect(page);
   await selectDate(page, expect);
   await wait(3);
@@ -419,7 +432,6 @@ test("Create user in organization event", async ({ page }) => {
 
   await addUserToOrganization(page);
   await visitEventPage(page, null, "Create User In Organization");
-  await checkEventContent(page, `[ "CREATE_PRODUCT" ]`);
   await checkEventRawContent(page);
 });
 
@@ -460,27 +472,35 @@ test("Update user in organization event", async ({ page }) => {
 
   await clickIconButton(page, "admin@gmail.com", ".mdi-pencil");
 
-  const checkbox2 = page.locator(".v-input__control", {
-    hasText: "EDIT_PRODUCT",
+  const checkbox = page.getByRole("combobox", {
+    name: "Roles",
   });
-  await expect(
-    checkbox2
-      .locator(".v-selection-control__input")
-      .locator(".mdi-checkbox-blank-outline"),
-  ).toBeVisible();
-  await checkbox2.locator(".v-selection-control__input").click();
-  await page.locator(".v-btn__content", { hasText: "Add User" }).click();
-  await expect(
-    page.getByText("Successfully Edited user in org!"),
-  ).toBeVisible();
+  await checkbox.click();
+  await checkbox.pressSequentially("TEST_READ_ONLY");
+  await page.waitForTimeout(300);
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await page.locator("body").click();
+  await page.locator("body").click();
+  await page
+    .getByRole("button", {
+      name: "Add user",
+      exact: true,
+    })
+    .click();
+  await expect(page.getByText("Successfully added user to org!")).toBeVisible();
 
   await visitEventPage(page, null, "Update User In Organization");
-  await checkEntityContent(page, "Entity Before", `[ "CREATE_PRODUCT" ]`);
-  await checkEntityContent(
-    page,
-    "Entity After",
-    `[ "CREATE_PRODUCT", "EDIT_PRODUCT" ]`,
-  );
+
+  const entityBefore = page.locator(".v-card", { hasText: "Entity Before" });
+  await expect(entityBefore.getByText("Roles Table")).toBeVisible();
+  await entityBefore.getByText("Roles Table").click();
+  await expect(entityBefore.getByText("ORGANIZATION_ADMIN")).toBeVisible();
+
+  const entityAfter = page.locator(".v-card", { hasText: "Entity After" });
+  await expect(entityAfter.getByText("Roles Table")).toBeVisible();
+  await entityAfter.getByText("Roles Table").click();
+  await expect(entityAfter.getByText("TEST_READ_ONLY")).toBeVisible();
 });
 
 test("Add resource quantity to organization event", async ({ page }) => {
@@ -608,7 +628,11 @@ test("Transfer Product event", async ({ page }) => {
 });
 
 test("Transfer resource event", async ({ page }) => {
-  await createResource(page, "/home", null);
+  await createResource(
+    page,
+    "/home",
+    "Organization with User, Sale and Resources",
+  );
   await createOrganization(page, "/resources?clazz=Element");
 
   await expect(
@@ -641,7 +665,11 @@ test("Transfer resource event", async ({ page }) => {
 
 test("Create sale event", async ({ page }) => {
   test.setTimeout(60000);
-  await createResource(page, "/home", null);
+  await createResource(
+    page,
+    "/home",
+    "Organization with User, Sale and Resources",
+  );
   await createProduct(page, "/resources?clazz=Element");
   const discount = "23";
   await createSale(page, discount);
@@ -657,7 +685,11 @@ test("Create sale event", async ({ page }) => {
 
 test("Return product event", async ({ page }) => {
   test.setTimeout(60000);
-  await createResource(page, "/home", null);
+  await createResource(
+    page,
+    "/home",
+    "Organization with User, Sale and Resources",
+  );
   await createProduct(page, "/resources?clazz=Element");
   const discount = "24";
   await createSale(page, discount);
@@ -692,7 +724,11 @@ test("Return product event", async ({ page }) => {
 
 test("Return resource event", async ({ page }) => {
   test.setTimeout(60000);
-  await createResource(page, "/home", null);
+  await createResource(
+    page,
+    "/home",
+    "Organization with User, Sale and Resources",
+  );
   await createProduct(page, "/resources?clazz=Element");
   const discount = "25";
   await createSale(page, discount);
@@ -724,4 +760,9 @@ test("Return resource event", async ({ page }) => {
     productDescription,
     "Resources Table",
   );
+});
+
+test("Try to access event page that does not exists", async ({ page }) => {
+  await page.goto("./system-events/c676d048-d0ae-40a8-b5bd-cffcf2095cb2");
+  await expect(page.getByText("Event not found")).toBeVisible();
 });

@@ -32,7 +32,7 @@ const createSale = async (page, discount) => {
 
   await expect(page.getByText("submit")).toBeVisible();
 
-  await firstInputSelect(page, 1);
+  await firstInputSelect(page, "Organization with User, Sale and Resources");
   await secondInputSelect(page);
 
   await selectDate(page, expect);

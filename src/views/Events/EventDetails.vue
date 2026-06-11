@@ -43,7 +43,6 @@
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
 import { computed } from "vue";
 import CreatedOrDeletedEvent from "./CreatedOrDeletedEvent.vue";
 import UserToolTip from "@/components/Tooltip/UserToolTip.vue";
@@ -58,12 +57,9 @@ dayjs.extend(customParseFormat);
 
 const timeAgo = (input) => dayjs(input, "DD/MM/YYYY, HH:mm:ss", true).fromNow();
 
-const route = useRoute();
 const systemEventsStore = useSystemEventsStore();
 
-const eventId = route.params.eventId;
-
-const event = await systemEventsStore.fetchSystemEvent(eventId);
+const event = systemEventsStore.selectedEvent;
 
 const eventTypes = computed(() => systemEventsStore.eventTypes);
 

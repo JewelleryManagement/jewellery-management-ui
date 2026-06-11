@@ -5,32 +5,24 @@
 </template>
 
 <script setup>
-import { onBeforeMount, inject } from "vue";
+import { onBeforeMount, inject, ref } from "vue";
 import EventTimeline from "./Events/EventTimeline.vue";
-import { useUsersStore } from "@/store/users";
-import { useProductsStore } from "@/store/products";
 import { useSystemEventsStore } from "@/store/systemEvents";
 import { useResourcesStore } from "@/store/resources";
 
-const userStore = useUsersStore();
-const productsStore = useProductsStore();
 const systemEventsStore = useSystemEventsStore();
 const resourcesStore = useResourcesStore();
 
 const snackbarProvider = inject("snackbarProvider");
 
+const events = ref([]);
+
 onBeforeMount(async () => {
   try {
-    await Promise.all([
-      userStore.fetchUsers(),
-      resourcesStore.fetchResources(),
-      productsStore.fetchProducts(),
-      resourcesStore.buildResourcesQueries(),
-    ]);
+    await resourcesStore.buildResourcesQueries();
+    events.value = await systemEventsStore.fetchAllEvents();
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch globally!");
   }
 });
-
-const events = await systemEventsStore.fetchAllEvents();
 </script>
