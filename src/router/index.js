@@ -7,6 +7,7 @@ import { useSalesStore } from "@/store/sales";
 import { useResourcesStore } from "@/store/resources";
 import { useSystemEventsStore } from "@/store/systemEvents";
 import { useRolesStore } from "@/store/roles";
+import { usePermissionsStore } from "@/store/permissions.js";
 
 export const makeFetchGuard =
   ({ action, type, getPayload = (to) => to.params.id }) =>
@@ -65,14 +66,22 @@ const routes = [
     props: true,
     name: "Users Create",
     component: () => import("../views/Users/UserCreate.vue"),
-    meta: { title: "Users Create", requiresAuth: true },
+    meta: {
+      title: "Users Create",
+      requiresAuth: true,
+      authorization: "canCreateSystemUsers",
+    },
   },
   {
     path: "/users/edit/:id",
     props: true,
     name: "Edit-User",
     component: () => import("../views/Users/UserUpdate.vue"),
-    meta: { title: "Edit user", requiresAuth: true },
+    meta: {
+      title: "Edit user",
+      requiresAuth: true,
+      authorization: "canUpdateSystemUsers",
+    },
     beforeEnter: makeFetchGuard({
       action: (id) => useUsersStore().fetchUser(id),
       type: "User",
@@ -90,7 +99,7 @@ const routes = [
     component: () => import("../views/Resources/ResourcesDetailsById.vue"),
     meta: { title: "Resource page", requiresAuth: true },
     beforeEnter: makeFetchGuard({
-      action: (id) => useResourcesStore().fetchAvailabilityResourceById(id),
+      action: (id) => useResourcesStore().fetchResourceById(id),
       type: "Resource",
     }),
   },
@@ -98,16 +107,24 @@ const routes = [
     path: "/resources/add",
     name: "Add Resources",
     component: () => import("../views/Resources/ResourceDetails.vue"),
-    meta: { title: "Add resource", requiresAuth: true },
+    meta: {
+      title: "Add resource",
+      requiresAuth: true,
+      authorization: "canCreateSystemResource",
+    },
   },
   {
     path: "/resources/edit/:id",
     name: "Edit-Resource",
     props: true,
     component: () => import("../views/Resources/ResourceDetails.vue"),
-    meta: { title: "Edit resource", requiresAuth: true },
+    meta: {
+      title: "Edit resource",
+      requiresAuth: true,
+      authorization: "canUpdateSystemResource",
+    },
     beforeEnter: makeFetchGuard({
-      action: (id) => useResourcesStore().fetchAvailabilityResourceById(id),
+      action: (id) => useResourcesStore().fetchResourceById(id),
       type: "Resource",
     }),
   },
@@ -116,9 +133,13 @@ const routes = [
     name: "Duplicate-Resource",
     props: true,
     component: () => import("../views/Resources/ResourceDetails.vue"),
-    meta: { title: "Duplicate resource", requiresAuth: true },
+    meta: {
+      title: "Duplicate resource",
+      requiresAuth: true,
+      authorization: "canCreateSystemResource",
+    },
     beforeEnter: makeFetchGuard({
-      action: (id) => useResourcesStore().fetchAvailabilityResourceById(id),
+      action: (id) => useResourcesStore().fetchResourceById(id),
       type: "Resource",
     }),
   },
@@ -204,7 +225,11 @@ const routes = [
   },
   {
     path: "/organizations/add",
-    meta: { title: "Create organization", requiresAuth: true },
+    meta: {
+      title: "Create organization",
+      requiresAuth: true,
+      authorization: "canCreateSystemOrganization",
+    },
     component: () => import("../views/Organizations/OrganizationsAdd.vue"),
   },
   {
@@ -225,7 +250,12 @@ const routes = [
     name: "Remove-Quantity",
     component: () =>
       import("../views/Organizations/OrganizationResourceRemove.vue"),
-    meta: { title: "Remove Quantity", requiresAuth: true },
+    meta: {
+      title: "Remove Quantity",
+      requiresAuth: true,
+      organizationAuthorization: "canDeleteResource",
+      organizationIdParam: "organizationId",
+    },
     beforeEnter: makeFetchGuard({
       type: "Resource",
       getPayload: (to) => to.params.resourceId,
@@ -239,7 +269,12 @@ const routes = [
     name: "Transfer-Quantity",
     component: () =>
       import("../views/Organizations/OrganizationResourceTransfer.vue"),
-    meta: { title: "Transfer Quantity", requiresAuth: true },
+    meta: {
+      title: "Transfer Quantity",
+      requiresAuth: true,
+      organizationAuthorization: "canTransferResource",
+      organizationIdParam: "organizationId",
+    },
     beforeEnter: makeFetchGuard({
       type: "Resource",
       getPayload: (to) => to.params.resourceId,
@@ -252,14 +287,24 @@ const routes = [
     name: "Add-user-to-Organization",
     props: true,
     component: () => import("../views/Organizations/OrganizationUserAdd.vue"),
-    meta: { title: "Add user to Organization", requiresAuth: true },
+    meta: {
+      title: "Add user to Organization",
+      requiresAuth: true,
+      organizationAuthorization: "canAddUser",
+      organizationIdParam: "organizationId",
+    },
   },
   {
     path: "/organizations/:organizationId/edit-user/:userId",
     name: "Edit-user-in-Organization",
     props: true,
     component: () => import("../views/Organizations/OrganizationUserEdit.vue"),
-    meta: { title: "Edit user in Organization", requiresAuth: true },
+    meta: {
+      title: "Edit user in Organization",
+      requiresAuth: true,
+      organizationAuthorization: "canUpdateUser",
+      organizationIdParam: "organizationId",
+    },
     beforeEnter: makeFetchGuard({
       type: "User",
       getPayload: (to) => ({
@@ -301,7 +346,11 @@ const routes = [
     path: "/roles/:type(organization|system)/create",
     name: "Role-Create",
     component: () => import("../components/Form/RoleForm.vue"),
-    meta: { title: "Create Role", requiresAuth: true },
+    meta: {
+      title: "Create Role",
+      requiresAuth: true,
+      authorization: "canCreateSystemRoles",
+    },
   },
   {
     path: "/not-found",
@@ -322,10 +371,12 @@ const router = createRouter({
   linkActiveClass: "active",
 });
 
-router.beforeEach((to, from) => {
+router.beforeEach(async (to, from) => {
   document.title = to.meta.title || "App";
 
   const isAuthenticated = useAuthStore().isAuthenticated;
+
+  const permissionsStore = usePermissionsStore();
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return { path: "/login", replace: true };
@@ -333,6 +384,38 @@ router.beforeEach((to, from) => {
 
   if (to.path === "/login" && isAuthenticated) {
     return { path: "/home", replace: true };
+  }
+
+  const authorization = to.meta.authorization;
+
+  if (authorization) {
+    await permissionsStore.fetchCurrentUserSystemPermissions();
+
+    if (!permissionsStore[authorization]) {
+      return {
+        name: "NotFound",
+        replace: true,
+      };
+    }
+  }
+
+  const organizationAuthorization = to.meta.organizationAuthorization;
+
+  if (organizationAuthorization) {
+    const organizationIdParam = to.meta.organizationIdParam;
+    const organizationId = to.params[organizationIdParam];
+    await permissionsStore.fetchCurrentUserOrgnizationPermissions(
+      organizationId,
+    );
+
+    const checker = permissionsStore[organizationAuthorization];
+
+    if (typeof checker !== "function" || !checker(organizationId)) {
+      return {
+        name: "NotFound",
+        replace: true,
+      };
+    }
   }
 
   return true;

@@ -54,6 +54,14 @@ export const useUsersStore = defineStore("users", {
         label: "Events",
         icon: "mdi-calendar",
       },
+      {
+        label: "Organization Roles",
+        icon: "mdi-shield-account",
+      },
+      {
+        label: "System Roles",
+        icon: "mdi-shield-account",
+      },
     ],
   }),
   getters: {
@@ -109,6 +117,9 @@ export const useUsersStore = defineStore("users", {
     },
     async fetchUsersByOrganizationWithRoles(organizationId) {
       return await getAllUsersByOrganizationWithRoles(organizationId);
+    },
+    clearUsers() {
+      this.users = [];
     },
   },
   persist: {

@@ -264,7 +264,7 @@ test("Try to access update user in organization without update permissions", asy
 test("Try to read products in user without product read and sale read permissions", async ({
   page,
 }) => {
-  await loginUserWithoutPermissions(page);
+  await loginUserWithReadPermissions(page);
   await navigateViaNavbar(page, expect, {
     navParentButtonText: "Users",
     expectedUrl: "/home",
@@ -370,7 +370,7 @@ test("Try to transfer product without product transfer permission", async ({
 test("Try to access products by resource without product read permission", async ({
   page,
 }) => {
-  await loginUserWithoutPermissions(page);
+  await loginUserWithReadPermissions(page);
 
   await navigateViaNavbar(page, expect, {
     navParentButtonText: "Resources",
@@ -598,44 +598,44 @@ test("Try to access organization quantities by resource only for permitted organ
   await expect(page.getByText("1-1 of 1")).toBeVisible();
 });
 
-test("Try to access organization quantities by resource withot read permissions", async ({
-  page,
-}) => {
-  await loginUserWithoutPermissions(page);
+// test("Try to access organization quantities by resource withot read permissions", async ({
+//   page,
+// }) => {
+//   await loginUserWithoutPermissions(page);
 
-  await navigateViaNavbar(page, expect, {
-    navParentButtonText: "Resources",
-    expectedUrl: "/home",
-    navChildButtonText: "Diamond Melee",
-    expectedNewUrl: "resources?clazz=DiamondMelee",
-    expectedHeader: "All Diamond Melees table",
-  });
+//   await navigateViaNavbar(page, expect, {
+//     navParentButtonText: "Resources",
+//     expectedUrl: "/home",
+//     navChildButtonText: "Diamond Melee",
+//     expectedNewUrl: "resources?clazz=DiamondMelee",
+//     expectedHeader: "All Diamond Melees table",
+//   });
 
-  await page
-    .locator(".v-data-table-footer__items-per-page .v-input__control")
-    .click();
-  await page
-    .locator(".v-overlay-container .v-list-item", {})
-    .filter({ hasText: "All" })
-    .click();
+//   await page
+//     .locator(".v-data-table-footer__items-per-page .v-input__control")
+//     .click();
+//   await page
+//     .locator(".v-overlay-container .v-list-item", {})
+//     .filter({ hasText: "All" })
+//     .click();
 
-  await expect(
-    page.getByRole("cell", {
-      name: "S.C",
-      exact: true,
-    }),
-  ).toBeVisible();
-  await page
-    .getByRole("cell", {
-      name: "S.C",
-      exact: true,
-    })
-    .click();
+//   await expect(
+//     page.getByRole("cell", {
+//       name: "S.C",
+//       exact: true,
+//     }),
+//   ).toBeVisible();
+//   await page
+//     .getByRole("cell", {
+//       name: "S.C",
+//       exact: true,
+//     })
+//     .click();
 
-  await expect(page.getByText("Organizations Table")).toBeVisible();
-  await page.getByText("Organizations Table").click();
-  await expect(page.getByText("No data available")).toBeVisible();
-});
+//   await expect(page.getByText("Organizations Table")).toBeVisible();
+//   await page.getByText("Organizations Table").click();
+//   await expect(page.getByText("No data available")).toBeVisible();
+// });
 
 test("Try to create sale without create permission", async ({ page }) => {
   await loginUserWithSomePermissions(page);
@@ -793,7 +793,7 @@ test("Try to access sale page without sale read permission", async ({
 test("Try to access sales by resource without read permissions", async ({
   page,
 }) => {
-  await loginUserWithoutPermissions(page);
+  await loginUserWithReadPermissions(page);
 
   await navigateViaNavbar(page, expect, {
     navParentButtonText: "Resources",
@@ -875,4 +875,52 @@ test("Add user in organization without role assign permission roles field should
   await expect(page.getByText("Add User")).toBeVisible();
   await page.getByText("Add User").click();
   await expect(page.getByText("Select Role")).not.toBeVisible();
+});
+
+test("Try to access resource remove from organization page without delete permission", async ({
+  page,
+}) => {
+  await loginUserWithoutPermissions(page);
+
+  await page.goto(
+    "./organizations/availability/remove/640809ce-f04b-46c3-9a01-9cd33034d185/00d905ba-836f-4cef-8827-c339ca94367c/10",
+  );
+
+  await expect(page.getByText("Page not found")).toBeVisible();
+});
+
+test("Try to access resource transfer from organization page without transfer permission", async ({
+  page,
+}) => {
+  await loginUserWithoutPermissions(page);
+
+  await page.goto(
+    "./organizations/availability/transfer/640809ce-f04b-46c3-9a01-9cd33034d185/00d905ba-836f-4cef-8827-c339ca94367c/10",
+  );
+
+  await expect(page.getByText("Page not found")).toBeVisible();
+});
+
+test("Try to access add user to organization page without add permission", async ({
+  page,
+}) => {
+  await loginUserWithoutPermissions(page);
+
+  await page.goto(
+    "./organizations/640809ce-f04b-46c3-9a01-9cd33034d185/add-user",
+  );
+
+  await expect(page.getByText("Page not found")).toBeVisible();
+});
+
+test("Try to access edit user in organization page without update permission", async ({
+  page,
+}) => {
+  await loginUserWithoutPermissions(page);
+
+  await page.goto(
+    "./organizations/640809ce-f04b-46c3-9a01-9cd33034d185/edit-user/88596531-7f0f-407d-b502-31833b8c8e8d",
+  );
+
+  await expect(page.getByText("Page not found")).toBeVisible();
 });

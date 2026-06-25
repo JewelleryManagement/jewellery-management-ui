@@ -5,7 +5,7 @@
       v-for="button in buttons"
       :key="button.label"
       :prepend-icon="button.icon"
-      :class="isMediumAndDownScreen() ? 'mx-2 my-2' : 'mx-15'"
+      :class="isMediumAndDownScreen() ? 'mx-2 my-2' : 'mx-10'"
       :size="isMediumAndDownScreen() ? 'small' : 'x-large'"
       color="red"
       rounded="xs"

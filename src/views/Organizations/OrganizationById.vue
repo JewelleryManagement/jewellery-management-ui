@@ -127,7 +127,11 @@
     >
     </EventsTable>
 
-    <RolesTable v-if="selectedButton === 'Roles'" :roles="roles" />
+    <RolesTable
+      v-if="selectedButton === 'Roles'"
+      :roles="roles"
+      title="Organization Roles"
+    />
   </div>
 </template>
 
@@ -182,7 +186,7 @@ const events = ref([]);
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 const roles = ref([]);
 onMounted(async () => {
-  await fetchCurrentUserPermissions();
+  await fetchCurrentUserOrgnizationPermissions();
   await updateOrganizationDetails();
   await fetchEventsForOrganization();
   await fetchRolesForOrganization();
@@ -259,9 +263,9 @@ const fetchRolesForOrganization = async () => {
   }
 };
 
-const fetchCurrentUserPermissions = async () => {
+const fetchCurrentUserOrgnizationPermissions = async () => {
   try {
-    await permissionsStore.fetchCurrentUserPermissions(orgId);
+    await permissionsStore.fetchCurrentUserOrgnizationPermissions(orgId);
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
       "Could not fetch roles for organization!",
@@ -303,14 +307,17 @@ const allowedTableButtons = computed(() => {
 
     if (!requiredPermission) return true;
 
-    return permissionsStore.hasPermission(orgId, requiredPermission);
+    return permissionsStore.hasOrganizationPermission(
+      orgId,
+      requiredPermission,
+    );
   });
 });
 
 const openRolesDialog = (userId) => {
   const member = orgMembers.value.find((item) => item.user.id === userId);
 
-  selectedUserRoles.value = member?.organizationRoles || [];
+  selectedUserRoles.value = member?.roles || [];
   isDialogOpen.value = true;
 };
 </script>

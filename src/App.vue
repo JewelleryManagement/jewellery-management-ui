@@ -25,14 +25,16 @@
 
 <script setup>
 import { useRouter } from "vue-router";
-import { ref, provide, computed } from "vue";
+import { ref, provide, computed, watch } from "vue";
 import NavBar from "./components/Nav/NavBar.vue";
 import SnackBar from "./components/Popup/SnackBar.vue";
 import { useAuthStore } from "./store/auth";
 import { useResourcesStore } from "./store/resources";
+import { usePermissionsStore } from "./store/permissions.js";
 
 const resourcesStore = useResourcesStore();
 const authStore = useAuthStore();
+const permissionsStore = usePermissionsStore();
 const router = useRouter();
 
 const isAuth = computed(() => authStore.isAuthenticated);
@@ -101,7 +103,9 @@ const mainMenuPages = computed(() => [
     link: { text: "Users", url: "/users" },
     children: [
       { text: "All Users", url: "/users" },
-      { text: "Create User", url: "/users/create" },
+      ...(permissionsStore.canCreateSystemUsers
+        ? [{ text: "Create User", url: "/users/create" }]
+        : []),
     ],
     icon: "mdi-account-multiple",
     active: false,
@@ -110,7 +114,9 @@ const mainMenuPages = computed(() => [
     link: { text: "Resources", url: "/resources" },
 
     children: [
-      { text: "Add Resource", url: "/resources/add" },
+      ...(permissionsStore.canCreateSystemResource
+        ? [{ text: "Add Resource", url: "/resources/add" }]
+        : []),
       { text: "All", url: "/resources" },
       ...useResourceButtons().value,
     ],
@@ -139,7 +145,9 @@ const mainMenuPages = computed(() => [
     link: { text: "Organizations", url: "/organizations" },
     children: [
       { text: "All Organizations", url: "/organizations" },
-      { text: "New Organization", url: "/organizations/add" },
+      ...(permissionsStore.canCreateSystemOrganization
+        ? [{ text: "New Organization", url: "/organizations/add" }]
+        : []),
     ],
     icon: "mdi-domain",
     active: false,
@@ -147,9 +155,19 @@ const mainMenuPages = computed(() => [
   {
     link: { text: "Roles", url: "/roles" },
     children: [
-      { text: "Create Organization Role", url: "/roles/organization/create" },
+      ...(permissionsStore.canCreateSystemRoles
+        ? [
+            {
+              text: "Create Organization Role",
+              url: "/roles/organization/create",
+            },
+            {
+              text: "Create System Role",
+              url: "/roles/system/create",
+            },
+          ]
+        : []),
       { text: "Organization Roles", url: "/roles/organization" },
-      { text: "Create System Role", url: "/roles/system/create" },
       { text: "System Roles", url: "/roles/system" },
     ],
     icon: "mdi-shield-account",
@@ -167,6 +185,16 @@ const mainMenuPages = computed(() => [
 ]);
 
 const navBarButtons = ref(mainMenuPages);
+
+watch(
+  () => authStore.isAuthenticated,
+  async (isAuthenticated) => {
+    if (isAuthenticated) {
+      await permissionsStore.fetchCurrentUserSystemPermissions();
+    }
+  },
+  { immediate: true },
+);
 </script>
 
 <style>

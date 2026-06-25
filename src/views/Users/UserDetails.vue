@@ -31,11 +31,23 @@
       :items="events"
     >
     </EventsTable>
+
+    <RolesTable
+      v-if="selectedButton === 'Organization Roles'"
+      :roles="userOrganizationRoles"
+      title="Organization Roles"
+    ></RolesTable>
+
+    <RolesTable
+      v-if="selectedButton === 'System Roles'"
+      :roles="userSystemRoles"
+      title="System Roles"
+    ></RolesTable>
   </div>
 </template>
 
 <script setup>
-import { computed, inject, ref, watch } from "vue";
+import { computed, inject, onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ResourceAvailabilityTable from "@/components/Table/ResourceAvailabilityTable.vue";
 import ProductsTable from "@/components/Table/ProductsTable.vue";
@@ -46,6 +58,9 @@ import { useUsersStore } from "@/store/users";
 import { useProductsStore } from "@/store/products";
 import { useSystemEventsStore } from "@/store/systemEvents";
 import { useResourcesStore } from "@/store/resources";
+import { useRolesStore } from "@/store/roles";
+import RolesTable from "@/components/Table/RolesTable.vue";
+import { usePermissionsStore } from "@/store/permissions";
 const route = useRoute();
 const router = useRouter();
 watch(
@@ -59,6 +74,8 @@ const productsStore = useProductsStore();
 const usersStore = useUsersStore();
 const systemEventsStore = useSystemEventsStore();
 const resourcesStore = useResourcesStore();
+const rolesStore = useRolesStore();
+const permissionsStore = usePermissionsStore();
 const snackbarProvider = inject("snackbarProvider");
 const userProducts = computed(() => productsStore.currentUserProducts ?? []);
 
@@ -69,6 +86,9 @@ const tableButtons = computed(() => usersStore.tableButtons);
 const events = await systemEventsStore.fetchEventsRelatedTo(userId);
 
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
+
+const userOrganizationRoles = ref([]);
+const userSystemRoles = ref([]);
 
 async function fetchPurhasedResourcePerUser() {
   try {
@@ -86,14 +106,45 @@ async function fetchProductsForUser() {
   }
 }
 
+async function fetchUserOrganizationRoles() {
+  try {
+    userOrganizationRoles.value = await rolesStore.fetchUserOrganizationRoles(
+      id,
+    );
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch organization roles.");
+  }
+}
+
+async function fetchUserSystemRoles() {
+  try {
+    await permissionsStore.fetchCurrentUserSystemPermissions();
+
+    if (permissionsStore.canReadSystemRoles) {
+      userSystemRoles.value = await rolesStore.fetchUserSystemRoles(id);
+    }
+  } catch (error) {
+    snackbarProvider.showErrorSnackbar("Failed to fetch system roles.");
+  }
+}
+
 await fetchPurhasedResourcePerUser();
 await fetchProductsForUser();
+await fetchUserOrganizationRoles();
+await fetchUserSystemRoles();
 
 const tableColumnsResources = computed(
   () => resourcesStore.getTableColumnsWithQuantity,
 );
 const purchasedResources = computed(() => usersStore.getPurchasedResources);
 const user = computed(() => usersStore.selectedUser);
+
+onMounted(async () => {
+  await fetchPurhasedResourcePerUser();
+  await fetchProductsForUser();
+  await fetchUserOrganizationRoles();
+  await fetchUserSystemRoles();
+});
 </script>
 
 <style scoped>

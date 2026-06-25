@@ -103,7 +103,7 @@ const events = await systemEventsStore.fetchEventsRelatedTo(saleId);
 const eventHeaders = computed(() => systemEventsStore.eventHeaders);
 
 onMounted(async () => {
-  await permissionsStone.fetchCurrentUserPermissions(
+  await permissionsStone.fetchCurrentUserOrgnizationPermissions(
     currentSale.value.organizationSeller.id,
   );
 });

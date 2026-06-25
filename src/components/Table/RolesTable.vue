@@ -17,7 +17,10 @@
       </v-btn>
     </div>
     <div v-if="isRolesPage" class="d-flex justify-end">
-      <table-button :path="`/roles/${roleType}/create`">
+      <table-button
+        v-if="permissionsStore.canCreateSystemRoles"
+        :path="`/roles/${roleType}/create`"
+      >
         Create Role
       </table-button>
     </div>
@@ -43,23 +46,40 @@
           :permissions="extractDirectPermissions(item.permissions)"
         />
       </template>
+      <template v-if="isRolesPage" v-slot:item.actions="{ item }">
+        <div @click.stop>
+          <IconButton
+            v-if="permissionsStore.canDeleteSystemRoles"
+            icon="mdi-delete"
+            name="Delete"
+            color="red"
+            @click="onDelete(item.id)"
+          />
+        </div>
+      </template>
     </v-data-table>
   </div>
 </template>
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import TableButton from "../Button/TableButton.vue";
 import { useRolesStore } from "@/store/roles";
 import PermissionsTooltip from "../Tooltip/PermissionsTooltip.vue";
 import { navigateToItemDetails } from "@/utils/row-click-handler";
+import { usePermissionsStore } from "@/store/permissions.js";
+import IconButton from "../Button/IconButton.vue";
+import { handleNotFound } from "@/utils/action-guard.js";
 
 const props = defineProps({
   roles: {
     type: Array,
     default: null,
   },
+  title: String,
 });
+
+const snackbarProvider = inject("snackbarProvider");
 
 const route = useRoute();
 const isRolesPage = computed(() => route.path.startsWith("/roles"));
@@ -67,7 +87,11 @@ const isRolesPage = computed(() => route.path.startsWith("/roles"));
 const roleType = computed(() => route.params.type);
 
 const pageTitle = computed(() => {
-  return roleType.value === "organization"
+  if (props.title) {
+    return props.title;
+  }
+
+  return route.params.type === "organization"
     ? "Organization Roles"
     : "System Roles";
 });
@@ -75,6 +99,7 @@ const pageTitle = computed(() => {
 const search = ref("");
 const router = useRouter();
 const rolesStore = useRolesStore();
+const permissionsStore = usePermissionsStore();
 
 const localRoles = ref([]);
 
@@ -84,7 +109,9 @@ const extractDirectPermissions = (permissions) => {
   return (permissions || [])?.map((item) => item.permission);
 };
 
-const columns = rolesStore.columns;
+const columns = isRolesPage
+  ? rolesStore.getTableColumnsWithActions
+  : rolesStore.columns;
 
 const navigateToItemPage = (row, item) => {
   const roleId = item.internalItem.key;
@@ -93,12 +120,42 @@ const navigateToItemPage = (row, item) => {
 };
 
 const fetchRoles = async () => {
+  await permissionsStore.fetchCurrentUserSystemPermissions();
+
   if (props.roles) return;
 
-  if (roleType.value === "organization") {
+  if (
+    roleType.value === "organization" &&
+    permissionsStore.canReadSystemRoles
+  ) {
     localRoles.value = await rolesStore.fetchAllRolesByType("ORGANIZATION");
-  } else {
-    localRoles.value = [];
+  } else if (
+    roleType.value === "system" &&
+    permissionsStore.canReadSystemRoles
+  ) {
+    localRoles.value = await rolesStore.fetchAllRolesByType("SYSTEM");
+  }
+};
+
+const onDelete = async (roleId) => {
+  const confirmation = window.confirm(
+    "Are you sure that you would like to delete this item?",
+  );
+
+  if (!confirmation) return;
+
+  try {
+    await rolesStore.deleteRoleById(roleId);
+
+    localRoles.value = localRoles.value.filter((role) => role.id !== roleId);
+
+    snackbarProvider.showSuccessSnackbar("Role deleted successfully!");
+  } catch (error) {
+    if (await handleNotFound(router, error, "Resource")) return;
+
+    snackbarProvider.showErrorSnackbar(
+      error?.response?.data?.error || "Failed to delete role",
+    );
   }
 };
 

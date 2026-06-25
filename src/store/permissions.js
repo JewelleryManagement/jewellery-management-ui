@@ -1,7 +1,10 @@
 import { defineStore } from "pinia";
 import { STORAGE_KEYS } from "./storageKeys";
 import { storageService } from "./storageService";
-import { getCurrentUserPermissions } from "@/services/HttpClientService";
+import {
+  getCurrentUserPermissions,
+  getCurrentUserSystemPermissions,
+} from "@/services/HttpClientService";
 import {
   ORGANIZATION_EVENT_READ,
   ORGANIZATION_PRODUCT_DELETE,
@@ -19,12 +22,45 @@ import {
   ORGANIZATION_USER_ADD,
   ORGANIZATION_USER_DELETE,
   ORGANIZATION_USER_READ,
+  SYSTEM_EVENT_READ,
+  SYSTEM_RESOURCE_CREATE,
+  SYSTEM_RESOURCE_DELETE,
+  SYSTEM_RESOURCE_UPDATE,
+  SYSTEM_USER_CREATE,
+  SYSTEM_USER_DELETE,
+  SYSTEM_USER_READ,
+  SYSTEM_USER_UPDATE,
+  SYSTEM_ROLE_READ,
+  SYSTEM_RESOURCE_READ,
+  SYSTEM_ROLE_CREATE,
+  SYSTEM_ROLE_DELETE,
+  SYSTEM_ORGANIZATION_CREATE,
 } from "@/utils/permissionConstants";
 
 export const usePermissionsStore = defineStore("permissions", {
   state: () => ({
     permissionsByOrg: {},
+    systemPermissions: [],
     permissionFormats: {
+      SYSTEM_USER_READ: { name: "Read User", group: "User" },
+      SYSTEM_USER_CREATE: { name: "Create User", group: "User" },
+      SYSTEM_USER_UPDATE: { name: "Update User", group: "User" },
+      SYSTEM_USER_DELETE: { name: "Delete User", group: "User" },
+      SYSTEM_RESOURCE_READ: { name: "Read Resource", group: "Resource" },
+      SYSTEM_RESOURCE_CREATE: { name: "Create Resource", group: "Resource" },
+      SYSTEM_RESOURCE_UPDATE: { name: "Update Resource", group: "Resource" },
+      SYSTEM_RESOURCE_DELETE: { name: "Delete Resource", group: "Resource" },
+      SYSTEM_RESOURCE_IMPORT: { name: "Import Resource", group: "Resource" },
+      SYSTEM_ROLE_CREATE: { name: "Create Role", group: "Role" },
+      SYSTEM_ROLE_DELETE: { name: "Delete Role", group: "Role" },
+      SYSTEM_ROLE_ASSIGN: { name: "Assign System Role", group: "Role" },
+      SYSTEM_ROLE_READ: { name: "Read Role", group: "Role" },
+      SYSTEM_EVENT_READ: { name: "Read Event", group: "Event" },
+      SYSTEM_ORGANIZATION_CREATE: {
+        name: "Create Organization",
+        group: "Organization",
+      },
+
       ORGANIZATION_READ: { name: "Read Organization", group: "Organization" },
       ORGANIZATION_DELETE: {
         name: "Delete Organization",
@@ -80,96 +116,197 @@ export const usePermissionsStore = defineStore("permissions", {
       return (organizationId) => state.permissionsByOrg[organizationId] ?? [];
     },
 
-    hasPermission: (state) => {
+    hasOrganizationPermission: (state) => {
       return (organizationId, permission) =>
         state.permissionsByOrg[organizationId]?.includes(permission) ?? false;
     },
 
+    hasSystemPermission: (state) => {
+      return (permission) =>
+        state.systemPermissions.some(
+          (systemPermission) => systemPermission.permission === permission,
+        );
+    },
+
+    canReadSystemUsers() {
+      return this.hasSystemPermission(SYSTEM_USER_READ);
+    },
+
+    canCreateSystemUsers() {
+      return this.hasSystemPermission(SYSTEM_USER_CREATE);
+    },
+
+    canUpdateSystemUsers() {
+      return this.hasSystemPermission(SYSTEM_USER_UPDATE);
+    },
+
+    canDeleteSystemUsers() {
+      return this.hasSystemPermission(SYSTEM_USER_DELETE);
+    },
+
+    canReadSystemResource() {
+      return this.hasSystemPermission(SYSTEM_RESOURCE_READ);
+    },
+
+    canCreateSystemResource() {
+      return this.hasSystemPermission(SYSTEM_RESOURCE_CREATE);
+    },
+
+    canUpdateSystemResource() {
+      return this.hasSystemPermission(SYSTEM_RESOURCE_UPDATE);
+    },
+
+    canDeleteSystemResource() {
+      return this.hasSystemPermission(SYSTEM_RESOURCE_DELETE);
+    },
+
+    canReadSystemEvents() {
+      return this.hasSystemPermission(SYSTEM_EVENT_READ);
+    },
+
+    canReadSystemRoles() {
+      return this.hasSystemPermission(SYSTEM_ROLE_READ);
+    },
+
+    canCreateSystemRoles() {
+      return this.hasSystemPermission(SYSTEM_ROLE_CREATE);
+    },
+
+    canDeleteSystemRoles() {
+      return this.hasSystemPermission(SYSTEM_ROLE_DELETE);
+    },
+
+    canCreateSystemOrganization() {
+      return this.hasSystemPermission(SYSTEM_ORGANIZATION_CREATE);
+    },
+
     canReadResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_RESOURCE_READ);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_RESOURCE_READ,
+        );
     },
 
     canReadProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_READ);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_PRODUCT_READ,
+        );
     },
 
     canReadUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_USER_READ);
+        this.hasOrganizationPermission(organizationId, ORGANIZATION_USER_READ);
     },
 
     canReadEvent() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_EVENT_READ);
+        this.hasOrganizationPermission(organizationId, ORGANIZATION_EVENT_READ);
     },
 
     canReadRole() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_ROLE_READ);
+        this.hasOrganizationPermission(organizationId, ORGANIZATION_ROLE_READ);
     },
 
     canDeleteResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_RESOURCE_DELETE);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_RESOURCE_DELETE,
+        );
     },
 
     canTransferResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_RESOURCE_TRANSFER);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_RESOURCE_TRANSFER,
+        );
     },
 
     canDisassembleProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_DELETE);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_PRODUCT_DELETE,
+        );
     },
 
     canTransferProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_TRANSFER);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_PRODUCT_TRANSFER,
+        );
     },
 
     canAddUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_USER_ADD);
+        this.hasOrganizationPermission(organizationId, ORGANIZATION_USER_ADD);
     },
 
     canDeleteUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_USER_DELETE);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_USER_DELETE,
+        );
     },
 
     canUpdateUser() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_ROLE_UPDATE);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_ROLE_UPDATE,
+        );
     },
 
     canAssignRoles() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_ROLE_ASSIGN);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_ROLE_ASSIGN,
+        );
     },
 
     canReturnResource() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_SALE_RESOURCE_RETURN);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_SALE_RESOURCE_RETURN,
+        );
     },
 
     canReturnProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_SALE_PRODUCT_RETURN);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_SALE_PRODUCT_RETURN,
+        );
     },
 
     canUpdateProduct() {
       return (organizationId) =>
-        this.hasPermission(organizationId, ORGANIZATION_PRODUCT_UPDATE);
+        this.hasOrganizationPermission(
+          organizationId,
+          ORGANIZATION_PRODUCT_UPDATE,
+        );
     },
   },
   actions: {
-    async fetchCurrentUserPermissions(organizationId) {
+    async fetchCurrentUserOrgnizationPermissions(organizationId) {
       const permissions = await getCurrentUserPermissions(organizationId);
 
       this.permissionsByOrg[organizationId] = permissions;
+    },
+
+    async fetchCurrentUserSystemPermissions() {
+      const permissions = await getCurrentUserSystemPermissions();
+
+      this.systemPermissions = permissions;
     },
 
     async fetchPermissionsForOrganizations(organizationIds) {
@@ -180,7 +317,7 @@ export const usePermissionsStore = defineStore("permissions", {
           if (this.permissionsByOrg[organizationId]) return;
 
           try {
-            await this.fetchCurrentUserPermissions(organizationId);
+            await this.fetchCurrentUserOrgnizationPermissions(organizationId);
           } catch (error) {
             this.permissionsByOrg[organizationId] = [];
           }
