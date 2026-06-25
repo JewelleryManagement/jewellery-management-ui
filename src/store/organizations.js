@@ -125,9 +125,6 @@ export const useOrganizationsStore = defineStore("organizations", {
       this.selectedOrganization = data;
       return data;
     },
-    async fetchCurrentUserPermissions(organizationId) {
-      return await getCurrentUserPermissions(organizationId);
-    },
   },
   persist: {
     key: STORAGE_KEYS.ORGANIZATIONS,

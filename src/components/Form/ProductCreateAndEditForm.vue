@@ -191,7 +191,9 @@ const populateFormData = async (newOrg) => {
   if (currentOrg) {
     props.productInfo.ownerId = currentOrg.id;
     selectedOrg.value = currentOrg;
-    await permissionsStore.fetchCurrentUserPermissions(currentOrg.id);
+    await permissionsStore.fetchCurrentUserOrgnizationPermissions(
+      currentOrg.id,
+    );
     return Promise.all([
       fetchResourcesForOrganization(currentOrg),
       fetchProductsForOrganization(currentOrg),

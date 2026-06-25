@@ -49,7 +49,8 @@
 
     <RolesTable
       v-if="!rawDataButton && selectedButton === 'Roles'"
-      :roles="entity.member.organizationRoles"
+      :roles="entity.member.roles"
+      title="Organization Roles"
     />
   </v-card>
 </template>

@@ -117,9 +117,14 @@ const fetchPermissions = async () => {
   directSelectedPermissions.value = [];
 
   if (roleType.value === "organization") {
-    permissions.value = await rolesStore.fetchAllPermissions();
+    permissions.value = await rolesStore.fetchAllPermissionsByRoleType(
+      "ORGANIZATION",
+    );
     return;
-  } else permissions.value = [];
+  } else
+    permissions.value = await rolesStore.fetchAllPermissionsByRoleType(
+      "SYSTEM",
+    );
 };
 
 watch(roleType, fetchPermissions, { immediate: true });

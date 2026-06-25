@@ -93,7 +93,9 @@ onMounted(async () => {
   if (props.selectedOrg) {
     await getUsersOutsideOrg(selectedOrg.value);
   }
-  await permissionsStore.fetchCurrentUserPermissions(props.selectedOrg.id);
+  await permissionsStore.fetchCurrentUserOrgnizationPermissions(
+    props.selectedOrg.id,
+  );
 
   await fetchRoles();
 });

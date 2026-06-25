@@ -36,6 +36,7 @@
     <template v-slot:item.actions="{ item }">
       <div class="d-flex align-center ga-2" @click.stop>
         <IconButton
+          v-if="permissionsStore.canDeleteSystemResource"
           icon="mdi-delete"
           name="Delete"
           color="red"
@@ -43,6 +44,7 @@
         />
 
         <IconButton
+          v-if="permissionsStore.canUpdateSystemResource"
           icon="mdi-pencil"
           name="Edit"
           color="green"
@@ -50,6 +52,7 @@
         />
 
         <IconButton
+          v-if="permissionsStore.canCreateSystemResource"
           icon="mdi-content-duplicate"
           name="Duplicate"
           color="indigo"
@@ -71,13 +74,14 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import IconButton from "@/components/Button/IconButton.vue";
 import { useRoute, useRouter } from "vue-router";
 import { confirmDeleteResource } from "@/utils/resource-util";
 import { navigateToItemDetails } from "@/utils/row-click-handler";
 import { inject } from "vue";
 import { useResourcesStore } from "@/store/resources";
+import { usePermissionsStore } from "@/store/permissions";
 const snackbarProvider = inject("snackbarProvider");
 
 const route = useRoute();
@@ -96,6 +100,7 @@ watch(
   },
 );
 const resourcesStore = useResourcesStore();
+const permissionsStore = usePermissionsStore();
 const resources = computed(() => resourcesStore.resources);
 
 const selectedTableColumns = computed(() => {
@@ -133,4 +138,8 @@ const navigateToItemPage = (row, item) => {
 
   navigateToItemDetails(router, "ResourceDetails", "id", resourceId);
 };
+
+onMounted(async () => {
+  await permissionsStore.fetchCurrentUserSystemPermissions();
+});
 </script>

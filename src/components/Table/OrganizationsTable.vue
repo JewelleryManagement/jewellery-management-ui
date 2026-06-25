@@ -4,7 +4,10 @@
       <h1>{{ name }}</h1>
     </div>
 
-    <div v-if="isOrganizationsPage" class="d-flex justify-end">
+    <div
+      v-if="isOrganizationsPage && permissionsStore.canCreateSystemOrganization"
+      class="d-flex justify-end"
+    >
       <table-button path="/organizations/add">New Organization</table-button>
     </div>
     <v-card-title>
@@ -34,8 +37,10 @@
 
 <script setup>
 import { navigateToItemDetails } from "../../utils/row-click-handler.js";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import { usePermissionsStore } from "@/store/permissions.js";
+
 const props = defineProps({
   headers: Array,
   items: Array,
@@ -44,6 +49,7 @@ const props = defineProps({
 });
 const route = useRoute();
 const router = useRouter();
+const permissionsStore = usePermissionsStore();
 
 const isOrganizationsPage = computed(() => route.path === "/organizations");
 
@@ -54,4 +60,8 @@ const navigateToItemPage = (row, item) => {
 
   navigateToItemDetails(router, "Organization Details", "id", organizationId);
 };
+
+onMounted(
+  async () => await permissionsStore.fetchCurrentUserSystemPermissions(),
+);
 </script>

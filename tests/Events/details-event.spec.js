@@ -490,6 +490,8 @@ test("Update user in organization event", async ({ page }) => {
     .click();
   await expect(page.getByText("Successfully added user to org!")).toBeVisible();
 
+  await page.waitForTimeout(300);
+
   await visitEventPage(page, null, "Update User In Organization");
 
   const entityBefore = page.locator(".v-card", { hasText: "Entity Before" });

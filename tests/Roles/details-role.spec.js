@@ -48,9 +48,7 @@ test("Visit roles tables", async ({ page }) => {
   });
 
   await tableVisivility(page, expect);
-  await expect(
-    page.getByText("No data available", { exact: true }),
-  ).toBeVisible();
+  await expect(page.getByText("SYSTEM_ADMIN", { exact: true })).toBeVisible();
 });
 
 test("Test roles table's filer buttons", async ({ page }) => {

@@ -89,7 +89,9 @@ watch(
   () => sellObject.seller,
   async (newSeller) => {
     if (newSeller.id) {
-      await permissionsStore.fetchCurrentUserPermissions(newSeller.id);
+      await permissionsStore.fetchCurrentUserOrgnizationPermissions(
+        newSeller.id,
+      );
 
       initUsersForSale(newSeller.id);
       initResourcesForSale(newSeller.id);

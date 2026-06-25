@@ -4,7 +4,7 @@
       <v-card-title>Roles</v-card-title>
 
       <v-card-text>
-        <OrganizationRolesTable :roles="roles" />
+        <RolesTable :roles="roles" title="Organization Roles" />
       </v-card-text>
 
       <v-card-actions>
@@ -16,7 +16,7 @@
 </template>
 <script setup>
 import { computed } from "vue";
-import OrganizationRolesTable from "../Table/RolesTable.vue";
+import RolesTable from "../Table/RolesTable.vue";
 
 const props = defineProps({
   modelValue: {

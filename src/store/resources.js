@@ -7,6 +7,7 @@ import {
   removeResource,
   fetchAvailabilityResourceById,
   updateResource,
+  getResourceById,
 } from "@/services/HttpClientService";
 import AllowedValuesService from "@/services/AllowedValuesService";
 import {
@@ -163,6 +164,7 @@ export const useResourcesStore = defineStore("resources", {
     resources: [],
     resourceDetails: {},
     currentAvailability: {},
+    selectedResource: {},
     resourcesQueries: {},
     tableColumns: [
       { key: "clazz", title: "Resource Type" },
@@ -319,6 +321,11 @@ export const useResourcesStore = defineStore("resources", {
       }));
       this.resources = formattedResponse;
     },
+    async fetchResourceById(resourceId) {
+      const data = await getResourceById(resourceId);
+      this.selectedResource = data;
+      return data;
+    },
     async createResource(formData) {
       const res = await postResources(formData);
       this.resources.push(res);
@@ -374,6 +381,9 @@ export const useResourcesStore = defineStore("resources", {
       }
 
       this.resourcesQueries = queriesByResourceClass;
+    },
+    clearResources() {
+      this.resources = [];
     },
   },
   persist: {

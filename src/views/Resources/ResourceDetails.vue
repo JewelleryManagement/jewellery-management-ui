@@ -132,8 +132,8 @@ const generateSku = () => {
 
 const loadResourceDetails = () => {
   if (isEditState.value || isDuplicateState.value) {
-    const resourceDetails = computed(() => resourcesStore.currentAvailability);
-    const resource = resourceDetails.value.resource;
+    const resourceDetails = computed(() => resourcesStore.selectedResource);
+    const resource = resourceDetails.value;
     resourcesStore.setResourceDetails(resource);
     selectedClazz.value = resource.clazz;
     sku.value = resource.sku;

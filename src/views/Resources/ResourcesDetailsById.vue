@@ -73,7 +73,9 @@ const systemEventsStore = useSystemEventsStore();
 const resourcesStore = useResourcesStore();
 
 const resourceId = route.params.id;
-const resourceAvailability = computed(() => resourcesStore.currentAvailability);
+const resourceAvailability = ref(
+  await resourcesStore.fetchAvailabilityResourceById(resourceId),
+);
 
 const sales = ref(await salesStore.fetchAllSalesByResource(resourceId));
 const salesTableColumns = computed(() => salesStore.getAllColumnsWithQuantity);

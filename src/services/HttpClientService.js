@@ -130,8 +130,8 @@ export async function getRolesByType(roleType) {
   return await fetchData(`/roles/type/${roleType}`);
 }
 
-export async function getAllPermissions() {
-  return await fetchData("/roles/permissions");
+export async function getPermissionsByRoleType(type) {
+  return await fetchData(`/roles/permissions?roleType=${type}`);
 }
 
 export async function getRole(id) {
@@ -140,6 +140,22 @@ export async function getRole(id) {
 
 export async function getAllUsersByOrganizationWithRoles(organizationId) {
   return await fetchData(`/organizations/${organizationId}/users/roles`);
+}
+
+export async function getCurrentUserSystemPermissions() {
+  return await fetchData("/roles/current-user/system-permissions");
+}
+
+export async function getUserOrganizationRoles(userId) {
+  return await fetchData(`/roles/organization/users/${userId}`);
+}
+
+export async function getUserSystemRoles(userId) {
+  return await fetchData(`/roles/system/users/${userId}`);
+}
+
+export async function getResourceById(resourceId) {
+  return await fetchData(`/resources/${resourceId}`);
 }
 
 // POSTS REQUESTS
@@ -230,6 +246,10 @@ export async function removeResourceFromOrg(
 
 export async function removeUserFromOrg(orgId, userId) {
   return await removeData(`/organizations/${orgId}/users/${userId}`);
+}
+
+export async function removeRole(roleId) {
+  return await removeData(`/roles/${roleId}`);
 }
 
 // PUT REQUEST

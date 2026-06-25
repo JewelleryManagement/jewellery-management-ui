@@ -5,6 +5,7 @@ import {
   getAllEventsRelatedTo,
   getSystemEvent,
   getAllEvents,
+  getAllEventsRelatedToOrganizations,
 } from "@/services/HttpClientService";
 
 export const useSystemEventsStore = defineStore("systemEvents", {

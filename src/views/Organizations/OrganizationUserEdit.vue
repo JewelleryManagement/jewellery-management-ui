@@ -61,7 +61,7 @@ const fetchSelectedUser = async () => {
       (member) => member.user.id === selectedUserId,
     );
     selectedUser.value = orgMembers[selectedUserIndex]?.user;
-    selectedRoles.value = orgMembers[selectedUserIndex]?.organizationRoles;
+    selectedRoles.value = orgMembers[selectedUserIndex]?.roles;
   } catch (error) {
     snackbarProvider.showErrorSnackbar(
       "Could not fetch users for organization!",

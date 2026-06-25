@@ -21,6 +21,7 @@
         </v-btn>
       </div>
       <table-button
+        v-if="permissionsStore.canCreateSystemResource"
         :to="{
           path: '/resources/add',
           query: $route.query,
@@ -42,9 +43,12 @@ import { onMounted, inject, computed } from "vue";
 import ResourceTable from "@/components/Table/ResourceTable.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useResourcesStore } from "@/store/resources";
+import { usePermissionsStore } from "@/store/permissions";
+
 const route = useRoute();
 const router = useRouter();
 const resourcesStore = useResourcesStore();
+const permissionsStore = usePermissionsStore();
 const snackbarProvider = inject("snackbarProvider");
 const selectedResourceClazz = computed(() => route.query.clazz || "All");
 const selectedButton = computed(() => {
@@ -78,7 +82,13 @@ const filterResourcesByType = (resourceType) => {
 
 onMounted(async () => {
   try {
-    await resourcesStore.fetchResources();
+    await permissionsStore.fetchCurrentUserSystemPermissions();
+
+    if (permissionsStore.canReadSystemResource) {
+      await resourcesStore.fetchResources();
+    } else {
+      resourcesStore.clearResources();
+    }
   } catch (error) {
     snackbarProvider.showErrorSnackbar("Failed to fetch resources.");
   }

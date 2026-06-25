@@ -2,10 +2,13 @@ import { defineStore } from "pinia";
 import { STORAGE_KEYS } from "./storageKeys";
 import { storageService } from "./storageService";
 import {
-  getAllPermissions,
+  getPermissionsByRoleType,
   postCreateRole,
   getRolesByType,
   getRole,
+  getUserOrganizationRoles,
+  getUserSystemRoles,
+  removeRole,
 } from "@/services/HttpClientService";
 
 export const useRolesStore = defineStore("roles", {
@@ -16,8 +19,14 @@ export const useRolesStore = defineStore("roles", {
       { key: "roleType", title: "Role Type" },
       { key: "permissions", title: "Permissions" },
     ],
+    tableColumnActions: { key: "actions", title: "", slot: "actions" },
   }),
-  getters: {},
+  getters: {
+    getTableColumnsWithActions: (state) => [
+      ...state.columns,
+      state.tableColumnActions,
+    ],
+  },
   actions: {
     async createRole(data) {
       await postCreateRole(data);
@@ -29,12 +38,24 @@ export const useRolesStore = defineStore("roles", {
       return data;
     },
 
-    async fetchAllPermissions() {
-      return await getAllPermissions();
+    async fetchAllPermissionsByRoleType(type) {
+      return await getPermissionsByRoleType(type);
     },
 
     async fetchAllRolesByType(type) {
       return await getRolesByType(type);
+    },
+
+    async fetchUserOrganizationRoles(userId) {
+      return getUserOrganizationRoles(userId);
+    },
+
+    async fetchUserSystemRoles(userId) {
+      return getUserSystemRoles(userId);
+    },
+
+    async deleteRoleById(roleId) {
+      await removeRole(roleId);
     },
   },
   persist: {

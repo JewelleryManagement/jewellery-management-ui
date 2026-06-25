@@ -15,15 +15,22 @@
         v-if="isDetailsPage"
         class="pa-4 d-flex flex-wrap justify-space-between ga-3"
       >
-        <text-button color="red" text="Delete" @click="onDelete()" />
+        <text-button
+          v-if="permissionsStore.canDeleteSystemResource"
+          color="red"
+          text="Delete"
+          @click="onDelete()"
+        />
 
         <text-button
+          v-if="permissionsStore.canUpdateSystemResource"
           color="green"
           text="Edit"
           :path="{ name: 'Edit-Resource', params: { id: resource.id } }"
         />
 
         <text-button
+          v-if="permissionsStore.canCreateSystemResource"
           color="indigo"
           text="Duplicate"
           :path="{ name: 'Duplicate-Resource', params: { id: resource.id } }"
@@ -47,6 +54,7 @@ import { confirmDeleteResource } from "@/utils/resource-util";
 import { getQuery } from "@/utils/resource-util";
 import { inject } from "vue";
 import { useResourcesStore } from "@/store/resources";
+import { usePermissionsStore } from "@/store/permissions.js";
 const snackbarProvider = inject("snackbarProvider");
 
 const { resourceAvailability } = defineProps({
@@ -54,8 +62,11 @@ const { resourceAvailability } = defineProps({
 });
 
 const resourcesStore = useResourcesStore();
+const permissionsStore = usePermissionsStore();
 const route = useRoute();
 const router = useRouter();
+
+await permissionsStore.fetchCurrentUserSystemPermissions();
 
 const isDetailsPage = computed(() => route.path.startsWith("/resources"));
 
